@@ -85,6 +85,8 @@ public class Regex {
 
     private var namedGroups: Option<HashMap<String, Int64>> = None
 
+    var matchFunc = CJ_REGEX_Match
+
     public init(pattern: String, flags: Array<RegexFlag>) {
         this.pattern = pattern
         this.flags = flags
@@ -119,6 +121,9 @@ public class Regex {
                 }
             }
             this.re = result.re
+            if (result.jit) {
+                matchFunc = CJ_REGEX_JIT_Match
+            }
         }
     }
 
@@ -154,7 +159,7 @@ public class Regex {
                 release(inputCString)
                 throw RegexException("Create match_data for pattern `${pattern}` failed.")
             }
-            let isMatch = CJ_REGEX_Match(this.re, inputCString, UIntNative(input.size), UIntNative(0), pcre2md) >= 0
+            let isMatch = matchFunc(this.re, inputCString, UIntNative(input.size), UIntNative(0), pcre2md) >= 0
             release(inputCString)
             release(pcre2md)
             return isMatch
@@ -245,7 +250,7 @@ public class Regex {
     func find(input: String, inputCString: CString, pcre2md: Pcre2MatchDataPtr, offset: Int64, group!: Bool = false): Option<MatchData> {
         unsafe {
             var md: Option<MatchData> = None
-            let rc = Int64(CJ_REGEX_Match(this.re, inputCString, UIntNative(input.size), UIntNative(offset), pcre2md))
+            let rc = Int64(matchFunc(this.re, inputCString, UIntNative(input.size), UIntNative(offset), pcre2md))
             if (rc < 0) {
                 return md
             }
@@ -304,7 +309,7 @@ public class Regex {
             }
             var offset = 0
             while (true) {
-                let rc = Int64(CJ_REGEX_Match(this.re, inputCString, UIntNative(input.size), UIntNative(offset), pcre2md))
+                let rc = Int64(matchFunc(this.re, inputCString, UIntNative(input.size), UIntNative(offset), pcre2md))
                 if (rc < 0) {
                     break
                 }

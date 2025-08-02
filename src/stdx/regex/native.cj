@@ -16,7 +16,7 @@ type Pcre2OvectorPtr = CPointer<UIntNative>
 
 @C
 struct CompileResult {
-    CompileResult(let re: Pcre2CodePtr, let errorCode: Int32, let errorOffset: UIntNative) {}
+    CompileResult(let re: Pcre2CodePtr, let errorCode: Int32, let errorOffset: UIntNative, let jit: Bool) {}
 }
 
 @C
@@ -32,6 +32,10 @@ foreign func CJ_REGEX_CreateMatchData(re: Pcre2CodePtr): Pcre2MatchDataPtr
 
 @FastNative
 foreign func CJ_REGEX_Match(re: Pcre2CodePtr, cinput: CString, length: UIntNative, offset: UIntNative,
+    matchData: Pcre2MatchDataPtr): Int32
+
+@FastNative
+foreign func CJ_REGEX_JIT_Match(re: Pcre2CodePtr, cinput: CString, length: UIntNative, offset: UIntNative,
     matchData: Pcre2MatchDataPtr): Int32
 
 @FastNative
