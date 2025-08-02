@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <limits.h>
 
 #define PCRE2_STATIC
@@ -27,6 +28,7 @@ typedef struct {
     pcre2_code* re;
     int errorCode;
     PCRE2_SIZE errorOffset;
+    bool jit;
 } CompileResult;
 
 typedef struct {
@@ -47,6 +49,9 @@ extern CompileResult* CJ_REGEX_Compile(const unsigned char* pattern, const uint3
 
     pcre2_code* re = pcre2_compile(pattern, PCRE2_ZERO_TERMINATED, options, &errorCode, &errorOffset, NULL);
 
+    int jit_result = pcre2_jit_compile(re, PCRE2_JIT_COMPLETE);
+    
+    result->jit = (jit_result == 0);
     result->re = re;
     result->errorCode = errorCode;
     result->errorOffset = errorOffset;
@@ -63,6 +68,12 @@ extern int CJ_REGEX_Match(const pcre2_code* re, const unsigned char* subject, co
     const PCRE2_SIZE offset, pcre2_match_data* matchData)
 {
     return pcre2_match(re, subject, length, offset, 0, matchData, NULL);
+}
+
+extern int CJ_REGEX_JIT_Match(const pcre2_code* re, const unsigned char* subject, const PCRE2_SIZE length,
+    const PCRE2_SIZE offset, pcre2_match_data* matchData)
+{
+    return pcre2_jit_match(re, subject, length, offset, 0, matchData, NULL);
 }
 
 extern PCRE2_SIZE* CJ_REGEX_GetOvector(pcre2_match_data* matchData)
