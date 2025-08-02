@@ -163,7 +163,6 @@ make_cangjie_lib(
     compress.zlib IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}ZLIB stdx.compress.zlibFFI
     CANGJIE_STD_LIB_LINK std-core std-collection std-io std-math
-
     OBJECTS ${output_cj_object_dir}/stdx/compress.zlib.o
     FLAGS -lstdx.compress.zlibFFI)
 
@@ -173,6 +172,16 @@ add_library(stdx.compress.zlib STATIC ${ZLIBFFI_OBJS} ${output_cj_object_dir}/st
 set_target_properties(stdx.compress.zlib PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.compress.zlib DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
+make_cangjie_lib(
+    regex IS_SHARED
+    DEPENDS cangjie${BACKEND_TYPE}Regex stdx.regexFFI
+    CANGJIE_STD_LIB_LINK std-core std-collection std-sort std-sync std-math
+    OBJECTS ${output_cj_object_dir}/stdx/regex.o $<TARGET_OBJECTS:stdx.regexFFI-objs>
+    FLAGS -lstdx.regexFFI)
+
+get_target_property(REGEXFFI_OBJS stdx.regexFFI SOURCES)
+add_library(stdx.regex STATIC ${REGEXFFI_OBJS} ${output_cj_object_dir}/stdx/regex.o)
+install(TARGETS stdx.regex DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
 make_cangjie_lib(
     encoding.url IS_SHARED
@@ -701,6 +710,18 @@ add_cangjie_library(
     MODULE_NAME "stdx"
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/compress
     DEPENDS ${COMPRESS_DEPENDENCIES})
+
+add_cangjie_library(
+    cangjie${BACKEND_TYPE}Regex
+    NO_SUB_PKG
+    IS_STDXLIB
+    IS_PACKAGE
+    IS_CJNATIVE_BACKEND
+    PACKAGE_NAME "regex"
+    MODULE_NAME "stdx"
+    SOURCES ${REGEX_SRCS}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/regex
+    DEPENDS ${REGEX_DEPENDENCIES})
 
 add_cangjie_library(
     cangjie${BACKEND_TYPE}Url

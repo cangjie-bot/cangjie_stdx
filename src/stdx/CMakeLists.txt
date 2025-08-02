@@ -7,6 +7,7 @@
 
 add_subdirectory(dynamicLoader)
 add_subdirectory(compress)
+add_subdirectory(regex)
 add_subdirectory(serialization)
 add_subdirectory(encoding)
 add_subdirectory(fuzz)

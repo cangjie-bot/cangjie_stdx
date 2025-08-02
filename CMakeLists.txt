@@ -151,6 +151,19 @@ if(BUILD_GCC_TOOLCHAIN)
     set(GCC_TOOLCHAIN_FLAG "${GCC_TOOLCHAIN_FLAG} --gcc-toolchain=\"${BUILD_GCC_TOOLCHAIN}\"")
 endif()
 
+if(NOT DEFINED CANGJIE_PCRE2_SOURCE_DIR)
+    set(CANGJIE_PCRE2_SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/pcre2-10.44-h1)
+endif()
+
+if(NOT EXISTS ${CANGJIE_PCRE2_SOURCE_DIR})
+    set(REPOSITORY_PATH https://gitee.com/openharmony/third_party_pcre2.git)
+    message(STATUS "Set pcre2 REPOSITORY_PATH: ${REPOSITORY_PATH}")
+    execute_process(
+        COMMAND git clone --branch OpenHarmony-v6.0-Beta1 ${REPOSITORY_PATH} ${CANGJIE_PCRE2_SOURCE_DIR}
+    )
+endif()
+include(Pcre2)
+
 if(NOT EXISTS ${CANGJIE_ZLIB_SOURCE_DIR})
     set(REPOSITORY_PATH https://gitee.com/openharmony/third_party_zlib.git)
     message(STATUS "Set Zlib REPOSITORY_PATH: ${REPOSITORY_PATH}")
