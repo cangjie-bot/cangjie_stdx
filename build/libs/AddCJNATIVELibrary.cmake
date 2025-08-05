@@ -261,6 +261,7 @@ make_cangjie_lib(
         ${tlsFFI_flags}
         ${openssl_flags}
         ${ssl_dependencies}
+        $<$<BOOL:${MINGW}>:-pthread>
         $<$<BOOL:${MINGW}>:-lws2_32>
         $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
 
