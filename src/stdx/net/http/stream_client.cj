@@ -122,7 +122,9 @@ class ClientStream {
         if (bodySize != 0) {
             match (req.body) {
                 case rb: HttpRawBody => writeRawBody(rb, hasTrailer)
-                case body: InputStream => writeNormalBody(body, hasTrailer)
+                case body: InputStream => spawn {
+                    writeNormalBody(body, hasTrailer)
+                }
             }
         }
         httpLogDebug(logger, "[ClientStream#writeRequest] finish write body of stream: ${streamId}")
