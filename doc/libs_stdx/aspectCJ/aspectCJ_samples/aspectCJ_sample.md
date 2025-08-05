@@ -29,8 +29,8 @@ main() {
 linux 平台编译命令：
 
 ```shell
-cjc aop_demo1.cj --plugin=libcollect-aspects.so -o main	// 第一次编译，收集切面
-cjc aop_demo1.cj --plugin=libwave-aspects.so -o main	// 第二次编译，织入切面
+cjc aop_demo1.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main	// 第一次编译，收集切面
+cjc aop_demo1.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main	// 第二次编译，织入切面
 ```
 
 运行结果可能如下：
@@ -53,7 +53,7 @@ package AOP_demo2
 import stdx.aspectCJ.*
 import std.time.DateTime
 
-@InsertAtExit[packageName: "AOP_demo1", className: "", methodName: "printCurrentTime", isStatic: false, funcTypeStr: "()->std.core:String", recursive: false]
+@InsertAtExit[packageName: "AOP_demo2", className: "", methodName: "printCurrentTime", isStatic: false, funcTypeStr: "()->std.core:String", recursive: false]
 public func printCurrentTimeImpl() {
     println("----- ${DateTime.now()} -----")
 }
@@ -73,8 +73,8 @@ main() {
 linux 平台编译命令：
 
 ```shell
-cjc aop_demo2.cj --plugin=libcollect-aspects.so -o main	// 第一次编译，收集切面
-cjc aop_demo2.cj --plugin=libwave-aspects.so -o main	// 第二次编译，织入切面
+cjc aop_demo2.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main	// 第一次编译，收集切面
+cjc aop_demo2.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main	// 第二次编译，织入切面
 ```
 
 运行结果可能如下：
@@ -93,12 +93,12 @@ done
 <!-- compile -->
 
 ```cangjie
-package AOP_demo2
+package AOP_demo3
 
 import stdx.aspectCJ.*
 import std.time.DateTime
 
-@ReplaceFuncBody[packageName: "AOP_demo1", className: "", methodName: "printCurrentTime", isStatic: false, recursive: false]
+@ReplaceFuncBody[packageName: "AOP_demo3", className: "", methodName: "printCurrentTime", isStatic: false, recursive: false]
 public func printCurrentTimeImpl(original: (String)->String) {
     println("----- ${DateTime.now()} -----")
     println(original("abc"))
@@ -120,8 +120,8 @@ main() {
 linux 平台编译命令：
 
 ```shell
-cjc aop_demo2.cj --plugin=libcollect-aspects.so -o main	// 第一次编译，收集切面
-cjc aop_demo2.cj --plugin=libwave-aspects.so -o main	// 第二次编译，织入切面
+cjc aop_demo3.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main	// 第一次编译，收集切面
+cjc aop_demo3.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main	// 第二次编译，织入切面
 ```
 
 运行结果可能如下：

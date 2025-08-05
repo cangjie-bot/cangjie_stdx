@@ -36,9 +36,9 @@ main(): Int64 {
 
 ```text
 url.scheme = http
-url.opaque =
-url.userInfo =
-url.rawUserInfo =
+url.opaque = 
+url.userInfo = 
+url.rawUserInfo = 
 url.host = www.example.com:80
 url.hostName = www.example.com
 url.port = 80

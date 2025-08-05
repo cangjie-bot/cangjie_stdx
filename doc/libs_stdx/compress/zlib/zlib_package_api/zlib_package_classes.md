@@ -96,7 +96,7 @@ main(): Unit {
 
 ```text
 65
-17
+18
 ```
 
 ## class CompressOutputStream
@@ -307,7 +307,7 @@ main(): Unit {
 
 ```text
 65
-17
+18
 Hello, World!Hello, World!Hello, World!Hello, World!Hello, World!
 ```
 
@@ -427,5 +427,5 @@ main(): Unit {
 
 ```text
 65
-17
+18
 ```
