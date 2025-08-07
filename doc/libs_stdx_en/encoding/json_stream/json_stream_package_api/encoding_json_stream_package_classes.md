@@ -297,7 +297,8 @@ Exceptions:
 
 ```cangjie
 public func startObject(): Unit
-``````markdown
+```
+
 Function: Begins serializing a new JSON object. Every [startObject](encoding_json_stream_package_classes.md#func-startobject-1) must have a corresponding [endObject](encoding_json_stream_package_classes.md#func-endobject-1).
 
 Exceptions:
@@ -353,4 +354,3 @@ Return value:
 Exceptions:
 
 - IllegalStateException - Thrown when the current writer's state is inappropriate for writing a value.
-```

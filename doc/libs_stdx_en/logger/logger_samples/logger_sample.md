@@ -297,7 +297,8 @@ public class ToStringWrapper <: ToString & LogValue {
 ```
 
 Execution results:
-``````text
+
+```text
 time=2025-04-15T15:18:09.2186361+08:00 level="INFO" msg="abc" name="main" age=2
 time=2025-04-15T15:18:09.2187444+08:00 level="DEBUG" msg="Logging in user foo with birthday 2025-04-15T15:18:09.2187408+08:00" name="main"
 time=2025-04-15T15:18:09.2191009+08:00 level="INFO" msg="Hello, World!" name="main" k1=[[1,4],[2,5],[3]] password="v22222"

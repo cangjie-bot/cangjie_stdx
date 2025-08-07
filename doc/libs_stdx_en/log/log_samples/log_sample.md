@@ -297,8 +297,8 @@ class TextLogWriter <: LogWriter {
                 out.write("\"".toArray())
         }
     }
-    public func startArray(): Unit {```swift
-out.write("[".toArray())
+    public func startArray(): Unit {
+        out.write("[".toArray())
     }
     public func endArray(): Unit {
         out.write("]".toArray())

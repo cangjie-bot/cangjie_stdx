@@ -1169,7 +1169,8 @@ Return value:
 - UInt8 - UInt8 type instance.
 
 ### func consumeUInt8s(Int64)
-``````cangjie
+
+```cangjie
 public open func consumeUInt8s(count: Int64): Array<UInt8>
 ```
 

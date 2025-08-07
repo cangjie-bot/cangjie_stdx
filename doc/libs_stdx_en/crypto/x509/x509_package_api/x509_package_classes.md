@@ -595,7 +595,9 @@ public prop countryName: ?String
 
 Function: Returns the country or region name of the certificate entity.
 
-Type: ?String### prop email
+Type: ?String
+
+### prop email
 
 ```cangjie
 public prop email: ?String
