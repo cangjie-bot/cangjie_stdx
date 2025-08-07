@@ -298,7 +298,8 @@ Exceptions:
 
 ```cangjie
 public func post(url: String, body: Array<UInt8>): HttpResponse
-``````
+```
+
 Function: Convenient request function with POST method.
 
 Parameters:
@@ -596,7 +597,9 @@ Return Value:
 
 ```cangjie
 public func enablePush(enable: Bool): ClientBuilder
-```Function: Configure whether the client supports HTTP/2 server push.
+```
+
+Function: Configure whether the client supports HTTP/2 server push.
 
 Parameters:
 
@@ -894,7 +897,7 @@ Type: ?Int64
 
 ### prop others
 
-```cangjie```
+```cangjie
 public prop others: ArrayList<String>
 ```
 
@@ -1194,7 +1197,9 @@ Parent Type:
 
 ```cangjie
 public func add(name: String, value: String): Unit
-```Function: Add specified key-value pair. If the name already exists, the value will be appended to its corresponding value list; if the name does not exist, the name field and its value will be added.
+```
+
+Function: Add specified key-value pair. If the name already exists, the value will be appended to its corresponding value list; if the name does not exist, the name field and its value will be added.
 
 Parameters:
 
@@ -1491,7 +1496,7 @@ Parameters:
 
 ### func addHeaders(HttpHeaders)
 
-```cangjie```
+```cangjie
 public func addHeaders(headers: HttpHeaders): HttpRequestBuilder
 ```
 
@@ -1791,7 +1796,9 @@ Return Value:
 
 ```cangjie
 public func trailer(name: String, value: String): HttpRequestBuilder
-```Function: Adds specified key-value pairs to the request trailer, following the same rules as the `add` function in the [HttpHeaders](http_package_classes.md#class-httpheaders) class.
+```
+
+Function: Adds specified key-value pairs to the request trailer, following the same rules as the `add` function in the [HttpHeaders](http_package_classes.md#class-httpheaders) class.
 
 Parameters:
 
@@ -2688,7 +2695,9 @@ Type: [TransportConfig](http_package_structs.md#struct-transportconfig)
 
 ```cangjie
 public prop writeTimeout: Duration
-```Function: Get the server's configured write response timeout duration.
+```
+
+Function: Get the server's configured write response timeout duration.
 
 Type: Duration
 
@@ -2996,18 +3005,6 @@ Exceptions:
 public func distributor(distributor: HttpRequestDistributor): ServerBuilder
 ```
 
-Function: Sets the request distributor for the server.
-
-Parameters:
-
-- distributor: [HttpRequestDistributor](http_package_interfaces.md#interface-httprequestdistributor) - The request distributor instance.
-
-Return Value:
-
-- [ServerBuilder](http_package_classes.md#class-serverbuilder) - Reference to current [ServerBuilder](http_package_classes.md#class-serverbuilder).```cangjie
-public func distributor(distributor: HttpRequestDistributor): ServerBuilder
-```
-
 Function: Sets the request distributor, which routes requests to corresponding handlers based on URLs. Uses the default distributor if not specified.
 
 Parameters:
@@ -3302,7 +3299,9 @@ Return Value:
 
 ```cangjie
 public func tlsConfig(config: TlsServerConfig): ServerBuilder
-```Function: Configure TLS layer settings, which are not set by default.
+```
+
+Function: Configure TLS layer settings, which are not set by default.
 
 Parameters:
 

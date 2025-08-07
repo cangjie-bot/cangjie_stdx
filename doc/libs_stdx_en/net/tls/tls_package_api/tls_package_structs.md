@@ -297,7 +297,7 @@ Exceptions:
 
 ### prop dhParameters
 
-```cangjie```
+```cangjie
 public mut prop dhParameters: ?DHParameters
 ```
 

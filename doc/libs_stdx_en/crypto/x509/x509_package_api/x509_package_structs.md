@@ -595,7 +595,7 @@ Type: String
 
 ### let body
 
-```cangjie```markdown
+```cangjie
 public let body: ?DerBlob
 ```
 
@@ -894,7 +894,8 @@ Purpose: The root certificate chain, defaults to the system root certificate cha
 Type: Array<[X509Certificate](x509_package_classes.md#class-x509certificate)>
 
 ### var time
-``````cangjie
+
+```cangjie
 public var time: DateTime = DateTime.now()
 ```
 
