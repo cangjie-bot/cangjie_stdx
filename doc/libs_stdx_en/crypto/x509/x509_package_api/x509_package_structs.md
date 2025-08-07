@@ -297,7 +297,9 @@ public static let KeyAgreement: UInt16 = 0x0008
 
 Functionality: Indicates the key is used for key agreement.
 
-Type: UInt16### static let KeyEncipherment
+Type: UInt16
+
+### static let KeyEncipherment
 
 ```cangjie
 public static let KeyEncipherment: UInt16 = 0x0020
@@ -595,7 +597,7 @@ Type: String
 
 ### let body
 
-```cangjie```markdown
+```cangjie
 public let body: ?DerBlob
 ```
 
@@ -894,7 +896,8 @@ Purpose: The root certificate chain, defaults to the system root certificate cha
 Type: Array<[X509Certificate](x509_package_classes.md#class-x509certificate)>
 
 ### var time
-``````cangjie
+
+```cangjie
 public var time: DateTime = DateTime.now()
 ```
 

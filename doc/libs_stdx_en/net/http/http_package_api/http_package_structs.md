@@ -298,7 +298,8 @@ Type: UInt16
 
 ```cangjie
 public static const STATUS_LOOP_DETECTED: UInt16 = 508
-``````
+```
+
 Function: The server detected infinite recursion while processing the request.
 
 Type: UInt16
@@ -595,7 +596,7 @@ Type: UInt16
 
 ### static const STATUS_SEE_OTHER
 
-```cangjie```
+```cangjie
 public static const STATUS_SEE_OTHER: UInt16 = 303
 ```
 
@@ -876,4 +877,3 @@ public mut prop writeTimeout: Duration
 Function: Sets and retrieves the write timeout for transport layer connections. If set to less than 0, it will be set to 0. Default value is Duration.Max.
 
 Type: Duration
-```

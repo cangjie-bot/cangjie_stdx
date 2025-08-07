@@ -297,7 +297,7 @@ main() {
                 httpContext =>
                 let pusher = HttpResponsePusher.getPusher(httpContext)
                 match (pusher) {
-                    case Some(pusher) => pusher.push("/picture.png", "GET", httpContext.request.headers)```scala
+                    case Some(pusher) => pusher.push("/picture.png", "GET", httpContext.request.headers)
                     case None => ()
                 }
             }

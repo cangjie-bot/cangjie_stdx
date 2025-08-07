@@ -297,7 +297,7 @@ Parameters:
 
 ### func getValue()
 
-```cangjie```markdown
+```cangjie
 public func getValue(): Float64
 ```
 
@@ -597,7 +597,7 @@ public func toJsonString(depth: Int64, bracketInNewLine!: Bool = false, indent!:
 
 Function: Converts [JsonObject](encoding_json_package_classes.md#class-jsonobject) into a JSON-formatted string. This function specifies the initial indentation depth, whether to place the first bracket on a new line, and the indentation string.
 
-Parameters:```markdown
+Parameters:
 - depth: Int64 - Indentation depth.
 - bracketInNewLine!: Bool - Whether the first bracket should be on a new line. If `true`, the first bracket will start on a new line and be indented to the specified depth.
 - indent!: String - The specified indentation string. The indentation string can only consist of spaces and tabs. Defaults to two spaces.
@@ -897,7 +897,8 @@ Return Value:
 Exceptions:
 
 - [JsonException](encoding_json_package_exceptions.md#class-jsonexception) - Thrown if conversion fails.
-```### func kind()
+
+### func kind()
 
 ```cangjie
 public func kind(): JsonKind
