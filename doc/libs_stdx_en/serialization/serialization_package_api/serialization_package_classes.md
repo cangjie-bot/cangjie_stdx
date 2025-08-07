@@ -297,7 +297,7 @@ Return Value:
 
 ### func get(String)
 
-```cangjie```
+```cangjie
 public func get(key: String): DataModel
 ```
 
