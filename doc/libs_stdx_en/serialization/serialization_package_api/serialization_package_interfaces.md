@@ -595,7 +595,7 @@ Parent Type:
 
 #### static func deserialize(DataModel)
 
-```cangjie```
+```cangjie
 public static func deserialize(dm: DataModel): Option<T>
 ```
 
