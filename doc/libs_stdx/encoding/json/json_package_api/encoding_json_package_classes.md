@@ -208,6 +208,10 @@ public init(bv: Bool)
 
 功能：将指定的 Bool 类型实例封装成 [JsonBool](encoding_json_package_classes.md#class-jsonbool) 实例。
 
+参数：
+
+- bv: Bool - Bool 类型。
+
 ### func getValue()
 
 ```cangjie
@@ -496,6 +500,10 @@ public init(map: HashMap<String, JsonValue>)
 
 功能：将指定的 HashMap 类型实例封装成 [JsonObject](encoding_json_package_classes.md#class-jsonobject) 实例。
 
+参数：
+
+- map: HashMap\<String, [JsonValue](encoding_json_package_classes.md#class-jsonvalue)> - data 数据。
+
 ### func containsKey(String)
 
 ```cangjie
@@ -664,6 +672,10 @@ public init(sv: String)
 ```
 
 功能：将指定的 String 类型实例封装成 [JsonString](encoding_json_package_classes.md#class-jsonstring) 实例。
+
+参数：
+
+- sv: String - String 类型。
 
 ### func getValue()
 
