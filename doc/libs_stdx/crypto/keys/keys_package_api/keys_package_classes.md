@@ -184,7 +184,7 @@ public func sign(digest: Array<Byte>): Array<Byte>
 
 - [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 签名失败，抛出异常。
 
-### func toString
+### func toString()
 
 ```cangjie
 public override func toString(): String
@@ -298,7 +298,7 @@ public override func encodeToPem(): PemEntry
 
 - [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
-### func toString
+### func toString()
 
 ```cangjie
 public override func toString(): String
@@ -936,7 +936,7 @@ public func sign(data: Array<Byte>): Array<Byte>
 
 - [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 签名失败，抛出异常。
 
-### func toString
+### func toString()
 
 ```cangjie
 public override func toString(): String

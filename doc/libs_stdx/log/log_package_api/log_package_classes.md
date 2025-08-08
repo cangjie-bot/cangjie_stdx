@@ -599,7 +599,7 @@ public func isClosed(): Bool
 
 返回值：
 
-- Bool。
+- Bool - 是否关闭。
 
 ### func log(LogLevel, String, Array\<Attr>)
 

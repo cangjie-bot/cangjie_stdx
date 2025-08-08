@@ -34,3 +34,15 @@ public init(message: String)
 参数：
 
 - message: String - 异常信息。
+
+### func getClassName()
+
+```cangjie
+protected override func getClassName(): String
+```
+
+功能：获得类名。
+
+返回值：
+
+- String - 类名。
