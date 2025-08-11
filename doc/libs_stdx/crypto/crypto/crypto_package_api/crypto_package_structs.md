@@ -57,7 +57,7 @@ public static let OFB: OperationMode
 public static let CFB: OperationMode
 ```
 
-功能：Output FeedBack(密文反馈)工作模式，CFB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CFB")。
+功能：Cipher FeedBack(密文反馈)工作模式，CFB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CFB")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
