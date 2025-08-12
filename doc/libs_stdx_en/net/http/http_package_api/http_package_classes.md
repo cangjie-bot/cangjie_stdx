@@ -561,7 +561,7 @@ Exceptions:
 
 - IllegalArgumentException - Thrown when configuration parameters are invalid.
 
-### func connector((SocketAddress)->StreamingSocket)
+### func connector((SocketAddress) -> StreamingSocket)
 
 ```cangjie
 public func connector(c: (SocketAddress) -> StreamingSocket): ClientBuilder
