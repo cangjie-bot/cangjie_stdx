@@ -561,7 +561,7 @@ public func build(): Client
 
 - IllegalArgumentException - 配置项有非法参数时抛出此异常。
 
-### func connector((SocketAddress)->StreamingSocket)
+### func connector((SocketAddress) -> StreamingSocket)
 
 ```cangjie
 public func connector(c: (SocketAddress) -> StreamingSocket): ClientBuilder
