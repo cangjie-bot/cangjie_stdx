@@ -561,7 +561,7 @@ public func build(): Client
 
 - IllegalArgumentException - 配置项有非法参数时抛出此异常。
 
-### func connector((SocketAddress)->StreamingSocket)
+### func connector((SocketAddress) -> StreamingSocket)
 
 ```cangjie
 public func connector(c: (SocketAddress) -> StreamingSocket): ClientBuilder
@@ -2409,21 +2409,101 @@ public abstract class ProtocolService
 
 功能：Http 协议服务实例，为单个客户端连接提供 Http 服务，包括对客户端 request 报文的解析、 request 的分发处理、 response 的发送等。
 
+### prop distributor
+
+```cangjie
+protected prop distributor: HttpRequestDistributor
+```
+
+功能：获取请求分发器，请求分发器会根据 url 将请求分发给对应的 handler。
+
+类型：[HttpRequestDistributor](http_package_interfaces.md#interface-httprequestdistributor)
+
+### prop httpKeepAliveTimeout
+
+```cangjie
+protected prop httpKeepAliveTimeout: Duration
+```
+
+功能：HTTP/1.1 专用，获取服务器设定的保持长连接的超时时间。
+
+类型：Duration
+
+### prop logger
+
+```cangjie
+protected prop logger: Logger
+```
+
+功能：获取服务器日志记录器，设置 logger.level 将立即生效，记录器应该是线程安全的。
+
+类型：[Logger](../../../log/log_package_api/log_package_classes.md#class-logger)
+
+### prop maxRequestBodySize
+
+```cangjie
+protected prop maxRequestBodySize: Int64
+```
+
+功能：获取服务器设定的读取请求的请求体最大值，仅对于 HTTP/1.1 且未设置 "Transfer-Encoding: chunked" 的请求生效。
+
+类型：Int64
+
+### prop maxRequestHeaderSize
+
+```cangjie
+protected prop maxRequestHeaderSize: Int64
+```
+
+功能：获取服务器设定的读取请求的请求头最大值。仅对 HTTP/1.1 生效，HTTP/2 中有专门的配置 maxHeaderListSize。
+
+类型：Int64
+
+### prop readHeaderTimeout
+
+```cangjie
+protected prop readHeaderTimeout: Duration
+```
+
+功能：获取服务器设定的读取请求头的超时时间。
+
+类型：Duration
+
+### prop readTimeout
+
+```cangjie
+protected prop readTimeout: Duration
+```
+
+功能：获取服务器设定的读取整个请求的超时时间。
+
+类型：Duration
+
 ### prop server
 
 ```cangjie
 protected open mut prop server: Server
 ```
 
-功能：返回 [Server](#class-server) 实例，提供默认实现，设置为绑定的 [Server](#class-server) 实例
+功能：返回 [Server](#class-server) 实例，提供默认实现，设置为绑定的 [Server](#class-server) 实例。
 
-### func serve()
+### prop writeTimeout
 
 ```cangjie
-protected func serve(): Unit
+protected prop writeTimeout: Duration
 ```
 
-功能：处理来自客户端连接的请求，不提供默认实现。
+功能：获取服务器设定的写响应的超时时间。
+
+类型：Duration
+
+### func close()
+
+```cangjie
+protected open func close(): Unit
+```
+
+功能：强制关闭连接，提供默认实现，无任何行为。
 
 ### func closeGracefully()
 
@@ -2433,13 +2513,13 @@ protected open func closeGracefully(): Unit
 
 功能：优雅关闭连接，提供默认实现，无任何行为。
 
-### func close()
+### func serve()
 
 ```cangjie
-protected open func close(): Unit
+protected func serve(): Unit
 ```
 
-功能：强制关闭连接，提供默认实现，无任何行为。
+功能：处理来自客户端连接的请求，不提供默认实现。
 
 ## class RedirectHandler
 

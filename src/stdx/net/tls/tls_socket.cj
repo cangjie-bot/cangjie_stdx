@@ -336,11 +336,11 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
         return "TlsSocket(${state.load()})"
     }
 
-    public override operator func ==(other: TlsSocket) {
+    public override operator func ==(other: TlsSocket): Bool {
         refEq(this, other)
     }
 
-    public override operator func !=(other: TlsSocket) {
+    public override operator func !=(other: TlsSocket): Bool {
         !(refEq(this, other))
     }
 

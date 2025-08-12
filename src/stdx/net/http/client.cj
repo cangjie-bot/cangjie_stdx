@@ -82,7 +82,7 @@ public class ClientBuilder {
      * @param c set the ClientBuilder's Connector.
      * @return ClientBuilder whose Connector has been set.
      */
-    public func connector(c: Connector): ClientBuilder {
+    public func connector(c: (SocketAddress) -> StreamingSocket): ClientBuilder {
         _connector = c
         return this
     }

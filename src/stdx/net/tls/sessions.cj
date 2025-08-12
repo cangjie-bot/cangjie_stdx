@@ -35,11 +35,11 @@ public struct TlsSession <: Equatable<TlsSession> & ToString & Hashable {
         holder = SessionHolder(pointer)
     }
 
-    public override operator func ==(other: TlsSession) {
+    public override operator func ==(other: TlsSession): Bool {
         id == other.id
     }
 
-    public override operator func !=(other: TlsSession) {
+    public override operator func !=(other: TlsSession): Bool {
         id != other.id
     }
 
@@ -107,11 +107,11 @@ public class TlsSessionContext <: Equatable<TlsSessionContext> & ToString {
         TlsSessionContext(name)
     }
 
-    public override operator func ==(other: TlsSessionContext) {
+    public override operator func ==(other: TlsSessionContext): Bool {
         this.name == other.name
     }
 
-    public override operator func !=(other: TlsSessionContext) {
+    public override operator func !=(other: TlsSessionContext): Bool {
         this.name != other.name
     }
 
