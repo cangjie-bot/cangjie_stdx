@@ -143,7 +143,7 @@ python3 build.py install
 
 **import stdx.fullPackageName.itemName**
 
-其中 `fullPackageName` 为[包列表](#包列表)给出的包名，`itemName` 为可见声明或定义的名字,  `*` 表示导入所有可见的顶层声明或定义，例如：
+其中 `fullPackageName` 为包名，`itemName` 为可见声明或定义的名字,  `*` 表示导入所有可见的顶层声明或定义，例如：
 
 * import stdx.net.http.ServerBuilder：导入 stdx 模块的 net.http 包中的【顶层声明】ServerBuilder。
 * import stdx.net.http.\* ：导入 stdx 模块的 net.http 包。

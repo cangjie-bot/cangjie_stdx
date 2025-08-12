@@ -141,7 +141,7 @@ In the Cangjie source code file that needs to use `stdx`, import the correspondi
 
 **import stdx.fullPackageName.itemName**
 
-`fullPackageName` is the package name given in [package list](#package-list), `itemName` is the name of a visible declaration or definition,  `*` means importing all visible top-level declarations or definitions, for example:
+`fullPackageName` is the package name, `itemName` is the name of a visible declaration or definition,  `*` means importing all visible top-level declarations or definitions, for example:
 
 - import stdx.net.http.ServerBuilder：Import the top-level declaration of ServerBuilder in the net.http package of the stdx module.
 - import stdx.net.http.\* ：Import the net.http package of the stdx module.
