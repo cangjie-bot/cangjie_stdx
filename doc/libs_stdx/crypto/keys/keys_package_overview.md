@@ -33,12 +33,12 @@ keys 包提供非对称加密和签名算法，包括 RSA 和 SM2 非对称加�
 
 |                 类名              |                功能                 |
 | --------------------------------- | ---------------------------------- |
-| [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivateKey) | ECDSA私钥类。    |
-| [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublicKey) | ECDSA公钥类。    |
-| [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivateKey) | RSA私钥类。    |
-| [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublicKey) | RSA公钥类。    |
-| [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privateKey) | SM2私钥类。    |
-| [SM2PublicKey](./keys_package_api/keys_package_classes.md#class-sm2publicKey) | SM2公钥类。    |
+| [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivatekey) | ECDSA私钥类。    |
+| [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublickey) | ECDSA公钥类。    |
+| [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivatekey) | RSA私钥类。    |
+| [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublickey) | RSA公钥类。    |
+| [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privatekey) | SM2私钥类。    |
+| [SM2PublicKey](./keys_package_api/keys_package_classes.md#class-sm2publickey) | SM2公钥类。    |
 
 ### 枚举
 

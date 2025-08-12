@@ -700,7 +700,7 @@ public class SHA512 <: Digest {
 }
 ```
 
-Function: Provides implementation interface for the [SHA512](digest_package_classes.md#class-sha512) algorithm. See [SHA512 Algorithm Example](../digest_samples/sample_digest.md#SHA512-Algorithm-Example) for usage.
+Function: Provides implementation interface for the [SHA512](digest_package_classes.md#class-sha512) algorithm. See [SHA512 Algorithm Example](../digest_samples/sample_digest.md#sha512-algorithm-example) for usage.
 
 Parent Type:
 
@@ -808,7 +808,7 @@ public class SM3 <: Digest {
 }
 ```
 
-Function: Provides implementation interface for the [SM3](digest_package_classes.md#class-sm3) algorithm. See [SM3 Algorithm Example](../digest_samples/sample_digest.md#SM3-Algorithm-Example) for usage.
+Function: Provides implementation interface for the [SM3](digest_package_classes.md#class-sm3) algorithm. See [SM3 Algorithm Example](../digest_samples/sample_digest.md#sm3-algorithm-example) for usage.
 
 Parent Type:
 

@@ -164,7 +164,7 @@ public class MD5 <: Digest {
 }
 ```
 
-功能：提供 [MD5](digest_package_classes.md#class-md5) 算法的实现接口。使用示例见 [MD5 算法示例](../digest_samples/sample_digest.md#MD5-算法示例)。
+功能：提供 [MD5](digest_package_classes.md#class-md5) 算法的实现接口。使用示例见 [MD5 算法示例](../digest_samples/sample_digest.md#md5-算法示例)。
 
 父类型：
 
@@ -272,7 +272,7 @@ public class SHA1 <: Digest {
 }
 ```
 
-功能：提供 [SHA1](digest_package_classes.md#class-sha1) 算法的实现接口。使用示例见 [SHA1 算法示例](../digest_samples/sample_digest.md#SHA1-算法示例)。
+功能：提供 [SHA1](digest_package_classes.md#class-sha1) 算法的实现接口。使用示例见 [SHA1 算法示例](../digest_samples/sample_digest.md#sha1-算法示例)。
 
 父类型：
 
@@ -380,7 +380,7 @@ public class SHA224 <: Digest {
 }
 ```
 
-功能：提供 [SHA224](digest_package_classes.md#class-sha224) 算法的实现接口。使用示例见 [SHA224 算法示例](../digest_samples/sample_digest.md#SHA224-算法示例)。
+功能：提供 [SHA224](digest_package_classes.md#class-sha224) 算法的实现接口。使用示例见 [SHA224 算法示例](../digest_samples/sample_digest.md#sha224-算法示例)。
 
 父类型：
 
@@ -488,7 +488,7 @@ public class SHA256 <: Digest {
 }
 ```
 
-功能：提供 [SHA256](digest_package_classes.md#class-sha256) 算法的实现接口。使用示例见 [SHA256 算法示例](../digest_samples/sample_digest.md#SHA256-算法示例)。
+功能：提供 [SHA256](digest_package_classes.md#class-sha256) 算法的实现接口。使用示例见 [SHA256 算法示例](../digest_samples/sample_digest.md#sha256-算法示例)。
 
 父类型：
 
@@ -596,7 +596,7 @@ public class SHA384 <: Digest {
 }
 ```
 
-功能：提供 [SHA384](digest_package_classes.md#class-sha384) 算法的实现接口。使用示例见 [SHA384 算法示例](../digest_samples/sample_digest.md#SHA384-算法示例)。
+功能：提供 [SHA384](digest_package_classes.md#class-sha384) 算法的实现接口。使用示例见 [SHA384 算法示例](../digest_samples/sample_digest.md#sha384-算法示例)。
 
 父类型：
 
@@ -704,7 +704,7 @@ public class SHA512 <: Digest {
 }
 ```
 
-功能：提供 [SHA512](digest_package_classes.md#class-sha512) 算法的实现接口。使用示例见 [SHA512 算法示例](../digest_samples/sample_digest.md#SHA512-算法示例)。
+功能：提供 [SHA512](digest_package_classes.md#class-sha512) 算法的实现接口。使用示例见 [SHA512 算法示例](../digest_samples/sample_digest.md#sha512-算法示例)。
 
 父类型：
 
@@ -812,7 +812,7 @@ public class SM3 <: Digest {
 }
 ```
 
-功能：提供 [SM3](digest_package_classes.md#class-sm3) 算法的实现接口。使用示例见 [SM3 算法示例](../digest_samples/sample_digest.md#SM3-算法示例)。
+功能：提供 [SM3](digest_package_classes.md#class-sm3) 算法的实现接口。使用示例见 [SM3 算法示例](../digest_samples/sample_digest.md#sm3-算法示例)。
 
 父类型：
 

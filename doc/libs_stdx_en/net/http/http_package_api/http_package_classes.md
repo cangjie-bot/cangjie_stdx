@@ -182,7 +182,7 @@ Parameters:
 
 - url: String - The request URL.
 - header!: [HttpHeaders](http_package_classes.md#class-httpheaders) - Request headers, defaults to empty headers.
-- version!: [Protocol](http_package_enums.md#enum-protocol) - The request protocol, defaults to [HTTP1_1](./http_package_enums.md#enum-Protocol).
+- version!: [Protocol](http_package_enums.md#enum-protocol) - The request protocol, defaults to [HTTP1_1](./http_package_enums.md#enum-protocol).
 
 Return value:
 
@@ -1985,7 +1985,7 @@ Type: [HttpHeaders](http_package_classes.md#class-httpheaders)
 public prop version: Protocol
 ```
 
-Function: Retrieves the protocol version of the response. The default value is [HTTP1_1](./http_package_enums.md#enum-Protocol).
+Function: Retrieves the protocol version of the response. The default value is [HTTP1_1](./http_package_enums.md#enum-protocol).
 
 Type: [Protocol](http_package_enums.md#enum-protocol)
 
@@ -3395,7 +3395,7 @@ Parameters:
 
 - client: [Client](http_package_classes.md#class-client) - Client object for the request.
 - url: [URL](../../../encoding/url/url_package_api/url_package_classes.md#class-url) - URL object for the request. Note that the URL scheme must be `ws` or `wss` for WebSocket upgrades.
-- version!: [Protocol](http_package_enums.md#enum-protocol) - HTTP version used to create the socket. Only [HTTP1_1](./http_package_enums.md#enum-Protocol) and [HTTP2_0](./http_package_enums.md#enum-Protocol) are supported for WebSocket upgrades.
+- version!: [Protocol](http_package_enums.md#enum-protocol) - HTTP version used to create the socket. Only [HTTP1_1](./http_package_enums.md#enum-protocol) and [HTTP2_0](./http_package_enums.md#enum-protocol) are supported for WebSocket upgrades.
 - subProtocols!: ArrayList\<String> - User-configured list of subprotocols, ranked by preference. Default is empty. If configured, it will be sent to the server with the upgrade request.
 - headers!: [HttpHeaders](http_package_classes.md#class-httpheaders) - Non-essential headers (e.g., cookies) to be sent with the upgrade request.
 
@@ -3424,7 +3424,7 @@ The server upgrade process involves receiving an upgrade request from the client
 - Users configure supported subprotocols and origin whitelists via the `subProtocols` and `origins` parameters. If `subProtocols` is not set, no subprotocols are supported. If `origins` is not set, all origin handshake requests are accepted.
 - Users can customize upgrade request handling (e.g., processing cookies) via the `userFunc` parameter. The `userFunc` must return an [HttpHeaders](http_package_classes.md#class-httpheaders) object, which is sent back to the client in the 101 response (failed upgrades do not return headers).
 - WebSocket extensions are not currently supported. If extensions are negotiated during the handshake, a [WebSocketException](http_package_exceptions.md#class-websocketexception) is thrown.
-- Only [HTTP1_1](./http_package_enums.md#enum-Protocol) and [HTTP2_0](./http_package_enums.md#enum-Protocol) are supported for WebSocket upgrades.
+- Only [HTTP1_1](./http_package_enums.md#enum-protocol) and [HTTP2_0](./http_package_enums.md#enum-protocol) are supported for WebSocket upgrades.
 
 Parameters:
 

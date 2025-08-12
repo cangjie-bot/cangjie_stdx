@@ -6,7 +6,7 @@
 
 ## 目录结构
 
-```
+```text
 /stdx
 ├─ build                        # 工程构建目录，编译构建工具、脚本等
 ├─ build_temp                   # 工程构建的临时目录
@@ -53,7 +53,7 @@ cjc -v
 
 下载源码
 
-```
+```bash
 git clone https://gitcode.com/Cangjie/cangjie_stdx.git
 ```
 
@@ -97,22 +97,22 @@ python3 build.py install
 
 其中：
 
-* x86_64-w64-mingw32：该配置项表示代码编译所在机器的操作系统架构信息。该信息可以通过执行 `cjc -v` 获得。开发者请根据实际情况配置。例如执行 `cjc -v` 的回显信息如下，则该配置为 `x86_64-w64-mingw32` 。
+- x86_64-w64-mingw32：该配置项表示代码编译所在机器的操作系统架构信息。该信息可以通过执行 `cjc -v` 获得。开发者请根据实际情况配置。例如执行 `cjc -v` 的回显信息如下，则该配置为 `x86_64-w64-mingw32` 。
 
   ```text
   Cangjie Compiler: 0.60.5 (cjnative)
   Target: x86_64-w64-mingw32
   ```
 
-* x86_64-w64-mingw32.bin-dependencies：该配置中的 x86_64-w64-mingw32 请替换为实际的操作系统信息。
+- x86_64-w64-mingw32.bin-dependencies：该配置中的 x86_64-w64-mingw32 请替换为实际的操作系统信息。
 
-* path-option：`stdx` 二进制所在路径，请根据实际路径和使用动态还是静态二进制修改。
+- path-option：`stdx` 二进制所在路径，请根据实际路径和使用动态还是静态二进制修改。
 
 > **说明：**
 >
-> * `cjpm.toml` 是仓颉包管理工具 CJPM 的配置文件，详情请参见《仓颉编程语言工具使用指南》。
-> * Windows、Linux、MacOS 的配置方式相同。
-> * 如果导入 `stdx` 的静态库，使用 crypto 和 net 包时，由于需要依赖系统符号，所以在 `cjpm.toml`的 `compile-option`配置项里在  `Windows`操作系统下需要额外添加`-lcrypt32`，`Linux`操作系统下需要额外添加`-ldl`。
+> - `cjpm.toml` 是仓颉包管理工具 CJPM 的配置文件，详情请参见《仓颉编程语言工具使用指南》。
+> - Windows、Linux、MacOS 的配置方式相同。
+> - 如果导入 `stdx` 的静态库，使用 crypto 和 net 包时，由于需要依赖系统符号，所以在 `cjpm.toml`的 `compile-option`配置项里在  `Windows`操作系统下需要额外添加`-lcrypt32`，`Linux`操作系统下需要额外添加`-ldl`。
 
 **配置示例**：假设开发环境为 Windows（架构为 x86_64），导入 `stdx` 的动态二进制，则 `cjpm.toml` 配置示例如下。
 
@@ -143,11 +143,11 @@ python3 build.py install
 
 **import stdx.fullPackageName.itemName**
 
-其中 `fullPackageName` 为[包列表](#包列表)给出的包名，`itemName` 为可见声明或定义的名字,  `*` 表示导入所有可见的顶层声明或定义，例如：
+其中 `fullPackageName` 为[包列表](./doc/libs_stdx/libs_overview.md#包列表)给出的包名，`itemName` 为可见声明或定义的名字,  `*` 表示导入所有可见的顶层声明或定义，例如：
 
-* import stdx.net.http.ServerBuilder：导入 stdx 模块的 net.http 包中的【顶层声明】ServerBuilder。
-* import stdx.net.http.\* ：导入 stdx 模块的 net.http 包。
-* import stdx.log.\* ：导入 stdx 模块的 log 包。
+- import stdx.net.http.ServerBuilder：导入 stdx 模块的 net.http 包中的【顶层声明】ServerBuilder。
+- import stdx.net.http.\* ：导入 stdx 模块的 net.http 包。
+- import stdx.log.\* ：导入 stdx 模块的 log 包。
 
 ### 使用示例
 

@@ -33,12 +33,12 @@ Using this package requires external dependencies on OpenSSL 3's crypto dynamic 
 
 |                 Class Name                |               Functionality               |
 | ---------------------------------------- | ----------------------------------------- |
-| [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivateKey) | ECDSA private key class. |
-| [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublicKey) | ECDSA public key class. |
-| [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivateKey) | RSA private key class. |
-| [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublicKey) | RSA public key class. |
-| [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privateKey) | SM2 private key class. |
-| [SM2PublicKey](./keys_package_api/keys_package_classes.md#class-sm2publicKey) | SM2 public key class. |
+| [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivatekey) | ECDSA private key class. |
+| [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublickey) | ECDSA public key class. |
+| [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivatekey) | RSA private key class. |
+| [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublickey) | RSA public key class. |
+| [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privatekey) | SM2 private key class. |
+| [SM2PublicKey](./keys_package_api/keys_package_classes.md#class-sm2publickey) | SM2 public key class. |
 
 ### Enums
 

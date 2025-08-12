@@ -336,7 +336,7 @@ public class RSAPrivateKey <: PrivateKey{
 }
 ```
 
-Function: RSA private key class, providing the capability to generate RSA private keys. RSA private keys support signing and decryption operations, and can be encoded/decoded in PEM and DER formats, complying with the PKCS1 standard. For usage examples, see [RSA Key Example](../keys_samples/sample_keys.md#RSA-Key-Example).
+Function: RSA private key class, providing the capability to generate RSA private keys. RSA private keys support signing and decryption operations, and can be encoded/decoded in PEM and DER formats, complying with the PKCS1 standard. For usage examples, see [RSA Key Example](../keys_samples/sample_keys.md#rsa-key-example).
 
 Parent Type:
 
@@ -569,7 +569,7 @@ public class RSAPublicKey <: PublicKey {
 }
 ```
 
-Function: RSA public key class, providing the capability to generate RSA public keys. RSA public keys support signature verification and encryption operations, and can be encoded/decoded in PEM and DER formats. For usage examples, see [RSA Key Example](../keys_samples/sample_keys.md#RSA-Key-Example).
+Function: RSA public key class, providing the capability to generate RSA public keys. RSA public keys support signature verification and encryption operations, and can be encoded/decoded in PEM and DER formats. For usage examples, see [RSA Key Example](../keys_samples/sample_keys.md#rsa-key-example).
 
 Parent Type:
 
@@ -722,7 +722,7 @@ public class SM2PrivateKey <: PrivateKey {
 }
 ```
 
-Function: SM2 private key class, providing the capability to generate SM2 private keys. SM2 private keys support signing and decryption operations, and support encoding/decoding in PEM and DER formats, complying with PKCS1 standards. For usage examples, see [SM2 Key Examples](../keys_samples/sample_keys.md#SM2-Key-Examples).
+Function: SM2 private key class, providing the capability to generate SM2 private keys. SM2 private keys support signing and decryption operations, and support encoding/decoding in PEM and DER formats, complying with PKCS1 standards. For usage examples, see [SM2 Key Examples](../keys_samples/sample_keys.md#sm2-key-examples).
 
 Parent Type:
 

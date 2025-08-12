@@ -6,7 +6,7 @@ Cangjie programming language provides `stdx` module, which provides common capab
 
 ## Project Directory
 
-```
+```text
 /stdx
 ├─ build                        # Directory of Engineering Construction
 ├─ build_temp                   # Temporary directory for project construction
@@ -44,6 +44,7 @@ Configure the Cangjie SDK environment:
 ```shell
 source <cangjie sdk path>
 ```
+
 Execute the following command to verify whether the installation is successful:
 
 ```shell
@@ -54,7 +55,7 @@ cjc -v
 
 Download the source code
 
-```
+```bash
 git clone https://gitcode.com/Cangjie/cangjie_stdx.git
 ```
 
@@ -68,8 +69,10 @@ python3 build.py install
 
 1. `build.py clean` command is used to clear temporary files in the workspace.
 2. `build.py build` command starts the compilation：
-  - `-t` or `--build-type`，specifies the type of build artifact, which can be either `release` or `debug`
-  - `--target-lib` specifies the openssl lib directory
+
+    - `-t` or `--build-type`，specifies the type of build artifact, which can be either `release` or `debug`
+    - `--target-lib` specifies the openssl lib directory
+
 3. `build.py install` ommand installs the build artifacts to the `output` directory.
 
 If the compilation is successful, a product directory named target by default will be obtained in the project directory.
@@ -87,6 +90,7 @@ For integration building, please refer to the [Cangjie SDK Integration Build Gui
 `stdx` provides two types of binaries: static and dynamic. Both are used independently and developers can reference them according to actual conditions.
 
 ### Import stdx
+
 Add the following configuration to the `cjpm.toml` file of the code project:
 
 ```toml
@@ -103,11 +107,12 @@ explain:
   Cangjie Compiler: 0.59.4 (cjnative)
   Target: x86_64-w64-mingw32
   ```
+
 - x86_64-w64-mingw32.bin-dependencies：Please replace x86_64-w64-mingw32 in the configuration with the actual operating system information.
 - path-option：`stdx` The path where the binary is located.
 
 > **illustrate:**
-> 
+>
 > - `cjpm.toml` is the configuration file of the Cangjie package management tool CJPM. For details, please refer to the Cangjie Programming Language Tool User Guide.
 > - The configuration method is the same for Windows, Linux, and MacOS.
 > - If you import the static library of `stdx` and use the crypto and net packages, you need to add `-lcrypt32` to the `compile-option` configuration item of `cjpm.toml` under the `Windows` operating system, and `-ldl` under the `Linux` operating system, because they need to rely on system symbols.
@@ -141,12 +146,11 @@ In the Cangjie source code file that needs to use `stdx`, import the correspondi
 
 **import stdx.fullPackageName.itemName**
 
-`fullPackageName` is the package name given in [package list](#package-list), `itemName` is the name of a visible declaration or definition,  `*` means importing all visible top-level declarations or definitions, for example:
+`fullPackageName` is the package name given in [package list](./doc/libs_stdx_en/libs_overview.md#package-list), `itemName` is the name of a visible declaration or definition,  `*` means importing all visible top-level declarations or definitions, for example:
 
 - import stdx.net.http.ServerBuilder：Import the top-level declaration of ServerBuilder in the net.http package of the stdx module.
 - import stdx.net.http.\* ：Import the net.http package of the stdx module.
 - import stdx.log.\* ：Import the log package from the stdx module.
-
 
 ### Usage Examples
 

@@ -182,7 +182,7 @@ public func connect(url: String, header!: HttpHeaders = HttpHeaders(), version!:
 
 - url: String - 请求的 url。
 - header!: [HttpHeaders](http_package_classes.md#class-httpheaders) - 请求头，默认为空请求头。
-- version!: [Protocol](http_package_enums.md#enum-protocol) - 请求的协议，默认为 [HTTP1_1](./http_package_enums.md#enum-Protocol)。
+- version!: [Protocol](http_package_enums.md#enum-protocol) - 请求的协议，默认为 [HTTP1_1](./http_package_enums.md#enum-protocol)。
 
 返回值：
 
@@ -1986,7 +1986,7 @@ public prop trailers: HttpHeaders
 public prop version: Protocol
 ```
 
-功能：获取响应的协议版本，默认值为 [HTTP1_1](./http_package_enums.md#enum-Protocol)。
+功能：获取响应的协议版本，默认值为 [HTTP1_1](./http_package_enums.md#enum-protocol)。
 
 类型：[Protocol](http_package_enums.md#enum-protocol)
 
@@ -3472,7 +3472,7 @@ public static func upgradeFromClient(client: Client, url: URL,
 
 - client: [Client](http_package_classes.md#class-client) - 用于请求的 client 对象。
 - url: [URL](../../../encoding/url/url_package_api/url_package_classes.md#class-url) - 用于请求的 url 对象，[WebSocket](http_package_classes.md#class-websocket) 升级时要注意 url 的 scheme 为 ws 或 wss。
-- version!: [Protocol](http_package_enums.md#enum-protocol) - 创建 socket 使用的 HTTP 版本，只支持  [HTTP1_1](./http_package_enums.md#enum-Protocol) 和  [HTTP2_0](./http_package_enums.md#enum-Protocol) 向 [WebSocket](http_package_classes.md#class-websocket) 升级。
+- version!: [Protocol](http_package_enums.md#enum-protocol) - 创建 socket 使用的 HTTP 版本，只支持  [HTTP1_1](./http_package_enums.md#enum-protocol) 和  [HTTP2_0](./http_package_enums.md#enum-protocol) 向 [WebSocket](http_package_classes.md#class-websocket) 升级。
 - subProtocols!: ArrayList\<String> - 用户配置的子协议列表，按偏好排名，默认为空。若用户配置了，则会随着升级请求发送给服务器。
 - headers!: [HttpHeaders](http_package_classes.md#class-httpheaders) - 需要随着升级请求一同发送的非升级必要头，如 cookie 等。
 

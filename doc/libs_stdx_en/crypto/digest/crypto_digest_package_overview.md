@@ -46,7 +46,7 @@ This package requires the crypto dynamic library files from OpenSSL 3 as externa
 
 |               Struct Name               |           Function           |
 |----------------------------------------| ---------------------------- |
-| [HashType](./digest_package_api/digest_package_structs.md#struct-hashType) | Digest algorithm type. |
+| [HashType](./digest_package_api/digest_package_structs.md#struct-hashtype) | Digest algorithm type. |
 
 ### Exception Classes
 

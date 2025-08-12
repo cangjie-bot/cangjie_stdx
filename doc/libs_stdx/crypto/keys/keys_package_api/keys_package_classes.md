@@ -8,7 +8,7 @@ public class ECDSAPrivateKey <: PrivateKey {
 }
 ```
 
-功能：ECDSA 私钥类，提供生成 ECDSA 私钥能力，ECDSA 的私钥支持签名操作，同时支持 PEM 和 DER 格式的编码解码。使用示例见 [ECDSA 密钥示例](../keys_samples/sample_keys.md#ECDSA-密钥示例)。
+功能：ECDSA 私钥类，提供生成 ECDSA 私钥能力，ECDSA 的私钥支持签名操作，同时支持 PEM 和 DER 格式的编码解码。使用示例见 [ECDSA 密钥示例](../keys_samples/sample_keys.md#ecdsa-密钥示例)。
 
 父类型：
 
@@ -204,7 +204,7 @@ public class ECDSAPublicKey <: PublicKey {
 }
 ```
 
-功能：ECDSA 公钥类，提供生成 ECDSA 公钥能力，ECDSA 公钥支持验证签名操作，支持 PEM 和 DER 格式的编码解码。使用示例见 [ECDSA 密钥示例](../keys_samples/sample_keys.md#ECDSA-密钥示例)。
+功能：ECDSA 公钥类，提供生成 ECDSA 公钥能力，ECDSA 公钥支持验证签名操作，支持 PEM 和 DER 格式的编码解码。使用示例见 [ECDSA 密钥示例](../keys_samples/sample_keys.md#ecdsa-密钥示例)。
 
 父类型：
 
@@ -336,7 +336,7 @@ public class RSAPrivateKey <: PrivateKey{
 }
 ```
 
-功能：RSA 私钥类，提供生成 RSA 私钥能力，RSA 私钥支持签名和解密操作，支持 PEM 和 DER 格式的编码解码，符合 PKCS1 标准。使用示例见 [RSA 密钥示例](../keys_samples/sample_keys.md#RSA-密钥示例)。
+功能：RSA 私钥类，提供生成 RSA 私钥能力，RSA 私钥支持签名和解密操作，支持 PEM 和 DER 格式的编码解码，符合 PKCS1 标准。使用示例见 [RSA 密钥示例](../keys_samples/sample_keys.md#rsa-密钥示例)。
 
 父类型：
 
@@ -569,7 +569,7 @@ public class RSAPublicKey <: PublicKey {
 }
 ```
 
-功能：RSA 公钥类，提供生成 RSA 公钥能力，RSA 公钥支持验证签名和加密操作，支持 PEM 和 DER 格式的编码解码。使用示例见 [RSA 密钥示例](../keys_samples/sample_keys.md#RSA-密钥示例)。
+功能：RSA 公钥类，提供生成 RSA 公钥能力，RSA 公钥支持验证签名和加密操作，支持 PEM 和 DER 格式的编码解码。使用示例见 [RSA 密钥示例](../keys_samples/sample_keys.md#rsa-密钥示例)。
 
 父类型：
 
@@ -724,7 +724,7 @@ public class SM2PrivateKey <: PrivateKey {
 }
 ```
 
-功能：SM2 私钥类，提供生成 SM2 私钥能力，SM2 私钥支持签名和解密操作，支持 PEM 和 DER 格式的编码解码，符合 PKCS1 标准。使用示例见 [SM2 密钥示例](../keys_samples/sample_keys.md#SM2-密钥示例)。
+功能：SM2 私钥类，提供生成 SM2 私钥能力，SM2 私钥支持签名和解密操作，支持 PEM 和 DER 格式的编码解码，符合 PKCS1 标准。使用示例见 [SM2 密钥示例](../keys_samples/sample_keys.md#sm2-密钥示例)。
 
 父类型：
 
@@ -956,7 +956,7 @@ public class SM2PublicKey <: PublicKey {
 }
 ```
 
-功能：SM2 公钥类，提供生成 SM2 公钥能力，SM2 公钥支持验证签名和加密操作，支持 PEM 和 DER 格式的编码解码。使用示例见 [SM2 密钥示例](../keys_samples/sample_keys.md#SM2-密钥示例)。
+功能：SM2 公钥类，提供生成 SM2 公钥能力，SM2 公钥支持验证签名和加密操作，支持 PEM 和 DER 格式的编码解码。使用示例见 [SM2 密钥示例](../keys_samples/sample_keys.md#sm2-密钥示例)。
 
 父类型：
 

@@ -46,7 +46,7 @@ digest 包提供常用的消息摘要算法，包括 MD5、SHA1、SHA224、SHA25
 
 | 结构体名                                                                                |           功能           |
 |-------------------------------------------------------------------------------------| ------------------------ |
-| [HashType](./digest_package_api/digest_package_structs.md#struct-hashType)                     |  摘要算法类型。 |
+| [HashType](./digest_package_api/digest_package_structs.md#struct-hashtype)                     |  摘要算法类型。 |
 
 ### 异常类
 

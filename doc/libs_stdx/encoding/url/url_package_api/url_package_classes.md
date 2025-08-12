@@ -11,7 +11,7 @@ public class Form {
 
 功能：[Form](url_package_classes.md#class-form) 以 key-value 键值对形式存储 http 请求的表单信息，通常为请求 [URL](url_package_classes.md#class-url) 中的 query 部分。
 
-同一个 key 可以对应多个 value，value 以数组形式存储。`&` 符号分隔多个键值对；`=` 分隔的左侧作为 key 值，右侧作为 value 值（没有 `=` 或者 value 为空，均是允许的）。使用示例见 [Form 的构造使用](../url_samples/form.md#Form-的构造使用)。
+同一个 key 可以对应多个 value，value 以数组形式存储。`&` 符号分隔多个键值对；`=` 分隔的左侧作为 key 值，右侧作为 value 值（没有 `=` 或者 value 为空，均是允许的）。使用示例见 [Form 的构造使用](../url_samples/form.md#form-的构造使用)。
 
 ### init()
 
