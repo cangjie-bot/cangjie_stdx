@@ -115,6 +115,7 @@ explain:
 >
 > - `cjpm.toml` is the configuration file of the Cangjie package management tool CJPM. For details, please refer to the Cangjie Programming Language Tool User Guide.
 > - The configuration method is the same for Windows, Linux, and MacOS.
+> - CJPM uses static compilation by default and currently does not support mixed static and dynamic compilation. Therefore, it is recommended to use the static stdx under default circumstances; if you need to use the dynamic stdx, it is advisable to configure compile-option = "--dy-std" in the cjpm.toml file.
 > - If you import the static library of `stdx` and use the crypto and net packages, you need to add `-lcrypt32` to the `compile-option` configuration item of `cjpm.toml` under the `Windows` operating system, and `-ldl` under the `Linux` operating system, because they need to rely on system symbols.
 
 **Configuration example**：Assuming the development environment is Windows x86_64, import the dynamic binary of `stdx`, then the `cjpm.toml` configuration example is as follows:
