@@ -112,6 +112,7 @@ python3 build.py install
 >
 > - `cjpm.toml` 是仓颉包管理工具 CJPM 的配置文件，详情请参见《仓颉编程语言工具使用指南》。
 > - Windows、Linux、MacOS 的配置方式相同。
+> - cjpm编译默认为静态编译，目前不支持动静态混用，所以默认情况下建议使用静态stdx；若使用动态stdx，建议在`cjpm.toml`文件中配置compile-option="--dy-std"。
 > - 如果导入 `stdx` 的静态库，使用 crypto 和 net 包时，由于需要依赖系统符号，所以在 `cjpm.toml`的 `compile-option`配置项里在  `Windows`操作系统下需要额外添加`-lcrypt32`，`Linux`操作系统下需要额外添加`-ldl`。
 
 **配置示例**：假设开发环境为 Windows（架构为 x86_64），导入 `stdx` 的动态二进制，则 `cjpm.toml` 配置示例如下。
