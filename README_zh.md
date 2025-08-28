@@ -32,6 +32,7 @@
 ## 约束
 
 支持在 Ubuntu/MacOS(x86_64, aarch64)、Cangjie SDK 1.0.0 及以上版本中对 `stdx` 构建。更详细的环境及工具依赖请参阅 [构建依赖工具](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md)。
+依赖仓颉编译器和运行时。
 
 ## 编译构建
 
