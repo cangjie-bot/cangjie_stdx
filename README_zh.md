@@ -2,7 +2,15 @@
 
 ## 简介
 
-仓颉编程语言提供了 `stdx` 模块，该模块提供了网络、安全等领域的通用能力。`stdx` 的 API 详细说明请参见[资料](./doc/libs_stdx/summary_cjnative.md)。
+仓颉编程语言提供了 `stdx` 模块，该模块提供了网络、安全等领域的通用能力。
+
+架构图：
+![](figures/stdx_Architecture_Diagram_zh.png)
+
+## 使用说明
+
+`stdx` 相关 API 请参见[API接口说明](./doc/libs_stdx/summary_cjnative.md)。
+相关指导请参见[开发指南](https://gitcode.com/Cangjie/cangjie_docs/)。
 
 ## 目录结构
 
@@ -11,6 +19,7 @@
 ├─ build                        # 工程构建目录，编译构建工具、脚本等
 ├─ build_temp                   # 工程构建的临时目录
 ├─ doc                          # STDX 库资料目录
+├─ figures                      # 存放readme中的架构图
 ├─ src                          # STDX 各个包代码目录                        
 │   └─ stdx                     
 │       ├── aspectCJ            # 提供 AOP 功能
@@ -32,6 +41,7 @@
 ## 约束
 
 支持在 Ubuntu/MacOS(x86_64, aarch64)、Cangjie SDK 1.0.0 及以上版本中对 `stdx` 构建。更详细的环境及工具依赖请参阅 [构建依赖工具](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md)。
+依赖仓颉编译器部件和仓颉运行时部件。
 
 ## 编译构建
 
@@ -198,3 +208,7 @@ main () {
 ## License 许可
 
 本项目开源许可请参阅 [LICENSE](LICENSE)。
+
+## 参与贡献
+
+欢迎广大开发者贡献代码、文档等，具体的贡献流程和方式请参见 [参与贡献](https://gitcode.com/openharmony/docs/blob/master/zh-cn/contribute/%E5%8F%82%E4%B8%8E%E8%B4%A1%E7%8C%AE.md)。
