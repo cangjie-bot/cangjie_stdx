@@ -2,7 +2,11 @@
 
 ## 简介
 
-仓颉编程语言提供了 `stdx` 模块，该模块提供了网络、安全等领域的通用能力。`stdx` 的 API 详细说明请参见[资料](./doc/libs_stdx/summary_cjnative.md)。
+仓颉编程语言提供了 `stdx` 模块，该模块提供了网络、安全等领域的通用能力。
+
+## 使用说明
+
+`stdx` 相关 API 请参见[资料](./doc/libs_stdx/summary_cjnative.md)，相关指导请参见[开发指南](https://gitcode.com/Cangjie/cangjie_docs/)。
 
 ## 目录结构
 
@@ -32,6 +36,7 @@
 ## 约束
 
 支持在 Ubuntu/MacOS(x86_64, aarch64)、Cangjie SDK 1.0.0 及以上版本中对 `stdx` 构建。更详细的环境及工具依赖请参阅 [构建依赖工具](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md)。
+依赖仓颉编译器部件和仓颉运行时部件。
 
 ## 编译构建
 
