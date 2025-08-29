@@ -2,7 +2,26 @@
 
 ## Introduction
 
-Cangjie programming language provides `stdx` module, which provides common capabilities in the fields of network, security, etc. For detailed description of `stdx` API, please refer to the [document](./doc/libs_stdx/summary_cjnative.md).
+The extension library `stdx` is an extension module provided by the Cangjie programming language (i.e., a non-core standard library, but an official supplementary feature set). It is a key component of the language ecosystem, supplementing Cangjie with more practical capabilities covering multiple domains, including aspect-oriented programming, compression and decompression, security (secure encryption capabilities/message digest algorithms/Asymmetric encryption and decryption and signature algorithms/digital certificate processing functions), encoding and decoding (base64/hex/json/url), networking (http/tls), logging, unit test extensions, and serialization.
+
+Architecture Diagram:
+![](figures/stdx_Architecture_Diagram_en.png)
+
+- aspectCJ: The `stdx.aspectCJ` package provides annotations for Aspect-Oriented Programming (AOP) in Cangjie.
+- compress: compress provides compression and decompression functionality.
+- crypto: cryptographic toolkit.
+- encoding: Basic Toolkit for Data Encoding and Decoding.
+- fuzz: Fuzz technology is an automated software testing method.
+- log: The log package provides a unified logging API.
+- logger: The `logger` package provides logging functionality in both plain text and `JSON` formats.
+- net: Network communication and secure transmission.
+- serialization: The serialization package provides capabilities for serialization and deserialization.
+- unittest: Provides the capability to supply test data in serialized formats when writing unit test code for Cangjie projects. 
+
+## Operating Instructions
+
+For APIs related to stdx, please refer to [API Interface Description](./doc/libs_stdx_en/summary_cjnative.md).
+For relevant guidance, please refer to [Development Guide](https://gitcode.com/Cangjie/cangjie_docs/).
 
 ## Project Directory
 
@@ -11,6 +30,7 @@ Cangjie programming language provides `stdx` module, which provides common capab
 ├─ build                        # Directory of Engineering Construction
 ├─ build_temp                   # Temporary directory for project construction
 ├─ doc                          # Directory of STDX library document
+├─ figures                      # architecture pictures
 ├─ src                          # Directory of STDX package codes                     
 │   └─ stdx                     
 │       ├── aspectCJ            # Provides AOP
@@ -32,6 +52,8 @@ Cangjie programming language provides `stdx` module, which provides common capab
 ## Constraints
 
 Support for building `stdx` in Ubuntu/MacOS (x86_64, aarch64), Cangjie SDK 1.0.0 and above versions, please refer to the [Build Dependency Tools](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md).
+
+Note: Future versions of this extension library may contain incompatible changes, and cross-version backward compatibility is not guaranteed. Please fully assess the version adaptation risks before use.
 
 ## Compilation and Building
 
@@ -201,3 +223,6 @@ main () {
 ## License
 
 Please see [LICENSE](LICENSE) for more information.
+
+## Contribution Guidelines
+Developers are welcome to make contributions in any form, including but not limited to code, documentation, and issues.
