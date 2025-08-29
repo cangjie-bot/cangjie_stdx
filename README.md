@@ -2,7 +2,15 @@
 
 ## Introduction
 
-Cangjie programming language provides `stdx` module, which provides common capabilities in the fields of network, security, etc. For detailed description of `stdx` API, please refer to the [document](./doc/libs_stdx/summary_cjnative.md).
+Cangjie programming language provides `stdx` module, which provides common capabilities in the fields of network, security, etc. 
+
+Architecture Diagram:
+![](figures/stdx_Architecture_Diagram_en.png)
+
+## Operating Instructions
+
+For APIs related to stdx, please refer to [API Interface Description](./doc/libs_stdx_en/summary_cjnative.md).
+For relevant guidance, please refer to [Development Guide](https://gitcode.com/Cangjie/cangjie_docs/).
 
 ## Project Directory
 
@@ -11,6 +19,7 @@ Cangjie programming language provides `stdx` module, which provides common capab
 ├─ build                        # Directory of Engineering Construction
 ├─ build_temp                   # Temporary directory for project construction
 ├─ doc                          # Directory of STDX library document
+├─ figures                      # architecture pictures
 ├─ src                          # Directory of STDX package codes                     
 │   └─ stdx                     
 │       ├── aspectCJ            # Provides AOP
@@ -32,6 +41,7 @@ Cangjie programming language provides `stdx` module, which provides common capab
 ## Constraints
 
 Support for building `stdx` in Ubuntu/MacOS (x86_64, aarch64), Cangjie SDK 1.0.0 and above versions, please refer to the [Build Dependency Tools](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md).
+Depends on the Cangjie Compiler Component and the Cangjie Runtime Component.
 
 ## Compilation and Building
 
@@ -201,3 +211,6 @@ main () {
 ## License
 
 Please see [LICENSE](LICENSE) for more information.
+
+## Contribution Guidelines
+Developers are welcome to contribute code, documentation, and other resources. For specific contribution processes and methods, please refer to [How to Contribute](https://gitcode.com/openharmony/docs/blob/master/en/contribute/how-to-contribute.md).
