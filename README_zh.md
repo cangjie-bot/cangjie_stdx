@@ -2,7 +2,26 @@
 
 ## 简介
 
-仓颉编程语言提供了 `stdx` 模块，该模块提供了网络、安全等领域的通用能力。`stdx` 的 API 详细说明请参见[资料](./doc/libs_stdx/summary_cjnative.md)。
+拓展库 `stdx` 是仓颉编程语言提供的拓展模块（即非核心的标准库，但官方提供的附加功能集），是该语言生态中的重要组成部分，为仓颉补充了更多实用能力，涵盖面向切面编程、压缩和解压缩、安全（安全加密能力/消息摘要算法/非对称加解密和签名算法/数字证书处理功能）、编解码（base64/hex/json/url）、网络（http/tls）、日志、单元测试拓展、序列化等多个领域。 
+
+架构图：
+![](figures/stdx_Architecture_Diagram_zh.png)
+
+- aspectCJ: 提供了 Cangjie 中面向切面编程的相关注解。
+- compress: 提供了压缩解压功能。
+- crypto: 提供了密码学操作的工具库。
+- encoding: 提供了数据编码与解码的基础工具库。
+- fuzz: 提供了一种自动化软件测试方法。
+- log: 提供了一个单一的日志 API。
+- logger: 提供了文本格式和 JSON 格式日志打印功能。
+- net: 提供了网络通信和安全传输功能。
+- serialization: 提供了序列化和反序列化的能力。
+- unittest: 提供了在编写仓颉项目单元测试代码时输入序列化格式的测试数据的能力。
+
+## 使用说明
+
+`stdx` 相关 API 请参见 [API接口说明](./doc/libs_stdx/summary_cjnative.md)。
+相关指导请参见 [开发指南](https://gitcode.com/Cangjie/cangjie_docs/)。
 
 ## 目录结构
 
@@ -11,6 +30,7 @@
 ├─ build                        # 工程构建目录，编译构建工具、脚本等
 ├─ build_temp                   # 工程构建的临时目录
 ├─ doc                          # STDX 库资料目录
+├─ figures                      # 存放readme中的架构图
 ├─ src                          # STDX 各个包代码目录                        
 │   └─ stdx                     
 │       ├── aspectCJ            # 提供 AOP 功能
@@ -32,6 +52,8 @@
 ## 约束
 
 支持在 Ubuntu/MacOS(x86_64, aarch64)、Cangjie SDK 1.0.0 及以上版本中对 `stdx` 构建。更详细的环境及工具依赖请参阅 [构建依赖工具](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md)。
+
+注意：本拓展库后续版本可能存在不兼容变更，不承诺跨版本 API/ABI 兼容性，使用前请充分评估版本适配风险。
 
 ## 编译构建
 
@@ -198,3 +220,7 @@ main () {
 ## License 许可
 
 本项目开源许可请参阅 [LICENSE](LICENSE)。
+
+## 参与贡献
+
+欢迎开发者们提供任何形式的贡献，包括但不限于代码、文档、issue 等。
