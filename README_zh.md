@@ -29,7 +29,6 @@
 ```text
 /stdx
 ├─ build                        # 工程构建目录，编译构建工具、脚本等
-├─ build_temp                   # 工程构建的临时目录
 ├─ doc                          # STDX 库资料目录
 ├─ figures                      # 存放readme中的架构图
 ├─ src                          # STDX 各个包代码目录                        

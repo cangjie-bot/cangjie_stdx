@@ -29,7 +29,6 @@ For relevant guidance, please refer to [Development Guide](https://gitcode.com/C
 ```text
 /stdx
 ├─ build                        # Directory of Engineering Construction
-├─ build_temp                   # Temporary directory for project construction
 ├─ doc                          # Directory of STDX library document
 ├─ figures                      # architecture pictures
 ├─ src                          # Directory of STDX package codes                     
