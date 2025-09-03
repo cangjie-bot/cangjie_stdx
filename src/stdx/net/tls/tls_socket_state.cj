@@ -10,6 +10,7 @@ package stdx.net.tls
 
 import stdx.crypto.x509.*
 import std.net.StreamingSocket
+import stdx.net.tls.common.TlsException
 
 abstract class TlsSocketState <: ToString {
     // this is abstract class instead of interface to fit AtomicReference constraints
@@ -107,21 +108,9 @@ class SocketConnected <: TlsSocketState {
         }
     }
 
-    prop clientCertificate: ?Array<X509Certificate> {
+    prop certificate: ?Array<X509Certificate> {
         get() {
-            match (isClient) {
-                case true => myCertificate
-                case false => peerCertificate
-            }
-        }
-    }
-
-    prop serverCertificate: Array<X509Certificate> {
-        get() {
-            match (isClient) {
-                case true => peerCertificate.getOrThrow()
-                case false => myCertificate.getOrThrow()
-            }
+            myCertificate
         }
     }
 }

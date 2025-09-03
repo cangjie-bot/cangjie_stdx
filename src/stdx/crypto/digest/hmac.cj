@@ -9,6 +9,7 @@
 package stdx.crypto.digest
 
 import std.crypto.digest.Digest
+import stdx.crypto.common.CryptoException
 
 public struct HashType <: ToString & Equatable<HashType> {
     private var hashType: String

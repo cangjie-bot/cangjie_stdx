@@ -31,9 +31,9 @@ main() {
 <!-- compile -->
 ```cangjie
 import std.net.{TcpSocket, SocketAddress}
-import std.convert.Parsable
 import std.fs.*
 import stdx.net.tls.*
+import stdx.net.tls.common.*
 import stdx.crypto.x509.X509Certificate
 import stdx.net.http.*
 import std.io.*
@@ -44,8 +44,8 @@ main() {
     var tlsConfig = TlsClientConfig()
     // TLS 证书文件需要用户自行提供
     let pem = String.fromUtf8(readToEnd(File("/rootCerPath", Read)))
-    tlsConfig.verifyMode = CustomCA(X509Certificate.decodeFromPem(pem))
-    tlsConfig.alpnProtocolsList = ["h2"]
+    tlsConfig.verifyMode = CustomCA(X509Certificate.decodeFromPem(pem).map({certificate => certificate}))
+    tlsConfig.supportedAlpnProtocols = ["h2"]
     // TCP 建连配置
     let TcpSocketConnector = {
         sa: SocketAddress =>
@@ -75,6 +75,7 @@ main() {
 import std.io.*
 import std.fs.*
 import stdx.net.http.*
+import stdx.net.tls.*
 
 func checksum(chunk: Array<UInt8>): Int64 {
     var sum = 0

@@ -8,6 +8,8 @@
 
 package stdx.net.tls
 
+import stdx.net.tls.common.TlsException
+
 const CJTLS_EOF: Int32 = 0
 const CJTLS_FAIL: Int32 = -1
 const CJTLS_NEED_READ: Int32 = -2

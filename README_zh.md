@@ -2,7 +2,7 @@
 
 ## 简介
 
-拓展库 `stdx` 是仓颉编程语言提供的拓展模块（即非核心的标准库，但官方提供的附加功能集），是该语言生态中的重要组成部分，为仓颉补充了更多实用能力，涵盖面向切面编程、压缩和解压缩、安全（安全加密能力/消息摘要算法/非对称加解密和签名算法/数字证书处理功能）、编解码（base64/hex/json/url）、网络（http/tls）、日志、单元测试拓展、序列化等多个领域。 
+拓展库 `stdx` 是仓颉编程语言提供的拓展模块（即非核心的标准库，但官方提供的附加功能集），是该语言生态中的重要组成部分，为仓颉补充了更多实用能力，涵盖面向切面编程、压缩和解压缩、安全（安全加密能力/消息摘要算法/非对称加解密和签名算法/数字证书处理功能）、编解码（base64/hex/json/url）、网络（http/tls）、日志、单元测试拓展、序列化、并发编程模型、非局部控制操作等多个领域。 
 
 架构图：
 
@@ -18,6 +18,8 @@
 - net: 提供了网络通信和安全传输功能。
 - serialization: 提供了序列化和反序列化的能力。
 - unittest: 提供了在编写仓颉项目单元测试代码时输入序列化格式的测试数据的能力。
+- actors: 提供了一种并发编程模型，旨在简化并发任务的处理。
+- effect: 提供了一种强大的非局部控制操作。
 
 ## 使用说明
 
@@ -32,10 +34,12 @@
 ├─ doc                          # STDX 库资料目录
 ├─ figures                      # 存放readme中的架构图
 ├─ src                          # STDX 各个包代码目录                        
-│   └─ stdx                     
+│   └─ stdx
+│       ├── actors              # 提供 Actors 功能                     
 │       ├── aspectCJ            # 提供 AOP 功能
 │       ├── compress            # 提供压缩和解压缩功能
 │       ├── crypto              # 提供安全相关能力
+|       ├── effect              # 提供用于处理 Effect Handler 特性的用户级 API。这是一个实验性功能，需要使用支持该机制的 Cangjie 编译器。
 │       ├── dynamicLoader       # Openssl 动态加载模块
 │       ├── encoding            # 提供 JSON 和字符串编码相关能力。
 │       ├── fuzz                # 提供基于覆盖率反馈的仓颉 fuzz 引擎及对应的接口
@@ -180,7 +184,7 @@ python3 build.py install
 
 [package]
   cjc-version = "0.60.5"
-  compile-option = "-ldl"              
+  compile-option = "-ldl"
   description = "nothing here"
   link-option = ""
   name = "test"

@@ -7,8 +7,8 @@
  */
 
 #include "cangjie/Basic/Print.h"
-#include "cangjie/CHIR/CHIRCasting.h"
 #include "cangjie/CHIR/CHIRBuilder.h"
+#include "cangjie/CHIR/CHIRCasting.h"
 #include "cangjie/CHIR/Transformation/BlockGroupCopyHelper.h"
 #include "cangjie/CHIR/Type/CustomTypeDef.h"
 #include "cangjie/CHIR/Utils.h"
@@ -22,7 +22,6 @@
 
 using namespace Cangjie;
 
-namespace {
 struct To {
     std::string packageName;
     std::string outerTypeName;
@@ -165,6 +164,21 @@ std::vector<CHIR::Value*> WaveAspects::PrepareArguments(const CHIR::Func& caller
     return args;
 }
 
+namespace {
+CHIR::Type* ComputeThisTypeOfCallee(const CHIR::FuncBase& callee, const std::vector<CHIR::Value*>& args)
+{
+    CHIR::Type* thisType = nullptr;
+    if (callee.IsMemberFunc()) {
+        if (callee.TestAttr(Cangjie::CHIR::Attribute::STATIC)) {
+            thisType = callee.GetOuterDeclaredOrExtendedDef()->GetType();
+        } else {
+            CJC_ASSERT(!args.empty());
+            thisType = args[0]->GetType();
+        }
+    }
+    return thisType;
+}
+
 CHIR::FuncBase* GetFuncByMangledName(CHIR::CHIRBuilder& builder, const std::string& funcMangledName)
 {
     auto curPackage = builder.GetChirContext().GetCurPackage();
@@ -185,26 +199,17 @@ CHIR::FuncBase* GetFuncByMangledName(CHIR::CHIRBuilder& builder, const std::stri
     return nullptr;
 }
 
-CHIR::Apply* CreateApplyAtFuncBeginning(CHIR::CHIRBuilder& builder, const CHIR::Func& caller,
-    CHIR::FuncBase& callee, const std::vector<CHIR::Value*>& args)
+CHIR::Apply* CreateApplyAtFuncBeginning(
+    CHIR::CHIRBuilder& builder, const CHIR::Func& caller, CHIR::FuncBase& callee, const std::vector<CHIR::Value*>& args)
 {
-    auto paramTys = callee.GetFuncType()->GetParamTypes();
     auto resultTy = callee.GetFuncType()->GetReturnType();
     auto entry = caller.GetEntryBlock();
-    auto apply = builder.CreateExpression<CHIR::Apply>(CHIR::INVALID_LOCATION, resultTy, &callee, args, entry);
-    CHIR::Type* thisType = nullptr;
-    CHIR::Type* outerParentType = nullptr;
-    if (callee.IsMemberFunc()) {
-        if (callee.TestAttr(Cangjie::CHIR::Attribute::STATIC)) {
-            thisType = callee.GetOuterDeclaredOrExtendedDef()->GetType();
-            outerParentType = thisType;
-        } else {
-            thisType = args[0]->GetType();
-            outerParentType = args[0]->GetType();
-            paramTys[0] = args[0]->GetType();
-        }
-    }
-    apply->SetInstantiatedFuncType(thisType, outerParentType, paramTys, *resultTy);
+    auto funcCallCxt = CHIR::FuncCallContext {
+        .args = args,
+        .thisType = ComputeThisTypeOfCallee(callee, args)
+    };
+    auto apply =
+        builder.CreateExpression<CHIR::Apply>(CHIR::INVALID_LOCATION, resultTy, &callee, funcCallCxt, entry);
     apply->MoveBefore(entry->GetExpressionByIdx(0));
     return apply;
 }
@@ -237,6 +242,7 @@ CHIR::FuncBase* WaveAspects::GetCalleeByProcessInfo(
     return callee;
 }
 
+namespace {
 bool HasFunction(const CHIR::Package& package, std::string funcName)
 {
     for (auto func : package.GetGlobalFuncs()) {
@@ -251,6 +257,7 @@ bool HasFunction(const CHIR::Package& package, std::string funcName)
     }
     return false;
 }
+} // namespace
 
 void WaveAspects::ReadInfo()
 {
@@ -278,20 +285,12 @@ void WaveAspects::ReadInfo()
                     builder.GetType<CHIR::FuncType>(std::vector<CHIR::Type*>{}, builder.GetVoidTy()),
                     packageInitFuncName, "", "", "");
                 std::vector<CHIR::Value*> args;
+                auto funcCallCxt = CHIR::FuncCallContext {
+                    .args = args,
+                    .thisType = ComputeThisTypeOfCallee(*initF, args)
+                };
                 auto apply = builder.CreateExpression<CHIR::Apply>(
-                    CHIR::INVALID_LOCATION, builder.GetVoidTy(), initF, args, bb);
-                CHIR::Type* thisType = nullptr;
-                CHIR::Type* outerParentType = nullptr;
-                if (initF->IsMemberFunc()) {
-                    if (initF->TestAttr(Cangjie::CHIR::Attribute::STATIC)) {
-                        thisType = initF->GetOuterDeclaredOrExtendedDef()->GetType();
-                        outerParentType = thisType;
-                    } else {
-                        thisType = args[0]->GetType();
-                        outerParentType = args[0]->GetType();
-                    }
-                }
-                apply->SetInstantiatedFuncType(thisType, outerParentType, {}, *builder.GetVoidTy());
+                    CHIR::INVALID_LOCATION, builder.GetVoidTy(), initF, funcCallCxt, bb);
                 apply->MoveBefore(bb->GetExpressionByIdx(2));
             }
         }
@@ -299,7 +298,7 @@ void WaveAspects::ReadInfo()
     closedir(dp);
 }
 
-// Implementation
+// 实现 plugin
 void WaveAspects::Run(CHIR::Func& func)
 {
     if (hasError) {
@@ -310,51 +309,32 @@ void WaveAspects::Run(CHIR::Func& func)
         ReadInfo();
         hasInitedProcessInfos = true;
     }
+    //
     for (auto pi : processInfos) {
         if (Meets(func, pi, builder)) {
             auto args = PrepareArguments(func, pi);
             auto callee = GetCalleeByProcessInfo(pi, func, args);
             if (pi.annoClassName == "InsertAtEntry") {
-                auto paramTys = callee->GetFuncType()->GetParamTypes();
                 auto resultTy = callee->GetFuncType()->GetReturnType();
                 auto entry = func.GetEntryBlock();
-                auto apply =
-                    builder.CreateExpression<CHIR::Apply>(CHIR::INVALID_LOCATION, resultTy, callee, args, entry);
-                CHIR::Type* thisType = nullptr;
-                CHIR::Type* outerParentType = nullptr;
-                if (callee->IsMemberFunc()) {
-                    if (callee->TestAttr(Cangjie::CHIR::Attribute::STATIC)) {
-                        thisType = callee->GetOuterDeclaredOrExtendedDef()->GetType();
-                        outerParentType = thisType;
-                    } else {
-                        thisType = args[0]->GetType();
-                        outerParentType = args[0]->GetType();
-                        paramTys[0] = args[0]->GetType();
-                    }
-                }
-                apply->SetInstantiatedFuncType(thisType, outerParentType, paramTys, *resultTy);
+                auto funcCallCxt = CHIR::FuncCallContext {
+                    .args = args,
+                    .thisType = ComputeThisTypeOfCallee(*callee, args)
+                };
+                auto apply = builder.CreateExpression<CHIR::Apply>(
+                    CHIR::INVALID_LOCATION, resultTy, callee, funcCallCxt, entry);
                 apply->MoveBefore(entry->GetExpressionByIdx(0));
             } else if (pi.annoClassName == "InsertAtExit") {
                 auto preAction = [this, args, callee](CHIR::Expression& expr) {
                     if (expr.GetExprKind() == Cangjie::CHIR::ExprKind::EXIT) {
-                        auto paramTys = callee->GetFuncType()->GetParamTypes();
                         auto resultTy = callee->GetFuncType()->GetReturnType();
-                        auto bb = expr.GetParent();
-                        auto apply =
-                            builder.CreateExpression<CHIR::Apply>(CHIR::INVALID_LOCATION, resultTy, callee, args, bb);
-                        CHIR::Type* thisType = nullptr;
-                        CHIR::Type* outerParentType = nullptr;
-                        if (callee->IsMemberFunc()) {
-                            if (callee->TestAttr(Cangjie::CHIR::Attribute::STATIC)) {
-                                thisType = callee->GetOuterDeclaredOrExtendedDef()->GetType();
-                                outerParentType = thisType;
-                            } else {
-                                thisType = args[0]->GetType();
-                                outerParentType = args[0]->GetType();
-                                paramTys[0] = args[0]->GetType();
-                            }
-                        }
-                        apply->SetInstantiatedFuncType(thisType, outerParentType, paramTys, *resultTy);
+                        auto bb = expr.GetParentBlock();
+                        auto funcCallCxt = CHIR::FuncCallContext {
+                            .args = args,
+                            .thisType = ComputeThisTypeOfCallee(*callee, args)
+                        };
+                        auto apply = builder.CreateExpression<CHIR::Apply>(
+                            CHIR::INVALID_LOCATION, resultTy, callee, funcCallCxt, bb);
                         apply->MoveBefore(&expr);
                     }
                     return CHIR::VisitResult::CONTINUE;
@@ -419,7 +399,12 @@ void WaveAspects::Run(CHIR::Func& func)
 
 void WaveAspects::ReadInfo(const std::string& annoInfoPath)
 {
-    std::ifstream inFile(annoInfoPath);
+    auto absPath = FileUtil::GetAbsPath(annoInfoPath);
+    if (!absPath.has_value()) {
+        std::cerr << "Invalid file path." << std::endl;
+        return;
+    }
+    std::ifstream inFile(absPath.value());
     if (!inFile) {
         std::cerr << "Cannot access this file." << std::endl;
     } else {
@@ -464,7 +449,7 @@ void WaveAspects::ReadInfo(const std::string& annoInfoPath)
         }
         inFile.close();
     }
-} // namespace
+}
 
-// Register plugin
+// register plugin
 CHIR_PLUGIN(WaveAspects)

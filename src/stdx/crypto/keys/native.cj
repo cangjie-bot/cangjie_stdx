@@ -9,7 +9,7 @@
 package stdx.crypto.keys
 
 import stdx.crypto.digest.*
-import stdx.crypto.x509.*
+import stdx.crypto.common.*
 
 const RSA_id: Int32 = 6
 const EC_id: Int32 = 408
@@ -28,6 +28,11 @@ const PKCS1_PADDING_SIZE: Int32 = 11
 const RSA_PKCS1_PADDING: Int32 = 1
 const RSA_PKCS1_OAEP_PADDING: Int32 = 4
 const RSA_PKCS1_PSS_PADDING: Int32 = 6
+
+const CJ_FAIL: Int32 = -1
+const CJ_NEED_READ: Int32 = -2
+const CJ_NEED_WRITE: Int32 = -3
+const CJ_OK: Int32 = 1
 
 // sm2
 foreign func DYN_EVP_PKEY_CTX_set1_id(ctx: CPointer<UInt64>, id: CPointer<Byte>, len: Int64, msg: CPointer<DynMsg>): Int32
@@ -585,7 +590,69 @@ func checkError(dynMsgPtr: CPointer<DynMsg>): Unit {
 }
 
 @C
-struct DynMsg {
+protected struct DynMsg {
     var found = true
     var funcName = CPointer<UInt8>()
+}
+
+@C
+protected struct ExceptionData {
+    var message: CPointer<Byte> = CPointer() // this is always allocated using malloc
+    var constMessage: CPointer<Byte> = CPointer() // this is never allocated
+
+    protected prop hasException: Bool {
+        get() {
+            !message.isNull() || !constMessage.isNull()
+        }
+    }
+
+    protected func throwException(fallback!: String): Nothing {
+        if (!message.isNull()) {
+            throw CryptoException(CString(message).toString())
+        }
+        if (!constMessage.isNull()) {
+            throw CryptoException(CString(constMessage).toString())
+        }
+
+        throw CryptoException(fallback)
+    }
+
+    protected mut func clear(): Unit {
+        if (!message.isNull()) {
+            unsafe { CRYPTO_free(message) }
+            message = CPointer()
+        }
+    }
+
+    protected static func create(): CPointer<ExceptionData> {
+        unsafe {
+            let ptr = LibC.malloc<ExceptionData>(count: 1)
+            if (ptr.isNull()) {
+                throw CryptoException("malloc failed")
+            }
+            ptr.write(ExceptionData())
+            return ptr
+        }
+    }
+
+    protected static func free(exception: CPointer<ExceptionData>): Unit {
+        unsafe {
+            if (exception.isNull()) {
+                return
+            }
+
+            var data = exception.read()
+            data.clear()
+            LibC.free(exception)
+        }
+    }
+
+    protected static func withException<R>(block: (CPointer<ExceptionData>) -> R): R {
+        let exception = ExceptionData.create()
+        try {
+            block(exception)
+        } finally {
+            ExceptionData.free(exception)
+        }
+    }
 }

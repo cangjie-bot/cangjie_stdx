@@ -8,6 +8,8 @@
 
 package stdx.net.tls
 
+import stdx.net.tls.common.TlsException
+
 extend TlsRawSocket {
     /**
      * @throws TlsException while tls socket is not connected.

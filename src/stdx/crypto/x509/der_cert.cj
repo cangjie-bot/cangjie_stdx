@@ -9,6 +9,7 @@
 package stdx.crypto.x509
 
 import std.time.DateTime
+import stdx.crypto.common.*
 
 class X509Blob <: Equatable<X509Blob> & Hashable {
     let content: DerBlob
@@ -284,7 +285,7 @@ func freeX509Result(data: CPointer<UInt16Result>) {
 /**
  * Clone the result from C side and free memory.
  */
-func cloneX509Result(data: CPointer<StringArrayResult>): Array<String> {
+func cloneAndFreeX509Result(data: CPointer<StringArrayResult>): Array<String> {
     if (data.isNull()) {
         throw X509Exception("Null pointer check failed.")
     }
@@ -319,7 +320,7 @@ private func bufferToString(buffer: CPointer<CString>, i: Int64): String {
 /**
  * Clone the result from C side and free memory.
  */
-func cloneX509Result(data: CPointer<ByteArrayResult>): Array<Array<Byte>> {
+func cloneAndFreeX509Result(data: CPointer<ByteArrayResult>): Array<Array<Byte>> {
     if (data.isNull()) {
         throw X509Exception("Null pointer check failed.")
     }
@@ -344,7 +345,7 @@ func cloneX509Result(data: CPointer<ByteArrayResult>): Array<Array<Byte>> {
 /**
  * Clone the result from C side and free memory.
  */
-func cloneX509Result(data: CPointer<UInt16Result>): Array<UInt16> {
+func cloneAndFreeX509Result(data: CPointer<UInt16Result>): Array<UInt16> {
     if (data.isNull()) {
         throw X509Exception("Null pointer check failed.")
     }
@@ -369,7 +370,7 @@ func getX509DnsNames(content: DerBlob): Array<String> {
     runOnRawPtr(content.content) {
         rawPtr: CPointer<Byte>, size: UIntNative => getX509DnsNames(rawPtr, size, result)
     }
-    cloneX509Result(result)
+    cloneAndFreeX509Result(result)
 }
 
 /**
@@ -380,7 +381,7 @@ func getX509EmailAddresses(content: DerBlob): Array<String> {
     runOnRawPtr(content.content) {
         rawPtr: CPointer<Byte>, size: UIntNative => getX509EmailAddresses(rawPtr, size, result)
     }
-    cloneX509Result(result)
+    cloneAndFreeX509Result(result)
 }
 
 /**
@@ -391,7 +392,7 @@ func getX509IpAddresses(content: DerBlob): Array<IP> {
     runOnRawPtr(content.content) {
         rawPtr: CPointer<Byte>, size: UIntNative => getX509IpAddresses(rawPtr, size, result)
     }
-    cloneX509Result(result)
+    cloneAndFreeX509Result(result)
 }
 
 /**
@@ -509,5 +510,5 @@ func getX509ExtKeyUsage(content: DerBlob): ExtKeyUsage {
     runOnRawPtr(content.content) {
         rawPtr: CPointer<Byte>, size: UIntNative => getX509ExtKeyUsage(rawPtr, size, result)
     }
-    ExtKeyUsage(cloneX509Result(result))
+    ExtKeyUsage(cloneAndFreeX509Result(result))
 }

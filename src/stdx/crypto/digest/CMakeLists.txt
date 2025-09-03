@@ -15,5 +15,4 @@ set(CRYPTODIGEST_SRCS
     sha384.cj
     sha512.cj
     sm3.cj
-    util.cj
     CACHE INTERNAL "")

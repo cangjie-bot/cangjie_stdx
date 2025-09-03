@@ -10,7 +10,8 @@ package stdx.crypto.x509
 
 import std.time.DateTime
 import std.collection.{ArrayList, HashSet, contains, map, collectString, filter}
-import std.fs.{Path, exists, File, Directory}
+import std.fs.*
+import stdx.crypto.common.*
 
 // Delete them after Cangjie support these types.
 public type IP = Array<Byte>
@@ -18,7 +19,7 @@ const IPV4_SIZE: Int64 = 4
 const IPV6_SIZE: Int64 = 16
 const V_ASN1_UTF8STRING: Int32 = 12
 
-public class X509Certificate <: Equatable<X509Certificate> & Hashable & ToString {
+public class X509Certificate <: Certificate & Equatable<X509Certificate> & Hashable & ToString {
     private let blob: X509Blob
 
     init(blob: X509Blob) {
@@ -530,7 +531,7 @@ func verifyCertChain(cert: DerBlob, roots: Array<DerBlob>, intermediates: Array<
 
 @When[os != "Windows"]
 func getCertsRecursively(root: Path, result: HashSet<X509Certificate>): Unit {
-    if (exists(root)) {
+    if (isRegular(root)) {
         let condition1 = root.extensionName == "pem"
         let condition2 = root.extensionName == "crt"
         let condition3 = root.extensionName == "cer"
@@ -544,12 +545,30 @@ func getCertsRecursively(root: Path, result: HashSet<X509Certificate>): Unit {
                 throw X509Exception("${root} isn't a vaild certificate PEM file.")
             }
         }
-    } else if (exists(root)) {
+    } else if (isDirectory(root)) {
         // File and Directories
         Directory.walk(root) { entry =>
             getCertsRecursively(entry.path, result)
             true
         }
+    }
+}
+
+@When[os != "Windows"]
+func isDirectory(path: Path): Bool {
+    try {
+        return FileInfo(path).isDirectory()
+    } catch (e: FSException) {
+        return false
+    }
+}
+ 
+@When[os != "Windows"]
+func isRegular(path: Path): Bool {
+    try {
+        return FileInfo(path).isRegular()
+    } catch (e: FSException) {
+        return false
     }
 }
 

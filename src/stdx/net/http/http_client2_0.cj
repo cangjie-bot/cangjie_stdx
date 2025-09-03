@@ -13,7 +13,7 @@ import std.sync.*
 import std.collection.*
 import std.convert.Parsable
 import stdx.encoding.url.*
-import stdx.net.tls.*
+import stdx.net.tls.common.*
 import stdx.log.*
 
 class HttpClient2 <: HttpClient {
@@ -23,7 +23,7 @@ class HttpClient2 <: HttpClient {
     let closingEngines = HashMap<AddrPort, HttpClientEngine2>(0)
     let engineLock = Mutex()
     let connector: Connector
-    let tlsConfig: TlsClientConfig
+    let tlsConfig: TlsConfig
     let proxy: String
     let client: Client
     let logger: Logger
@@ -158,28 +158,27 @@ class HttpClient2 <: HttpClient {
         let sa = IPSocketAddress(ips[0], addrport.port)
         let tmpConn = connector(sa)
         // alpnProtocolsList have been checked before HttpClient2 initial, no need to check again
-        if (let Some(conn) <- (tmpConn as TlsSocket)) {
+        if (let Some(conn) <- (tmpConn as TlsConnection)) {
             return HttpClientEngine2(conn, localSettings, logger, readTimeout, writeTimeout)
         }
-        let tlsConn: TlsSocket
+        let tlsConn: TlsConnection
         try {
-            tlsConn = TlsSocket.client(tmpConn, clientConfig: tlsConfig)
+            tlsConn = getGlobalTlsKit().getTlsClient(tmpConn, tlsConfig, session: None)
         } catch (e: Exception) {
             tmpConn.close()
             throw e
         }
 
+        let result: TlsHandshakeResult
         try {
-            tlsConn.handshake()
+            result = tlsConn.handshake(timeout: None)
         } catch (e: Exception) {
             tlsConn.close()
             throw e
         }
-        match (tlsConn.alpnProtocolName) {
-            case Some("h2") => ()
-            case _ =>
-                tlsConn.close()
-                throw NegotiateException()
+        if (result.alpnProtocol != "h2") {
+            tlsConn.close()
+            throw NegotiateException()
         }
         return HttpClientEngine2(tlsConn, localSettings, logger, readTimeout, writeTimeout)
     }

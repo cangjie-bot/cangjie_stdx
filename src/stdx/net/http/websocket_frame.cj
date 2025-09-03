@@ -8,7 +8,7 @@
 
 package stdx.net.http
 
-import stdx.crypto.crypto.SecureRandom
+import stdx.crypto.common.*
 
 const MAXUINT16 = 65535
 // decide fin rsv and opcode
@@ -96,7 +96,7 @@ public class WebSocketFrame {
  * for read
  */
 func toWebSocketFrameFromFirstTwoBytes(bytes: Array<UInt8>): WebSocketFrame {
-    // FIN: 1 bit, 
+    // FIN: 1 bit,
     // indicates that this is the final fragment in a message.
     // RFC 6455 5.2.
     let fin = (bytes[0] & FIN) == FIN
@@ -152,7 +152,7 @@ func toWebSocketFrameFromFirstTwoBytes(bytes: Array<UInt8>): WebSocketFrame {
  * for write
  */
 func toWebSocketFrameBytesExceptPayload(fin: Bool, frameType: WebSocketFrameType, payloadLength: Int64, isClient: Bool): Array<UInt8> {
-    // ws-frame contains a maximum of 14 bytes except payload 
+    // ws-frame contains a maximum of 14 bytes except payload
     let array = Array<UInt8>(14, repeat: 0)
     if (fin) {
         array[0] = array[0] | FIN
@@ -180,7 +180,7 @@ func toWebSocketFrameBytesExceptPayload(fin: Bool, frameType: WebSocketFrameType
             }
             return array[..2]
         // if 126, the following 2 bytes interpreted as a
-        // 16-bit unsigned integer are the payload length 
+        // 16-bit unsigned integer are the payload length
         // RFC 6455 5.2.
         case payloadLength >= 126 && payloadLength <= MAXUINT16 =>
             array[1] = array[1] | PAYLOADLEN126
@@ -193,7 +193,7 @@ func toWebSocketFrameBytesExceptPayload(fin: Bool, frameType: WebSocketFrameType
             }
             return array[..4]
         // if 127, the following 8 bytes interpreted as a
-        // 64-bit unsigned integer are the payload length 
+        // 64-bit unsigned integer are the payload length
         // RFC 6455 5.2.
         case _ =>
             array[1] = array[1] | PAYLOADLEN127
@@ -250,6 +250,7 @@ public enum WebSocketFrameType <: Equatable<WebSocketFrameType> & ToString {
  * the masking key must be derived from a strong source of entropy
  */
 func generateMaskingKey(): Array<UInt8> {
-    let secureRandom = SecureRandom()
-    return secureRandom.nextBytes(4)
+    let arr = Array<UInt8>(4, repeat: 0)
+    getGlobalCryptoKit().getRandomGen().nextBytes(arr)
+    arr
 }

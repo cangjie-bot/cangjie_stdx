@@ -13,8 +13,8 @@ import std.io.*
 import std.collection.{ArrayList, HashMap}
 import std.sync.{Monitor, AtomicUInt32, AtomicInt64, AtomicBool}
 import std.convert.Parsable
-import stdx.net.tls.TlsSocket
-import stdx.crypto.x509.X509Certificate
+import stdx.net.tls.common.TlsConnection
+import stdx.crypto.common.Certificate
 import stdx.log.{Logger, LogLevel}
 import stdx.encoding.url.URL
 
@@ -584,11 +584,11 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
         this.responded = false
     }
 
-    public prop clientCertificate: ?Array<X509Certificate> {
+    public prop clientCertificate: ?Array<Certificate> {
         get() {
             let bufferedConn = stream.server.conn
             return match (bufferedConn.socket) {
-                case tlsConn: TlsSocket => tlsConn.clientCertificate
+                case tlsConn: TlsConnection => tlsConn.handshakeResult?.peerCertificate ?? None
                 case _ => None
             }
         }

@@ -8,11 +8,13 @@
 
 package stdx.net.tls
 
+import stdx.net.tls.common.*
 import stdx.crypto.x509.*
+import stdx.crypto.common.*
 
 enum HandshakeConfig {
-    | Client(TlsClientConfig, ?TlsSession)
-    | Server(TlsServerConfig, ?TlsSessionContext)
+    | Client(TlsClientConfig, ?TlsClientSession)
+    | Server(TlsServerConfig, ?TlsServerSession)
 }
 
 extend TlsContext {
@@ -164,7 +166,11 @@ extend TlsContext {
         match (verifyMode) {
             case Default => ()
             case TrustAll => setContextTrustAll(context)
-            case CustomCA(items) => configureCustomCA(context, items, exception)
+            case CustomCA(items) =>
+                let ca = items.map({c => c as X509Certificate ??
+                    throw TlsException("Only certificates of type `X509Certificate` are allowed.")})
+                configureCustomCA(context, ca, exception)
+            case _ => TlsException("Unsupported verify mode.")
         }
     }
 
