@@ -9,6 +9,8 @@
 package stdx.net.tls
 
 import stdx.crypto.x509.*
+import stdx.crypto.common.*
+import stdx.net.tls.common.TlsException
 
 extend<T> Option<T> {
     func exists() {
@@ -31,16 +33,12 @@ extend TlsRawSocket {
 
     private func getPeerCertificate(stream: CPointer<Ssl>, exception: CPointer<ExceptionData>): ?Array<X509Certificate> {
         unsafe {
-            let countPtr = LibC.malloc<UInt32>(count: 1)
-            if (countPtr.isNull()) {
-                throw TlsException("Failed to allocate memory.")
-            }
-            countPtr.write(0)
+            var count: UInt32 = 0
             var dynMsg = DynMsg()
-            let chain = CJ_TLS_DYN_GetPeerCertificate(stream, countPtr, exception, inout dynMsg)
+            let chain = CJ_TLS_DYN_GetPeerCertificate(stream, inout count, exception, inout dynMsg)
+            let resultSize = Int64(count)
             try {
                 checkDynMsg(dynMsg)
-                let resultSize = Int64(countPtr.read())
                 if (resultSize != 0 && chain.isNotNull()) {
                     return convertNativeChain(chain, resultSize)
                 }
@@ -51,9 +49,8 @@ extend TlsRawSocket {
                 return None
             } finally {
                 CJ_TLS_DYN_Call {
-                    dsgMsg: CPointer<DynMsg> => CJ_TLS_DYN_CertChainFree(chain, Int64(countPtr.read()), dsgMsg)
+                    dsgMsg: CPointer<DynMsg> => CJ_TLS_DYN_CertChainFree(chain, resultSize, dsgMsg)
                 }
-                LibC.free(countPtr)
             }
         }
     }

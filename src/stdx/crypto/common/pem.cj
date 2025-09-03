@@ -6,7 +6,7 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.crypto.x509
+package stdx.crypto.common
 
 public struct Pem <: Collection<PemEntry> & ToString {
     public Pem(private let items: Array<PemEntry>) {}
@@ -23,7 +23,7 @@ public struct Pem <: Collection<PemEntry> & ToString {
 
     /**
      * Decode a PEM text into sequence of entries
-     * @throw X509Exception - if text is without valid LABLE or is not encoded in base64.
+     * @throw CryptoException - if text is without valid LABLE or is not encoded in base64.
      */
     public static func decode(text: String): Pem {
         Pem(parsePem(text.toArray()))

@@ -35,7 +35,7 @@ public func csv<T>(
 
 返回值：
 
-- [CsvStrategy](data_package_classes.md#class-csvstrategy)\<T> - 对象，T 可被序列化，数据值从 CSV 文件中读取。
+- [CsvStrategy](data_package_classes.md#class-csvstrategy)\<T> 对象，T 可被序列化，数据值从 CSV 文件中读取。
 
 异常：
 

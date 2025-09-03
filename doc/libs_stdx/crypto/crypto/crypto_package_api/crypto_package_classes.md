@@ -3,10 +3,14 @@
 ## class SecureRandom
 
 ```cangjie
-public class SecureRandom {
+public class SecureRandom <: RandomGenerator {
     public init(priv!: Bool = false)
 }
 ```
+
+父类型：
+
+- [RandomGenerator](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-randomgenerator)
 
 功能：用于生成加密安全的伪随机数。
 
@@ -16,7 +20,7 @@ public class SecureRandom {
 
 - 随机数生成： Random 使用了梅森旋转伪随机生成器；[SecureRandom](crypto_package_classes.md#class-securerandom) 则使用了 openssl 库提供的 [MD5](../../digest/digest_package_api/digest_package_classes.md#class-md5) 等随机算法，使用熵源生成真随机数；如果硬件支持，还可以使用硬件随机数生成器来生成安全性更强的随机数。
 - 安全性： Random 不能用于加密安全的应用或者隐私数据的保护，可以使用 [SecureRandom](crypto_package_classes.md#class-securerandom)。
-  
+
 使用示例见 [SecureRandom 使用](../crypto_samples/sample_secure_random.md#securerandom-使用)。
 
 ### init(Bool)
@@ -583,7 +587,7 @@ public init(
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 参数设置不正确，实例化失败。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 参数设置不正确，实例化失败。
 
 ### prop aad
 
@@ -703,7 +707,7 @@ public func encrypt(input: Array<Byte>): Array<Byte>
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
 
 ### func encrypt(Array\<Byte>, Array\<Byte>)
 
@@ -724,7 +728,7 @@ public func encrypt(input: Array<Byte>, to!: Array<Byte>): Int64
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
 - IllegalArgumentException - 当 to 的 size = 0 时，抛出异常。
 
 ### func encrypt(InputStream, OutputStream)
@@ -742,7 +746,7 @@ public func encrypt(input: InputStream, output: OutputStream): Unit
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
 
 ### func decrypt(Array\<Byte>)
 
@@ -762,7 +766,7 @@ public func decrypt(input: Array<Byte>): Array<Byte>
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。
 
 ### func decrypt(Array\<Byte>, Array\<Byte>)
 
@@ -783,7 +787,7 @@ public func decrypt(input: Array<Byte>,  to!: Array<Byte>): Int64
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。
 - IllegalArgumentException - 当 to 的 size = 0 时，抛出异常。
 
 ### func decrypt(InputStream, OutputStream)
@@ -796,9 +800,9 @@ public func decrypt(input: InputStream, output: OutputStream): Unit
 
 参数：
 
-- input: InputStream  - 待解密的输入数据流。
+- input:InputStream  - 待解密的输入数据流。
 - output: OutputStream - 解密后的输出数据流。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。

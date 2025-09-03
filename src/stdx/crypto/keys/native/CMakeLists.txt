@@ -9,6 +9,8 @@ file(
     GLOB
     keys_ffi_src
     keys.c
+    crypto_errors.c
+    compat.c
 )
 
 set(libname stdx.crypto.keysFFI)

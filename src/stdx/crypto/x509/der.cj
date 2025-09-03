@@ -10,6 +10,7 @@ package stdx.crypto.x509
 
 import std.time.DateTime
 import std.collection.{ArrayList, map}
+import stdx.crypto.common.*
 
 struct DerField <: ToString {
     DerField(

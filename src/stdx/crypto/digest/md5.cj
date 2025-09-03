@@ -9,6 +9,7 @@
 package stdx.crypto.digest
 
 import std.crypto.digest.Digest
+import stdx.crypto.common.CryptoException
 
 public class MD5 <: Digest {
     var md5Ctx: MD5CTX

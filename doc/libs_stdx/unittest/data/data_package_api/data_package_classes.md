@@ -68,6 +68,16 @@ public class SerializableProvider<T> <: DataProvider<T> where T <: Serializable<
 
 - DataProvider\<T>
 
+### prop isInfinite
+
+```cangjie
+public prop isInfinite: Bool
+```
+
+功能：是否生成无限的数据。
+
+Bool。
+
 ### func provide()
 
 ```cangjie

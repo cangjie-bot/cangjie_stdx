@@ -14,7 +14,7 @@ macro(to_link_library_option lib_name)
 endmacro()
 
 function(make_cangjie_lib target_name)
-    set(options IS_SHARED ALLOW_UNDEFINED)
+    set(options IS_SHARED IS_MACRO ALLOW_UNDEFINED)
     set(oneValueArgs)
     set(multiValueArgs
         DEPENDS
@@ -174,8 +174,13 @@ function(make_cangjie_lib target_name)
                 set(target_lib_full_name
                     ${CMAKE_BINARY_DIR}/lib/${output_stdx_cj_lib_dir}/libstdx${CMAKE_SHARED_LIBRARY_SUFFIX})
             else()
-                set(target_lib_full_name
-                    ${CMAKE_BINARY_DIR}/lib/${output_stdx_cj_lib_dir}/libstdx.${target_name}${CMAKE_SHARED_LIBRARY_SUFFIX})
+                if (CANGJIE_LIBRARY_IS_MACRO)
+                    set(target_lib_full_name
+                        ${CMAKE_BINARY_DIR}/lib/${output_stdx_cj_lib_dir}/lib-macro_stdx.${target_name}${CMAKE_SHARED_LIBRARY_SUFFIX})
+                else()
+                    set(target_lib_full_name
+                        ${CMAKE_BINARY_DIR}/lib/${output_stdx_cj_lib_dir}/libstdx.${target_name}${CMAKE_SHARED_LIBRARY_SUFFIX})
+                endif()
             endif()
         else()
             set(target_lib_full_name ${CMAKE_BINARY_DIR}/bin/${target_name}${CMAKE_EXECUTABLE_SUFFIX})
@@ -276,7 +281,7 @@ function(make_cangjie_lib target_name)
                 list(APPEND force_link_archives_option "${archive_path}")
                 list(APPEND force_link_archives_option "${LINKER_OPTION_PREFIX}--no-whole-archive")
             endif()
-        endforeach()        
+        endforeach()
 
         add_custom_target(
             ${target_name} ALL
@@ -291,12 +296,15 @@ function(make_cangjie_lib target_name)
                 ${CANGJIE_LIBRARY_OBJECTS}
                 boundscheck
             COMMENT "Generating ${target_lib_full_name}")
-            
+
     else()
         message(FATAL_ERROR "only support SHARED or EXE for now")
     endif()
 
     if(CANGJIE_LIBRARY_IS_SHARED)
         install(FILES ${target_lib_full_name} DESTINATION ${output_stdx_cj_lib_dir}/dynamic/stdx)
+        if(CANGJIE_LIBRARY_IS_MACRO)
+            install(FILES ${target_lib_full_name} DESTINATION ${output_stdx_cj_lib_dir}/static/stdx)
+        endif()
     endif()
 endfunction()

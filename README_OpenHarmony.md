@@ -1,6 +1,6 @@
 # cangjie_stdx
 
-仓颉编程语言提供了 `stdx` 模块，该模块提供了网络、安全等领域的通用能力。`stdx` 的 API 详细说明请参见[资料](./doc/libs_stdx/summary_cjnative.md)。
+仓颉编程语言提供了 `stdx` 扩展库，该扩展库提供了网络、安全等领域的通用能力。`stdx` 的 API 详细说明请参见[资料](./doc/libs_stdx/summary_cjnative.md)。
 
 ## 目录结构
 
@@ -9,8 +9,9 @@
 ├─ build                        # 工程构建目录，编译构建工具、脚本等
 ├─ build_temp                   # 工程构建的临时目录
 ├─ doc                          # STDX 库资料目录
-├─ src                          # STDX 各个包代码目录                        
-│   └─ stdx                     
+├─ src                          # STDX 各个包代码目录
+│   └─ stdx
+│       ├── actors              # 提供 Actors 功能
 │       ├── aspectCJ            # 提供 AOP 功能
 │       ├── compress            # 提供压缩和解压缩功能
 │       ├── crypto              # 提供安全相关能力
@@ -39,7 +40,7 @@ stdx编译出二进制，在代码工程的 `cjpm.toml` 进行配置导入。
 
 参考[OHOS 仓颉SDK构建指导书 (Ubuntu 22.04)](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/linux_ohos_zh.md)
 
-### 2. 使用stdx
+### 2. stdx的使用
 
 开发者使用 DevEco Studio 开发时， `cjpm.toml` 配置文件中会自带 `target` 信息，因此，该场景仅需要修改 `path-option` 表示的 `stdx` 路径。
 

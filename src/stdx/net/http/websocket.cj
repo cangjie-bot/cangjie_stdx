@@ -12,7 +12,7 @@ import std.collection.ArrayList
 import std.sync.{AtomicBool, Mutex}
 import stdx.log.Logger
 import stdx.encoding.url.URL
-import stdx.crypto.crypto.SecureRandom
+import stdx.crypto.common.*
 import stdx.encoding.base64.{toBase64String, fromBase64String}
 
 // GUID is used to generate Sec-WebSocket-Accept.
@@ -99,8 +99,8 @@ public class WebSocket {
             conn.readRaw(bytes)
             frame = toWebSocketFrameFromFirstTwoBytes(bytes)
 
-            // client --> server  must      mask  
-            // server --> client  must not  mask  
+            // client --> server  must      mask
+            // server --> client  must not  mask
             // if the data is being sent by the client, the frames must be masked.
             // RFC 6455 6.1.5.
             // a server must not mask any frames that it sends to the client.
@@ -108,7 +108,7 @@ public class WebSocket {
             if ((isClient && frame.mask) || (!isClient && !frame.mask)) {
                 failTheWebSocketConnection(WebSocketStatusCode.PROTOCOL_ERROR, "receiving an invalid mask message")
             }
-            // if a nonzero value is received and none of the negotiated extensions 
+            // if a nonzero value is received and none of the negotiated extensions
             // defines the meaning of such a nonzero value, the receiving endpoint
             // must _fail the websocket connection_.
             // RFC 6455 5.2.
@@ -131,7 +131,7 @@ public class WebSocket {
                 conn.readRaw(frame.maskingKey)
             }
 
-            // control frames cannot be fragmented and must have 
+            // control frames cannot be fragmented and must have
             // a payload length of 125 bytes or less.
             match (frame.frameType) {
                 case PingWebFrame | PongWebFrame | CloseWebFrame =>
@@ -241,7 +241,7 @@ public class WebSocket {
                         // valid status code ranges defined in
                         // RFC 6455 7.4.2.
                         // status must between 1000 and 4999,
-                        // 1005, 1006, 1015 are reserved values and must not be 
+                        // 1005, 1006, 1015 are reserved values and must not be
                         // set as status code in a Close control frame by an endpoint.
                         if (status >= 5000 || status < 1000 || status == 1005 || status == 1006 || status == 1015) {
                             throw WebSocketException("Invalid close status code.")
@@ -333,7 +333,7 @@ public class WebSocket {
         if (statusCode >= 5000 || statusCode < 1000 || statusCode == 1005 || statusCode == 1006 || statusCode == 1015) {
             throw WebSocketException("Invalid status code.")
         }
-        // the first two bytes of the body must be 2-byte unsigned integer, 
+        // the first two bytes of the body must be 2-byte unsigned integer,
         // and the Close frame must have a payload length of 125 bytes or less.
         if (reason.size > 123) {
             throw WebSocketException("All control frames must have a payload length of 125 bytes or less.")
@@ -486,7 +486,7 @@ public class WebSocket {
      * @throws WebSocketException, if handshake failed, including get conn from pool failed, check response from server failed.
      */
     public static func upgradeFromClient(client: Client, url: URL, version!: Protocol = HTTP1_1,
-        subProtocols!: ArrayList<String> = ArrayList<String>(), headers!: HttpHeaders = HttpHeaders()): (WebSocket, 
+        subProtocols!: ArrayList<String> = ArrayList<String>(), headers!: HttpHeaders = HttpHeaders()): (WebSocket,
         HttpHeaders) {
 
         // a client opens a connection and sends a handshake
@@ -503,7 +503,7 @@ public class WebSocket {
         let upgradeRequest = constructUpgradeRequest(url, webSocketKey, subProtocols, headers, version)
 
         // once the client's opening handshake has been sent,
-        // the client must wait for a response from the server 
+        // the client must wait for a response from the server
         // before sending any further data.
         if (client.isClosed.load()) {
             throw WebSocketException("This client has already closed.")
@@ -552,7 +552,7 @@ func constructUpgradeRequest(url: URL, webSocketKey: String, subProtocols: Array
     }
 
     // send an opening handshake, and read the server’s handshake in response.
-    // the handshake consists of an HTTP Upgrade request, 
+    // the handshake consists of an HTTP Upgrade request,
     // along with a list of required and optional header fields.
     // RFC 6455 4.1.
     let upgradeRequestBuilder = HttpRequestBuilder().url(upgradeUrl)
@@ -583,7 +583,7 @@ func constructUpgradeRequest(url: URL, webSocketKey: String, subProtocols: Array
         // RFC 6455 4.1.9.
         .header("sec-websocket-version", "13")
     // may include a header field with a name sec-websocket-protocol
-    // If present, this value indicates one or more comma-separated subprotocol 
+    // If present, this value indicates one or more comma-separated subprotocol
     // the client wishes to speak, ordered by preference.
     // RFC 6455 4.1.10.
     if (!subProtocols.isEmpty()) {
@@ -639,7 +639,7 @@ func validateUpgradeResponse(resp: HttpResponse, acceptValue: String, subProtoco
 
             // if the response lacks a Sec-WebSocket-Accept header field or the Sec-WebSocket-Accept header field
             // contains a value other than the base64-encoded SHA-1 of the concatenation of the sec-websocket-key
-            // (as a string, not base64-decoded) with the string "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" 
+            // (as a string, not base64-decoded) with the string "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
             // but ignoring any leading and trailing whitespace,
             // the client must _fail the websocket connection_.
             let acceptValues = resp.headers.getInternal("sec-websocket-accept") ?? failTheWebSocketConnection(resp,
@@ -651,7 +651,7 @@ func validateUpgradeResponse(resp: HttpResponse, acceptValue: String, subProtoco
             if (resp.status != HttpStatusCode.STATUS_OK) {
                 failTheWebSocketConnection(resp, "the status code should be 200, but received ${resp}")
             }
-        // an HTTP/1.1 upgrade request but receive an HTTP/1.0 response 
+        // an HTTP/1.1 upgrade request but receive an HTTP/1.0 response
         case _ => failTheWebSocketConnection(resp,
             "wrong http version ${resp.version} which cannot be upgraded to websocket")
     }
@@ -661,9 +661,9 @@ func validateUpgradeResponse(resp: HttpResponse, acceptValue: String, subProtoco
         failTheWebSocketConnection(resp, "websocket extensions not supported yet")
     }
 
-    // if the response includes a sec-websocket-protocol header field and this header field indicates 
-    // the use of a subprotocol that was not present in the client’s handshake 
-    // (the server has indicated a subprotocol not requested by the client), 
+    // if the response includes a sec-websocket-protocol header field and this header field indicates
+    // the use of a subprotocol that was not present in the client’s handshake
+    // (the server has indicated a subprotocol not requested by the client),
     // the client must _fail the websocket connection_
     let subProtocol = match (resp.headers.getInternal("sec-websocket-protocol")) {
         case None => ""
@@ -712,7 +712,7 @@ func parseUpgradeRequest1(ctx: HttpContext): String {
             "the upgrade request lacks Connection: Upgrade header field")
     }
 
-    // a sec-websocket-key header field with a base64-encoded value that, 
+    // a sec-websocket-key header field with a base64-encoded value that,
     // when decoded, is 16 bytes in length.
     let keyValues = ctx.request.headers.getInternal("sec-websocket-key") ?? responseAndThrows(ctx,
         HttpStatusCode.STATUS_BAD_REQUEST, "the upgrade request lacks sec-websocket-key header field")
@@ -785,13 +785,13 @@ func replyUpgradeResponse1(conn: HttpEngineConn1, subProtocol: String, acceptVal
         .header("sec-websocket-accept", acceptValue)
 
     // optionally
-    // a sec-websocket-protocol header field  
+    // a sec-websocket-protocol header field
     // RFC 6455 4.2.2.5.4.
     if (!subProtocol.isEmpty()) {
         responseBuilder.header("sec-websocket-protocol", subProtocol)
     }
-    // other headers such as set-cookie 
-    // RFC 6455 1.3.      
+    // other headers such as set-cookie
+    // RFC 6455 1.3.
     responseBuilder.addHeaders(responseHeader)
     conn.writeResponse(responseBuilder.build())
 }
@@ -811,8 +811,8 @@ func replyUpgradeResponse2(conn: HttpEngineConn2, subProtocol: String, responseH
  * RFC 6455 4.1.7.
  */
 func generateKey(): String {
-    let secureRandom = SecureRandom()
-    let r: Array<Byte> = secureRandom.nextBytes(16)
+    let r = Array<Byte>(16, repeat: 0)
+    getGlobalCryptoKit().getRandomGen().nextBytes(r)
     return toBase64String(r)
 }
 

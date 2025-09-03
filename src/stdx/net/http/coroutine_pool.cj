@@ -181,7 +181,7 @@ class CoroutinePool {
         start()
     }
 
-    public mut prop logger: Logger {
+    mut prop logger: Logger {
         get() {
             return _logger
         }
@@ -198,7 +198,7 @@ class CoroutinePool {
         }
     }
 
-    public func submit<T>(
+    func submit<T>(
         fn: () -> T,
         connId!: ?UInt64,
         onClose!: ?(() -> Unit) = None,
@@ -256,7 +256,7 @@ class CoroutinePool {
         return task
     }
 
-    public func close(): Unit {
+    func close(): Unit {
         synchronized(workersMutex) {
             closed.store(true) // mark first
             taskQueue.close() // close input stream
@@ -269,7 +269,7 @@ class CoroutinePool {
         }
     }
 
-    public func closeGracefully(): Unit {
+    func closeGracefully(): Unit {
         synchronized(workersMutex) {
             closed.store(true) // mark first
             taskQueue.close() // workers will close after queue closed and emptied
@@ -293,7 +293,7 @@ class CoroutinePool {
         }
     }
 
-    public func isClosed(): Bool {
+    func isClosed(): Bool {
         return closed.load()
     }
 

@@ -430,7 +430,7 @@ class MultipartReader {
     }
 
     // read until boundary
-    public func readPayload(): (Array<UInt8>, Bool, Bool) {
+    func readPayload(): (Array<UInt8>, Bool, Bool) {
         var readSectionEnd = false
         var readMultipartEnd = false
         if (let Some(index) <- buffer[curParse..curRead].indexOf(startBoundary)) {

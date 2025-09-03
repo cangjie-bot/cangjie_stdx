@@ -12,7 +12,7 @@ public class ECDSAPrivateKey <: PrivateKey {
 
 父类型：
 
-- [PrivateKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-privatekey)
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
 
 ### init(Curve)
 
@@ -28,7 +28,7 @@ public init(curve: Curve)
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
 
 ### static func decodeDer(DerBlob)
 
@@ -40,7 +40,7 @@ public static func decodeDer(blob: DerBlob): ECDSAPrivateKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
 
 返回值：
 
@@ -48,7 +48,7 @@ public static func decodeDer(blob: DerBlob): ECDSAPrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
 
 ### static func decodeDer(DerBlob, ?String)
 
@@ -60,7 +60,7 @@ public static func decodeDer(blob: DerBlob, password!: ?String): ECDSAPrivateKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
 - password!: ?String - 解密私钥需要提供的密码，密码为 None 时则不解密。
 
 返回值：
@@ -69,7 +69,7 @@ public static func decodeDer(blob: DerBlob, password!: ?String): ECDSAPrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败或者参数密码为空字符串，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败或者参数密码为空字符串，抛出异常。
 
 ### static func decodeFromPem(String)
 
@@ -89,7 +89,7 @@ public static func decodeFromPem(text: String): ECDSAPrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
 
 ### static func decodeFromPem(String, ?String)
 
@@ -110,7 +110,7 @@ public static func decodeFromPem(text: String, password!: ?String): ECDSAPrivate
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、参数密码为空字符串、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、参数密码为空字符串、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
 
 ### func encodeToDer()
 
@@ -122,11 +122,11 @@ public override func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 Der 格式私钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 Der 格式私钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encodeToDer(?String)
 
@@ -142,11 +142,11 @@ public func encodeToDer(password!: ?String): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
 
 ### func encodeToPem()
 
@@ -158,11 +158,11 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func sign(Array\<Byte>)
 
@@ -182,7 +182,7 @@ public func sign(digest: Array<Byte>): Array<Byte>
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 签名失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 签名失败，抛出异常。
 
 ### func toString()
 
@@ -208,7 +208,7 @@ public class ECDSAPublicKey <: PublicKey {
 
 父类型：
 
-- [PublicKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-publickey)
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### init(ECDSAPrivateKey)
 
@@ -224,7 +224,7 @@ public init(pri: ECDSAPrivateKey)
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
 
 ### static func decodeDer(DerBlob)
 
@@ -236,7 +236,7 @@ public static func decodeDer(blob: DerBlob): ECDSAPublicKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的公钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的公钥对象。
 
 返回值：
 
@@ -244,7 +244,7 @@ public static func decodeDer(blob: DerBlob): ECDSAPublicKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### static func decodeFromPem(String)
 
@@ -264,7 +264,7 @@ public static func decodeFromPem(text: String): ECDSAPublicKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合公钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合公钥头标准时，抛出异常。
 
 ### func encodeToDer()
 
@@ -276,11 +276,11 @@ public override func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 Der 格式公钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 Der 格式公钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encodeToPem()
 
@@ -292,11 +292,11 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) 对象。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) 对象。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func toString()
 
@@ -327,6 +327,208 @@ public func verify(digest: Array<Byte>, sig: Array<Byte>): Bool
 
 - Bool - 返回 true 表示验证成功，false 失败。
 
+## class GeneralPrivateKey
+
+```cangjie
+public class GeneralPrivateKey <: PrivateKey
+```
+
+功能：通用的私钥参数加解密功能实现。
+
+父类型：
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
+
+### static func decodeDer(DerBlob)
+
+```cangjie
+static func decodeDer(encoded: DerBlob): PrivateKey
+```
+
+功能：将私钥从 DER 格式解码。
+
+参数：
+
+- encoded: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DER 格式的私钥对象。
+
+返回值：
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 由 DER 格式解码出的私钥。
+
+### static func decodeDer(DerBlob, ?String)
+
+```cangjie
+static func decodeDer(encoded: DerBlob, password!: ?String): PrivateKey
+```
+
+功能：将 DER 格式的私钥解密解码成 [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) 对象，密码为 None 时则不解密。
+
+参数：
+
+- encoded: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DER 格式的私钥。
+- password!: ?String - 解密密码。
+
+返回值：
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 解密解码后的私钥对象。
+
+### static func decodeFromPem(String)
+
+```cangjie
+static func decodeFromPem(text: String): PrivateKey
+```
+
+功能：将私钥从 PEM 格式解码。
+
+参数：
+
+- text: String - PEM 格式的私钥字符流。
+
+返回值：
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 由 PEM 格式解码出的私钥。
+
+### static func decodeFromPem(String, ?String)
+
+```cangjie
+static func decodeFromPem(text: String, password!: ?String): PrivateKey
+```
+
+功能：将 PEM 格式的私钥解密解码成 [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) 对象，密码为 None 时则不解密。
+
+参数：
+
+- text: String - PEM 格式的私钥。
+- password!: ?String - 解密密码。
+
+返回值：
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 解密解码后的私钥对象。
+
+### func encodeToDer()
+
+```cangjie
+func encodeToDer(): DerBlob
+```
+
+功能：将私钥编码成 DER 格式。
+
+返回值：
+
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DER 格式的私钥。
+
+### func encodeToDer(?String)
+
+```cangjie
+func encodeToDer(password!: ?String): DerBlob
+```
+
+功能：将私钥加密编码成 DER 格式，密码为 None 时则不加密。
+
+参数：
+
+- password!: ?String - 加密密码。
+
+返回值：
+
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 加密后的 DER 格式的私钥。
+
+### func encodeToPem()
+
+```cangjie
+func encodeToPem(): PemEntry
+```
+
+功能：将私钥编码成 PEM 格式。
+
+返回值：
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 编码后的 PEM 格式的私钥。
+
+### func encodeToPem(?String)
+
+```cangjie
+func encodeToPem(password!: ?String): PemEntry
+```
+
+功能：将私钥加密编码成 PEM 格式，密码为 None 时则不加密。
+
+参数：
+
+- password!: ?String - 加密密码。
+
+返回值：
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 加密后的 PEM 格式的私钥。
+
+## class GeneralPublicKey
+
+```cangjie
+public class GeneralPublicKey <: PublicKey
+```
+
+功能：通用的公钥参数加解密功能实现。
+
+父类型：
+
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
+
+### static func decodeDer(DerBlob)
+
+```cangjie
+static func decodeDer(encoded: DerBlob): PublicKey
+```
+
+功能：将公钥从 DER 格式解码。
+
+参数：
+
+- encoded: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DER 格式的公钥对象。
+
+返回值：
+
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey) - 由 DER 格式解码出的公钥。
+
+### static func decodeFromPem(String)
+
+```cangjie
+static func decodeFromPem(text: String): PublicKey
+```
+
+功能：将公钥从 PEM 格式解码。
+
+参数：
+
+- text: String - PEM 格式的公钥字符流。
+
+返回值：
+
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey) - 由 PEM 格式解码出的公钥。
+
+### func encodeToDer()
+
+```cangjie
+func encodeToDer(): DerBlob
+```
+
+功能：将公钥编码成 DER 格式。
+
+返回值：
+
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DER 格式的公钥。
+
+### func encodeToPem()
+
+```cangjie
+func encodeToPem(): PemEntry
+```
+
+功能：将公钥编码为 PEM 格式。
+
+返回值：
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 公钥数据 PEM 格式编码生成的对象。
+
 ## class RSAPrivateKey
 
 ```cangjie
@@ -340,7 +542,7 @@ public class RSAPrivateKey <: PrivateKey{
 
 父类型：
 
-- [PrivateKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-privatekey)
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
 
 ### init(Int32)
 
@@ -356,7 +558,7 @@ public init(bits: Int32)
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 密钥长度不符合要求或初始化失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 密钥长度不符合要求或初始化失败，抛出异常。
 
 ### init(Int32, BigInt)
 
@@ -373,7 +575,7 @@ public init(bits: Int32, e: BigInt)
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 密钥长度不符合要求、公钥公共指数值不符合要求或初始化失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 密钥长度不符合要求、公钥公共指数值不符合要求或初始化失败，抛出异常。
 
 ### static func decodeDer(DerBlob)
 
@@ -385,7 +587,7 @@ public static func decodeDer(blob: DerBlob): RSAPrivateKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
 
 返回值：
 
@@ -393,7 +595,7 @@ public static func decodeDer(blob: DerBlob): RSAPrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
 
 ### static func decodeDer(DerBlob, ?String)
 
@@ -405,7 +607,7 @@ public static func decodeDer(blob: DerBlob, password!: ?String): RSAPrivateKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
 - password!: ?String - 解密私钥需要提供的密码，密码为 None 时则不解密。
 
 返回值：
@@ -414,7 +616,7 @@ public static func decodeDer(blob: DerBlob, password!: ?String): RSAPrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败或者参数密码为空字符串，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败或者参数密码为空字符串，抛出异常。
 
 ### static func decodeFromPem(String)
 
@@ -434,7 +636,7 @@ public static func decodeFromPem(text: String): RSAPrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
 
 ### static func decodeFromPem(String, ?String)
 
@@ -455,7 +657,7 @@ public static func decodeFromPem(text: String, password!: ?String): RSAPrivateKe
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、参数密码为空字符串、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、参数密码为空字符串、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
 
 ### func decrypt(InputStream, OutputStream, PadOption)
 
@@ -473,7 +675,7 @@ public func decrypt(input: InputStream, output: OutputStream, padType!: PadOptio
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或解密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或解密失败，抛出异常。
 
 ### func encodeToDer()
 
@@ -485,11 +687,11 @@ public override func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encodeToDer(?String)
 
@@ -505,11 +707,11 @@ public func encodeToDer(password!: ?String): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
 
 ### func encodeToPem()
 
@@ -521,11 +723,11 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func sign(Digest, Array\<Byte>, PadOption)
 
@@ -547,7 +749,7 @@ public func sign(hash: Digest, digest: Array<Byte>, padType!: PadOption): Array<
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 设置摘要方法失败、设置填充模式失败或签名失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 设置摘要方法失败、设置填充模式失败或签名失败，抛出异常。
 
 ### func toString()
 
@@ -573,7 +775,7 @@ public class RSAPublicKey <: PublicKey {
 
 父类型：
 
-- [PublicKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-publickey)
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### init(RSAPrivateKey)
 
@@ -589,7 +791,7 @@ public init(pri: RSAPrivateKey)
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
 
 ### static func decodeDer(DerBlob)
 
@@ -601,7 +803,7 @@ public static func decodeDer(blob: DerBlob): RSAPublicKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的公钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的公钥对象。
 
 返回值：
 
@@ -609,7 +811,7 @@ public static func decodeDer(blob: DerBlob): RSAPublicKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
 
 ### static func decodeFromPem(String)
 
@@ -629,7 +831,7 @@ public static func decodeFromPem(text: String): RSAPublicKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合公钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合公钥头标准时，抛出异常。
 
 ### func encodeToDer()
 
@@ -641,11 +843,11 @@ public override func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 Der 格式公钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 Der 格式公钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encodeToPem()
 
@@ -657,11 +859,11 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 返回 [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) 对象。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) 对象。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encrypt(InputStream, OutputStream, PadOption)
 
@@ -679,7 +881,7 @@ public func encrypt(input: InputStream, output: OutputStream, padType!: PadOptio
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或加密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或加密失败，抛出异常。
 
 ### func toString()
 
@@ -714,7 +916,7 @@ public func verify(hash: Digest, digest: Array<Byte>, sig: Array<Byte>, padType!
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或验证失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或验证失败，抛出异常。
 
 ## class SM2PrivateKey
 
@@ -728,7 +930,7 @@ public class SM2PrivateKey <: PrivateKey {
 
 父类型：
 
-- [PrivateKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-privatekey)
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
 
 ### init()
 
@@ -740,7 +942,7 @@ public init()
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
 
 ### static func decodeDer(DerBlob)
 
@@ -752,7 +954,7 @@ public static func decodeDer(blob: DerBlob): SM2PrivateKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
 
 返回值：
 
@@ -760,7 +962,7 @@ public static func decodeDer(blob: DerBlob): SM2PrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
 
 ### static func decodeDer(DerBlob, ?String)
 
@@ -772,7 +974,7 @@ public static func decodeDer(blob: DerBlob, password!: ?String): SM2PrivateKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的私钥对象。
 - password!: ?String - 解密私钥需要提供的密码，密码为 None 时则不解密。
 
 返回值：
@@ -781,7 +983,7 @@ public static func decodeDer(blob: DerBlob, password!: ?String): SM2PrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败或者参数密码为空字符串，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败或者参数密码为空字符串，抛出异常。
 
 ### static func decodeFromPem(String)
 
@@ -801,7 +1003,7 @@ public static func decodeFromPem(text: String): SM2PrivateKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
 
 ### static func decodeFromPem(String, ?String)
 
@@ -822,7 +1024,7 @@ public static func decodeFromPem(text: String, password!: ?String): SM2PrivateKe
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、参数密码为空字符串、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、解密失败、参数密码为空字符串、字符流不符合 PEM 格式或文件头不符合私钥头标准时，抛出异常。
 
 ### func decrypt(Array\<Byte>)
 
@@ -842,7 +1044,7 @@ public func decrypt(input: Array<Byte>): Array<Byte>
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解密失败，抛出异常。
 
 ### func encodeToDer()
 
@@ -854,11 +1056,11 @@ public func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 DER 格式私钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encodeToDer(?String)
 
@@ -874,16 +1076,16 @@ public func encodeToDer(password!: ?String): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 DER 格式公钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 DER 格式公钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
 
 ### func encodeToPem(?String)
 
 ```cangjie
-public func encodeToPem(password!: ?String): PemEntry 
+public func encodeToPem(password!: ?String): PemEntry
 ```
 
 功能：将加密的私钥编码为 PEM 格式。
@@ -894,11 +1096,11 @@ public func encodeToPem(password!: ?String): PemEntry
 
 返回值：
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
 
 ### func encodeToPem()
 
@@ -910,11 +1112,11 @@ public func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func sign(Array\<Byte>)
 
@@ -934,7 +1136,7 @@ public func sign(data: Array<Byte>): Array<Byte>
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 签名失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 签名失败，抛出异常。
 
 ### func toString()
 
@@ -960,7 +1162,7 @@ public class SM2PublicKey <: PublicKey {
 
 父类型：
 
-- [PublicKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-publickey)
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### init(SM2PrivateKey)
 
@@ -976,7 +1178,7 @@ public init(pri: SM2PrivateKey)
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 初始化失败，抛出异常。
 
 ### static func decodeDer(DerBlob)
 
@@ -988,7 +1190,7 @@ public static func decodeDer(blob: DerBlob): SM2PublicKey
 
 参数：
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 二进制格式的公钥对象。
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 二进制格式的公钥对象。
 
 返回值：
 
@@ -996,7 +1198,7 @@ public static func decodeDer(blob: DerBlob): SM2PublicKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败，抛出异常。
 
 ### static func decodeFromPem(String)
 
@@ -1016,7 +1218,7 @@ public static func decodeFromPem(text: String): SM2PublicKey
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合公钥头标准时，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 解码失败、字符流不符合 PEM 格式或文件头不符合公钥头标准时，抛出异常。
 
 ### func encodeToDer()
 
@@ -1028,11 +1230,11 @@ public func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - 编码后的 Der 格式公钥。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 Der 格式公钥。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encodeToPem()
 
@@ -1044,16 +1246,16 @@ public func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 返回 [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) 对象。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) 对象。
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
 
 ### func encrypt(Array\<Byte>)
 
 ```cangjie
-public func encrypt(input: Array<Byte>): Array<Byte> 
+public func encrypt(input: Array<Byte>): Array<Byte>
 ```
 
 功能：encrypt 给一段数据进行加密，输出密文遵循 ASN.1 编码规则。
@@ -1068,7 +1270,7 @@ public func encrypt(input: Array<Byte>): Array<Byte>
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 加密失败，抛出异常。
 
 ### func toString()
 
@@ -1101,4 +1303,4 @@ public func verify(data: Array<Byte>, sig: Array<Byte>): Bool
 
 异常：
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或验证失败，抛出异常。
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 设置填充模式失败或验证失败，抛出异常。

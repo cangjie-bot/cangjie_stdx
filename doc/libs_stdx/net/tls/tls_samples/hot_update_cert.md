@@ -5,7 +5,7 @@
 <!-- run -->
 ```cangjie
 import std.net.StreamingSocket
-import stdx.crypto.x509.{X509Certificate, PrivateKey}
+import stdx.crypto.common.{Certificate, PrivateKey}
 import stdx.net.tls.*
 
 class MyServer {
@@ -16,12 +16,12 @@ class MyServer {
     }
 
     // 更改带有密钥的证书只会影响新的连接
-    public mut prop certificate: (Array<X509Certificate>, PrivateKey) {
+    public mut prop certificate: ?(Array<Certificate>, PrivateKey) {
         get() {
-            currentConfig.serverCertificate
+            currentConfig.certificate
         }
         set(newCertificate) {
-            currentConfig.serverCertificate = newCertificate
+            currentConfig.certificate = newCertificate
         }
     }
 

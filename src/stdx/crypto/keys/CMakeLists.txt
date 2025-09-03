@@ -12,5 +12,6 @@ set(KEYS_SRCS
         ecdsa.cj
         utils.cj
         sm2.cj
+        keys.cj
         CACHE INTERNAL ""
 )

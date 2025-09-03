@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The extension library `stdx` is an extension module provided by the Cangjie programming language (i.e., a non-core standard library, but an official supplementary feature set). It is a key component of the language ecosystem, supplementing Cangjie with more practical capabilities covering multiple domains, including aspect-oriented programming, compression and decompression, security (secure encryption capabilities/message digest algorithms/Asymmetric encryption and decryption and signature algorithms/digital certificate processing functions), encoding and decoding (base64/hex/json/url), networking (http/tls), logging, unit test extensions, and serialization.
+The extension library `stdx` is an extension module provided by the Cangjie programming language (i.e., a non-core standard library, but an official supplementary feature set). It is a key component of the language ecosystem, supplementing Cangjie with more practical capabilities covering multiple domains, including aspect-oriented programming, compression and decompression, security (secure encryption capabilities/message digest algorithms/Asymmetric encryption and decryption and signature algorithms/digital certificate processing functions), encoding and decoding (base64/hex/json/url), networking (http/tls), logging, unit test extensions, concurrent programming model, non-local control operation and serialization.
 
 Architecture Diagram:
 
@@ -18,6 +18,8 @@ Architecture Diagram:
 - net: Provides network communication and secure transmission functions.
 - serialization: Provides the capability of serialization and deserialization.
 - unittest: Provides the capability to supply test data in serialized input formats when writing unit test code for Cangjie projects.
+- actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
+- effect: Provides a powerful non-local control operation.
 
 ## Operating Instructions
 
@@ -32,10 +34,12 @@ For relevant guidance, please refer to [Development Guide](https://gitcode.com/C
 ├─ doc                          # Directory of STDX library document
 ├─ figures                      # architecture pictures
 ├─ src                          # Directory of STDX package codes                     
-│   └─ stdx                     
+│   └─ stdx
+│       ├── actors              # Provides Actors
 │       ├── aspectCJ            # Provides AOP
-│       ├── compress            # Provides compression and decompression 
+│       ├── compress            # Provides compression and decompression
 │       ├── crypto              # Provide security related capabilities
+|       ├── effect              # Provides user-level APIs for handling the Effect Handler feature. This is an experimental feature and requires the use of a Cangjie compiler that supports this mechanism.
 │       ├── dynamicLoader       # Openssl dynamic loading module
 │       ├── encoding            # Provide JSON and string encoding related capabilities
 │       ├── fuzz                # Provides the Cangjie fuzz engine based on coverage feedback
@@ -124,7 +128,7 @@ Add the following configuration to the `cjpm.toml` file of the code project:
 explain:
 
 - x86_64-w64-mingw32：This configuration item indicates the operating system architecture information of the machine where the code is compiled. This information can be obtained by executing `cjc -v`. Developers should configure according to the actual situation. For example, the output of executing `cjc -v` is as follows, and the configuration is `x86_64-w64-mingw32`.
-  
+
   ```text
   Cangjie Compiler: 0.59.4 (cjnative)
   Target: x86_64-w64-mingw32

@@ -8,7 +8,6 @@
 set(X509_SRCS
     certificate_info.cj
     certificate.cj
-    der_blob.cj
     der_cert.cj
     der_parser.cj
     der_principal.cj
@@ -18,10 +17,6 @@ set(X509_SRCS
     native.cj
     oid_principal.cj
     oid.cj
-    pem_entry.cj
-    pem_formatter.cj
-    pem_parser.cj
-    pem.cj
     serial_number.cj
     signature.cj
     utils.cj
