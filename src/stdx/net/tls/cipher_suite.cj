@@ -8,6 +8,8 @@
 
 package stdx.net.tls
 
+import stdx.net.tls.common.*
+
 public struct CipherSuite <: ToString & Equatable<CipherSuite> {
     CipherSuite(let name: String) {
         if (name.isEmpty()) {
@@ -116,44 +118,22 @@ extend TlsRawSocket {
  * @throws TlsException while cipher suites of TLS1.2 is set failed,
  * or the TLS versions does not contain 1.2.
  */
-func setCipherSuitesV1_2(
-    ctx: CPointer<Ctx>,
-    minVersion: TlsVersion,
-    maxVersion: TlsVersion,
-    cipherSuites_: Array<String>
-): Unit {
-    if (cipherSuites_.isEmpty()) {
+func setCipherSuitesV1_2(ctx: CPointer<Ctx>, cipherSuites: Array<String>): Unit {
+    if (cipherSuites.isEmpty()) {
         return
     }
 
-    let minV = minVersion.toNumericConstant()
-    let maxV = maxVersion.toNumericConstant()
-
-    if ((minV == CJTLS_PROTO_VERSION_BUTT && maxV == CJTLS_PROTO_VERSION_BUTT) || (minV == CJTLS_PROTO_VERSION_1_2 &&
-        maxV == CJTLS_PROTO_VERSION_1_2) || (minV == CJTLS_PROTO_VERSION_1_2 && maxV == CJTLS_PROTO_VERSION_1_3)) {
-        let cipherSuiteString1 = StringBuilder()
-        for (suite in cipherSuites_) {
-            if (!(cipherSuiteString1.size == 0)) {
-                cipherSuiteString1.append(r':')
+    let cipherSuiteStr = String.join(cipherSuites.map(cipherToOpenSslFormat), delimiter: ":")
+    unsafe {
+        let cStr = LibC.mallocCString(cipherSuiteStr)
+        try {
+            let ret = CJ_TLS_SetCipherList(ctx, cStr)
+            if (ret <= 0) {
+                throw TlsException("Failed to set cipher suites of TLS1.2.")
             }
-            cipherSuiteString1.append(cipherToOpenSslFormat(suite))
+        } finally {
+            LibC.free(cStr)
         }
-
-        var ret: Int32
-        unsafe {
-            var cStr = LibC.mallocCString(cipherSuiteString1.toString())
-            try {
-                ret = CJ_TLS_SetCipherList(ctx, cStr)
-            } finally {
-                LibC.free(cStr)
-            }
-        }
-
-        if (ret <= 0) {
-            throw TlsException("Failed to set cipher suites of TLS1.2.")
-        }
-    } else {
-        throw TlsException("Failed to set cipher suites of TLS1.2, the TLS versions does not contain 1.2.")
     }
 }
 
@@ -161,31 +141,22 @@ func setCipherSuitesV1_2(
  * @throws TlsException while cipher suites of TLS1.3 is set failed,
  * or the TLS versions does not contain 1.3.
  */
-func setCipherSuitesV1_3(
-    ctx: CPointer<Ctx>,
-    minVersion: TlsVersion,
-    maxVersion: TlsVersion,
-    cipherSuites: Array<String>
-): Unit {
+func setCipherSuitesV1_3(ctx: CPointer<Ctx>, cipherSuites: Array<String>): Unit {
     if (cipherSuites.isEmpty()) {
         return
     }
-    let minV = minVersion.toNumericConstant()
-    let maxV = maxVersion.toNumericConstant()
-    if ((minV == CJTLS_PROTO_VERSION_BUTT && maxV == CJTLS_PROTO_VERSION_BUTT) || (minV == CJTLS_PROTO_VERSION_1_3 &&
-        maxV == CJTLS_PROTO_VERSION_1_3) || (minV == CJTLS_PROTO_VERSION_1_2 && maxV == CJTLS_PROTO_VERSION_1_3)) {
-        var cipherSuiteString = String.join(cipherSuites, delimiter: ":")
-        var cStr = unsafe { LibC.mallocCString(cipherSuiteString) }
+
+    let cipherSuiteStr = String.join(cipherSuites, delimiter: ":")
+    unsafe {
+        let cStr = LibC.mallocCString(cipherSuiteStr)
         try {
-            let ret = unsafe { CJ_TLS_SetCipherSuites(ctx, cStr) }
+            let ret = CJ_TLS_SetCipherSuites(ctx, cStr)
             if (ret <= 0) {
                 throw TlsException("Failed to set cipher suites of TLS1.3.")
             }
         } finally {
-            unsafe { LibC.free(cStr) }
+            LibC.free(cStr)
         }
-    } else {
-        throw TlsException("Failed to set cipher suites of TLS1.3, the TLS versions does not contain 1.3.")
     }
 }
 

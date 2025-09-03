@@ -24,7 +24,7 @@ Function: Defines the certificate verification handling mode.
 CustomCA(Array<X509Certificate>)
 ```
 
-Function: Indicates verification based on the provided CA list.
+Function: Indicates verification based on the provided CA list and system CAs.
 
 ### Default
 

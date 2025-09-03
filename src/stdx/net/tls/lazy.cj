@@ -9,6 +9,7 @@
 package stdx.net.tls
 
 import std.sync.*
+import stdx.net.tls.common.TlsException
 
 /**
  * Simple concurrent-safe lazy impl. The provided builder in "configure" may

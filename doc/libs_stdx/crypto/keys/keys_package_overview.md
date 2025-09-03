@@ -31,25 +31,27 @@ keys 包提供非对称加密和签名算法，包括 RSA 和 SM2 非对称加�
 
 ### 类
 
-|                 类名              |                功能                 |
-| --------------------------------- | ---------------------------------- |
-| [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivatekey) | ECDSA私钥类。    |
-| [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublickey) | ECDSA公钥类。    |
-| [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivatekey) | RSA私钥类。    |
-| [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublickey) | RSA公钥类。    |
-| [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privatekey) | SM2私钥类。    |
-| [SM2PublicKey](./keys_package_api/keys_package_classes.md#class-sm2publickey) | SM2公钥类。    |
+| 类名                                                                                    | 功能                           |
+| --------------------------------------------------------------------------------------- | ------------------------------ |
+| [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivatekey)     | ECDSA私钥类。                  |
+| [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublickey)       | ECDSA公钥类。                  |
+| [GeneralPrivateKey](./keys_package_api/keys_package_classes.md#class-generalprivatekey) | 通用的私钥参数加解密功能实现。 |
+| [GeneralPublicKey](./keys_package_api/keys_package_classes.md#class-generalpublickey)   | 通用的公钥参数加解密功能实现。 |
+| [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivatekey)         | RSA私钥类。                    |
+| [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublickey)           | RSA公钥类。                    |
+| [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privatekey)         | SM2私钥类。                    |
+| [SM2PublicKey](./keys_package_api/keys_package_classes.md#class-sm2publickey)           | SM2公钥类。                    |
 
 ### 枚举
 
-| 枚举名                                                                                          | 功能                 |
-|----------------------------------------------------------------------------------------------|--------------------|
-| [Curve](./keys_package_api/keys_package_enums.md#enum-curve)                  | 枚举类型 Curve 用于选择生成 ECDSA 密钥时使用的椭圆曲线类型。 |
-| [PadOption](./keys_package_api/keys_package_enums.md#enum-padoption)                  | 用于设置 RSA 的填充模式。 |
+| 枚举名                                                               | 功能                                                         |
+| -------------------------------------------------------------------- | ------------------------------------------------------------ |
+| [Curve](./keys_package_api/keys_package_enums.md#enum-curve)         | 枚举类型 Curve 用于选择生成 ECDSA 密钥时使用的椭圆曲线类型。 |
+| [PadOption](./keys_package_api/keys_package_enums.md#enum-padoption) | 用于设置 RSA 的填充模式。                                    |
 
 ### 结构体
 
-| 结构体名                                                                                |           功能           |
-|-------------------------------------------------------------------------------------| ------------------------ |
-| [OAEPOption](./keys_package_api/keys_package_structs.md#struct-oaepoption)                     |  最优非对称加密填充。 |
-| [PSSOption](./keys_package_api/keys_package_structs.md#struct-pssoption)                     |  概率签名方案。 |
+| 结构体名                                                                   | 功能                 |
+| -------------------------------------------------------------------------- | -------------------- |
+| [OAEPOption](./keys_package_api/keys_package_structs.md#struct-oaepoption) | 最优非对称加密填充。 |
+| [PSSOption](./keys_package_api/keys_package_structs.md#struct-pssoption)   | 概率签名方案。       |

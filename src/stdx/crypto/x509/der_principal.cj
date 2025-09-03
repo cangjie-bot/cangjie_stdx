@@ -9,6 +9,7 @@
 package stdx.crypto.x509
 
 import std.collection.{filter, map}
+import stdx.crypto.common.*
 
 class X500Principal <: ToString {
     let content: DerField

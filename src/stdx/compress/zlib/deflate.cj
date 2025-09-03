@@ -39,7 +39,7 @@ class Deflate {
      *
      * @throws ZlibException if failed to malloc memory for zlib stream or failed to init encode resource.
      */
-    public init(
+    init(
         wrap!: WrapType = DeflateFormat,
         level!: CompressLevel = DefaultCompression,
         wbits!: WindowBits = DefaultWindowBits,

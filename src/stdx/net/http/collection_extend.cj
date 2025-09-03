@@ -13,7 +13,7 @@ import std.collection.concurrent.*
 import std.sync.AtomicBool
 
 extend<K, V> HashMap<K, V> {
-    public func computeIfAbsent(key: K, genValByKey: (K) -> V): V {
+    func computeIfAbsent(key: K, genValByKey: (K) -> V): V {
         match (get(key)) {
             case Some(val) => return val
             case None =>

@@ -105,6 +105,7 @@ content-length: 0
 <!-- run -->
 ```cangjie
 import stdx.net.http.*
+import stdx.net.tls.*
 import std.net.*
 import std.sync.*
 

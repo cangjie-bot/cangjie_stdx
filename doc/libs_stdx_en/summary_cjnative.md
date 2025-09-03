@@ -1,4 +1,8 @@
 - [Cangjie Programming Language Extension Libraries API](libs_overview.md)
+    - [stdx.actors](actors/actors_package_overview.md)
+        - [类](actors/actors_package_api/actors_package_classes.md)
+    - [stdx.actors.macros](actors/macros/macros_package_overview.md)
+        - [宏](actors/macros/macros_package_api/macros_package_macros.md)
     - [stdx.aspectCJ](aspectCJ/aspectCJ_package_overview.md)
         - [Classes](aspectCJ/aspectCJ_package_api/aspectCJ_package_classes.md)
         - [Tutorial Examples]()

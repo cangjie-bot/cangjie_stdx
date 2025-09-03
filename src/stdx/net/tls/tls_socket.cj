@@ -8,11 +8,13 @@
 
 package stdx.net.tls
 
+import stdx.net.tls.common.*
 import stdx.crypto.x509.*
+import stdx.crypto.common.*
 import std.net.{StreamingSocket, SocketAddress}
 import std.sync.*
 
-public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
+public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
     private static let idCounter = AtomicInt64(1)
     static let defaultTimeout: Duration = Duration.second * 30
 
@@ -21,22 +23,11 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
 
     // for now it's size is 1 but in theory server may provide more sessions
     // and it actually does in TLS 1.3
-    private let negotiatedSessions_ = AtomicOptionReference<Box<TlsSession>>()
+    private let negotiatedSessions_ = AtomicOptionReference<Box<TlsClientSession>>()
+    private var _handshakeResult: ?TlsSocketHandshakeResult = None
 
     var resumedSessionId: ?Array<Byte> = None
     var newSessionId: ?Array<Byte> = None
-
-    mut prop negotiatedSession: ?TlsSession {
-        get() {
-            negotiatedSessions_.load()?.value
-        }
-        set(value) {
-            match (value) {
-                case Some(value) => negotiatedSessions_.store(Box(value))
-                case None => throw Exception("Removing sessions is not allowed.")
-            }
-        }
-    }
 
     private init(socket: StreamingSocket, handshake: HandshakeConfig) {
         this.state = AtomicReference<TlsSocketState>(SocketReady(socket, handshake))
@@ -44,14 +35,14 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
 
     /**
      * Creates a client TLS stream connected to the specified peer.
-     * Can be optionally configured to resume a TLS session by TlsSession instance.
+     * Can be optionally configured to resume a TLS session by TlsClientSession instance.
      * However having a session doesn't guarantee that it will be successfully resumed,
      * in which case a full TLS handshake will happen and handshake() still may fail for some reason.
      * For example some servers may reject old sessions after restart or after timeout.
      */
     public static func client(
         socket: StreamingSocket,
-        session!: ?TlsSession = None,
+        session!: ?TlsClientSession = None,
         clientConfig!: TlsClientConfig = TlsClientConfig()
     ): TlsSocket {
         TlsSocket(socket, HandshakeConfig.Client(clientConfig, session))
@@ -64,10 +55,10 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
      */
     public static func server(
         socket: StreamingSocket,
-        sessionContext!: ?TlsSessionContext = None,
+        session!: ?TlsServerSession = None,
         serverConfig!: TlsServerConfig
     ): TlsSocket {
-        TlsSocket(socket, HandshakeConfig.Server(serverConfig, sessionContext))
+        TlsSocket(socket, HandshakeConfig.Server(serverConfig, session))
     }
 
     /**
@@ -77,6 +68,30 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
     public prop socket: StreamingSocket {
         get() {
             tryGetSocket(state.load()) ?? SocketClosed.throwAlreadyClosed()
+        }
+    }
+
+    public prop handshakeResult: ?TlsHandshakeResult {
+        get() {
+            _handshakeResult ?? None
+        }
+    }
+
+    mut prop negotiatedSession: ?TlsClientSession {
+        get() {
+            negotiatedSessions_.load()?.value
+        }
+        set(value) {
+            match (value) {
+                case Some(value) => negotiatedSessions_.store(Box(value))
+                case None => throw Exception("Removing sessions is not allowed.")
+            }
+        }
+    }
+
+    public prop certificate: Array<X509Certificate> {
+        get() {
+            connected.getOrThrow(SocketClosed.alreadyClosedException).certificate ?? []
         }
     }
 
@@ -125,7 +140,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
     /**
      * Negotiated ALPN protocol name
      */
-    public prop alpnProtocolName: ?String {
+    prop alpnProtocolName: ?String {
         get() {
             let connected = connected ?? SocketClosed.throwAlreadyClosed()
             connected.stream.getAlpnSelected()
@@ -137,7 +152,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
      *
      * Works only after successful handshake()
      */
-    public prop tlsVersion: TlsVersion {
+    prop tlsVersion: TlsVersion {
         get() {
             getVersion()
         }
@@ -158,46 +173,42 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
      *
      * On server it is always None because server can't initiate a session resumption.
      */
-    public prop session: ?TlsSession {
+    prop session: ?TlsClientSession {
         get() {
             negotiatedSession
         }
     }
 
     // negotiated domain name (SNI)
-    public prop domain: ?String {
+    prop domain: ?String {
         get() {
             getHostName()
         }
     }
 
     /**
-     * Server certificate chain that is either provided by the server or preconfigured in the server config
-     * this is optional as server may potentially skip sending cert chain at all
-     * that is usually not valid but could be allowed by providing a custom TLS client config accepting such servers
-     */
-    public prop serverCertificate: Array<X509Certificate> {
-        get() {
-            connected.getOrThrow(SocketClosed.alreadyClosedException).serverCertificate
-        }
-    }
-
-    /**
-     * Client certificate that is provided by a client or `None`.
-     * Please note that it could be missing when the client session has been resumed
-     */
-    public prop clientCertificate: ?Array<X509Certificate> {
-        get() {
-            connected.getOrThrow(SocketClosed.alreadyClosedException).clientCertificate
-        }
-    }
-
-    /**
      * Peer certificate if provided by the peer or `None`
      */
-    public prop peerCertificate: ?Array<X509Certificate> {
+    prop peerCertificate: ?Array<X509Certificate> {
         get() {
-            connected.getOrThrow(SocketClosed.alreadyClosedException).peerCertificate
+            let connState = connected.getOrThrow(SocketClosed.alreadyClosedException)
+            if (let Some(v) <- connState.peerCertificate) {
+                return v
+            }
+ 
+            if (connState.isClient) {
+                return None
+            }
+ 
+            // some resumed conn may be faster than full handshake conn, check again
+            if (let Some(id) <- resumedSessionId && let Some(store) <- connState.bridge.sessionStore) {
+                if (let Some(holder) <- store.tryGetHolder(SessionKey(id))) {
+                    connState.setPeerCerts(holder.getCerts())
+                    return holder.getCerts()
+                }
+            }
+ 
+            return None
         }
     }
 
@@ -207,7 +218,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
      *
      * @throws TlsException if handshake has not yet been performed or socket already closed.
      */
-    public prop cipherSuite: CipherSuite {
+    prop cipherSuite: CipherSuite {
         get() {
             let state = connected ?? SocketClosed.throwAlreadyClosed()
             state.stream.getCipherSuite()
@@ -220,7 +231,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
      * either client or server handshake
      * this could be done only once since renegotiating handshake is not supported
      */
-    public func handshake(timeout!: ?Duration = None): Unit {
+    public func handshake(timeout!: ?Duration = None): TlsHandshakeResult {
         let (started, handshake) = tryStartHandshake()
 
         let success = try {
@@ -242,6 +253,10 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
             success.close()
             SocketClosed.throwAlreadyClosed()
         }
+
+        let result = TlsSocketHandshakeResult(this)
+        _handshakeResult = result
+        result
     }
 
     /**
@@ -308,6 +323,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
     }
 
     private func close(selfClosed!: Bool) {
+        _handshakeResult = None
         do {
             match (state.load()) {
                 case closed: SocketClosed where !closed.selfClosed => return
@@ -352,14 +368,14 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
         let state = connected ?? SocketClosed.throwAlreadyClosed()
         let versionString = state.withStream<CString> {stream => unsafe { CJ_TLS_GetVersion(stream) }}
         if (versionString.isNull()) {
-            return TlsVersion.Unknown
+            throw TlsException("Unknown TLS version.")
         }
         // note: we don't own this CString so no need to invoke free()
 
         match (versionString.toString()) {
             case "TLSv1.2" => TlsVersion.V1_2
             case "TLSv1.3" => TlsVersion.V1_3
-            case _ => TlsVersion.Unknown
+            case _ => throw TlsException("Unknown TLS version.")
         }
     }
 
@@ -425,7 +441,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
         socket: StreamingSocket,
         timeout: ?Duration,
         cfg: TlsClientConfig,
-        session: ?TlsSession
+        session: ?TlsClientSession
     ): SocketConnected {
         let timeoutsBefore = (socket.readTimeout, socket.writeTimeout)
         socket.writeTimeout = timeout
@@ -442,7 +458,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
                 if (let Some(session) <- session) {
                     stream.setSession(session)
                 }
-                if (let Some(hostname) <- cfg.domain) {
+                if (let Some(hostname) <- cfg.serverName) {
                     if (!hostname.isEmpty()) {
                         stream.setRequestedHostName(hostname)
                     }
@@ -483,7 +499,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
         socket: StreamingSocket,
         timeout: Duration,
         cfg: TlsServerConfig,
-        sessionContext: ?TlsSessionContext
+        sessionContext: ?TlsServerSession
     ): SocketConnected {
         unsafe {
             let timeoutsBefore = (socket.readTimeout, socket.writeTimeout)
@@ -503,6 +519,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
                 try {
                     Bridge.register(bridge)
                     stream.handshake()
+                    // The server certificate is not supposed to be null
                     let myCertificate = cfg.serverCertificate[0]
                     let socketConnected = SocketConnected(stream, socket, myCertificate, false, bridge)
 
@@ -548,5 +565,49 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable {
             }
         }
         return certsOp
+    }
+}
+
+class TlsSocketHandshakeResult <: TlsHandshakeResult {
+    let _socket: TlsSocket
+
+    init(socket: TlsSocket) {
+        _socket = socket
+    }
+
+    public prop version: TlsVersion {
+        get() {
+            _socket.tlsVersion
+        }
+    }
+
+    public prop cipherSuite: String {
+        get() {
+            _socket.cipherSuite.toString()
+        }
+    }
+
+    public prop peerCertificate: Array<Certificate> {
+        get() {
+           _socket.peerCertificate?.map({c => (c as Certificate).getOrThrow()}) ?? []
+        }
+    }
+
+    public prop session: ?TlsSession {
+        get() {
+            _socket.session ?? None
+        }
+    }
+
+    public prop alpnProtocol: String {
+        get() {
+            _socket.alpnProtocolName ?? ""
+        }
+    }
+
+    public prop serverName: String {
+        get() {
+            _socket.domain ?? ""
+        }
     }
 }

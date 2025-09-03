@@ -218,7 +218,7 @@ class BufferedConn <: StreamingSocket {
         var len = bufferedReader.read(buf[readLen..buf.size])
         readLen += len
         while (readLen < buf.size) {
-            // read from socket 
+            // read from socket
             len = socket.read(buf[readLen..buf.size])
             if (len == 0) {
                 throw ConnectionException("Socket is closed.")

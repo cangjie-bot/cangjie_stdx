@@ -241,14 +241,14 @@ public func get(url: String): HttpResponse
 ### func getTlsConfig()
 
 ```cangjie
-public func getTlsConfig(): ?TlsClientConfig
+public func getTlsConfig(): ?TlsConfig
 ```
 
 功能：获取客户端设定的 TLS 层配置。
 
 返回值：
 
-- ?[TlsClientConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsclientconfig) - 客户端设定的 TLS 层配置，如果没有设置则返回 None。
+- ?[TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 客户端设定的 TLS 层配置，如果没有设置则返回 None。
 
 ### func head(String)
 
@@ -465,7 +465,7 @@ public func send(req: HttpRequest): HttpResponse
 - SocketException - Socket 连接出现错误时抛此异常。
 - [ConnectionException](http_package_exceptions.md#class-connectionexception) - 从连接中读数据时对端已关闭连接抛此异常。
 - SocketTimeoutException - Socket 连接超时抛此异常。
-- [TlsException](../../tls/tls_package_api/tls_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常抛此异常。
+- [TlsException](../../tls/common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常抛此异常。
 - [HttpException](http_package_exceptions.md#class-httpexception) - 当用户未使用 http 库提供的 API 升级 [WebSocket](http_package_classes.md#class-websocket) 时抛此异常。
 - [HttpTimeoutException](http_package_exceptions.md#class-httptimeoutexception) - 请求超时或读 [HttpResponse](http_package_classes.md#class-httpresponse).body 超时抛此异常。
 
@@ -503,7 +503,7 @@ public func upgrade(req: HttpRequest): (HttpResponse, ?StreamingSocket)
     - 发送带 body 的 TRACE 请求；
 - SocketException，[ConnectionException](http_package_exceptions.md#class-connectionexception) - Socket 连接出现异常或被关闭；
 - SocketTimeoutException - Socket 连接超时；
-- [TlsException](../../tls/tls_package_api/tls_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常。
+- [TlsException](../../tls/common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常。
 
 ## class ClientBuilder
 
@@ -785,17 +785,17 @@ public func readTimeout(timeout: Duration): ClientBuilder
 
 - [ClientBuilder](http_package_classes.md#class-clientbuilder) - 当前 [ClientBuilder](http_package_classes.md#class-clientbuilder) 实例的引用。
 
-### func tlsConfig(TlsClientConfig)
+### func tlsConfig(TlsConfig)
 
 ```cangjie
-public func tlsConfig(config: TlsClientConfig): ClientBuilder
+public func tlsConfig(config: TlsConfig): ClientBuilder
 ```
 
 功能：设置 TLS 层配置，默认不对其进行设置。
 
 参数：
 
-- config: [TlsClientConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsclientconfig) - 设定支持 tls 客户端需要的配置信息。
+- config: [TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 设定支持 tls 客户端需要的配置信息。
 
 返回值：
 
@@ -1134,12 +1134,12 @@ public class HttpContext
 ### prop clientCertificate
 
 ```cangjie
-public prop clientCertificate: ?Array<X509Certificate>
+public prop clientCertificate: ?Array<Certificate>
 ```
 
 功能：获取 Http 客户端证书。
 
-类型：?Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)>
+类型：?Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>
 
 ### prop request
 
@@ -2813,14 +2813,14 @@ public func closeGracefully(): Unit
 ### func getTlsConfig()
 
 ```cangjie
-public func getTlsConfig(): ?TlsServerConfig
+public func getTlsConfig(): ?TlsConfig
 ```
 
 功能：获取服务器设定的 TLS 层配置。
 
 返回值：
 
-- ?[TlsServerConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsclientconfig) - 服务端设定的 TLS 层配置，如果没有设置则返回 None。
+- ?[TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 服务端设定的 TLS 层配置，如果没有设置则返回 None。
 
 ### func onShutdown(() -> Unit)
 
@@ -2919,17 +2919,17 @@ h2 请求优先级：
 
 - SocketException - 当端口监听失败时，抛出异常。
 
-### func updateCA(Array\<X509Certificate>)
+### func updateCA(Array\<Certificate>)
 
 ```cangjie
-public func updateCA(newCa: Array<X509Certificate>): Unit
+public func updateCA(newCa: Array<Certificate>): Unit
 ```
 
 功能：对 CA 证书进行热更新。
 
 参数：
 
-- newCa: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - CA证书。
+- newCa: Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)> - CA 证书。
 
 异常：
 
@@ -2953,18 +2953,18 @@ public func updateCA(newCaFile: String): Unit
 - IllegalArgumentException - 参数包含空字符时抛出异常。
 - [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig时抛出异常。
 
-### func updateCert(Array\<X509Certificate>, PrivateKey)
+### func updateCert(Array\<Certificate>, PrivateKey)
 
 ```cangjie
-public func updateCert(certChain: Array<X509Certificate>, certKey: PrivateKey): Unit
+public func updateCert(certChain: Array<Certificate>, certKey: PrivateKey): Unit
 ```
 
 功能：对 TLS 证书进行热更新。
 
 参数：
 
-- certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - 证书链。
-- certKey: [PrivateKey](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-privatekey) - 证书匹配的私钥。
+- certChain: Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)> - 证书链。
+- certKey: [PrivateKey](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 证书匹配的私钥。
 
 异常：
 
@@ -3372,17 +3372,17 @@ public func servicePoolConfig(cfg: ServicePoolConfig): ServerBuilder
 
 - [ServerBuilder](http_package_classes.md#class-serverbuilder) - 当前 [ServerBuilder](http_package_classes.md#class-serverbuilder) 的引用。
 
-### func tlsConfig(TlsServerConfig)
+### func tlsConfig(TlsConfig)
 
 ```cangjie
-public func tlsConfig(config: TlsServerConfig): ServerBuilder
+public func tlsConfig(config: TlsConfig): ServerBuilder
 ```
 
 功能：设置 TLS 层配置，默认不对其进行设置。
 
 参数：
 
-- config: [TlsServerConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsserverconfig) - 设定支持 tls 服务所需要的配置信息。
+- config: [TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 设定支持 tls 服务所需要的配置信息。
 
 返回值：
 
@@ -3458,7 +3458,7 @@ public prop subProtocol: String
 ```cangjie
 public static func upgradeFromClient(client: Client, url: URL,
  version!: Protocol = HTTP1_1,
- subProtocols!: ArrayList<String> = ArrayList<String>(), 
+ subProtocols!: ArrayList<String> = ArrayList<String>(),
  headers!: HttpHeaders = HttpHeaders()): (WebSocket, HttpHeaders)
 ```
 

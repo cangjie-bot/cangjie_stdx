@@ -10,7 +10,6 @@ package stdx.net.http
 
 import stdx.encoding.base64.toBase64String
 import stdx.encoding.url.{URL, Form}
-import stdx.net.tls.*
 import std.collection.*
 import std.convert.Parsable
 import std.fs.*
@@ -358,7 +357,7 @@ func sizeOf(inputStream: InputStream): ?Int64 {
 class HttpTimer {
     var timer: ?Timer = None
 
-    public static let empty: HttpTimer = HttpTimer()
+    static let empty: HttpTimer = HttpTimer()
 
     private init() {}
 

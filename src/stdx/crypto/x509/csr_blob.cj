@@ -8,6 +8,8 @@
 
 package stdx.crypto.x509
 
+import stdx.crypto.common.*
+
 class X509CsrBlob <: Equatable<X509CsrBlob> & Hashable {
     let content: DerBlob
     private let csrInfo: DerSequence
@@ -109,7 +111,7 @@ func getX509CsrDnsNames(content: DerBlob): Array<String> {
     runOnRawPtr(content.content) {
         rawPtr: CPointer<Byte>, size: UIntNative => getX509CsrDnsNames(rawPtr, size, result)
     }
-    cloneX509Result(result)
+    cloneAndFreeX509Result(result)
 }
 
 /**
@@ -120,7 +122,7 @@ func getX509CsrEmailAddresses(content: DerBlob): Array<String> {
     runOnRawPtr(content.content) {
         rawPtr: CPointer<Byte>, size: UIntNative => getX509CsrEmailAddresses(rawPtr, size, result)
     }
-    cloneX509Result(result)
+    cloneAndFreeX509Result(result)
 }
 
 /**
@@ -131,5 +133,5 @@ func getX509CsrIpAddresses(content: DerBlob): Array<IP> {
     runOnRawPtr(content.content) {
         rawPtr: CPointer<Byte>, size: UIntNative => getX509CsrIpAddresses(rawPtr, size, result)
     }
-    cloneX509Result(result)
+    cloneAndFreeX509Result(result)
 }

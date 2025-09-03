@@ -36,7 +36,7 @@ class Inflate {
      *
      * @throws ZlibException if failed to malloc memory for zlib stream or failed to init decode resource.
      */
-    public init(wrap!: WrapType = DeflateFormat, wbits!: WindowBits = DefaultWindowBits) {
+    init(wrap!: WrapType = DeflateFormat, wbits!: WindowBits = DefaultWindowBits) {
         zlibStreamCPtr = unsafe { CJ_CreateZlibStream() }
         if (zlibStreamCPtr.isNull()) {
             throw ZlibException("Failed malloc in C code!")

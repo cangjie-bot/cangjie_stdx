@@ -1,9 +1,82 @@
-# x509 包
+# 类
+
+## class GeneralDHParameters
+
+```cangjie
+public class GeneralDHParameters <: DHParameters
+```
+
+功能：通用的 DH 密钥参数加解密功能实现。
+
+父类型：
+
+- [DHParameters](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-dhparameters)
+
+### static func decodeDer(DerBlob)
+
+```cangjie
+static func decodeDer(encoded: DerBlob): DHParameters
+```
+
+功能：将 DH 密钥参数从 DER 格式解码。
+
+> **说明：**
+>
+> - DH（Diffie-Hellman）密钥交换协议是一种确保共享 KEY 安全穿越不安全网络的方法。
+> - DER 和 PEM 是两种常见的编码格式。
+
+参数：
+
+- encoded: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DER 格式的 DH 密钥参数对象。
+
+返回值：
+
+- [DHParameters](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-dhparameters) - 由 DER 格式解码出的 DH 密钥参数。
+
+### static func decodeFromPem(String)
+
+```cangjie
+static func decodeFromPem(text: String): DHParameters
+```
+
+功能：将 DH 密钥参数从 PEM 格式解码。
+
+参数：
+
+- text: String - PEM 格式的 DH 密钥参数字符流。
+
+返回值：
+
+- [DHParameters](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-dhparameters) - 由 PEM 格式解码出的 DH 密钥参数。
+
+### func encodeToDer()
+
+```cangjie
+func encodeToDer(): DerBlob
+```
+
+功能：将 DH 密钥参数编码为 DER 格式。
+
+返回值：
+
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DH 密钥参数数据 DER 格式编码生成的对象。
+
+### func encodeToPem()
+
+```cangjie
+func encodeToPem(): PemEntry
+```
+
+功能：将 DH 密钥参数编码为 PEM 格式。
+
+返回值：
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - DH 密钥参数数据 PEM 格式编码生成的对象。
 
 ## class X509Certificate
 
 ```cangjie
-public class X509Certificate <: Equatable<X509Certificate> & Hashable & ToString {
+public class X509Certificate <: Certificate & Equatable<X509Certificate> & Hashable & ToString {
     public init(
         certificateInfo: X509CertificateInfo,
         parent!: X509Certificate,
@@ -18,6 +91,7 @@ public class X509Certificate <: Equatable<X509Certificate> & Hashable & ToString
 
 父类型：
 
+- [Certificate](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)
 - Equatable\<[X509Certificate](#class-x509certificate)>
 - Hashable
 - ToString
@@ -110,7 +184,7 @@ public prop publicKey: PublicKey
 
 功能：解析数字证书的公钥。
 
-类型：[PublicKey](x509_package_interfaces.md#interface-publickey)
+类型：[PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### prop publicKeyAlgorithm
 
@@ -180,8 +254,8 @@ public init(
 
 - certificateInfo: [X509CertificateInfo](x509_package_structs.md#struct-x509certificateinfo) - 数字证书配置信息。
 - parent!: [X509Certificate](x509_package_classes.md#class-x509certificate) - 颁发者证书。
-- publicKey!: [PublicKey](x509_package_interfaces.md#interface-publickey) - 申请人公钥，仅支持 RSA、ECDSA 和 DSA 公钥。
-- privateKey!: [PrivateKey](x509_package_interfaces.md#interface-privatekey) - 颁发者私钥，仅支持 RSA、ECDSA 和 DSA 私钥。
+- publicKey!: [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey) - 申请人公钥，仅支持 RSA、ECDSA 和 DSA 公钥。
+- privateKey!: [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 颁发者私钥，仅支持 RSA、ECDSA 和 DSA 私钥。
 - signatureAlgorithm!: ?[SignatureAlgorithm](./x509_package_enums.md#enum-signaturealgorithm) - 证书签名算法，默认值为 None，使用默认值时默认的摘要类型是 [SHA256](../../digest/digest_package_api/digest_package_classes.md#class-sha256)。
 
 异常：
@@ -238,7 +312,7 @@ public func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](x509_package_structs.md#struct-derblob) - 编码后的 Der 格式的数字证书。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 Der 格式的数字证书。
 
 ### func encodeToPem()
 
@@ -250,7 +324,7 @@ public func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](x509_package_structs.md#struct-pementry) - 编码后的 PEM 格式的数字证书。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 编码后的 PEM 格式的数字证书。
 
 ### func hashCode()
 
@@ -403,7 +477,7 @@ public prop publicKey: PublicKey
 
 功能：解析数字证书签名请求的公钥。
 
-类型：[PublicKey](x509_package_interfaces.md#interface-publickey)
+类型：[PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### prop publicKeyAlgorithm
 
@@ -459,7 +533,7 @@ public init(
 
 参数：
 
-- privateKey: [PrivateKey](x509_package_interfaces.md#interface-privatekey) - 私钥，仅支持 RSA、ECDSA 和 DSA 私钥。
+- privateKey: [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 私钥，仅支持 RSA、ECDSA 和 DSA 私钥。
 - certificateRequestInfo!: ?[X509CertificateRequestInfo](x509_package_structs.md#struct-x509certificaterequestinfo) - 数字证书签名信息，默认值为 None。
 - signatureAlgorithm!: ?[SignatureAlgorithm](./x509_package_enums.md#enum-signaturealgorithm) - 证书签名算法，默认值为 None，使用默认值时默认的摘要类型是 [SHA256](../../digest/digest_package_api/digest_package_classes.md#class-sha256)。
 
@@ -477,7 +551,7 @@ public static func decodeFromDer(der: DerBlob): X509CertificateRequest
 
 参数：
 
-- der: [DerBlob](x509_package_structs.md#struct-derblob) - DER 格式的二进制数据。
+- der: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - DER 格式的二进制数据。
 
 返回值：
 
@@ -517,7 +591,7 @@ public func encodeToDer(): DerBlob
 
 返回值：
 
-- [DerBlob](x509_package_structs.md#struct-derblob) - 编码后的 Der 格式的数字证书签名请求。
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - 编码后的 Der 格式的数字证书签名请求。
 
 ### func encodeToPem()
 
@@ -529,7 +603,7 @@ public func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](x509_package_structs.md#struct-pementry) - 编码后的 PEM 格式的数字证书签名请求。
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 编码后的 PEM 格式的数字证书签名请求。
 
 ### func hashCode()
 
