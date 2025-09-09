@@ -5,6 +5,15 @@
 #
 # See https://cangjie-lang.cn/pages/LICENSE for license information.
 
+if(OHOS)
+set(LOGGER_SRCS
+    common_logger_ohos.cj
+    json_logger.cj
+    str_ext.cj
+    text_logger.cj
+    simple_logger.cj
+    CACHE INTERNAL "")
+else()
 set(LOGGER_SRCS
     common_logger.cj
     json_logger.cj
@@ -12,3 +21,4 @@ set(LOGGER_SRCS
     text_logger.cj
     simple_logger.cj
     CACHE INTERNAL "")
+endif()
