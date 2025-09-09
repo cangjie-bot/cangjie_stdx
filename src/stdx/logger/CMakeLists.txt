@@ -5,10 +5,20 @@
 #
 # See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-set(LOGGER_SRCS
-    common_logger.cj
-    json_logger.cj
-    str_ext.cj
-    text_logger.cj
-    simple_logger.cj
-    CACHE INTERNAL "")
+if(OHOS)
+    set(LOGGER_SRCS
+        common_logger_ohos.cj
+        json_logger.cj
+        str_ext.cj
+        text_logger.cj
+        simple_logger.cj
+        CACHE INTERNAL "")
+else()
+    set(LOGGER_SRCS
+        common_logger.cj
+        json_logger.cj
+        str_ext.cj
+        text_logger.cj
+        simple_logger.cj
+        CACHE INTERNAL "")
+endif()
