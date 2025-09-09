@@ -445,12 +445,19 @@ add_library(stdx.log STATIC ${output_cj_object_dir}/stdx/log.o)
 set_target_properties(stdx.log PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.log DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
+if(OHOS)
+    set(hilog_flag -L $ENV{OHOS_ROOT}/prebuilts/ohos-sdk/linux/11/native/sysroot/usr/lib/${TRIPLE} -llibhilog_ndk.z.so)
+else()
+    set(hilog_flag)
+endif()
+
 make_cangjie_lib(
     logger IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}Logger
     CANGJIE_STDX_LIB_DEPENDS log encoding.json.stream
     CANGJIE_STD_LIB_LINK std-core std-collection std-collection.concurrent std-io std-sync std-time std-sort std-math
-    OBJECTS ${output_cj_object_dir}/stdx/logger.o)
+    OBJECTS ${output_cj_object_dir}/stdx/logger.o
+    FLAGS ${hilog_flag})
 
 add_library(stdx.logger STATIC ${output_cj_object_dir}/stdx/logger.o)
 set_target_properties(stdx.logger PROPERTIES LINKER_LANGUAGE C)
@@ -525,7 +532,6 @@ add_cangjie_library(
     cangjie${BACKEND_TYPE}Logger
     NO_SUB_PKG
     IS_STDXLIB
-    IS_PACKAGE
     IS_CJNATIVE_BACKEND
     PACKAGE_NAME "logger"
     MODULE_NAME "stdx"
