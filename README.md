@@ -82,7 +82,7 @@ cjc -v
 Download the source code
 
 ```bash
-git clone https://gitcode.com/Cangjie/cangjie_stdx.git
+git clone https://gitcode.com/Cangjie/cangjie_stdx.git -b dev
 ```
 
 Enter the project directory, and run the following commands:
