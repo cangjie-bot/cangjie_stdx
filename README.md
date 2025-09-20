@@ -1,4 +1,4 @@
-# Cangjie stdx
+# Cangjie Programming Language - Extension Library (stdx)
 
 ## Introduction
 
@@ -21,10 +21,17 @@ Architecture Diagram:
 - actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
 - effect: Provides a powerful non-local control operation.
 
+> Usage of Third-Party Libraries​
+> - `zlib` is used in the extension library `compress`. It is used as a source code dependency and will be compiled and integrated into the binary release package.​
+> - `libboundscheck` is used in the extension libraries `crypto`, `fuzz`, and `net`. It is used as a source code dependency and will be compiled and integrated into the binary release package.​
+> - `OpenSSL` is used in the extension libraries `crypto` and `net`. It uses dynamic loading (dlopen/LoadLibrary) of system dynamic libraries and does not depend on source code.
+
 ## Operating Instructions
 
 For APIs related to stdx, please refer to [API Interface Description](./doc/libs_stdx_en/summary_cjnative.md).
 For relevant guidance, please refer to [Development Guide](https://gitcode.com/Cangjie/cangjie_docs/).
+
+The standalone build outputs of stdx must be used together with the cjc compiler, runtime, and standard library (std), and the complete bundle runs out-of-the-box on Linux, macOS, Windows, and OpenHarmony systems.
 
 ## Project Directory
 
