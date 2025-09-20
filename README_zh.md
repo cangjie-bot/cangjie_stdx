@@ -1,30 +1,35 @@
-# 仓颉编程语言 stdx
+# 仓颉编程语言 - 扩展库（stdx）
 
 ## 简介
 
-拓展库 `stdx` 是仓颉编程语言提供的拓展模块（即非核心的标准库，但官方提供的附加功能集），是该语言生态中的重要组成部分，为仓颉补充了更多实用能力，涵盖面向切面编程、压缩和解压缩、安全（安全加密能力/消息摘要算法/非对称加解密和签名算法/数字证书处理功能）、编解码（base64/hex/json/url）、网络（http/tls）、日志、单元测试拓展、序列化、并发编程模型、非局部控制操作等多个领域。 
+仓颉编程语言扩展库（stdx） 是仓颉编程语言提供的拓展模块（即非核心的标准库，但官方提供的附加功能集），是该语言生态中的重要组成部分，为仓颉补充了更多实用能力，涵盖面向切面编程、压缩和解压缩、安全（安全加密能力/消息摘要算法/非对称加解密和签名算法/数字证书处理功能）、编解码（base64/hex/json/url）、网络（http/tls）、日志、单元测试拓展、序列化、并发编程模型、非局部控制操作等多个领域。 
 
 架构图：
 
 ![](figures/stdx_Architecture_Diagram_zh.png)
 
-- aspectCJ: 提供了 Cangjie 中面向切面编程的相关注解。
-- compress: 提供了压缩解压功能。
-- crypto: 提供了密码学操作的工具库。
-- encoding: 提供了数据编码与解码的基础工具库。
-- fuzz: 提供了一种自动化软件测试方法。
-- log: 提供了一个单一的日志 API。
-- logger: 提供了文本格式和 JSON 格式日志打印功能。
-- net: 提供了网络通信和安全传输功能。
-- serialization: 提供了序列化和反序列化的能力。
-- unittest: 提供了在编写仓颉项目单元测试代码时输入序列化格式的测试数据的能力。
 - actors: 提供了一种并发编程模型，旨在简化并发任务的处理。
+- aspectCJ: 提供了面向切面编程的相关注解。
+- compress: 提供压缩和解压缩功能。
+- crypto: 提供安全相关能力。
 - effect: 提供了一种强大的非局部控制操作。
+- encoding: 提供了数据编码与解码的基础工具库。
+- fuzz: 提供基于覆盖率反馈的仓颉 fuzz 引擎及对应的接口。
+- log: 提供了日志记录相关的能力。
+- logger: 提供了文本格式和 JSON 格式日志打印功能。
+- net: 提供了http网络通信和安全传输功能。
+- serialization: 提供了序列化和反序列化的能力。
+- unittest.data: 为标准库的unittest提供测试数据扩展能力。
+
+> 三方库的使用方式
+> - `OpenSSL` 的使用主体是扩展库 `crypto` 和 `net`，使用方式是动态加载系统中的动态库，不依赖源码。
 
 ## 使用说明
 
 `stdx` 相关 API 请参见 [API接口说明](./doc/libs_stdx/summary_cjnative.md)。
 相关指导请参见 [开发指南](https://gitcode.com/Cangjie/cangjie_docs/)。
+
+`stdx` 的构建产物需搭配 cjc 编译器、运行时和标准库一同使用，整体可在 Linux、macOS、Windows 与 OpenHarmony 系统上直接运行。
 
 ## 目录结构
 
@@ -33,21 +38,21 @@
 ├─ build                        # 工程构建目录，编译构建工具、脚本等
 ├─ doc                          # STDX 库资料目录
 ├─ figures                      # 存放readme中的架构图
-├─ src                          # STDX 各个包代码目录                        
+├─ src                          # STDX 各个包代码目录
 │   └─ stdx
-│       ├── actors              # 提供 Actors 功能                     
-│       ├── aspectCJ            # 提供 AOP 功能
+│       ├── actors              # 提供了一种并发编程模型，旨在简化并发任务的处理                     
+│       ├── aspectCJ            # 提供了面向切面编程的相关注解
 │       ├── compress            # 提供压缩和解压缩功能
 │       ├── crypto              # 提供安全相关能力
-|       ├── effect              # 提供用于处理 Effect Handler 特性的用户级 API。这是一个实验性功能，需要使用支持该机制的 Cangjie 编译器。
-│       ├── dynamicLoader       # Openssl 动态加载模块
-│       ├── encoding            # 提供 JSON 和字符串编码相关能力。
+│       ├── dynamicLoader       # OpenSSL 动态加载模块（内部可见，不公开）
+|       ├── effect              # 提供了一种强大的非局部控制操作
+│       ├── encoding            # 提供了数据编码与解码的基础工具库。
 │       ├── fuzz                # 提供基于覆盖率反馈的仓颉 fuzz 引擎及对应的接口
 │       ├── log                 # 提供了日志记录相关的能力
 │       ├── logger              # 提供文本格式和 JSON 格式日志打印功能
-│       ├── net                 # 提供网络通信等能力
+│       ├── net                 # 提供了http网络通信和安全传输功能
 │       ├── serialization       # 提供序列化和反序列化能力
-│       └─  unittest            # 提供单元测试扩展能力
+│       └─  unittest            # 为标准库的unittest提供测试数据扩展能力
 │
 ├─ third_party                  # 第三方组件目录
 └─ target                       # 编译构建产物目录
@@ -55,9 +60,7 @@
 
 ## 约束
 
-支持在 Ubuntu/MacOS(x86_64, aarch64)、Cangjie SDK 1.0.0 及以上版本中对 `stdx` 构建。更详细的环境及工具依赖请参阅 [构建依赖工具](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md)。
-
-注意：本拓展库后续版本可能存在不兼容变更，不承诺跨版本 API/ABI 兼容性，使用前请充分评估版本适配风险。
+支持在 Cangjie SDK 1.0.0 及以上版本中对 `stdx` 构建。更详细的环境及工具依赖请参阅 [构建依赖工具](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md)。
 
 ## 编译构建
 
@@ -146,19 +149,19 @@ python3 build.py install
 [dependencies]
 
 [package]
-  cjc-version = "0.60.5"
-  compile-option = ""
-  description = "nothing here"
-  link-option = ""
-  name = "test"
-  output-type = "executable"
-  override-compile-option = ""
-  src-dir = ""
-  target-dir = ""
-  version = "1.0.0"
-  package-configuration = {}
+  cjc-version = "1.0.0"         # 仓颉编译器最低要求版本
+  compile-option = ""           # 传给 cjc 的额外编译选项
+  description = "test sample"   # 当前仓颉模块描述信息，仅作说明用，不限制格式
+  link-option = ""              # 传给链接器的额外选项
+  name = "test"                 # 当前仓颉模块名称
+  output-type = "executable"    # 编译输出产物的类型（executable/static/dynamic）
+  override-compile-option = ""  # 传给 cjc 的额外全局编译选项
+  src-dir = ""                  # 源码的存放路径
+  target-dir = ""               # 编译产物的存放路径
+  version = "1.0.0"             # 当前仓颉模块的版本号
+  package-configuration = {}    # 每个模块的担保可配置项
 
-[target.x86_64-w64-mingw32]                                                     # 系统架构和 OS 信息
+[target.x86_64-w64-mingw32] # 系统架构和 OS 信息
   [target.x86_64-w64-mingw32.bin-dependencies]
     path-option = ["D:\\cangjiestdx\\windows_x86_64_cjnative\\stdx\\dynamic\\stdx"] # stdx 路径根据实际情况配置
 ```
@@ -183,9 +186,9 @@ python3 build.py install
 [dependencies]
 
 [package]
-  cjc-version = "0.60.5"
+  cjc-version = "1.0.0"
   compile-option = "-ldl"
-  description = "nothing here"
+  description = "test sample"
   link-option = ""
   name = "test"
   output-type = "executable"
