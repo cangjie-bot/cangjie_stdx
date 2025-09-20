@@ -1,4 +1,4 @@
-# Cangjie stdx
+# Cangjie Programming Language - Extension Library (stdx)
 
 ## Introduction
 
@@ -8,23 +8,28 @@ Architecture Diagram:
 
 ![](figures/stdx_Architecture_Diagram_en.png)
 
-- aspectCJ: Provides annotations related to aspect-oriented programming in Cangjie.
+- actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
+- aspectCJ: Provides annotations related to aspect-oriented programming.
 - compress: Provides compression and decompression functions.
 - crypto: Provides a utility library for cryptographic operations.
+- effect: Provides a powerful non-local control operation.
 - encoding: Provides a basic utility library for data encoding and decoding.
-- fuzz: Provides an automated software testing method.
-- log: Provides a single logging API.
+- fuzz: Provides the Cangjie fuzz engine based on coverage feedback.
+- log: Provides interfaces for logging.
 - logger: Provides log printing functions in text format and JSON format.
 - net: Provides network communication and secure transmission functions.
 - serialization: Provides the capability of serialization and deserialization.
-- unittest: Provides the capability to supply test data in serialized input formats when writing unit test code for Cangjie projects.
-- actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
-- effect: Provides a powerful non-local control operation.
+- unittest.data: Provide test data extension capabilities for the standard library’s unittest.
+
+> Usage of Third-Party Libraries​
+> - `OpenSSL` is used in the extension libraries `crypto` and `net`. It uses dynamic loading of system dynamic libraries and does not depend on source code.
 
 ## Operating Instructions
 
 For APIs related to stdx, please refer to [API Interface Description](./doc/libs_stdx_en/summary_cjnative.md).
 For relevant guidance, please refer to [Development Guide](https://gitcode.com/Cangjie/cangjie_docs/).
+
+The standalone build outputs of stdx must be used together with the cjc compiler, runtime, and standard library (std), and the complete bundle runs out-of-the-box on Linux, macOS, Windows, and OpenHarmony systems.
 
 ## Project Directory
 
@@ -33,21 +38,21 @@ For relevant guidance, please refer to [Development Guide](https://gitcode.com/C
 ├─ build                        # Directory of Engineering Construction
 ├─ doc                          # Directory of STDX library document
 ├─ figures                      # architecture pictures
-├─ src                          # Directory of STDX package codes                     
+├─ src                          # Directory of STDX package codes
 │   └─ stdx
-│       ├── actors              # Provides Actors
-│       ├── aspectCJ            # Provides AOP
-│       ├── compress            # Provides compression and decompression
-│       ├── crypto              # Provide security related capabilities
-|       ├── effect              # Provides user-level APIs for handling the Effect Handler feature. This is an experimental feature and requires the use of a Cangjie compiler that supports this mechanism.
-│       ├── dynamicLoader       # Openssl dynamic loading module
-│       ├── encoding            # Provide JSON and string encoding related capabilities
+│       ├── actors              # Provides a concurrent programming model designed to simplify the handling of concurrent tasks
+│       ├── aspectCJ            # Provides annotations related to aspect-oriented programming
+│       ├── compress            # Provides compression and decompression functions
+│       ├── crypto              # Provides a utility library for cryptographic operations
+│       ├── dynamicLoader       # OpenSSL dynamic loading module(non-public)
+|       ├── effect              # Provides a powerful non-local control operation
+│       ├── encoding            # Provides a basic utility library for data encoding and decoding
 │       ├── fuzz                # Provides the Cangjie fuzz engine based on coverage feedback
-│       ├── log                 # Provides logging related
+│       ├── log                 # Provides interfaces for logging
 │       ├── logger              # Provides log printing functions in text format and JSON format
-│       ├── net                 # Provide network communication and other capabilities
+│       ├── net                 # Provides network communication and secure transmission functions
 │       ├── serialization       # Provides serialization and deserialization
-│       └─  unittest            # Provides unit testing extension
+│       └─  unittest            # Provide test data extension capabilities for the standard library’s unittest
 │
 ├─ third_party                  # Directory of third-party components
 └─ target                       # Directory of constructed products
@@ -55,9 +60,8 @@ For relevant guidance, please refer to [Development Guide](https://gitcode.com/C
 
 ## Constraints
 
-Support for building `stdx` in Ubuntu/MacOS (x86_64, aarch64), Cangjie SDK 1.0.0 and above versions, please refer to the [Build Dependency Tools](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md).
+Support for building `stdx` using Cangjie SDK 1.0.0 and above versions, please refer to the [Build Dependency Tools](https://gitcode.com/Cangjie/cangjie_build/blob/dev/docs/env_zh.md).
 
-Note: Future versions of this extension library may contain incompatible changes, and cross-version backward compatibility is not guaranteed. Please fully assess the version adaptation risks before use.
 
 ## Compilation and Building
 
@@ -120,7 +124,7 @@ For integration building, please refer to the [Cangjie SDK Integration Build Gui
 Add the following configuration to the `cjpm.toml` file of the code project:
 
 ```toml
-[target.x86_64-w64-mingw32]                                                     # System architecture and OS information
+[target.x86_64-w64-mingw32] # System architecture and OS information
   [target.x86_64-w64-mingw32.bin-dependencies]
     path-option = ["D:\\cangjiestdx\\windows_x86_64_cjnative\\stdx\\dynamic\\stdx"] # The stdx path is configured according to the actual situation
 ```
@@ -149,19 +153,19 @@ explain:
 [dependencies]
 
 [package]
-  cjc-version = "0.59.4"
-  compile-option = ""
-  description = "nothing here"
-  link-option = ""
-  name = "test"
-  output-type = "executable"
-  override-compile-option = ""
-  src-dir = ""
-  target-dir = ""
-  version = "1.0.0"
-  package-configuration = {}
+  cjc-version = "1.0.0"         # Minimum required version of the Cangjie compiler
+  compile-option = ""           # Extra compile options passed to cjc
+  description = "test sample"   # Description of the current Cangjie module, for documentation only, format not restricted
+  link-option = ""              # Extra options passed to the linker
+  name = "test"                 # Name of the current Cangjie module
+  output-type = "executable"    # Type of compilation output (executable/static/dynamic)
+  override-compile-option = ""  # Additional global compile options passed to cjc
+  src-dir = ""                  # Directory where source code is stored
+  target-dir = ""               # Directory where compilation output is stored
+  version = "1.0.0"             # Version number of the current Cangjie module
+  package-configuration = {}    # Configurable options guaranteed for each module
 
-[target.x86_64-w64-mingw32]                                                     # System architecture and OS information
+[target.x86_64-w64-mingw32] # System architecture and OS information
   [target.x86_64-w64-mingw32.bin-dependencies]
     path-option = ["D:\\cangjiestdx\\windows_x86_64_cjnative\\stdx\\dynamic\\stdx"] # The stdx path is configured according to the actual situation
 ```
@@ -186,9 +190,9 @@ Assuming that the developer is developing on Linux and wants to import the stati
 [dependencies]
 
 [package]
-  cjc-version = "0.59.4"
+  cjc-version = "1.0.0"
   compile-option = "-ldl"
-  description = "nothing here"
+  description = "test sample"
   link-option = ""
   name = "test"
   output-type = "executable"
