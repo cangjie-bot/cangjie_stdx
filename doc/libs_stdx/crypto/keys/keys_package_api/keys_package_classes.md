@@ -151,7 +151,7 @@ public func encodeToDer(password!: ?String): DerBlob
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
 功能：将私钥编码为 PEM 格式。
@@ -163,6 +163,26 @@ public override func encodeToPem(): PemEntry
 异常：
 
 - [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+
+### func encodeToPem(?String)
+
+```cangjie
+public func encodeToPem(password!: ?String): PemEntry
+```
+
+功能：将加密的私钥编码为 PEM 格式。
+
+参数：
+
+- password!: ?String - 加密私钥需要提供的密码，密码为 None 时则不加密。
+
+返回值：
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+
+异常：
+
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
 
 ### func sign(Array\<Byte>)
 
@@ -285,7 +305,7 @@ public override func encodeToDer(): DerBlob
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
 功能：将公钥编码为 PEM 格式。
@@ -461,6 +481,18 @@ func encodeToPem(password!: ?String): PemEntry
 
 - [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 加密后的 PEM 格式的私钥。
 
+### func toString()
+
+```cangjie
+public func toString(): String
+```
+
+功能：转换为字符串格式。
+
+返回值：
+
+- String - 字符串。
+
 ## class GeneralPublicKey
 
 ```cangjie
@@ -528,6 +560,18 @@ func encodeToPem(): PemEntry
 返回值：
 
 - [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 公钥数据 PEM 格式编码生成的对象。
+
+### func toString()
+
+```cangjie
+public func toString(): String
+```
+
+功能：转换为字符串格式。
+
+返回值：
+
+- String - 字符串。
 
 ## class RSAPrivateKey
 
@@ -716,7 +760,7 @@ public func encodeToDer(password!: ?String): DerBlob
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
 功能：将私钥编码为 PEM 格式。
@@ -728,6 +772,26 @@ public override func encodeToPem(): PemEntry
 异常：
 
 - [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败，抛出异常。
+
+### func encodeToPem(?String)
+
+```cangjie
+public func encodeToPem(password!: ?String): PemEntry
+```
+
+功能：将加密的私钥编码为 PEM 格式。
+
+参数：
+
+- password!: ?String - 加密私钥需要提供的密码，密码为 None 时则不加密。
+
+返回值：
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+
+异常：
+
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 编码失败、加密失败或者参数密码为空字符串，抛出异常。
 
 ### func sign(Digest, Array\<Byte>, PadOption)
 
@@ -852,7 +916,7 @@ public override func encodeToDer(): DerBlob
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
 功能：将公钥编码为 PEM 格式。
