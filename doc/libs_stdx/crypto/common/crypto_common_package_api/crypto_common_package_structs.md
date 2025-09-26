@@ -358,40 +358,8 @@ public PemEntry(
 参数：
 
 - label: String - 标签。
-
 - headers: Array\<(String, String)> - 条目头。
-
 - body: ?[DerBlob](#struct-derblob) - 二进制内容。
-
-### let body
-
-```cangjie
-public let body: ?DerBlob
-```
-
-功能：[PemEntry](#struct-pementry) 实例的二进制内容。
-
-类型：?[DerBlob](#struct-derblob)
-
-### let headers
-
-```cangjie
-public let headers: Array<(String, String)>
-```
-
-功能：[PemEntry](#struct-pementry) 实例的条目头。
-
-类型：Array\<(String, String)>
-
-### let label
-
-```cangjie
-public let label: String
-```
-
-功能：[PemEntry](#struct-pementry) 实例的标签。
-
-类型：String
 
 ### init(String, DerBlob)
 
