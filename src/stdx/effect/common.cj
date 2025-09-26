@@ -8,7 +8,7 @@
 
 package stdx.effect
 
-internal class FrameBox {
+class FrameBox {
     var ref: Option<HandlerFrame>
 
     init() {
