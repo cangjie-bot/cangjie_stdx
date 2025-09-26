@@ -358,9 +358,7 @@ public PemEntry(
 参数：
 
 - label: String - 标签。
-
 - headers: Array\<(String, String)> - 条目头。
-
 - body: ?[DerBlob](#struct-derblob) - 二进制内容。
 
 ### let body
