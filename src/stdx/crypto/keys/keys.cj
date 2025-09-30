@@ -12,6 +12,7 @@ import stdx.crypto.common.*
 import stdx.encoding.hex.fromHexString
 
 const NULL_BYTE = "\0"
+const MAGIC_NUMBER = 10086
 
 protected func isPrivateKey(it: PemEntry): Bool {
     it.label == PemEntry.LABEL_PRIVATE_KEY || it.label == PemEntry.LABEL_EC_PRIVATE_KEY || it.label == PemEntry
