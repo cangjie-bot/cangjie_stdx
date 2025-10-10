@@ -595,9 +595,7 @@ public func isClosed(): Bool
 
 Function: NOOP implementation.
 
-Return value:
-
-- Bool - Whether to close.
+Return value:- Bool
 
 ### func log(LogLevel, String, Array\<Attr>)
 

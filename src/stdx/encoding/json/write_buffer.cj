@@ -155,11 +155,11 @@ class WriteBuffer {
         return this
     }
 
-    func appendEscape(str: String) {
+    func appendEscape(str: String, htmlSafe!: Bool = true) {
         var escapenum = 0
         unsafe {
             let input = acquireArrayRawData(str.rawData())
-            escapenum = CJ_JSON_StringEscapeCharNumGet(input.pointer, str.size)
+            escapenum = CJ_JSON_StringEscapeCharNumGet(input.pointer, str.size, htmlSafe)
             releaseArrayRawData(input)
         }
 
@@ -171,7 +171,7 @@ class WriteBuffer {
             unsafe {
                 let input = acquireArrayRawData(str.rawData())
                 let buff = acquireArrayRawData<Byte>(_buffer)
-                let len = CJ_JSON_ReplaceEscapeChar(input.pointer, str.size, buff.pointer + _size)
+                let len = CJ_JSON_ReplaceEscapeChar(input.pointer, str.size, buff.pointer + _size, htmlSafe)
                 releaseArrayRawData(input)
                 releaseArrayRawData(buff)
                 _size += len
@@ -188,7 +188,7 @@ class WriteBuffer {
     }
 }
 
-func jsonWriteWithoutFormat(json: JsonValue, buff: WriteBuffer): Unit {
+func jsonWriteWithoutFormat(json: JsonValue, buff: WriteBuffer, htmlSafe!: Bool = true): Unit {
     match (json) {
         case jo: JsonObject =>
             if (jo.size() == 0) {
@@ -198,7 +198,7 @@ func jsonWriteWithoutFormat(json: JsonValue, buff: WriteBuffer): Unit {
             buff.append(b'{')
             for ((strKey, jv) in jo.getFields()) {
                 buff.append(b'\"').appendEscape(strKey).append("\":".toArray())
-                jsonWriteWithoutFormat(jv, buff)
+                jsonWriteWithoutFormat(jv, buff, htmlSafe: htmlSafe)
                 buff.append(b',')
             }
             buff.removetail()
@@ -210,12 +210,12 @@ func jsonWriteWithoutFormat(json: JsonValue, buff: WriteBuffer): Unit {
             }
             buff.append(b'[')
             for (item in ja.getItems()) {
-                jsonWriteWithoutFormat(item, buff)
+                jsonWriteWithoutFormat(item, buff, htmlSafe: htmlSafe)
                 buff.append(b',')
             }
             buff.removetail()
             buff.append(b']')
-        case js: JsonString => buff.append(b'\"').appendEscape(js.getValue()).append(b'\"')
+        case js: JsonString => buff.append(b'\"').appendEscape(js.getValue(), htmlSafe:htmlSafe).append(b'\"')
         case jb: JsonBool => buff.append(jb.getValue())
         case ji: JsonInt => buff.append(ji.getValue())
         case jf: JsonFloat => buff.append(jf.getValue())
@@ -223,7 +223,7 @@ func jsonWriteWithoutFormat(json: JsonValue, buff: WriteBuffer): Unit {
     }
 }
 
-func jsonWriteObject(json: JsonObject, buff: WriteBuffer, depth: Int64, bracketInNewLine: Bool, indent: String): Unit {
+func jsonWriteObject(json: JsonObject, buff: WriteBuffer, depth: Int64, bracketInNewLine: Bool, indent: String, htmlSafe!: Bool = true): Unit {
     if (bracketInNewLine) {
         for (_ in 0..depth) {
             buff.append(indent)
@@ -244,9 +244,9 @@ func jsonWriteObject(json: JsonObject, buff: WriteBuffer, depth: Int64, bracketI
         }
         buff.append(b'\"').appendEscape(key).append(b'\"').append(b':').appendBlank(1)
         match (jv) {
-            case jo: JsonObject => jsonWriteObject(jo, buff, new_depth, false, indent)
-            case ja: JsonArray => jsonWriteArray(ja, buff, new_depth, false, indent)
-            case _ => jsonWriteWithoutFormat(jv, buff)
+            case jo: JsonObject => jsonWriteObject(jo, buff, new_depth, false, indent, htmlSafe: htmlSafe)
+            case ja: JsonArray => jsonWriteArray(ja, buff, new_depth, false, indent, htmlSafe: htmlSafe)
+            case _ => jsonWriteWithoutFormat(jv, buff, htmlSafe: htmlSafe)
         }
         buff.append(b',')
     }
@@ -258,7 +258,7 @@ func jsonWriteObject(json: JsonObject, buff: WriteBuffer, depth: Int64, bracketI
     buff.append(b'}')
 }
 
-func jsonWriteArray(json: JsonArray, buff: WriteBuffer, depth: Int64, bracketInNewLine: Bool, indent: String): Unit {
+func jsonWriteArray(json: JsonArray, buff: WriteBuffer, depth: Int64, bracketInNewLine: Bool, indent: String, htmlSafe!: Bool = true): Unit {
     if (bracketInNewLine) {
         for (_ in 0..depth) {
             buff.append(indent)
@@ -278,9 +278,9 @@ func jsonWriteArray(json: JsonArray, buff: WriteBuffer, depth: Int64, bracketInN
             buff.append(indent)
         }
         match (v) {
-            case jo: JsonObject => jsonWriteObject(jo, buff, new_depth, false, indent)
-            case ja: JsonArray => jsonWriteArray(ja, buff, new_depth, false, indent)
-            case _ => jsonWriteWithoutFormat(v, buff)
+            case jo: JsonObject => jsonWriteObject(jo, buff, new_depth, false, indent, htmlSafe: htmlSafe)
+            case ja: JsonArray => jsonWriteArray(ja, buff, new_depth, false, indent, htmlSafe: htmlSafe)
+            case _ => jsonWriteWithoutFormat(v, buff, htmlSafe: htmlSafe)
         }
         buff.append(b',')
     }

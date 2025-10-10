@@ -6,7 +6,15 @@
 
 build_temp/
 target/
-third_party/
 
 src/stdx/encoding/json/native/*.a
 src/stdx/encoding/json/native/json_api.h
+
+third_party/zlib
+third_party/flatbuffers
+
+third_party/boundscheck-v1.1.16
+src/stdx/syntax/NodeFormat_generated.cj
+src/stdx/syntax/table.cj
+src/stdx/syntax/flatbuffer_object.cj
+src/stdx/syntax/decode.cj

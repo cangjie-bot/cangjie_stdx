@@ -10,8 +10,8 @@ include(ExtractArchive)
 
 set(BACKEND_TYPE CJNATIVE)
 
-##  make shared/static library
-# if we support cross-compiling, we need to change here for target type
+##  Make shared/static library.
+# If we support cross-compiling, we need to change here for target type.
 string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${BACKEND_TYPE} output_cj_object_dir)
 string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_triple_name)
 set(CJNATIVE_BACKEND "cjnative")
@@ -423,7 +423,7 @@ make_cangjie_lib(
     DEPENDS cangjie${BACKEND_TYPE}Effect
     CANGJIE_STD_LIB_LINK std-core std-collection std-sync
     OBJECTS ${output_cj_object_dir}/stdx/effect.o)
-
+ 
 add_library(stdx.effect STATIC ${output_cj_object_dir}/stdx/effect.o)
 set_target_properties(stdx.effect PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.effect DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
@@ -919,3 +919,42 @@ add_cangjie_library(
     MODULE_NAME "stdx"
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
+ 
+if(DARWIN)
+    set(syntaxFFI_flags -lstdx.syntaxFFI)
+else()
+    set(syntaxFFI_flags -l:libstdx.syntaxFFI${CMAKE_SHARED_LIBRARY_SUFFIX})
+endif()
+
+if("$ENV{NO_ASPECTCJ}" STREQUAL "")
+    if(NOT CMAKE_CROSSCOMPILING OR (CMAKE_CROSSCOMPILING AND MINGW))
+        make_cangjie_lib(
+            syntax IS_SHARED
+            DEPENDS
+                cangjie${BACKEND_TYPE}Syntax
+                stdx.syntaxFFI
+            CANGJIE_STD_LIB_LINK std-core std-collection std-convert std-fs std-sort std-ast
+            OBJECTS ${output_cj_object_dir}/stdx/syntax.o
+            FORCE_LINK_ARCHIVES stdx.syntaxFFI
+            FLAGS ${syntaxFFI_flags}
+                $<$<NOT:$<BOOL:${WIN32}>>:-ldl>
+            )
+ 
+        add_library(stdx.syntax STATIC ${output_cj_object_dir}/stdx/syntax.o)
+        target_link_libraries(stdx.syntax stdx.syntaxFFI)
+        set_target_properties(stdx.syntax PROPERTIES LINKER_LANGUAGE C)
+        install(TARGETS stdx.syntax DESTINATION ${output_triple_name}_cjnative/static/stdx)
+ 
+        add_cangjie_library(
+            cangjie${BACKEND_TYPE}Syntax
+            NO_SUB_PKG
+            IS_STDXLIB
+            IS_PACKAGE
+            IS_CJNATIVE_BACKEND
+            PACKAGE_NAME "syntax"
+            MODULE_NAME "stdx"
+            SOURCES ${SYNTAX_SRCS}
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
+            DEPENDS ${SYNTAX_DEPENDENCIES})
+    endif()
+endif()

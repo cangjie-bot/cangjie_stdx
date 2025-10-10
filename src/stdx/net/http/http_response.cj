@@ -332,15 +332,22 @@ public class HttpResponse <: ToString {
     }
 
     /**
-     * If headers contains "Connection: close", this value is set true.
-     * It indicates that the connection be closed after reading Body.
+     * If headers contains "Connection: close", this value is set false.
+     * It indicates that whether the connection will be closed after reading Body.
      */
-    public prop close: Bool {
+    public prop isPersistent: Bool {
         get() {
             if (let Some(h) <- _headers) {
-                return h.get("connection") |> splitValuesByComma |> "close".caseInsensitiveMatchOne
+                return !(h.get("connection") |> splitValuesByComma |> "close".caseInsensitiveMatchOne)
             }
-            return false
+            return true
+        }
+    }
+
+    public func close(): Unit {
+        match (_body) {
+            case closable: Resource => closable.close()
+            case _ => ()
         }
     }
 

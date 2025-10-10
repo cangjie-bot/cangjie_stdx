@@ -1,0 +1,954 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This source file is part of the Cangjie project, licensed under Apache-2.0
+ * with Runtime Library Exception.
+ *
+ * See https://cangjie-lang.cn/pages/LICENSE for license information.
+ */
+
+package stdx.syntax
+
+import std.collection.ArrayList
+/**
+ * @brief Abstract sealed class representing a node in the syntax tree.
+ *
+ * This class serves as a base for other syntax tree node classes.
+ */
+sealed abstract class SyntaxTreeNode <: ToString {
+    /**
+     * @brief The parent node of this node.
+     *
+     * This optional field may contain a reference to the parent node in the syntax tree.
+     */
+    public let parentNode: ?SyntaxTreeNode
+
+    /**
+     * @brief The position of this node
+     *
+     * CodePosition range covering the start and end positions of the node in source code
+     */
+    public let nodePos: CodePositionRange
+
+    let nodeImpl: SyntaxNodeImpl
+
+    /**
+     * @brief Returns a string representation of the node.
+     *
+     * @return A string representation of the node, or an empty string if no implementation is set.
+     */
+    public open func toString(): String {
+        nodeImpl.toString()
+    }
+
+    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode) {
+        this.nodePos = nodePos
+        this.nodeImpl = nodeImpl
+        this.parentNode = parentNode
+    }
+
+    func transTokenList(node: SyntaxNodeImpl): Tokens {
+        var content = ArrayList<Token>()
+        if (let Some(nt) <- (node as NonTerminal)) {
+            for (child in nt.children) {
+                if (let Some(tk) <- (child as TokenTerminal)) {
+                    content.add(Token(tk.tokenKind, tk.value))
+                }
+            }
+        }
+        Tokens(content)
+    }
+}
+
+/**
+ * @brief Enumeration for different at operation kinds.
+ *
+ * The AtOpKind enumeration represents various types of at operations
+ * that can be used in annotation. Each kind is an operator that
+ * specifies the type of annotation.
+ */
+public enum AtOpKind {
+    | At
+    | AtExcl
+    | ...
+}
+
+class AnnotationPropInfos {
+    let argumentPropInfo: Array<PropInfo>
+
+    init(argumentPropInfo: Array<PropInfo>) {
+        this.argumentPropInfo = argumentPropInfo
+    }
+}
+
+class AnnotationPosInfos {
+    let atOpPos: CodePosition
+    let lSquarePos: Option<CodePosition>
+    let rSquarePos: Option<CodePosition>
+    let identifierPos: CodePosition
+    let commasPos: Array<CodePosition>
+
+    init(
+        atOpPos: CodePosition,
+        lSquarePos: Option<CodePosition>,
+        rSquarePos: Option<CodePosition>,
+        identifierPos: CodePosition,
+        commasPos: Array<CodePosition>
+    ) {
+        this.atOpPos = atOpPos
+        this.lSquarePos = lSquarePos
+        this.rSquarePos = rSquarePos
+        this.identifierPos = identifierPos
+        this.commasPos = commasPos
+    }
+}
+/**
+ * @brief Class representing an annotation in the syntax tree.
+ *
+ * This class extends SyntaxTreeNode and contains information about an annotation,
+ * including its arguments and identifier.
+ */
+public class Annotation <: SyntaxTreeNode {
+    private let identifier_: String
+
+    private let opKind_: AtOpKind
+
+    private let startPos: CodePosition
+
+    private let propInfos: AnnotationPropInfos
+
+    private let posInfos: AnnotationPosInfos
+
+    /**
+     * @brief Get the position of the annotation operator.
+     *
+     * @return CodePositionRange representing the position of the annotation at operator.
+     */
+    public func getAtOpPos(): CodePositionRange {
+        let endPos = posInfos.atOpPos + match (opKind) {
+            case At => SyntaxNodeKind.AtToken.size
+            case AtExcl => SyntaxNodeKind.AtExclToken.size
+            case _ => 0
+        }
+        return CodePositionRange(posInfos.atOpPos, endPos)
+    }
+
+    /**
+     * @brief Get the positions of commas in the code.
+     *
+     * @return Array<CodePositionRange> containing the positions of commas.
+     */
+    public func getCommasPos(): Array<CodePositionRange> {
+        let commasPosR = ArrayList<CodePositionRange>()
+        for (comma in posInfos.commasPos) {
+            commasPosR.add(CodePositionRange(comma, comma + SyntaxNodeKind.CommaToken.size))
+        }
+        return commasPosR.toArray()
+    }
+
+    /**
+     * @brief Get the position range of the identifier.
+     *
+     * @return CodePositionRange representing the position range of the identifier.
+     */
+    public func getIdentifierPos(): CodePositionRange {
+        return CodePositionRange(posInfos.identifierPos, posInfos.identifierPos + identifier.size)
+    }
+
+    /**
+     * @brief Get the position of the left square bracket.
+     *
+     * @return CodePositionRange representing the position of the left square bracket.
+     */
+    public func getLSquarePos(): Option<CodePositionRange> {
+        if (let Some(v) <- posInfos.lSquarePos) {
+            return CodePositionRange(v, v + SyntaxNodeKind.LSquareToken.size)
+        }
+        return None
+    }
+
+    /**
+     * @brief Get the position of the right square bracket.
+     *
+     * @return CodePositionRange representing the position of the right square bracket.
+     */
+    public func getRSquarePos(): Option<CodePositionRange> {
+        if (let Some(v) <- posInfos.rSquarePos) {
+            return CodePositionRange(v, v + SyntaxNodeKind.RSquareToken.size)
+        }
+        return None
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, identifier_: String,
+        opKind_: AtOpKind, posInfos: AnnotationPosInfos, propInfos: AnnotationPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.startPos = startPos
+        this.identifier_ = identifier_
+        this.opKind_ = opKind_
+        this.propInfos = propInfos
+        this.posInfos = posInfos
+    }
+
+    /**
+     * @brief The arguments of the annotation.
+     *
+     * This array field contains the arguments of the annotation.
+     */
+    public prop arguments: Array<Argument> {
+        get() {
+            let argus = ArrayList<Argument>()
+            for (propInfo in propInfos.argumentPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                argus.add(
+                    cast<Argument>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow())
+            }
+            argus.toArray()
+        }
+    }
+
+    /**
+     * @brief The identifier of the annotation.
+     *
+     * This string field holds the identifier of the annotation.
+     */
+    public prop identifier: String {
+        get() {
+            identifier_
+        }
+    }
+
+    public prop opKind: AtOpKind {
+        get() {
+            opKind_
+        }
+    }
+}
+
+class ArgumentPropInfos {
+    let valuePropInfo: PropInfo
+
+    init(valuePropInfo: PropInfo) {
+        this.valuePropInfo = valuePropInfo
+    }
+}
+
+class ArgumentPosInfos {
+    let inoutKeyWordPos: Option<CodePosition>
+    let identifierPos: Option<CodePosition>
+    let colonPos: Option<CodePosition>
+
+    init(inoutKeyWordPos: Option<CodePosition>, identifierPos: Option<CodePosition>, colonPos: Option<CodePosition>) {
+        this.inoutKeyWordPos = inoutKeyWordPos
+        this.identifierPos = identifierPos
+        this.colonPos = colonPos
+    }
+}
+
+/**
+ * @brief Class representing an argument in the syntax tree.
+ *
+ * This class extends SyntaxTreeNode and contains information about an argument,
+ * including its identifier, whether it is in-out, and its value expression.
+ */
+public class Argument <: SyntaxTreeNode {
+    private let identifier_: Option<String>
+
+    private let isInOut_: Bool
+
+    private let isNamed_: Bool
+
+    private let startPos: CodePosition
+
+    private let propInfos: ArgumentPropInfos
+
+    private let posInfos: ArgumentPosInfos
+
+    /**
+     * @brief Gets the position range of the 'inout' keyword in the parameter declaration.
+     *
+     * @return An Option of CodePositionRange representing the position range of the 'inout' keyword, if present.
+     */
+    public func getInoutKeyWordPos(): Option<CodePositionRange> {
+        if (let Some(inoutKeyWordPos) <- posInfos.inoutKeyWordPos) {
+            let endPos = inoutKeyWordPos + SyntaxNodeKind.InoutToken.size
+            return CodePositionRange(inoutKeyWordPos, endPos)
+        }
+        return None
+    }
+
+    /**
+     * @brief Gets the position range of the identifier in the parameter declaration.
+     *
+     * @return An Option of CodePositionRange representing the position range of the identifier, if present.
+     */
+    public func getIdentifierPos(): Option<CodePositionRange> {
+        if (let Some(identifierPos) <- posInfos.identifierPos && let Some(id) <- identifier) {
+            let endPos = identifierPos + id.size
+            return CodePositionRange(identifierPos, endPos)
+        }
+        return None
+    }
+
+    /**
+     * @brief Gets the position range of the colon in the parameter declaration.
+     *
+     * @return An Option of CodePositionRange representing the position range of the colon, if present.
+     */
+    public func getColonPos(): Option<CodePositionRange> {
+        if (let Some(colonPos) <- posInfos.colonPos) {
+            let endPos = colonPos + SyntaxNodeKind.ColonToken.size
+            return CodePositionRange(colonPos, endPos)
+        }
+        return None
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, identifier_: Option<String>,
+        isInOut_: Bool, isNamed_: Bool, posInfos: ArgumentPosInfos, propInfos: ArgumentPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.identifier_ = identifier_
+        this.isInOut_ = isInOut_
+        this.isNamed_ = isNamed_
+        this.startPos = startPos
+        this.posInfos = posInfos
+        this.propInfos = propInfos
+    }
+
+    /**
+     * @brief The identifier of the argument.
+     *
+     * This optional field may contain the identifier of the argument as a string.
+     */
+    public prop identifier: Option<String> {
+        get() {
+            identifier_
+        }
+    }
+
+    /**
+     * @brief Indicates if the argument is in-out.
+     *
+     * This boolean field specifies whether the argument is an in-out argument.
+     */
+    public prop isInOut: Bool {
+        get() {
+            isInOut_
+        }
+    }
+
+    /**
+     * @brief Check if the entity is named.
+     *
+     * This boolean field specifies indicating whether the entity is named.
+     */
+    public prop isNamed: Bool {
+        get() {
+            isNamed_
+        }
+    }
+
+    /**
+     * @brief The value expression of the argument.
+     *
+     * This field contains the expression representing the value of the argument.
+     */
+    public prop value: Expr {
+        get() {
+            let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfos.valuePropInfo.index]
+            let offset = propInfos.valuePropInfo.offset
+            cast<Expr>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
+        }
+    }
+}
+
+class BlockPropInfos {
+    let nodesPropInfo: Option<PropInfo>
+
+    init(nodesPropInfo: Option<PropInfo>) {
+        this.nodesPropInfo = nodesPropInfo
+    }
+}
+
+class BlockPosInfos {
+    let lCurlPos: CodePosition
+    let rCurlPos: CodePosition
+
+    init(lCurlPos: CodePosition, rCurlPos: CodePosition) {
+        this.lCurlPos = lCurlPos
+        this.rCurlPos = rCurlPos
+    }
+}
+
+/**
+ * @brief Class representing a block in the syntax tree.
+ *
+ * This class extends SyntaxTreeNode and contains a collection of child nodes.
+ */
+public class Block <: SyntaxTreeNode {
+    private let startPos: CodePosition
+
+    private let propInfos: BlockPropInfos
+
+    private let posInfos: BlockPosInfos
+
+    /**
+     * @brief Get the position of the left curly brace.
+     *
+     * @return CodePositionRange representing the position of the left curly brace.
+     */
+    public func getLCurlPos(): CodePositionRange {
+        return CodePositionRange(posInfos.lCurlPos, posInfos.lCurlPos + SyntaxNodeKind.LCurlToken.size)
+    }
+
+    /**
+     * @brief Get the position of the right curly brace.
+     *
+     * @return CodePositionRange representing the position of the right curly brace.
+     */
+    public func getRCurlPos(): CodePositionRange {
+        return CodePositionRange(posInfos.rCurlPos, posInfos.rCurlPos + SyntaxNodeKind.RCurlToken.size)
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: BlockPosInfos,
+        propInfos: BlockPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.startPos = startPos
+        this.posInfos = posInfos
+        this.propInfos = propInfos
+    }
+
+    /**
+     * @brief The nodes within the block.
+     *
+     * This array field contains the child nodes that make up the block.
+     */
+    public prop nodes: Array<SyntaxTreeNode> {
+        get() {
+            let nodeList = ArrayList<SyntaxTreeNode>()
+            if (let Some(propInfo) <- propInfos.nodesPropInfo) {
+                let lp = LocalParser((nodeImpl as NonTerminal).getOrThrow().children, propInfo.offset,
+                    index: propInfo.index)
+                while (!lp.look(SyntaxNodeKind.RCurlToken)) {
+                    var impl = lp.consume().getOrThrow()
+                    nodeList.add(
+                        cast<SyntaxTreeNode>(SyntaxNodeImplTranslator.translate(impl, startPos + lp.offset, this))
+                            .getOrThrow())
+                    lp.offset.move(impl.offset)
+                }
+            }
+            nodeList.toArray()
+        }
+    }
+}
+
+class EnumBodyPosInfos {
+    let bitOrsPos: Array<CodePosition>
+    let ellipsisPos: Option<CodePosition>
+
+    init(bitOrsPos: Array<CodePosition>, ellipsisPos: Option<CodePosition>) {
+        this.bitOrsPos = bitOrsPos
+        this.ellipsisPos = ellipsisPos
+    }
+}
+
+class BodyPropInfos {
+    let memberDeclsPropInfo: Array<PropInfo>
+
+    init(memberDeclsPropInfo: Array<PropInfo>) {
+        this.memberDeclsPropInfo = memberDeclsPropInfo
+    }
+}
+
+class BodyPosInfos {
+    let lCurlPos: CodePosition
+    let rCurlPos: CodePosition
+
+    init(lCurlPos: CodePosition, rCurlPos: CodePosition) {
+        this.lCurlPos = lCurlPos
+        this.rCurlPos = rCurlPos
+    }
+}
+
+/**
+ * @brief Represents the body of a custom decl
+ *
+ * This class is used to represent the body of a custom declaration.
+ * It serves as a container for member declarations.
+ */
+public class Body <: SyntaxTreeNode {
+    private let startPos: CodePosition
+
+    private let propInfos: BodyPropInfos
+
+    private let posInfos: BodyPosInfos
+
+    let enumBodyPosInfos: EnumBodyPosInfos
+
+    /**
+     * @brief Get the position range of the left curly brace.
+     */
+    public func getLCurlPos(): CodePositionRange {
+        let endPos = posInfos.lCurlPos + SyntaxNodeKind.LCurlToken.size
+        CodePositionRange(posInfos.lCurlPos, endPos)
+    }
+
+    /**
+     * @brief Get the position range of the right curly brace.
+     */
+    public func getRCurlPos(): CodePositionRange {
+        let endPos = posInfos.rCurlPos + SyntaxNodeKind.RCurlToken.size
+        CodePositionRange(posInfos.rCurlPos, endPos)
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: BodyPosInfos,
+        enumBodyPosInfos: EnumBodyPosInfos, propInfos: BodyPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.startPos = startPos
+        this.propInfos = propInfos
+        this.posInfos = posInfos
+        this.enumBodyPosInfos = enumBodyPosInfos
+    }
+
+    /**
+     * @brief The array of member declarations in the body.
+     *
+     * This variable holds an array of member declarations
+     */
+    public prop memberDecls: Array<Decl> {
+        get() {
+            let decls = ArrayList<Decl>()
+            for (propInfo in propInfos.memberDeclsPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                decls.add(cast<Decl>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow())
+            }
+            decls.toArray()
+        }
+    }
+}
+
+class GenericConstraintPropInfos {
+    let typeArgumentPropInfo: PropInfo
+    let upperBoundsPropInfo: Array<PropInfo>
+
+    init(typeArgumentPropInfo: PropInfo, upperBoundsPropInfo: Array<PropInfo>) {
+        this.typeArgumentPropInfo = typeArgumentPropInfo
+        this.upperBoundsPropInfo = upperBoundsPropInfo
+    }
+}
+
+class GenericConstraintPosInfos {
+    let upperBoundPos: CodePosition
+    let bitAndsPos: Array<CodePosition>
+
+    init(upperBoundPos: CodePosition, bitAndsPos: Array<CodePosition>) {
+        this.upperBoundPos = upperBoundPos
+        this.bitAndsPos = bitAndsPos
+    }
+}
+
+/**
+ * @brief Class representing a generic constraint in the syntax tree.
+ *
+ * This class extends SyntaxTreeNode and encapsulates a type argument and its upper bounds.
+ */
+public class GenericConstraint <: SyntaxTreeNode {
+    private let startPos: CodePosition
+
+    private let propInfos: GenericConstraintPropInfos
+
+    private let posInfos: GenericConstraintPosInfos
+    /**
+     * @brief Get the positions of bitwise 'and' operators in the code.
+     *
+     * @return Array<CodePositionRange> containing the positions of bitwise 'and' operators.
+     */
+    public func getBitAndsPos(): Array<CodePositionRange> {
+        let bitAndPos = ArrayList<CodePositionRange>()
+        for (bitAnd in posInfos.bitAndsPos) {
+            bitAndPos.add(CodePositionRange(bitAnd, bitAnd + SyntaxNodeKind.BitAndToken.size))
+        }
+        return bitAndPos.toArray()
+    }
+
+    /**
+     * @brief Get the position of the upper bound in the code.
+     *
+     * @return CodePositionRange representing the position of the upper bound.
+     */
+    public func getUpperBoundPos(): CodePositionRange {
+        return CodePositionRange(posInfos.upperBoundPos, posInfos.upperBoundPos + SyntaxNodeKind.UpperBoundToken.size)
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        posInfos: GenericConstraintPosInfos, propInfos: GenericConstraintPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.startPos = startPos
+        this.propInfos = propInfos
+        this.posInfos = posInfos
+    }
+
+    /**
+     * @brief The type argument of the constraint.
+     *
+     * This field specifies the type argument of the constraint.
+     */
+    public prop typeArgument: TypeAnnotation {
+        get() {
+            let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfos.typeArgumentPropInfo.index]
+            let offset = propInfos.typeArgumentPropInfo.offset
+            cast<TypeAnnotation>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
+        }
+    }
+
+    /**
+     * @brief The upper bounds of the type argument.
+     *
+     * This array field contains the upper bounds that the type argument must satisfy.
+     */
+    public prop upperBounds: Array<TypeAnnotation> {
+        get() {
+            let argus = ArrayList<TypeAnnotation>()
+            for (propInfo in propInfos.upperBoundsPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                argus.add(
+                    cast<TypeAnnotation>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this))
+                        .getOrThrow())
+            }
+            argus.toArray()
+        }
+    }
+}
+
+class GenericConstraintsPropInfos {
+    let constraintsPropInfo: Array<PropInfo>
+
+    init(constraintsPropInfo: Array<PropInfo>) {
+        this.constraintsPropInfo = constraintsPropInfo
+    }
+}
+
+class GenericConstraintsPosInfos {
+    let whereKeyWordPos: CodePosition
+    let commasPos: Array<CodePosition>
+
+    init(whereKeyWordPos: CodePosition, commasPos: Array<CodePosition>) {
+        this.whereKeyWordPos = whereKeyWordPos
+        this.commasPos = commasPos
+    }
+}
+
+/**
+ * @brief Class representing multiple generic constraints in the syntax tree.
+ *
+ * This class extends SyntaxTreeNode and contains a collection of GenericConstraint instances.
+ */
+public class GenericConstraints <: SyntaxTreeNode {
+    private let startPos: CodePosition
+
+    private let propInfos: GenericConstraintsPropInfos
+
+    private let posInfos: GenericConstraintsPosInfos
+    /**
+     * @brief Get the positions of commas in the code.
+     *
+     * @return Array<CodePositionRange> containing the positions of commas.
+     */
+    public func getCommasPos(): Array<CodePositionRange> {
+        let commasPos = ArrayList<CodePositionRange>()
+        for (comma in posInfos.commasPos) {
+            commasPos.add(CodePositionRange(comma, comma + SyntaxNodeKind.CommaToken.size))
+        }
+        return commasPos.toArray()
+    }
+
+    /**
+     * @brief Get the position of the 'where' keyword.
+     *
+     * @return CodePositionRange representing the position of the 'where' keyword.
+     */
+    public func getWhereKeyWordPos(): CodePositionRange {
+        return CodePositionRange(posInfos.whereKeyWordPos, posInfos.whereKeyWordPos + SyntaxNodeKind.WhereToken.size)
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        posInfos: GenericConstraintsPosInfos, propInfos: GenericConstraintsPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.startPos = startPos
+        this.propInfos = propInfos
+        this.posInfos = posInfos
+    }
+
+    /**
+     * @brief The collection of generic constraints.
+     *
+     * This array field contains multiple GenericConstraint instances.
+     */
+    public prop constraints: Array<GenericConstraint> {
+        get() {
+            let cons = ArrayList<GenericConstraint>()
+            for (propInfo in propInfos.constraintsPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                cons.add(
+                    cast<GenericConstraint>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this))
+                        .getOrThrow())
+            }
+            cons.toArray()
+        }
+    }
+}
+
+/**
+ * @brief Enumeration representing different modifier kinds.
+ */
+public enum ModifierKind {
+    | Abstract
+    | Internal
+    | Mut
+    | Open
+    | Operator
+    | Override
+    | Private
+    | Protected
+    | Public
+    | Redef
+    | Sealed
+    | Static
+    | Unsafe
+    | Const
+    | ...
+}
+
+/**
+ * @brief Class representing a modifier in the syntax tree.
+ *
+ * This class extends SyntaxTreeNode and encapsulates a ModifierKind.
+ */
+public class Modifier <: SyntaxTreeNode {
+    private let kind_: ModifierKind
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: ModifierKind) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.kind_ = kind_
+    }
+
+    /**
+     * @brief The kind of modifier.
+     *
+     * This field specifies the kind of modifier this instance represents.
+     */
+    public prop kind: ModifierKind {
+        get() {
+            kind_
+        }
+    }
+}
+
+class ParameterListPropInfos {
+    let paramsPropInfo: Array<PropInfo>
+
+    init(paramsPropInfo: Array<PropInfo>) {
+        this.paramsPropInfo = paramsPropInfo
+    }
+}
+
+class ParameterListPosInfos {
+    let paramsLParenPos: Option<CodePosition>
+    let paramsCommasPos: Array<CodePosition>
+    let paramsRParenPos: Option<CodePosition>
+
+    init(paramsLParenPos: Option<CodePosition>, paramsCommasPos: Array<CodePosition>,
+        paramsRParenPos: Option<CodePosition>) {
+        this.paramsLParenPos = paramsLParenPos
+        this.paramsCommasPos = paramsCommasPos
+        this.paramsRParenPos = paramsRParenPos
+    }
+}
+
+public class ParameterList <: SyntaxTreeNode {
+    private let startPos: CodePosition
+
+    private let propInfos: ParameterListPropInfos
+
+    private let posInfos: ParameterListPosInfos
+
+    /**
+     * @brief Get the position ranges of commas in the parameter list.
+     */
+    public func getParamsCommasPos(): Array<CodePositionRange> {
+        let ret = ArrayList<CodePositionRange>()
+        for (i in 0..posInfos.paramsCommasPos.size) {
+            let endPos = posInfos.paramsCommasPos[i] + SyntaxNodeKind.CommaToken.size
+            ret.add(CodePositionRange(posInfos.paramsCommasPos[i], endPos))
+        }
+        ret.toArray()
+    }
+
+    /**
+     * @brief Get the position range of the left parenthesis in the parameter list.
+     */
+    public func getParamsLParenPos(): Option<CodePositionRange> {
+        if (let Some(v) <- posInfos.paramsLParenPos) {
+            let endPos = v + SyntaxNodeKind.LParenToken.size
+            return CodePositionRange(v, endPos)
+        }
+        None
+    }
+
+    /**
+     * @brief Get the position range of the right parenthesis in the parameter list.
+     */
+    public func getParamsRParenPos(): Option<CodePositionRange> {
+        if (let Some(v) <- posInfos.paramsRParenPos) {
+            let endPos = v + SyntaxNodeKind.RParenToken.size
+            return CodePositionRange(v, endPos)
+        }
+        None
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ParameterListPosInfos,
+        propInfos: ParameterListPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.startPos = startPos
+        this.posInfos = posInfos
+        this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Get the params in the parameter list.
+     */
+    public prop params: Array<Parameter> {
+        get() {
+            let params = ArrayList<Parameter>()
+            for (propInfo in propInfos.paramsPropInfo) {
+                var curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                var offset = propInfo.offset
+                var currentPos = startPos + offset
+                params.add(
+                    cast<Parameter>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow())
+            }
+            params.toArray()
+        }
+    }
+}
+
+class SourceFilePropInfos {
+    let importListsPropInfo: Array<PropInfo>
+
+    let pkgHeaderPropInfo: Option<PropInfo>
+
+    let topLevelDeclsPropInfo: Array<PropInfo>
+
+    init(importListsPropInfo: Array<PropInfo>, pkgHeaderPropInfo: Option<PropInfo>,
+        topLevelDeclsPropInfo: Array<PropInfo>) {
+        this.importListsPropInfo = importListsPropInfo
+        this.pkgHeaderPropInfo = pkgHeaderPropInfo
+        this.topLevelDeclsPropInfo = topLevelDeclsPropInfo
+    }
+}
+
+/**
+ * @brief Class representing a source file in the syntax tree.
+ *
+ * This class extends SyntaxTreeNode and contains information about a source file,
+ * including its name, path, package header, import lists, and top-level declarations.
+ */
+public class SourceFile <: SyntaxTreeNode {
+    private let name_: String
+
+    private let path_: String
+
+    private let startPos: CodePosition
+
+    private let propInfos: SourceFilePropInfos
+
+    prop isMacroPackage: Bool {
+        get() {
+            pkgHeader?.isMacroPkg ?? false
+        }
+    }
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String, path_: String,
+        propInfos: SourceFilePropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.name_ = name_
+        this.path_ = path_
+        this.startPos = startPos
+        this.propInfos = propInfos
+    }
+
+    /**
+     * @brief The import lists of the source file.
+     *
+     * This array field contains the import lists of the source file.
+     */
+    public prop importLists: Array<ImportList> {
+        get() {
+            let imports = ArrayList<ImportList>()
+            for (propInfo in propInfos.importListsPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                imports.add(
+                    cast<ImportList>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow())
+            }
+            imports.toArray()
+        }
+    }
+
+    /**
+     * @brief The name of the source file.
+     *
+     * This string field holds the name of the source file.
+     */
+    public prop name: String {
+        get() {
+            name_
+        }
+    }
+
+    /**
+     * @brief The path of the source file.
+     *
+     * This string field holds the path of the source file.
+     */
+    public prop path: String {
+        get() {
+            path_
+        }
+    }
+
+    /**
+     * @brief The package header of the source file.
+     *
+     * This optional field may contain the package header of the source file.
+     */
+    public prop pkgHeader: Option<PackageHeader> {
+        get() {
+            if (let Some(propInfo) <- propInfos.pkgHeaderPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                cast<PackageHeader>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
+            } else {
+                None
+            }
+        }
+    }
+
+    /**
+     * @brief The top-level declarations in the source file.
+     *
+     * This array field contains the top-level declarations in the source file.
+     */
+    public prop topLevelDecls: Array<Decl> {
+        get() {
+            let decls = ArrayList<Decl>()
+            for (propInfo in propInfos.topLevelDeclsPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                decls.add(cast<Decl>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow())
+            }
+            decls.toArray()
+        }
+    }
+}

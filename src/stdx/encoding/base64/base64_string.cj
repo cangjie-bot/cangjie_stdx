@@ -106,6 +106,7 @@ func verifyBase64(value: Array<UInt8>): Bool {
     if (value.size == 0 || value.size % 4 != 0) {
         return false
     }
+
     /* 98% of all non base64 values are invalidated by this time. */
     var index: Int64 = value.size - 1
 
