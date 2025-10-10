@@ -34,7 +34,7 @@ mut prop supportedAlpnProtocols: Array<String>
 
 类型：Array\<String>
 
-### prop supportedCipherSuite
+### prop supportedCipherSuites
 
 ```cangjie
 mut prop supportedCipherSuites: Map<TlsVersion, Array<String>>

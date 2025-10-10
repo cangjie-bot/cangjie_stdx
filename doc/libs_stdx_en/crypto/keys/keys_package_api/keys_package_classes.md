@@ -184,7 +184,7 @@ Exceptions:
 
 - [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if signing fails.
 
-### func toString()
+### func toString
 
 ```cangjie
 public override func toString(): String
@@ -298,7 +298,7 @@ Exceptions:
 
 - [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
-### func toString()
+### func toString
 
 ```cangjie
 public override func toString(): String
@@ -932,7 +932,7 @@ Exceptions:
 
 - [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when signing fails.
 
-### func toString()
+### func toString
 
 ```cangjie
 public override func toString(): String

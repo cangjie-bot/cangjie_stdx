@@ -73,6 +73,18 @@ func encodeToPem(): PemEntry
 
 - [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - DH 密钥参数数据 PEM 格式编码生成的对象。
 
+### func toString()
+
+```cangjie
+public override func toString(): String
+```
+
+功能：转换为字符串格式。
+
+返回值：
+
+- String - 字符串。
+
 ## class X509Certificate
 
 ```cangjie

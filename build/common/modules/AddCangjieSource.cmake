@@ -7,7 +7,7 @@
 
 set(CANGJIE_LIB_DIR "modules")
 
-function(add_cangjie_library target_name 
+function(add_cangjie_library target_name
 )
     set(options
         IS_PACKAGE
@@ -28,7 +28,7 @@ function(add_cangjie_library target_name
         "${multi_value_args}"
         ${ARGN})
 
-    # pre-process source files
+    # The pre-process source files
     set(source_files)
     foreach(file ${CANGJIELIB_SOURCES})
         get_filename_component(file_path ${file} PATH)
@@ -43,7 +43,7 @@ function(add_cangjie_library target_name
     if(CANGJIELIB_IS_CJNATIVE_BACKEND)
         set(BACKEND "cjnative")
     endif()
-    # setting output directory
+    # Set output directory
     set(output_dir)
     set(output_bc_dir)
     if(CANGJIELIB_IS_STDXLIB)
@@ -66,7 +66,7 @@ function(add_cangjie_library target_name
     elseif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
         list(APPEND cangjie_compile_flags "-g")
         if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-            # -g will enable aggressive-parallel-compile, so we need limit --apc to 1 to disable it forcibly.
+            # The -g will enable aggressive-parallel-compile, so we need limit --apc to 1 to disable it forcibly.
             list(APPEND cangjie_compile_flags "--apc=1")
         endif()
     else()
@@ -81,24 +81,23 @@ function(add_cangjie_library target_name
     else()
         set(output_full_name "${CMAKE_BINARY_DIR}/${output_dir}/${CANGJIELIB_PACKAGE_NAME}")
     endif()
-    
+
     set(output_full_name_prefix "${CMAKE_BINARY_DIR}/${output_dir}/${CANGJIELIB_PACKAGE_NAME}")
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-        set(output_full_name "${output_full_name}.a") # set output path and output name
+        set(output_full_name "${output_full_name}.a") # Set output path and output name
         if(NOT ("${CANGJIELIB_MODULE_NAME}" STREQUAL ""))
             set(output_lto_bc_full_name "${CMAKE_BINARY_DIR}/${output_bc_dir}/lib${CANGJIELIB_MODULE_NAME}.${CANGJIELIB_PACKAGE_NAME}")
         else()
             set(output_lto_bc_full_name "${CMAKE_BINARY_DIR}/${output_bc_dir}/lib${CANGJIELIB_PACKAGE_NAME}")
-        endif()        
-        set(output_lto_bc_full_name "${output_lto_bc_full_name}.bc") # set output path and output name
+        endif()
+        set(output_lto_bc_full_name "${output_lto_bc_full_name}.bc") # Set output path and output name
     endif()
 
-    # list(APPEND cangjie_compile_flags "--output-type=staticlib")
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
         list(APPEND cangjie_compile_flags "--output-type=staticlib")
     endif()
 
-    # set compiler path
+    # Set compiler path
     if(CMAKE_CROSSCOMPILING)
         set(CANGJIE_NATIVE_CANGJIE_TOOLS_PATH ${CMAKE_BINARY_DIR}/../build/bin)
     endif()
@@ -106,22 +105,17 @@ function(add_cangjie_library target_name
     # Determine the suffix according to the host instead.
     set(cangjie_compiler_tool "cjc$<$<BOOL:${CMAKE_HOST_WIN32}>:.exe>")
 
-    # no-sub-pkg
+    # Set no-sub-pkg
     if(CANGJIELIB_NO_SUB_PKG)
         set(no_sub_pkg "--no-sub-pkg")
     endif()
 
-    set(output_argument "--output") # output argument to specify the output file dir and name
-    set(module_name_argument) # module name argument to specify which module the project belongs to
+    set(output_argument "--output") # Output argument to specify the output file dir and name
+    set(module_name_argument) # Module name argument to specify which module the project belongs to
     set(CJNATIVE_PATH)
-    if(CMAKE_CROSSCOMPILING)
-        # When cross-compiling stdxlib, use the installed llvm tools,
-        # in case the backend is compiled from source in previous native-building step
-        set(CJNATIVE_PATH $ENV{CANGJIE_HOME}/third_party/llvm/bin)
-        # $ENV{CANGJIE_HOME}
-    else()
-        set(CJNATIVE_PATH $ENV{CANGJIE_HOME}/third_party/llvm/bin)
-    endif()
+    # Use the installed llvm tools,
+    # in case the backend is compiled from source in previous native-building step
+    set(CJNATIVE_PATH $ENV{CANGJIE_HOME}/third_party/llvm/bin)
     set(COMPILE_CMD)
     if(CANGJIELIB_IS_PACKAGE)
         set(COMPILE_CMD
@@ -162,7 +156,7 @@ function(add_cangjie_library target_name
     
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
         list(APPEND COMPILE_CMD "$<IF:$<CONFIG:MinSizeRel>,-Os,-O2>")
-        # .bc files is for LTO mode and LTO mode does not support -Os and -Oz.
+        # The .bc files is for LTO mode and LTO mode does not support -Os and -Oz.
         list(APPEND COMPILE_BC_CMD "-O2")
     endif()
 
@@ -185,7 +179,7 @@ function(add_cangjie_library target_name
             COMMAND ${CMAKE_COMMAND} -E env "CANGJIE_PATH=${CMAKE_BINARY_DIR}/modules/${output_cj_lib_dir}" "LIBRARY_PATH=${CMAKE_BINARY_DIR}/lib"
                      ${COMPILE_BC_CMD}
             BYPRODUCTS ${output_lto_bc_full_name}
-            # ${target_name}_bc depends on ${target_name} so they will not run simultaneously. <target> and <target>_bc
+            # The ${target_name}_bc depends on ${target_name} so they will not run simultaneously. <target> and <target>_bc
             # compile the same package, which means they may write the same bc cache file. Running simultaneously
             # may cause IO error on windows in some cases.
             DEPENDS ${CANGJIELIB_DEPENDS} ${CANGJIELIB_SOURCE_DIR} ${target_name}
@@ -195,7 +189,9 @@ function(add_cangjie_library target_name
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
         set(TARGET_AR ar)
         if(CMAKE_CROSSCOMPILING)
-            if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+            if(IOS)
+                set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/ar)
+            elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang")
                 set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/llvm-ar)
             else()
                 set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/${TRIPLE}-ar)
@@ -219,7 +215,7 @@ function(add_cangjie_library target_name
             BYPRODUCTS ${output_full_name_prefix}.o)
     endif()
 
-    # install
+    # Install
     if(NOT ("${CANGJIELIB_MODULE_NAME}" STREQUAL ""))
         set(file_name "${CANGJIELIB_MODULE_NAME}.${CANGJIELIB_PACKAGE_NAME}")
     else()
@@ -248,7 +244,7 @@ endfunction()
 set(CJNATIVE_BACKEND "cjnative")
 # Install cangjie library FFI
 function(install_cangjie_library_ffi lib_name)
-    # set install dir
+    # Set install dir
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_lib_dir)
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
         install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/static/stdx)
@@ -256,7 +252,7 @@ function(install_cangjie_library_ffi lib_name)
 endfunction()
 
 function(install_cangjie_library_ffi_s lib_name)
-    # set install dir
+    # Set install dir
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_lib_dir)
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
         install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/dynamic/stdx)

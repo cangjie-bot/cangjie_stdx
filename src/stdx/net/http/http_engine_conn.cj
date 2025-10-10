@@ -65,6 +65,8 @@ abstract class HttpEngineConn {
         }
     }
 
+    protected func isClosed(): Bool
+
     protected prop clientCertificate: ?Array<Certificate>
 
     protected func getSocket(): StreamingSocket

@@ -10,8 +10,8 @@ include(ExtractArchive)
 
 set(BACKEND_TYPE CJNATIVE)
 
-##  make shared/static library
-# if we support cross-compiling, we need to change here for target type
+##  Make shared/static library.
+# If we support cross-compiling, we need to change here for target type.
 string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${BACKEND_TYPE} output_cj_object_dir)
 string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_triple_name)
 set(CJNATIVE_BACKEND "cjnative")
@@ -423,7 +423,7 @@ make_cangjie_lib(
     DEPENDS cangjie${BACKEND_TYPE}Effect
     CANGJIE_STD_LIB_LINK std-core std-collection std-sync
     OBJECTS ${output_cj_object_dir}/stdx/effect.o)
-
+ 
 add_library(stdx.effect STATIC ${output_cj_object_dir}/stdx/effect.o)
 set_target_properties(stdx.effect PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.effect DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
