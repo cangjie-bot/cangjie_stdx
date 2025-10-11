@@ -34,15 +34,3 @@ Function: Creates a [LogException](log_package_exceptions.md#class-logexception)
 Parameters:
 
 - message: String - The exception message.
-
-### func getClassName()
-
-```cangjie
-protected override func getClassName(): String
-```
-
-Function: Obtain the class name.
-
-Return value:
-
-- String - Class name.

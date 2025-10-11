@@ -45,6 +45,11 @@ public class HttpContext {
         _responseBuilder.reset()
     }
 
+    public func isClosed(): Bool {
+        return httpConn.isClosed()
+    }
+
+
     public prop request: HttpRequest {
         get() {
             return _request

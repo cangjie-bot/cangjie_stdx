@@ -18,9 +18,9 @@ import stdx.log.*
 
 class HttpClient2 <: HttpClient {
     // store all connections, key is domain or host:port
-    let engines = HashMap<AddrPort, HttpClientEngine2>()
+    let engines = HashMap<ConnectMapKey, HttpClientEngine2>()
     // store closing connections
-    let closingEngines = HashMap<AddrPort, HttpClientEngine2>(0)
+    let closingEngines = HashMap<ConnectMapKey, HttpClientEngine2>(0)
     let engineLock = Mutex()
     let connector: Connector
     let tlsConfig: TlsConfig
@@ -82,8 +82,7 @@ class HttpClient2 <: HttpClient {
         if (req.url.scheme != "https") {
             throw HttpException("Must use https scheme for HTTP/2 request.")
         }
-        let (hostAndport, authority) = parseHostAndPort(req.url)
-        let port = hostAndport.port
+        let (targetAddrPort, proxyAddrPort, authority, isToProxy) = parseHostAndPort(req.url)
         if (let Some(auth) <- authority) {
             // a client must not generate fields in a TRACE request containing
             // sensitive data that might be disclosed by the response.
@@ -94,39 +93,48 @@ class HttpClient2 <: HttpClient {
             }
         }
         if (req.headers.get("host").isEmpty()) {
-            req.headers.set("host", "${req.url.hostName}:${port}")
+            match (isToProxy) {
+                case false => req.headers.set("host", "${targetAddrPort.addr}:${targetAddrPort.port}")
+                case true => req
+                    .headers
+                    .set("host", "${proxyAddrPort.getOrThrow().addr}:${proxyAddrPort.getOrThrow().port}")
+            }
+        }
+        let connnectKey: ConnectMapKey = match ((isToProxy)) {
+            case false => ConnectMapKey(targetAddrPort, None<AddrPort>)
+            case true => ConnectMapKey(targetAddrPort, proxyAddrPort)
         }
         var httpEngine: HttpClientEngine2
         synchronized(engineLock) {
-            httpEngine = match (engines.get(hostAndport)) {
+            httpEngine = match (engines.get(connnectKey)) {
                 case Some(v) => v
                 case None =>
-                    httpLogDebug(logger, "[HttpClient2#request] start engine to ${hostAndport}")
-                    let engine = createEngine(hostAndport)
-                    engines.add(hostAndport, engine)
+                    httpLogDebug(logger, "[HttpClient2#request] start engine to ${connnectKey}")
+                    let engine = createEngine(connnectKey, isToProxy)
+                    engines.add(connnectKey, engine)
                     engine
             }
             // clean closed connection
-            if (let Some(v) <- closingEngines.get(hostAndport)) {
+            if (let Some(v) <- closingEngines.get(connnectKey)) {
                 if (v.streams.size == 0) {
                     v.close()
-                    closingEngines.remove(hostAndport)
+                    closingEngines.remove(connnectKey)
                 }
             }
             // if engine is closing, start a new engine
             if (httpEngine.quit.load()) {
-                httpLogDebug(logger, "[HttpClient2#request] restart engine to ${hostAndport}")
-                let newHttpEngine = createEngine(hostAndport)
-                engines.add(hostAndport, newHttpEngine)
+                httpLogDebug(logger, "[HttpClient2#request] restart engine to ${connnectKey}")
+                let newHttpEngine = createEngine(connnectKey, isToProxy)
+                engines.add(connnectKey, newHttpEngine)
             } else if (httpEngine.closing || httpEngine.lastStreamId.load() >= httpEngine.maxStreamId) {
-                httpLogDebug(logger, "[HttpClient2#request] restart engine to ${hostAndport}")
+                httpLogDebug(logger, "[HttpClient2#request] restart engine to ${connnectKey}")
                 // keep most 2 connections to one server
-                if (closingEngines.contains(hostAndport)) {
-                    closingEngines[hostAndport].close()
+                if (closingEngines.contains(connnectKey)) {
+                    closingEngines[connnectKey].close()
                 }
-                closingEngines.add(hostAndport, httpEngine)
-                let newHttpEngine = createEngine(hostAndport)
-                engines.add(hostAndport, newHttpEngine)
+                closingEngines.add(connnectKey, httpEngine)
+                let newHttpEngine = createEngine(connnectKey, isToProxy)
+                engines.add(connnectKey, newHttpEngine)
             }
         }
 
@@ -150,13 +158,20 @@ class HttpClient2 <: HttpClient {
     /*
      * do connection handshake in this func
      */
-    func createEngine(addrport: AddrPort): HttpClientEngine2 {
-        let ips = IPAddress.resolve(addrport.addr)
-        if (ips.size == 0) {
-            throw HttpException("Failed to resolve address ${addrport.addr}.")
+    func createEngine(key: ConnectMapKey, isToProxy: Bool): HttpClientEngine2 {
+        var addrPort: AddrPort = match (isToProxy) {
+            case false => key.addrPort
+            case true => key.httpsProxy.getOrThrow()
         }
-        let sa = IPSocketAddress(ips[0], addrport.port)
-        let tmpConn = connector(sa)
+        let ips = IPAddress.resolve(addrPort.addr)
+        if (ips.size == 0) {
+            throw HttpException("Failed to resolve address ${addrPort.addr}.")
+        }
+        let sa = IPSocketAddress(ips[0], addrPort.port)
+        let tmpConn = match (isToProxy) {
+            case false => connector(sa)
+            case true => getTunnelConnector(key.addrPort)
+        }
         // alpnProtocolsList have been checked before HttpClient2 initial, no need to check again
         if (let Some(conn) <- (tmpConn as TlsConnection)) {
             return HttpClientEngine2(conn, localSettings, logger, readTimeout, writeTimeout)
@@ -183,33 +198,33 @@ class HttpClient2 <: HttpClient {
         return HttpClientEngine2(tlsConn, localSettings, logger, readTimeout, writeTimeout)
     }
 
-    func parseHostAndPort(url: URL): (AddrPort, ?String) {
-        let addr: String
-        var _port: String
+    func getTunnelConnector(addrPort: AddrPort): StreamingSocket {
+        let headers = HttpHeaders()
+        headers.add("Host", addrPort.addr + ":" + addrPort.port.toString())
+        httpLogDebug(logger, "[HttpClient2#getTunnelConnector] Client2_0 getTunnelConnector,host=${addrPort.addr}:${addrPort.port}")
+        let (resp, conn) = client.connect(proxy, header: headers)
+        return conn.getOrThrow()
+    }
+
+    func parseHostAndPort(url: URL): (AddrPort, ?AddrPort, ?String, Bool) {
+        var proxyAddrPort: Option<AddrPort> = None<AddrPort>
+        let targetAddr: String = url.hostName
+        var targetport: String = url.port.ifEmpty("443")
+        let targetAddrPort: AddrPort = AddrPort(targetAddr, targetport)
         var auth = None<String>
+        var isToProxy: Bool = false
         let hostInNoProxy = matchNoProxy(url.hostName, url.port)
         if (!proxy.isEmpty() && !hostInNoProxy) {
             // check port
             // IPv6 is not considered yet
             let proxyUrl = URL.parse(proxy)
-            addr = proxyUrl.hostName
-            _port = proxyUrl.port
+            let proxyAddr = proxyUrl.hostName
+            let proxyPort = proxyUrl.port.ifEmpty("443")
             auth = parseProxyAuth(proxyUrl)
-        } else {
-            addr = url.hostName
-            _port = url.port
+            proxyAddrPort = AddrPort(proxyAddr, proxyPort)
+            isToProxy = true
         }
-        // only https, default port is 443
-        if (_port.isEmpty()) {
-            _port = "443"
-        }
-        let port = try {
-            UInt16.parse(_port)
-        } catch (e: IllegalArgumentException) {
-            throw HttpException("Invalid port string: ${_port}.")
-        }
-        let addrport = AddrPort(addr, port)
-        return (addrport, auth)
+        return (targetAddrPort, proxyAddrPort, auth, isToProxy)
     }
 }
 

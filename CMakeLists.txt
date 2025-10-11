@@ -7,7 +7,7 @@
 
 cmake_minimum_required(VERSION 3.16.5)
 project(stdx)
-# add path for custom CMake modules and add cmake modules
+# Add path for custom CMake modules and add cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build/common/modules")
 include(AddCangjieSource)
 
@@ -62,7 +62,10 @@ if(MINGW)
 endif()
 
 if(NOT TARGET_TRIPLE_DIRECTORY_PREFIX)
-    string(REPLACE "-" "_" TARGET_TRIPLE_DIRECTORY_PREFIX "${CMAKE_SYSTEM_NAME}_${CMAKE_SYSTEM_PROCESSOR}")
+    if(IOS AND IOS_PLATFORM MATCHES "SIMULATOR")
+        set(EXTRA_OS_SUFFIX _simulator)
+    endif()
+    string(REPLACE "-" "_" TARGET_TRIPLE_DIRECTORY_PREFIX "${CMAKE_SYSTEM_NAME}${EXTRA_OS_SUFFIX}_${CMAKE_SYSTEM_PROCESSOR}")
     string(TOLOWER "${TARGET_TRIPLE_DIRECTORY_PREFIX}" TARGET_TRIPLE_DIRECTORY_PREFIX)
 endif()
 
@@ -74,7 +77,7 @@ include(SetupAr)
 
 message(STATUS "Building with target=${TRIPLE}")
 
-if(DARWIN)
+if(MACOS)
     include(ReadDarwinSDKInfo)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0.0)
 endif()
@@ -125,7 +128,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-if(NOT CANGJIE_SKIP_FIND_OPENSSL)
+if(NOT CANGJIE_SKIP_FIND_OPENSSL AND NOT ANDROID)
     include(PrepareOpenSSL)
 else()
     # OpenSSL library wil be searched by the linker at build time

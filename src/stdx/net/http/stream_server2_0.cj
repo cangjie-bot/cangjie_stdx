@@ -478,14 +478,14 @@ class Stream {
      * if frames on this stream are received in a round-trip, they should be processed minimally.
      * We will send global WINDOW_UPDATE, if received DATA. Other frames will be ignored.
      */
-    func close(h2Error: H2Error, message: String): Unit {
+    func close(h2Error: H2Error, message: String, slow!: Bool = false): Unit {
         if (h2Error.code != NoError.code) {
             httpLogWarn(server.logger, "[Stream#close] ${message}")
         }
 
         // received rst and status has already been set to Closed
         if (isClosed()) {
-            purgeStream(purge: false)
+            purgeStream(purge: false, rstCount: !slow)
             return
         }
 
@@ -493,12 +493,18 @@ class Stream {
         cancelAllTimers()
         dataBBQ.close()
 
-        let rstFrame = RstStreamFrame(streamId, h2Error.code)
-        if (!server.responseQueue.send(rstFrame, CONTROL_PRIORITY)) {
-            if (server.logger.enabled(LogLevel.DEBUG)) {
-                httpLogDebug(server.logger, "[Stream#close] connection closed, write rst failed")
+        let id = streamId
+        spawn {
+            if (slow) {
+                sleep(Duration.second * 5)
             }
-            return
+ 
+            let rstFrame = RstStreamFrame(id, h2Error.code)
+            if (!server.responseQueue.send(rstFrame, CONTROL_PRIORITY)) {
+                if (server.logger.enabled(LogLevel.DEBUG)) {
+                    httpLogDebug(server.logger, "[Stream#close] connection closed, write rst failed")
+                }
+            }
         }
     }
 
@@ -598,6 +604,10 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
         get() {
             return stream.server.remoteSettings[SettingsEnablePush.code] == 1
         }
+    }
+
+    public func isClosed(): Bool {
+        return stream.isClosed()
     }
 
     public func getSocket(): StreamingSocket {
