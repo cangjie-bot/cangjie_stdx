@@ -51,7 +51,7 @@ func certificateFromPem(text: String): Array<Certificate>
 
 返回值：
 
-- [Certificate](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate) - 解码得到的证书。
+- Array\<[Certificate](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)> - 解码得到的证书集合。
 
 异常：
 

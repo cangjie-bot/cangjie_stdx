@@ -8,7 +8,7 @@
 
 #include "json_string_escape.h"
 
-int64_t CJ_JSON_ReplaceEscapeChar(const uint8_t* input, int64_t inputlen, uint8_t* buffer)
+int64_t CJ_JSON_ReplaceEscapeChar(const uint8_t* input, int64_t inputlen, uint8_t* buffer, bool htmlSafe)
 {
     uint8_t* pointer = buffer;
     const uint8_t* inputPointer = input;
@@ -28,7 +28,7 @@ int64_t CJ_JSON_ReplaceEscapeChar(const uint8_t* input, int64_t inputlen, uint8_
             continue;
         }
 
-        if ((b >= 32) && (b != '\"') && (b != '\\') && (b != '&')) { // ASCII code over 32 don't need escape
+        if ((b >= 32) && (b != '\"') && (b != '\\') && ((!htmlSafe && b == '&') || (b != '&'))) { // ASCII code over 32 don't need escape
             *pointer = *inputPointer;
             len++;
             continue;
@@ -117,7 +117,7 @@ int64_t CJ_JSON_WriteBufferAppendUint(uint8_t* buffer, const uint64_t num)
     return index;
 }
 
-int64_t CJ_JSON_StringEscapeCharNumGet(const uint8_t* input, int64_t strlen)
+int64_t CJ_JSON_StringEscapeCharNumGet(const uint8_t* input, int64_t strlen, bool htmlSafe)
 {
     const uint8_t* inputPointer;
     int64_t len = strlen;
@@ -130,7 +130,7 @@ int64_t CJ_JSON_StringEscapeCharNumGet(const uint8_t* input, int64_t strlen)
         }
 
         // ASCII code over 32 don't need escape
-        if ((*inputPointer >= 32) && (*inputPointer != '\"') && (*inputPointer != '\\') && (*inputPointer != '&')) {
+        if ((*inputPointer >= 32) && (*inputPointer != '\"') && (*inputPointer != '\\') && ((!htmlSafe && *inputPointer == '&') || *inputPointer != '&')) {
             continue;
         }
 

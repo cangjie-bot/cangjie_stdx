@@ -25,7 +25,7 @@ class HttpClient1 <: HttpClient {
 
     // a map
     // <addr: HttpEngine1>
-    let h1EngineMap = HashMap<AddrPort, HttpEngine1>()
+    let h1EngineMap = HashMap<ConnectMapKey, HttpEngine1>()
     let mapMtx = Mutex()
 
     let httpProxy: String
@@ -55,48 +55,57 @@ class HttpClient1 <: HttpClient {
     public func request(request: HttpRequest): HttpResponse {
         checkRequest(request)
         let hostInNoProxy = matchNoProxy(request.url.hostName, request.url.port)
-        let (addr, portString, isToProxy) = match ((request.url.scheme, hostInNoProxy)) {
+
+        let (targetAddrPort, proxyAddrPort, isToProxy, isToHttpsProxy) = match ((request.url.scheme, hostInNoProxy)) {
             // no proxy
-            case ("https", true) => (request.url.hostName, request.url.port.ifEmpty("443"), false)
-            case ("http", true) => (request.url.hostName, request.url.port.ifEmpty("80"), false)
+            case ("https", true) => (AddrPort(request.url.hostName, request.url.port.ifEmpty("443")), None<AddrPort>,
+                false, false)
+            case ("http", true) => (AddrPort(request.url.hostName, request.url.port.ifEmpty("80")), None<AddrPort>, false,
+                false)
             // https proxy
-            case ("https", false) => noProxyTarget(request, httpsProxy, "443")
+            case ("https", false) => noProxyTarget(request, httpsProxy, "443", "80")
             // http proxy
-            case ("http", false) => noProxyTarget(request, httpProxy, "80")
-            case _ => throw HttpException("Not HTTP protocol scheme: ${request.url.scheme}.")
+            case ("http", false) => noProxyTarget(request, httpProxy, "80", "80")
+            case _ => throw HttpException("Not HTTP protocol scheme: ${request.url.scheme}")
         }
 
         if (client.logger.enabled(LogLevel.DEBUG)) {
-            httpLogDebug(client.logger, "[HttpClient1#request] request host:${addr} port:${portString}.")
-        }
-
-        let port = try {
-            UInt16.parse(portString)
-        } catch (e: IllegalArgumentException) {
-            throw HttpException("Invalid url address or proxy address.")
+            httpLogDebug(client.logger,
+                "[HttpClient1#request] request target host:${targetAddrPort.addr} port:${targetAddrPort.port}")
+            if (isToProxy) {
+                httpLogDebug(client.logger,
+                    "[HttpClient1#request] request proxy host:${proxyAddrPort.getOrThrow().addr} port:${proxyAddrPort.getOrThrow().port}")
+            }
         }
 
         let httpEngine: HttpEngine1
-        let addrport = AddrPort(addr, port)
+        let connnectKey: ConnectMapKey = match ((isToProxy, isToHttpsProxy)) {
+            case (false, _) => ConnectMapKey(targetAddrPort, None<AddrPort>)
+            case (true, false) => ConnectMapKey(proxyAddrPort.getOrThrow(), None<AddrPort>)
+            case (true, true) => ConnectMapKey(targetAddrPort, proxyAddrPort)
+        }
         synchronized(mapMtx) {
             if (isClosed) {
                 throw HttpException("This client has already closed.")
             }
-            httpEngine = h1EngineMap.getIfAbsent(addrport, HttpEngine1(addrport, client))
+            httpEngine = match (isToProxy) {
+                case false => h1EngineMap.getIfAbsent(connnectKey, HttpEngine1(targetAddrPort, client, this))
+                case true => h1EngineMap.getIfAbsent(connnectKey, HttpEngine1(proxyAddrPort.getOrThrow(), client, this))
+            }
         }
 
         if (request.headers.get("host").isEmpty()) {
-            request.headers.set("host", "${addr}:${port}")
+            request.headers.set("host", "${httpEngine.addrport.addr}:${httpEngine.addrport.port}")
         }
 
-        return httpEngine.sendRequest(request, isToProxy)
+        return httpEngine.sendRequest(request, isToProxy, isToHttpsProxy)
     }
 
-    func noProxyTarget(request: HttpRequest, proxy: String, port: String): (String, String, Bool) {
+    func noProxyTarget(request: HttpRequest, proxy: String, targetPort: String, proxyPort: String): (AddrPort, Option<AddrPort>, Bool, Bool) {
         // check port
         // IPv6 is not considered yet
         if (proxy.isEmpty()) {
-            return (request.url.hostName, request.url.port.ifEmpty(port), false)
+            return (AddrPort(request.url.hostName, request.url.port.ifEmpty(targetPort)), None, false, false)
         } else {
             let proxyUrl = URL.parse(proxy)
             if (let Some(auth) <- parseProxyAuth(proxyUrl)) {
@@ -108,7 +117,8 @@ class HttpClient1 <: HttpClient {
                     request.headers.set("proxy-authorization", auth)
                 }
             }
-            return (proxyUrl.hostName, proxyUrl.port.ifEmpty(port), true)
+            return (AddrPort(request.url.hostName, request.url.port.ifEmpty(targetPort)), AddrPort(proxyUrl.hostName,
+                    proxyUrl.port.ifEmpty(proxyPort)), true, request.url.scheme == "https")
         }
     }
 
@@ -218,7 +228,8 @@ class HttpEngine1 {
 
     HttpEngine1(
         let addrport: AddrPort,
-        let client: Client
+        let client: Client,
+        let httpClient1: HttpClient1
     ) {
         connector = client.connector
         tlsConfig = client.getTlsConfig()
@@ -231,13 +242,13 @@ class HttpEngine1 {
      * @throws HttpException if too many 1xx responses.
      * @throws SocketException or ConnectionException if something wrong happened in socket.
      */
-    func sendRequest(request: HttpRequest, isToProxy: Bool): HttpResponse {
+    func sendRequest(request: HttpRequest, isToProxy: Bool, isToHttpsProxy: Bool): HttpResponse {
         let isTls = if (request.url.scheme == "https") {
             1
         } else {
             0
         }
-        let (connNode, isFromPool) = getConn(isTls, isToProxy)
+        let (connNode, isFromPool) = getConn(request, isTls, isToProxy, isToHttpsProxy: isToHttpsProxy)
         try {
             return connNode.sendRequest(request)
         } catch (e: ConnectionException) {
@@ -267,7 +278,7 @@ class HttpEngine1 {
         } else {
             0
         }
-        let (connNode, _) = getConn(isTls, isToProxy, forceNew: true)
+        let (connNode, _) = getConn(request, isTls, isToProxy, forceNew: true)
         try {
             return connNode.sendRequest(request)
         } catch (e: Exception) {
@@ -282,14 +293,15 @@ class HttpEngine1 {
      * idx == 0: plain connNode
      * idx == 1: tls connNode
      */
-    private func getConn(index: Int64, isToProxy: Bool, forceNew!: Bool = false): (ConnNode, Bool) {
+    private func getConn(request: HttpRequest, index: Int64, isToProxy: Bool, forceNew!: Bool = false,
+        isToHttpsProxy!: Bool = false): (ConnNode, Bool) {
         if (forceNew) {
-            return (createNewConn(index, isToProxy), false)
+            return (createNewConn(request, index, isToProxy, isToHttpsProxy: isToHttpsProxy), false)
         }
         if (let Some(connNode) <- tryGetConnFromPool(index)) {
             return (connNode, true)
         }
-        return (createNewConn(index, isToProxy), false)
+        return (createNewConn(request, index, isToProxy, isToHttpsProxy: isToHttpsProxy), false)
     }
 
     // get a connection from pool
@@ -309,7 +321,7 @@ class HttpEngine1 {
         }
     }
 
-    private func createNewConn(index: Int64, isToProxy: Bool): ConnNode {
+    private func createNewConn(request: HttpRequest, index: Int64, isToProxy: Bool, isToHttpsProxy!: Bool = false): ConnNode {
         if (isClosed) {
             throw HttpException("This client has already closed.")
         }
@@ -324,7 +336,7 @@ class HttpEngine1 {
         let connNode: ConnNode
         try {
             httpLogDebug(logger, "[HttpEngine1#getConn] Client1_1 get conn new")
-            connNode = ConnNode(client, this, index != 0, isToProxy)
+            connNode = ConnNode(client, request, this, index != 0, isToProxy, isToHttpsProxy)
         } catch (e: Exception) {
             connNum.fetchAdd(-1)
             throw e
@@ -371,7 +383,7 @@ class HttpEngine1 {
         }
     }
 
-    func connect(isTls: Bool): StreamingSocket {
+    func connect(request: HttpRequest, isTls: Bool, isToHttpsProxy!: Bool = false): StreamingSocket {
         if (isTls && tlsConfig.isNone()) {
             throw HttpException("TLS must be configured when HTTPS requests are sent.")
         }
@@ -379,10 +391,14 @@ class HttpEngine1 {
         if (ips.size == 0) {
             throw HttpException("Failed to resolve address ${addrport.addr}.")
         }
-        var conn = connector(IPSocketAddress(ips[0], addrport.port))
+        var conn = match (isToHttpsProxy) {
+            case false => connector(IPSocketAddress(ips[0], addrport.port))
+            case true => getTunnelConnector(request)
+        }
         if (let Some(tlsConn) <- (conn as TlsConnection)) {
             return tlsConn
         }
+        httpLogDebug(logger,"[HttpEngine1#connect] get conn finish")
         if (isTls) {
             let tlsConn = getGlobalTlsKit().getTlsClient(conn, tlsConfig.getOrThrow(), session: None)
             try {
@@ -393,8 +409,18 @@ class HttpEngine1 {
                 throw e
             }
             conn = tlsConn
+            httpLogDebug(logger,"[HttpEngine1#connect] handshake finish")
         }
         return conn
+    }
+
+    func getTunnelConnector(request: HttpRequest): StreamingSocket {
+        let headers = HttpHeaders()
+        headers.add("Host", request.url.hostName + ":" + request.url.port)
+        httpLogDebug(logger, "[HttpEngine1#getTunnelConnector] Client1_1 getTunnelConnector,https proxy:" + client.httpsProxy.toString())
+        let req = HttpRequestBuilder().connect().url(client.httpsProxy).version(HTTP1_1).setHeaders(headers).build()
+        let (resp, conn) = httpClient1.connect(req)
+        return conn.getOrThrow()
     }
 
     func closeConnInUse(connNode: ConnNode): Unit {
@@ -519,11 +545,13 @@ class ConnNode <: BodyProviderConn {
 
     ConnNode(
         client: Client,
+        request: HttpRequest,
         let h1Engine: HttpEngine1,
         let isTls: Bool,
-        let isToProxy: Bool
+        let isToProxy: Bool,
+        let isToHttpsProxy: Bool
     ) {
-        conn = BufferedConn(h1Engine.connect(isTls))
+        conn = BufferedConn(h1Engine.connect(request, isTls, isToHttpsProxy: isToHttpsProxy))
         logger = client.logger
         readTimeout = client.readTimeout
         writeTimeout = client.writeTimeout
@@ -771,17 +799,22 @@ class ConnNode <: BodyProviderConn {
         // RFC 9112 3.2.3.
         if (request.method == "CONNECT") {
             // authority-form
-            requestTarget.append(request.url.hostName)
-            if (request.url.port.isEmpty()) {
-                if (request.url.scheme == "https") {
-                    requestTarget.append(":443")
-                } else if (request.url.scheme == "http") {
-                    requestTarget.append(":80")
-                }
+            if (!request.headers.get("Host").isEmpty()) {
+                requestTarget.append(request.headers.getFirst("Host") ?? "")
             } else {
-                requestTarget.append(":")
-                requestTarget.append(request.url.port)
+                requestTarget.append(request.url.hostName)
+                if (request.url.port.isEmpty()) {
+                    if (request.url.scheme == "https") {
+                        requestTarget.append(":443")
+                    } else if (request.url.scheme == "http") {
+                        requestTarget.append(":80")
+                    }
+                } else {
+                    requestTarget.append(":")
+                    requestTarget.append(request.url.port)
+                }
             }
+
         // when a client wishes to request OPTIONS for the server as a whole, as opposed to a specific
         // named resource of that server, the client send only "*" (%x2A) as the request-target.
         // for example
@@ -952,7 +985,7 @@ class ConnNode <: BodyProviderConn {
             case Some(value) =>
                 if (value == -1) {
                     response._bodySize = None
-                    return ResponseBodyProviderUtilConnectionClose(this)
+                    return ResponseBodyProviderUtilConnectionClose(this, readTimer)
                 }
                 // Content-Length = 0
                 if (value == 0) {
@@ -1092,8 +1125,8 @@ func toHeaderString(httpHeaders: HttpHeaders): StringBuilder {
     return stringBuilder
 }
 
-class ResponseBodyProviderUtilConnectionClose <: InputStream {
-    ResponseBodyProviderUtilConnectionClose(let connNode: ConnNode) {}
+class ResponseBodyProviderUtilConnectionClose <: InputStream & Resource {
+    ResponseBodyProviderUtilConnectionClose(let connNode: ConnNode, let timer: HttpTimer) {}
     // if there is data in the cache,
     // the value is returned immediately
     public func read(buf: Array<Byte>): Int64 {
@@ -1110,5 +1143,14 @@ class ResponseBodyProviderUtilConnectionClose <: InputStream {
             }
             throw e
         }
+    }
+
+    public func close(): Unit {
+        timer.cancel()
+        connNode.h1Engine.closeConnInUse(connNode)
+    }
+
+    public func isClosed(): Bool {
+        connNode.getBufferConn().isClosed()
     }
 }
