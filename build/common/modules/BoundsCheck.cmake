@@ -11,7 +11,7 @@ project(boundscheck)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(SECURE_CFLAG_FOR_SHARED_LIBRARY "-fstack-protector-all")
 
-# we are not expect libboundscheck to be instrumented by asan or hwasan
+# It is not expect libboundscheck to be instrumented by asan or hwasan
 # otherwise it will generate false positive everywhere
 if(CANGJIE_SANITIZER_SUPPORT_ENABLED)
     get_directory_property(boundscheck_COMPILE_OPTIONS  COMPILE_OPTIONS)
@@ -25,7 +25,7 @@ if (MINGW)
     set(WARNING_FLAGS "-w")
     set(SECURE_CFLAG_FOR_SHARED_LIBRARY "-static ${SECURE_CFLAG_FOR_SHARED_LIBRARY}")
 else()
-    if(NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+    if(NOT DARWIN)
         set(SECURE_LDFLAG_FOR_SHARED_LIBRARY "-Wl,-z,relro,-z,now,-z,noexecstack")
     endif()
 endif()
@@ -36,7 +36,7 @@ set(CMAKE_C_FLAGS_RELEASE "-D_FORTIFY_SOURCE=2 -O2")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
 if(CLANG_TARGET_TRIPLE)
-    # We add --target option for clang only since gcc does not support --target option.
+    # Add --target option for clang only since gcc does not support --target option.
     # In case of gcc, cross compilation requires a target-specific gcc (a cross compiler).
     add_compile_options(--target=${CLANG_TARGET_TRIPLE})
     add_link_options(--target=${CLANG_TARGET_TRIPLE})

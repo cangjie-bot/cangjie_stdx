@@ -1161,6 +1161,18 @@ Function: Retrieves the HTTP response builder.
 
 Type: [HttpResponseBuilder](http_package_classes.md#class-httpresponsebuilder)
 
+### func isClosed()
+
+```cangjie
+public func isClosed(): Bool
+```
+
+Function: When using the HTTP/1.1 protocol, determine whether the socket has been closed; when using the HTTP/2 protocol, determine whether the HTTP/2 stream has been closed.
+
+Return Value:
+
+- Bool - If the HTTP/1.1 socket or HTTP/2 stream is closed, return true; otherwise, return false.
+
 ## class HttpHeaders
 
 ```cangjie
@@ -1340,19 +1352,6 @@ Function: Retrieve the length of the request body.
 
 Type: Option\<Int64>
 
-### prop close
-
-```cangjie
-public prop close: Bool
-```
-
-Function: Indicates whether the request header contains `Connection: close`.
-
-- For the server, close being true means the connection should be closed after processing the request.
-- For the client, close being true means the client should actively close the connection if the server does not close it after receiving the response.
-
-Type: Bool
-
 ### prop form
 
 ```cangjie
@@ -1380,6 +1379,19 @@ public prop headers: HttpHeaders
 Function: Retrieve the headers. For details, see the [HttpHeaders](http_package_classes.md#class-httpheaders) class. After retrieval, the request headers can be modified by calling member functions of the [HttpHeaders](http_package_classes.md#class-httpheaders) instance.
 
 Type: [HttpHeaders](http_package_classes.md#class-httpheaders)
+
+### prop isPersistent
+
+```cangjie
+public prop isPersistent: Bool
+```
+
+Function: Indicates whether the request use a persistent connection. If it contains `Connection: close`, it is false; otherwise, it is true.
+
+- For the server, isPersistent being false means the connection should be closed after processing the request.
+- For the client, isPersistent being false means the client should actively close the connection if the server does not close it after receiving the response.
+
+Type: Bool
 
 ### prop method
 
@@ -1925,20 +1937,6 @@ Function: Retrieves the length of the response body.
 
 Type: `Option<Int64>`
 
-### prop close
-
-```cangjie
-public prop close: Bool
-```
-
-Function: Indicates whether the response header contains `Connection: close`.
-
-For the server, `close` being `true` means the connection should be closed after processing the request.
-
-For the client, `close` being `true` means the client should actively close the connection if the server does not close it after receiving the response.
-
-Type: `Bool`
-
 ### prop headers
 
 ```cangjie
@@ -1948,6 +1946,19 @@ public prop headers: HttpHeaders
 Function: Retrieves the headers. For details on headers, refer to the [HttpHeaders](http_package_classes.md#class-httpheaders) class. After retrieval, the request's headers can be modified by calling member functions of the [HttpHeaders](http_package_classes.md#class-httpheaders) instance.
 
 Type: [HttpHeaders](http_package_classes.md#class-httpheaders)
+
+### prop isPersistent
+
+```cangjie
+public prop isPersistent: Bool
+```
+
+Function: Indicates whether the response use a persistent connection. If it contains `Connection: close`, it is false; otherwise, it is true.
+
+- For the server, isPersistent being false means the connection should be closed after processing the request.
+- For the client, isPersistent being false means the client should actively close the connection if the server does not close it after receiving the response.
+
+Type: `Bool`
 
 ### prop request
 
@@ -1988,6 +1999,18 @@ public prop version: Protocol
 Function: Retrieves the protocol version of the response. The default value is [HTTP1_1](./http_package_enums.md#enum-protocol).
 
 Type: [Protocol](http_package_enums.md#enum-protocol)
+
+### func close()
+
+```cangjie
+public func close(): Unit
+```
+
+Function：If the user no longer needs the unread body data, they can call this API to close the connection and release resources. For the HTTP/2 protocol, a Reset frame will be sent to close the corresponding stream.
+
+> **Note：**
+>
+> There is no need to call this API to release resources again if the user has already read the body.
 
 ### func toString()
 
@@ -2408,109 +2431,13 @@ public abstract class ProtocolService
 
 Functionality: HTTP protocol service instance that provides HTTP services for a single client connection, including parsing client request messages, dispatching request processing, and sending responses.
 
-### prop distributor
-
-```cangjie
-protected prop distributor: HttpRequestDistributor
-` ` `
-
-Function: Obtain the request distributor. The request distributor will distribute the request to the corresponding handler based on the url.
-
-Type: [HttpRequestDistributor](http_package_interfaces.md#interface-httprequestdistributor)
-
-### prop httpKeepAliveTimeout
-
-```cangjie
-protected prop httpKeepAliveTimeout: Duration
-```
-
-Function: Dedicated to HTTP/1.1, obtaining the timeout period set by the server to maintain a long connection.
-
-Type: Duration
-
-### prop logger
-
-```cangjie
-protected prop logger: Logger
-```
-
-Function: Obtain the server logger. Setting logger.level will take effect immediately. The logger should be thread-safe.
-
-Type: [Logger](..) /.. /.. /log/log_package_api/log_package_classes.md#class-logger)
-
-### prop maxRequestBodySize
-
-```cangjie
-protected prop maxRequestBodySize: Int64
-```
-
-Function: Obtain the maximum request body value of the read request set by the server, which is only effective for HTTP/1.1 requests without setting "Transfer-Encoding: chunked".
-
-Type: Int64
-
-### prop maxRequestHeaderSize
-
-```cangjie
-protected prop maxRequestHeaderSize: Int64
-```
-
-Function: Obtain the maximum value of the request header for the read request set by the server. It only takes effect for HTTP/1.1. There is a dedicated configuration for maxHeaderListSize in HTTP/2.
-
-Type: Int64
-
-### prop readHeaderTimeout
-
-```cangjie
-protected prop readHeaderTimeout: Duration
-```
-
-Function: Obtain the timeout period of the read request header set by the server.
-
-Type: Duration
-
-### prop readTimeout
-
-```cangjie
-protected prop readTimeout: Duration
-```
-
-Function: Obtain the timeout period set by the server for reading the entire request.
-
-Type: Duration
-
 ### prop server
 
 ```cangjie
 protected open mut prop server: Server
 ```
 
-Function: Returns the [Server](#class-server) instance, provides the default implementation, and sets it to the bound [Server](#class-server) instance.
-
-### prop writeTimeout
-
-```cangjie
-protected prop writeTimeout: Duration
-```
-
-Function: Obtain the timeout period for write responses set by the server.
-
-Type: Duration
-
-### func close()
-
-```cangjie
-protected open func close(): Unit
-```
-
-Function: Force connection closure, provides default implementation, no action at all.
-
-### func closeGracefully()
-
-```cangjie
-protected open func closeGracefully(): Unit
-```
-
-Function: Elegantly close the connection, provide default implementation, no behavior at all.
+Functionality: Returns the [Server](#class-server) instance, provides default implementation, set as the bound [Server](#class-server) instance.
 
 ### func serve()
 
@@ -2518,7 +2445,23 @@ Function: Elegantly close the connection, provide default implementation, no beh
 protected func serve(): Unit
 ```
 
-Function: Handles requests from client connections. No default implementation is provided.
+Functionality: Processes requests from client connections, no default implementation provided.
+
+### func closeGracefully()
+
+```cangjie
+protected open func closeGracefully(): Unit
+```
+
+Functionality: Gracefully closes the connection, provides default implementation with no behavior.
+
+### func close()
+
+```cangjie
+protected open func close(): Unit
+```
+
+Functionality: Forcefully closes the connection, provides default implementation with no behavior.
 
 ## class RedirectHandler
 
@@ -3571,7 +3514,7 @@ Exceptions:
 ### func write(WebSocketFrameType, Array\<UInt8>, Int64)
 
 ```cangjie
-public func write(frameType: WebSocketFrameType, byteArray: Array<UInt8>, frameSize!: Int64 = FRAMESIZE): Unit
+public func write(frameType: WebSocketFrameType, byteArray: Array<UInt8>, frameSize!: Int64 = 4096): Unit
 ```
 
 Function: Sends data. Not thread-safe (i.e., multi-threaded writing on the same [WebSocket](http_package_classes.md#class-websocket) object is not supported).

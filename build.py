@@ -15,6 +15,7 @@ import logging
 import multiprocessing
 import os
 import platform
+import re
 import shutil
 import stat
 import subprocess
@@ -70,6 +71,14 @@ def generate_cmake_defs(args):
             toolchain_file = "ohos_x86_64_clang_toolchain.cmake"
         elif args.target == "x86_64-w64-mingw32":
             toolchain_file = "mingw_x86_64_toolchain.cmake"
+        elif "aarch64-linux-android" in args.target:
+            toolchain_file = "android_aarch64_toolchain.cmake"
+        elif "x86_64-linux-android" in args.target:
+            toolchain_file = "android_x86_64_toolchain.cmake"
+        elif args.target == "arm64-apple-ios11-simulator":
+            toolchain_file = "ios_simulator_arm64_toolchain.cmake"
+        elif args.target == "arm64-apple-ios11":
+            toolchain_file = "ios_arm64_toolchain.cmake"
     else:
         args.target = None
         if IS_WINDOWS:
@@ -96,6 +105,14 @@ def generate_cmake_defs(args):
         "-DCANGJIE_BUILD_WITHOUT_EFFECT_HANDLERS=" + bool_to_opt(args.without_effect_handlers),
         "-DCANGJIE_BUILD_STDLIB_WITH_COVERAGE=" + bool_to_opt(args.stdlib_coverage),
         "-DCANGJIE_BUILD_ARGS=" + (";".join(args.build_args) if args.build_args else "")]
+    if args.target and "aarch64-linux-android" in args.target:
+        android_api_level = re.match(r'aarch64-linux-android(\d{2})?', args.target).group(1)
+        result.append("-DCMAKE_ANDROID_NDK=" + os.path.join(args.target_toolchain, "../../../../.."))
+        result.append("-DCMAKE_ANDROID_API=" + (android_api_level if android_api_level else ""))
+    if args.target and "x86_64-linux-android" in args.target:
+        android_api_level = re.match(r'x86_64-linux-android(\d{2})?', args.target).group(1)
+        result.append("-DCMAKE_ANDROID_NDK=" + os.path.join(args.target_toolchain, "../../../../.."))
+        result.append("-DCMAKE_ANDROID_API=" + (android_api_level if android_api_level else ""))
     return result
 
 def build(args):
@@ -107,6 +124,15 @@ def build(args):
         args.target = "x86_64-linux-ohos"
     elif args.target == "windows-x86_64":
         args.target = "x86_64-w64-mingw32"
+    elif args.target == "ios-simulator-aarch64":
+        args.target = "arm64-apple-ios11-simulator"
+    elif args.target == "ios-aarch64":
+        args.target = "arm64-apple-ios11"
+    elif args.target == "android-aarch64":
+        args.target = "aarch64-linux-android"
+    elif args.target == "android-x86_64":
+        args.target = "x86_64-linux-android"
+
     check_compiler(args)
 
     """build cangjie compiler"""
@@ -181,6 +207,14 @@ def install(args):
             args.host = "x86_64-linux-ohos"
         elif args.host == "windows-x86_64":
             args.host = "x86_64-w64-mingw32"
+        elif args.host == "ios-simulator-aarch64":
+            args.host = "arm64-apple-ios11-simulator"
+        elif args.host == "ios-aarch64":
+            args.host = "arm64-apple-ios11"
+        elif args.host == "android-aarch64":
+            args.host = "aarch64-linux-android"
+        elif args.host == "android-x86_64":
+            args.host = "x86_64-linux-android"
         
     targets = []
 
@@ -211,7 +245,7 @@ def install(args):
         LOG.fatal("Nothing is built yet.")
         sys.exit(1)
 
-    # install for all build directories in the list
+    # Install for all build directories in the list
     for target in targets:
         LOG.info("installing {} build...".format(target[0]))
         cmake_cmd = ["cmake", "--install", "."]
@@ -234,7 +268,6 @@ def install(args):
                 if os.path.isfile(bin_path) and not bin.endswith(".exe"):
                     os.remove(bin_path)
     LOG.info("end install targets...")
-
 
 def redo_with_write(redo_func, path, err):
 
@@ -268,7 +301,6 @@ def clean(args):
         if os.path.isfile(abs_file_path):
             os.remove(abs_file_path)
     LOG.info("end clean\n")
-
 
 def init_log(name):
     """init log config"""
@@ -318,7 +350,11 @@ SupportedTarget = [
     "native",
     "ohos-aarch64",
     "ohos-x86_64",
-    "windows-x86_64"
+    "windows-x86_64",
+    "ios-simulator-aarch64",
+    "ios-aarch64",
+    "android-aarch64",
+    "android-x86_64"
 ]
 
 def main():

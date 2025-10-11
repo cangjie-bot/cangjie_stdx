@@ -72,7 +72,7 @@ public operator func ==(that: CipherSuite): Bool
 ## struct TlsClientConfig
 
 ```cangjie
-public struct TlsClientConfig {
+public struct TlsClientConfig <: TlsConfig {
     public var keylogCallback: ?(TlsSocket, String) -> Unit = None
     public var verifyMode: CertificateVerifyMode = CertificateVerifyMode.Default
     public init()
@@ -80,6 +80,10 @@ public struct TlsClientConfig {
 ```
 
 功能：客户端配置。
+
+父类型：
+
+- [TlsConfig](./../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig)
 
 ### var keylogCallback
 

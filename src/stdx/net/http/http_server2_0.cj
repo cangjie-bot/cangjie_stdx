@@ -13,6 +13,7 @@ import std.net.{SocketAddress, StreamingSocket, SocketException}
 import std.collection.{ArrayList, HashMap}
 import stdx.log.LogLevel
 import stdx.net.tls.common.TlsException
+import std.time.MonoTime
 
 class HttpServer2 <: ProtocolService {
     // a wrapped tls connection
@@ -367,6 +368,8 @@ class HttpServer2 <: ProtocolService {
         }
     }
 
+    var lastExceptionTime = MonoTime.now()
+
     /*
      * Process frame on stream level.
      *
@@ -378,7 +381,10 @@ class HttpServer2 <: ProtocolService {
             stream.preProcess(frame)
         } catch (se: HttpStreamException) {
             // stream exception must be caught and processed here, because the outer function can not get the stream
-            stream.close(se.h2Error, se.message)
+            let now = MonoTime.now()
+            let needSlow = now - lastExceptionTime < Duration.second * 5
+            lastExceptionTime = now
+            stream.close(se.h2Error, se.message, slow: needSlow)
         }
     }
 
