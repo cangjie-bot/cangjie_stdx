@@ -9,6 +9,7 @@
 package stdx.encoding.json.stream
 
 import std.collection.*
+import std.collection.concurrent.ConcurrentHashMap
 
 @FastNative
 foreign func CJ_JSON_FloatPrint(num: Float64, dest: CPointer<UInt8>, destSize: Int64): Int64
@@ -183,5 +184,85 @@ extend<T> Option<T> <: JsonSerializable where T <: JsonSerializable {
         } else {
             w.writeNullValue()
         }
+    }
+}
+
+extend<T> HashSet<T> <: JsonSerializable where T <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startArray()
+        for (item in this) {
+            w.writeValue<T>(item)
+        }
+        w.endArray()
+    }
+}
+
+extend<T> LinkedList<T> <: JsonSerializable where T <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startArray()
+        for (item in this) {
+            w.writeValue<T>(item)
+        }
+        w.endArray()
+    }
+}
+
+extend<T> ArrayQueue<T> <: JsonSerializable where T <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startArray()
+        for (item in this) {
+            w.writeValue<T>(item)
+        }
+        w.endArray()
+    }
+}
+
+extend<T> ArrayDeque<T> <: JsonSerializable where T <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startArray()
+        for (item in this) {
+            w.writeValue<T>(item)
+        }
+        w.endArray()
+    }
+}
+
+extend<T> ArrayStack<T> <: JsonSerializable where T <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startArray()
+        for (item in this) {
+            w.writeValue<T>(item)
+        }
+        w.endArray()
+    }
+}
+
+extend<T> TreeSet<T> <: JsonSerializable where T <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startArray()
+        for (item in this) {
+            w.writeValue<T>(item)
+        }
+        w.endArray()
+    }
+}
+
+extend<V> TreeMap<String, V> <: JsonSerializable where V <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startObject()
+        for ((k, v) in this) {
+            w.writeName(k).writeValue(v)
+        }
+        w.endObject()
+    }
+}
+
+extend<V> ConcurrentHashMap<String, V> <: JsonSerializable where V <: JsonSerializable {
+    public func toJson(w: JsonWriter): Unit {
+        w.startObject()
+        for ((k, v) in this) {
+            w.writeName(k).writeValue(v)
+        }
+        w.endObject()
     }
 }
