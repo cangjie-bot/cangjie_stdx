@@ -230,7 +230,9 @@ extend<T> ArrayDeque<T> <: JsonSerializable where T <: JsonSerializable {
 extend<T> ArrayStack<T> <: JsonSerializable where T <: JsonSerializable {
     public func toJson(w: JsonWriter): Unit {
         w.startArray()
-        for (item in this) {
+        let list = this.toArray()
+        list.reverse()
+        for (item in list) {
             w.writeValue<T>(item)
         }
         w.endArray()
