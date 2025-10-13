@@ -223,6 +223,19 @@ extend<T> HashSet<T> <: JsonDeserializable<HashSet<T>> where T <: JsonDeserializ
     }
 }
 
+extend<T> LinkedList<T> <: JsonDeserializable<LinkedList<T>> where T <: JsonDeserializable<T> {
+    public static func fromJson(r: JsonReader): LinkedList<T> {
+        let result = LinkedList<T>()
+        r.startArray()
+        while (r.peek() != EndArray) {
+            result.addLast(T.fromJson(r))
+            r.afterRead()
+        }
+        r.endArray()
+        return result
+    }
+}
+
 extend<T> ArrayQueue<T> <: JsonDeserializable<ArrayQueue<T>> where T <: JsonDeserializable<T> {
     public static func fromJson(r: JsonReader): ArrayQueue<T> {
         let result = ArrayQueue<T>()
