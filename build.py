@@ -36,6 +36,20 @@ IS_MACOS = platform.system() == "Darwin"
 IS_ARM = platform.uname().processor in ["aarch64", "arm", "arm64"]
 # Wait for the version of aarch64 libcore to be ready.
 MAKE_JOBS = multiprocessing.cpu_count() + 2
+TARGET_DICTIONARY = {
+    "native": None,
+    "ohos-aarch64": "aarch64-linux-ohos",
+    "ohos-x86_64": "x86_64-linux-ohos",
+    "windows-x86_64": "x86_64-w64-mingw32",
+    "ios-simulator-aarch64": "arm64-apple-ios11-simulator",
+    "ios-aarch64": "arm64-apple-ios11",
+    "android-aarch64": "aarch64-linux-android",
+    "android31-aarch64": "aarch64-linux-android31",
+    "android26-aarch64": "aarch64-linux-android26",
+    "android-x86_64": "x86_64-linux-android",
+    "android31-x86_64": "x86_64-linux-android31",
+    "android26-x86_64": "x86_64-linux-android26"
+}
 
 def resolve_path(path):
     if os.path.isabs(path):
@@ -118,24 +132,8 @@ def generate_cmake_defs(args):
     return result
 
 def build(args):
-    if args.target == "native":
-        args.target = None
-    elif args.target == "ohos-aarch64":
-        args.target = "aarch64-linux-ohos"
-    elif args.target == "ohos-arm":
-        args.target = "arm-linux-ohos"
-    elif args.target == "ohos-x86_64":
-        args.target = "x86_64-linux-ohos"
-    elif args.target == "windows-x86_64":
-        args.target = "x86_64-w64-mingw32"
-    elif args.target == "ios-simulator-aarch64":
-        args.target = "arm64-apple-ios11-simulator"
-    elif args.target == "ios-aarch64":
-        args.target = "arm64-apple-ios11"
-    elif args.target == "android-aarch64":
-        args.target = "aarch64-linux-android"
-    elif args.target == "android-x86_64":
-        args.target = "x86_64-linux-android"
+    if args.target:
+        args.target = TARGET_DICTIONARY[args.target]
 
     check_compiler(args)
 
@@ -203,22 +201,7 @@ def install(args):
     LOG.info("begin install targets...")
 
     if args.host:
-        if args.host == "native":
-            args.host = None
-        elif args.host == "ohos-aarch64":
-            args.host = "aarch64-linux-ohos"
-        elif args.host == "ohos-x86_64":
-            args.host = "x86_64-linux-ohos"
-        elif args.host == "windows-x86_64":
-            args.host = "x86_64-w64-mingw32"
-        elif args.host == "ios-simulator-aarch64":
-            args.host = "arm64-apple-ios11-simulator"
-        elif args.host == "ios-aarch64":
-            args.host = "arm64-apple-ios11"
-        elif args.host == "android-aarch64":
-            args.host = "aarch64-linux-android"
-        elif args.host == "android-x86_64":
-            args.host = "x86_64-linux-android"
+        args.host = TARGET_DICTIONARY[args.host]
         
     targets = []
 
@@ -350,6 +333,7 @@ class BuildType(Enum):
         except KeyError:
             return s.build_type
 
+<<<<<<< HEAD
 SupportedTarget = [
     "native",
     "ohos-arm",
@@ -362,6 +346,8 @@ SupportedTarget = [
     "android-x86_64"
 ]
 
+=======
+>>>>>>> b709ee2 (feat: cross-compiling from mac to android 8 (api level 26))
 def main():
     """build entry"""
     parser = argparse.ArgumentParser(description="build stdx project")
@@ -380,7 +366,7 @@ def main():
         "--jobs", dest="jobs", type=int, default=0, help="run N jobs in parallel (0 means default)"
     )
     parser_build.add_argument(
-        "--target", dest="target", type=str, choices=SupportedTarget,
+        "--target", dest="target", type=str, choices=TARGET_DICTIONARY.keys(),
         help="build a second stdxlib for the target triple specified"
     )
     parser_build.add_argument(
@@ -414,7 +400,7 @@ def main():
     parser_install = subparsers.add_parser("install", help="install targets")
 
     parser_install.add_argument(
-        "--host", dest="host", type=str, choices=SupportedTarget, help="Generate installation package for the host"
+        "--host", dest="host", type=str, choices=TARGET_DICTIONARY.keys(), help="Generate installation package for the host"
     )
     parser_install.add_argument(
         "--prefix", dest="prefix", help="target install prefix"
