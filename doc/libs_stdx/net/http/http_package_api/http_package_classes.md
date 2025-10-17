@@ -1469,8 +1469,7 @@ public prop writeTimeout: ?Duration
 public override func toString(): String
 ```
 
-功能：把请求转换为字符串，包括 start line，headers，body size，trailers。
-例如：`"GET /path HTTP/1.1\r\nhost: www.example.com\r\n\r\nbody size: 5\r\nbar: foo\r\n"`。
+功能：把请求转换为字符串，包括 start line，headers，body size，trailers。例如：`"GET /path HTTP/1.1\r\nhost: www.example.com\r\n\r\nbody size: 5\r\nbar: foo\r\n"`。
 
 返回值：
 

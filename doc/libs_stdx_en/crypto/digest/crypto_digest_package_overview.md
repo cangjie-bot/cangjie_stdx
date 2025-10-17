@@ -47,9 +47,3 @@ This package requires the crypto dynamic library files from OpenSSL 3 as externa
 |               Struct Name               |           Function           |
 |----------------------------------------| ---------------------------- |
 | [HashType](./digest_package_api/digest_package_structs.md#struct-hashtype) | Digest algorithm type. |
-
-### Exception Classes
-
-|                 Exception Class Name                 |                Function                |
-| -------------------------------------------------- | ------------------------------------- |
-| [CryptoException](./digest_package_api/digest_package_exceptions.md#class-cryptoexception) | Exception class for the `crypto` package.      |
