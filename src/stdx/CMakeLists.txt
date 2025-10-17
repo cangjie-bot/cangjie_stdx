@@ -16,6 +16,13 @@ add_subdirectory(crypto)
 add_subdirectory(net)
 add_subdirectory(unittest)
 add_subdirectory(actors)
+
+if (CANGJIE_CODEGEN_CJNATIVE_BACKEND AND "$ENV{NO_ASPECTCJ}" STREQUAL "")
+    if (NOT CMAKE_CROSSCOMPILING OR (CMAKE_CROSSCOMPILING AND MINGW))
+        add_subdirectory(syntax)
+    endif()
+endif()
+
 if(CANGJIE_CODEGEN_CJNATIVE_BACKEND AND "$ENV{NO_ASPECTCJ}" STREQUAL "")
     if(CMAKE_CROSSCOMPILING)
         if ("$ENV{CANGJIE_LSP_PATH}" STREQUAL "")
