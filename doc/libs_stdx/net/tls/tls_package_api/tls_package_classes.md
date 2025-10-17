@@ -137,7 +137,6 @@ public override operator func ==(other: TlsClientSession): Bool
 
 - Bool - 若会话对象相同，返回 `true`；否则，返回 `false`。
 
-
 ## class TlsServerSession
 
 ```cangjie
