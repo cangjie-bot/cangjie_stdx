@@ -87,7 +87,7 @@ main() {
 
 输出：
 
-```
+```text
 42
 ```
 
@@ -111,7 +111,7 @@ main() {
 
 输出：
 
-```
+```text
 Error from effect
 ```
 
@@ -134,7 +134,7 @@ main() {
 
 输出：
 
-```
+```text
 No handler here
 ```
 
@@ -150,7 +150,6 @@ No handler here
 | **Formatter**   |  尚未支持                          |
 | **Coverage** |  尚未支持                          |
 | **Cjlint**      |  尚未支持                          |
-
 
 ## API 列表
 
