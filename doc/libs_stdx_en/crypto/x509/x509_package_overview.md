@@ -35,19 +35,11 @@ This package requires external dependencies on OpenSSL 3's crypto dynamic librar
 | ------------------------------------------------------------- | -------------------------------- |
 | [IP](./x509_package_api/x509_package_type.md#type-ip) | x509 uses `Array<Byte>` to represent IP addresses. |
 
-### Interfaces
-
-| Interface Name                                                  | Functionality                     |
-| ------------------------------------------------------------- | -------------------------------- |
-| [DHParameters](./x509_package_api/x509_package_interfaces.md#interface-dhparameters) | Provides the DH key interface. |
-| [Key](./x509_package_api/x509_package_interfaces.md#interface-key) | Provides the key interface. |
-| [PrivateKey](./x509_package_api/x509_package_interfaces.md#interface-privatekey) | Provides the private key interface. |
-| [PublicKey](./x509_package_api/x509_package_interfaces.md#interface-publickey) | Provides the public key interface. |
-
 ### Classes
 
 | Class Name                                                   | Functionality                     |
 | ---------------------------------------------------------- | -------------------------------- |
+| [GeneralDHParameters](./x509_package_api/x509_package_classes.md#class-generaldhparameters)       | Implementation of generic DH key parameter encryption/decryption functionality.          |
 | [X509Certificate](./x509_package_api/x509_package_classes.md#class-x509certificate) | X509 digital certificates are used for encrypted communications. |
 | [X509CertificateRequest](./x509_package_api/x509_package_classes.md#class-x509certificaterequest) | Certificate signing requests. |
 | [X509Name](./x509_package_api/x509_package_classes.md#class-x509name) | Distinguished names for certificate entities. |
@@ -63,11 +55,8 @@ This package requires external dependencies on OpenSSL 3's crypto dynamic librar
 
 | Struct Name                                                                               | Functionality                     |
 | --------------------------------------------------------------------------------------- | -------------------------------- |
-| [DerBlob](./x509_package_api/x509_package_structs.md#struct-derblob)                     | Supports configuring binary certificate streams in Crypto. |
 | [ExtKeyUsage](./x509_package_api/x509_package_structs.md#struct-extkeyusage)             | Extended fields in digital certificates. |
 | [KeyUsage](./x509_package_api/x509_package_structs.md#struct-keyusage)                   | Extended fields in digital certificates typically include usage descriptions for public keys. |
-| [Pem](./x509_package_api/x509_package_structs.md#struct-pem)                            | Pem struct. |
-| [PemEntry](./x509_package_api/x509_package_structs.md#struct-pementry)                   | PEM text format. |
 | [SerialNumber](./x509_package_api/x509_package_structs.md#struct-serialnumber)          | Serial numbers for digital certificates. |
 | [Signature](./x509_package_api/x509_package_structs.md#struct-signature)                | Signatures for digital certificates. |
 | [VerifyOption](./x509_package_api/x509_package_structs.md#struct-verifyoption)          | Verification options. |

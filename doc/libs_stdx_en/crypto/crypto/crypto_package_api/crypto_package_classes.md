@@ -3,19 +3,21 @@
 ## class SecureRandom
 
 ```cangjie
-public class SecureRandom {
+public class SecureRandom <: RandomGenerator {
     public init(priv!: Bool = false)
 }
 ```
+
+Parent Type:
+
+- [RandomGenerator](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-randomgenerator)
 
 Function: Used to generate cryptographically secure pseudo-random numbers.
 
 Compared with Random, there are three main differences:
 
 - Random seed: Random uses the system clock as the default seed, resulting in identical outputs when timestamps are the same; [SecureRandom](crypto_package_classes.md#class-securerandom) utilizes random seeds provided by the operating system or hardware to generate true random numbers.
-
 - Random number generation: Random employs the Mersenne Twister pseudo-random number generator; [SecureRandom](crypto_package_classes.md#class-securerandom) uses random algorithms like [MD5](../../digest/digest_package_api/digest_package_classes.md#class-md5) provided by the OpenSSL library, generating true random numbers using entropy sources. If hardware supports it, hardware random number generators can be used to produce even more secure random numbers.
-
 - Security: Random should not be used for cryptographic security applications or privacy data protection, whereas [SecureRandom](crypto_package_classes.md#class-securerandom) can be used for such purposes.
 
 For usage examples, see [SecureRandom Usage](../crypto_samples/sample_secure_random.md#securerandom-usage).
@@ -534,20 +536,16 @@ Currently, SM4 supports encryption and decryption modes defined by [OperationMod
 
 Different operation modes may have varying implementations and security levels. It is essential to choose the appropriate mode for the specific scenario.
 
-- **iv (Initialization Vector)**:
-  - Recommended length is 12 bytes in GCM mode.
-  - Length must be 16 bytes in CBC, OFB, CFB, and CTR modes.
-  - Optional in ECB mode.
+- **iv (Initialization Vector)**: Recommended length is 12 bytes in GCM mode. Length must be 16 bytes in CBC, OFB, CFB, and CTR modes. Optional in ECB mode.
 
-- **paddingMode**: Defined by [PaddingMode](crypto_package_structs.md#struct-paddingmode), currently supporting:
-  - `NoPadding`: No padding.
-  - `PKCS7Padding`: PKCS7 padding (default).
+- **paddingMode**: Defined by [PaddingMode](crypto_package_structs.md#struct-paddingmode), currently supporting `NoPadding`: No padding. `PKCS7Padding`: PKCS7 padding (default).
 
 Padding mode is effective only for ECB and CBC modes, where block length must equal `blockSize`. Padding is applied accordingly. Padding mode settings are irrelevant for OFB, CFB, CTR, and GCM modes, as these modes do not require padding.
 
 If `NoPadding` is selected, the user is responsible for ensuring data can be divided into blocks. If data cannot be divided or the last block is shorter than `blockSize`, an error will occur.
 
 - **aad (Additional Authenticated Data)**: Used only in GCM mode, provided by the user for digest calculation (default is empty).
+
 - **tagSize**: Digest length, used only in GCM mode. Default is `SM4_GCM_TAG_SIZE` (16 bytes). Minimum is 12 bytes; maximum is 16 bytes.
 
 In GCM mode, the last `tagSize` bytes of the encrypted result are the digest data.
@@ -588,7 +586,7 @@ Parameters:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if parameter settings are incorrect, causing instantiation to fail.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Thrown if parameter settings are incorrect, causing instantiation to fail.
 
 ### prop aad
 
@@ -708,7 +706,7 @@ Return value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown when encryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Thrown when encryption fails.
 
 ### func encrypt(Array\<Byte>, Array\<Byte>)
 
@@ -729,7 +727,7 @@ Return value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown when encryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Thrown when encryption fails.
 - IllegalArgumentException - Thrown when 'to' array size is 0.
 
 ### func encrypt(InputStream, OutputStream)
@@ -747,7 +745,7 @@ Parameters:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown when encryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Thrown when encryption fails.
 
 ### func decrypt(Array\<Byte>)
 
@@ -767,7 +765,7 @@ Return value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown when decryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Thrown when decryption fails.
 
 ### func decrypt(Array\<Byte>, Array\<Byte>)
 
@@ -788,7 +786,7 @@ Return value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown when decryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Thrown when decryption fails.
 - IllegalArgumentException - Thrown when 'to' array size is 0.
 
 ### func decrypt(InputStream, OutputStream)
@@ -806,4 +804,4 @@ Parameters:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown when decryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Thrown when decryption fails.

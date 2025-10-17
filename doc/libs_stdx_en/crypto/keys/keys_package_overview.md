@@ -35,6 +35,8 @@ Using this package requires external dependencies on OpenSSL 3's crypto dynamic 
 | ---------------------------------------- | ----------------------------------------- |
 | [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivatekey) | ECDSA private key class. |
 | [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublickey) | ECDSA public key class. |
+| [GeneralPrivateKey](./keys_package_api/keys_package_classes.md#class-generalprivatekey) | Implementation of generic private key parameter encryption/decryption functionality. |
+| [GeneralPublicKey](./keys_package_api/keys_package_classes.md#class-generalpublickey)   | Implementation of generic public key parameter encryption/decryption functionality. |
 | [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivatekey) | RSA private key class. |
 | [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublickey) | RSA public key class. |
 | [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privatekey) | SM2 private key class. |
