@@ -690,7 +690,7 @@ public static func fromJson(r: JsonReader): HashSet<T>
 
 返回值：
 
-- HashSet \<T> - HashSet 类型的实例。
+- HashSet\<T> - HashSet 类型的实例。
 
 ### extend\<T> LinkedList\<T> <: JsonDeserializable\<LinkedList\<T>> where T <: JsonDeserializable\<T>
 
@@ -718,7 +718,7 @@ public static func fromJson(r: JsonReader): LinkedList<T>
 
 返回值：
 
-- LinkedList \<T> - LinkedList 类型的实例。
+- LinkedList\<T> - LinkedList 类型的实例。
 
 ### extend\<T> ArrayQueue\<T> <: JsonDeserializable\<ArrayQueue\<T>> where T <: JsonDeserializable\<T>
 
@@ -746,7 +746,7 @@ public static func fromJson(r: JsonReader): ArrayQueue<T>
 
 返回值：
 
-- ArrayQueue \<T> - ArrayQueue 类型的实例。
+- ArrayQueue\<T> - ArrayQueue 类型的实例。
 
 ### extend\<T> ArrayDeque\<T> <: JsonDeserializable\<ArrayDeque\<T>> where T <: JsonDeserializable\<T>
 
@@ -774,7 +774,7 @@ public static func fromJson(r: JsonReader): ArrayDeque<T>
 
 返回值：
 
-- ArrayDeque \<T> - ArrayDeque 类型的实例。
+- ArrayDeque\<T> - ArrayDeque 类型的实例。
 
 ### extend\<T> ArrayStack\<T> <: JsonDeserializable\<ArrayStack\<T>> where T <: JsonDeserializable\<T>
 
@@ -802,7 +802,7 @@ public static func fromJson(r: JsonReader): ArrayStack<T>
 
 返回值：
 
-- ArrayStack \<T> - ArrayStack 类型的实例。
+- ArrayStack\<T> - ArrayStack 类型的实例。
 
 ### extend\<T> TreeSet\<T> <: JsonDeserializable\<TreeSet\<T>> where T <: JsonDeserializable\<T>
 
@@ -830,7 +830,7 @@ public static func fromJson(r: JsonReader): TreeSet<T>
 
 返回值：
 
-- TreeSet \<T> - TreeSet 类型的实例。
+- TreeSet\<T> - TreeSet 类型的实例。
 
 ### extend\<T> Option \<T> <: JsonDeserializable\<Option\<T>> where T <: JsonDeserializable\<T>
 
