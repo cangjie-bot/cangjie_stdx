@@ -192,7 +192,7 @@ Exceptions:
 
 ```cangjie
 public class JsonWriter {
-    public var writeConfig = WriteConfig.compact
+    public var writeConfig: WriteConfig = WriteConfig.compact
     public init(out: OutputStream)
 }
 ```
@@ -212,7 +212,7 @@ Usage examples can be found at [Serialization using Json Stream](../json_stream_
 ### var writeConfig
 
 ```cangjie
-public var writeConfig = WriteConfig.compact
+public var writeConfig: WriteConfig = WriteConfig.compact
 ```
 
 Functionality: Serialization format configuration. See [WriteConfig](./encoding_json_stream_package_structs.md#struct-writeconfig) for details.
