@@ -49,6 +49,24 @@ sealed abstract class JsonValue <: ToString {
     public func toJsonString(): String
 
     /**
+     * Convert JsonValue to String Without Escaping.
+     *
+     * @return json-converted String.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toStringWithoutEscaping(): String
+
+    /**
+     * Convert JsonValue to json-String Without Escaping.
+     *
+     * @return json-converted prettified String.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toJsonStringWithoutEscaping(): String
+
+    /**
      * Parses string data into JsonValue.
      *
      * @param s String in JSON data format.

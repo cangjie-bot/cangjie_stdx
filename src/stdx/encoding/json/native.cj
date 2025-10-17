@@ -12,7 +12,7 @@ import std.collection.*
 import std.convert.*
 
 @FastNative
-foreign func CJ_JSON_ReplaceEscapeChar(input: CPointer<UInt8>, inputlen: Int64, buffer: CPointer<UInt8>): Int64
+foreign func CJ_JSON_ReplaceEscapeChar(input: CPointer<UInt8>, inputlen: Int64, buffer: CPointer<UInt8>, htmlSafe: Bool): Int64
 
 @FastNative
 foreign func CJ_JSON_WriteBufferAppendInt(buffer: CPointer<UInt8>, num: Int64): Int64
@@ -24,7 +24,7 @@ foreign func CJ_CORE_Float64ToCPointer(num: Float64): CPointer<UInt8>
 foreign func strlen(str: CPointer<UInt8>): UIntNative
 
 @FastNative
-foreign func CJ_JSON_StringEscapeCharNumGet(input: CPointer<UInt8>, inputlen: Int64): Int64
+foreign func CJ_JSON_StringEscapeCharNumGet(input: CPointer<UInt8>, inputlen: Int64, htmlSafe: Bool): Int64
 
 /**
  * @brief Get rows and columns of the error position

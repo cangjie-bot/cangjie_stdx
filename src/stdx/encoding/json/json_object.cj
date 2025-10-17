@@ -52,6 +52,24 @@ public class JsonNull <: JsonValue {
     public func toJsonString(): String {
         return toString()
     }
+
+    /**
+     * Convert JsonNull to String Without Escaping.
+     *
+     * @return json-converted String is "".
+     */
+    public func toStringWithoutEscaping(): String {
+        return "null"
+    }
+
+    /**
+     * Convert JsonNull to json-String Without Escaping.
+     *
+     * @return json-converted prettified String is "".
+     */
+    public func toJsonStringWithoutEscaping(): String {
+        return toJsonString()
+    }
 }
 
 /**
@@ -116,6 +134,24 @@ public class JsonBool <: JsonValue {
     public func toJsonString(): String {
         return toString()
     }
+
+    /**
+     * Convert JsonBool to String.
+     *
+     * @return json-converted String is value string data: true or false Without Escaping.
+     */
+    public func toStringWithoutEscaping(): String {
+        return value.toString()
+    }
+
+    /**
+     * Convert JsonBool to json-String.
+     *
+     * @return json-converted prettified String is value string data: true or false Without Escaping.
+     */
+    public func toJsonStringWithoutEscaping(): String {
+        return toString()
+    }
 }
 
 /**
@@ -178,6 +214,24 @@ public class JsonInt <: JsonValue {
      * @since 0.21.1
      */
     public func toJsonString(): String {
+        return toString()
+    }
+
+    /**
+     * Convert JsonInt to String Without Escaping.
+     *
+     * @return json-converted String is value string data.
+     */
+    public func toStringWithoutEscaping(): String {
+        return value.toString()
+    }
+
+    /**
+     * Convert JsonInt to json-String Without Escaping.
+     *
+     * @return json-converted prettified String is value string data.
+     */
+    public func toJsonStringWithoutEscaping(): String {
         return toString()
     }
 }
@@ -256,6 +310,24 @@ public class JsonFloat <: JsonValue {
     public func toJsonString(): String {
         return toString()
     }
+
+    /**
+     * Convert JsonFloat to String Without Escaping.
+     *
+     * @return json-converted String is value string data.
+     */
+    public func toStringWithoutEscaping(): String {
+        return value.toString()
+    }
+
+    /**
+     * Convert JsonFloat to json-String Without Escaping.
+     *
+     * @return json-converted prettified String is value string data.
+     */
+    public func toJsonStringWithoutEscaping(): String {
+        return toString()
+    }
 }
 
 /**
@@ -322,6 +394,28 @@ public class JsonString <: JsonValue {
     public func toJsonString(): String {
         let buff = WriteBuffer(value.size + 2)
         jsonWriteWithoutFormat(this, buff)
+        return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
+    }
+
+    /**
+     * Convert JsonString to String Without Escaping.
+     *
+     * @return json-converted String is value string data.
+     */
+    public func toStringWithoutEscaping(): String {
+        let buff = WriteBuffer(value.size + 2)
+        jsonWriteWithoutFormat(this, buff, htmlSafe: false)
+        return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
+    }
+
+    /**
+     * Convert JsonString to json-String Without Escaping.
+     *
+     * @return json-converted prettified String is value string data.
+     */
+    public func toJsonStringWithoutEscaping(): String {
+        let buff = WriteBuffer(value.size + 2)
+        jsonWriteWithoutFormat(this, buff, htmlSafe: false)
         return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
     }
 }
@@ -391,7 +485,18 @@ public class JsonArray <: JsonValue {
      * @throws JsonException if there exists JsonValue which cannot be converted to String.
      */
     public func toJsonString(): String {
-        return toJsonString(0)
+        return toJsonStringBase(0)
+    }
+
+    /**
+     * Convert JsonArray to Json-String Without Escaping.
+     *
+     * @return json-converted String is items string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toJsonStringWithoutEscaping(): String {
+        return toJsonStringBase(0, htmlSafe: false)
     }
 
     /**
@@ -405,6 +510,18 @@ public class JsonArray <: JsonValue {
      * @throws JsonException if there exists JsonValue which cannot be converted to String.
      */
     public func toJsonString(depth: Int64, bracketInNewLine!: Bool = false, indent!: String = "  "): String {
+        return toJsonStringBase(depth, bracketInNewLine: bracketInNewLine, indent: indent)
+    }
+
+    /**
+     * Convert JsonArray to Json-String.
+     *
+     * @param depth of indentation in JSON format.
+     * @return json-converted String is items string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    func toJsonStringBase(depth: Int64, bracketInNewLine!: Bool = false, indent!: String = "  ", htmlSafe!: Bool = true): String {
         if (depth < 0) {
             throw IllegalArgumentException("Depth cannot be negative.")
         }
@@ -412,8 +529,20 @@ public class JsonArray <: JsonValue {
             throw IllegalArgumentException("Indent must be an empty string or any combination of spaces and tabs.")
         }
         let buff = WriteBuffer(asumecapacity(this))
-        jsonWriteArray(this, buff, depth, bracketInNewLine, indent)
+        jsonWriteArray(this, buff, depth, bracketInNewLine, indent, htmlSafe: htmlSafe)
         return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
+    }
+
+    /**
+     * Convert JsonArray to Json-String Without Escaping.
+     *
+     * @param depth of indentation in JSON format.
+     * @return json-converted String is items string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toJsonStringWithoutEscaping(depth: Int64, bracketInNewLine!: Bool = false, indent!: String = "  "): String {
+        return toJsonStringBase(depth, bracketInNewLine: bracketInNewLine, indent: indent, htmlSafe: false)
     }
 
     /**
@@ -428,6 +557,19 @@ public class JsonArray <: JsonValue {
     public func toString(): String {
         let buff = WriteBuffer(asumecapacity(this))
         jsonWriteWithoutFormat(this, buff)
+        return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
+    }
+
+    /**
+     * Convert JsonArray to String Without Escaping.
+     *
+     * @return json-converted String is items string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toStringWithoutEscaping(): String {
+        let buff = WriteBuffer(asumecapacity(this))
+        jsonWriteWithoutFormat(this, buff, htmlSafe: false)
         return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
     }
 
@@ -549,7 +691,18 @@ public class JsonObject <: JsonValue {
      * @throws JsonException if there exists JsonValue which cannot be converted to String.
      */
     public func toJsonString(): String {
-        return toJsonString(0)
+        return toJsonStringBase(0)
+    }
+
+     /**
+     * Convert JsonObject to Json-String Without Escaping.
+     *
+     * @return json-converted String is fields string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toJsonStringWithoutEscaping(): String {
+        return toJsonStringBase(0, htmlSafe: false)
     }
 
     /**
@@ -563,6 +716,18 @@ public class JsonObject <: JsonValue {
      * @throws JsonException if there exists JsonValue which cannot be converted to String.
      */
     public func toJsonString(depth: Int64, bracketInNewLine!: Bool = false, indent!: String = "  "): String {
+        return toJsonStringBase(depth, bracketInNewLine: bracketInNewLine, indent: indent)
+    }
+
+    /**
+     * Convert JsonObject to Json-String.
+     *
+     * @param depth of indentation in JSON format.
+     * @return json-converted String is fields string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    func toJsonStringBase(depth: Int64, bracketInNewLine!: Bool = false, indent!: String = "  ", htmlSafe!: Bool = true): String {
         if (depth < 0) {
             throw IllegalArgumentException("Depth cannot be negative.")
         }
@@ -570,8 +735,20 @@ public class JsonObject <: JsonValue {
             throw IllegalArgumentException("Indent must be an empty string or any combination of spaces and tabs.")
         }
         let buff = WriteBuffer(asumecapacity(this))
-        jsonWriteObject(this, buff, depth, bracketInNewLine, indent)
+        jsonWriteObject(this, buff, depth, bracketInNewLine, indent, htmlSafe: htmlSafe)
         return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
+    }
+
+    /**
+     * Convert JsonObject to Json-String Without Escaping.
+     *
+     * @param depth of indentation in JSON format.
+     * @return json-converted String is fields string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toJsonStringWithoutEscaping(depth: Int64, bracketInNewLine!: Bool = false, indent!: String = "  "): String {
+        return toJsonStringBase(depth, bracketInNewLine: bracketInNewLine, indent: indent, htmlSafe: false)
     }
 
     /**
@@ -586,6 +763,19 @@ public class JsonObject <: JsonValue {
     public func toString(): String {
         let buff = WriteBuffer(asumecapacity(this))
         jsonWriteWithoutFormat(this, buff)
+        return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
+    }
+
+    /**
+     * Convert JsonObject to String Without Escaping.
+     *
+     * @return json-converted String is fields string data.
+     *
+     * @throws JsonException if there exists JsonValue which cannot be converted to String.
+     */
+    public func toStringWithoutEscaping(): String {
+        let buff = WriteBuffer(asumecapacity(this))
+        jsonWriteWithoutFormat(this, buff, htmlSafe: false)
         return unsafe { String.fromUtf8Unchecked(buff.getAndClear()) }
     }
 
