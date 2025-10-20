@@ -15,9 +15,16 @@ import stdx.crypto.common.*
 enum HandshakeConfig {
     | Client(TlsClientConfig, ?TlsClientSession)
     | Server(TlsServerConfig, ?TlsServerSession)
+    | KeylessServer(KeylessTlsServerConfig, ?TlsServerSession)
 }
 
 extend TlsContext {
+
+    func setCertificateChainAndCallback(chain: Array<X509Certificate>, signCallback: KeylessSignCallback, decryptCallback: ?KeylessDecryptCallback): Unit {
+        withContext<Unit> {
+            nativeContext, exception => setCertificateChainAndCallback(nativeContext, chain, signCallback, decryptCallback, exception)
+        }
+    }
     func setCertificateChainAndPrivateKey(chain: Array<X509Certificate>, key: PrivateKey): Unit {
         withContext<Unit> {
             nativeContext, exception => setCertificateChainAndPrivateKey(nativeContext, chain, key, exception)
@@ -52,6 +59,56 @@ extend TlsContext {
         }
     }
 
+    private func signCallbackWrapper(): CKeylessSignCallback {
+        {
+            key: CString, alg: CString, digestPtr: CPointer<Byte>, digestLen: Int64, written: CPointer<Int64> =>
+                let (signCb, _) = TlsSocket.keylessCallback.get(key.toString()) ?? throw TlsException("Missing keyless sign callback.")
+                let digest = Array<Byte>(digestLen, repeat: 0)
+                for (i in 0..digestLen) {
+                    unsafe { digest[i] = digestPtr.read(i) }
+                }
+                var signature: Array<Byte> = signCb(digest)
+                unsafe { written.write(signature.size) }
+                return unsafe { acquireArrayRawData(signature).pointer }
+        }
+    }
+
+    private func decryptCallbackWrapper(): CKeylessDecryptCallback {
+        {
+            key: CString, ciphertextPtr: CPointer<Byte>, ciphertextLen: Int64, written: CPointer<Int64> =>
+                let (_, decryptCbOpt) = TlsSocket.keylessCallback.get(key.toString()) ?? throw TlsException("Missing keyless decrypt callback.")
+                let decryptCb = decryptCbOpt ?? throw TlsException("Decrypt callback is not provided.")
+                let ciphertext = Array<Byte>(ciphertextLen, repeat: 0)
+                for (i in 0..ciphertextLen) {
+                    unsafe { ciphertext[i] = ciphertextPtr.read(i) }
+                }
+                let plain: Array<Byte> = decryptCb(ciphertext)
+                unsafe { written.write(plain.size) }
+                return unsafe { acquireArrayRawData(plain).pointer }
+        }
+    }
+
+    private func setCertificateChainAndCallback(
+        context: CPointer<Ctx>,
+        chain: Array<X509Certificate>,
+        signCallback: KeylessSignCallback,
+        decryptCallback: ?KeylessDecryptCallback,
+        exception: CPointer<ExceptionData>
+    ): Unit {
+        if (chain.isEmpty()) {
+            throw IllegalArgumentException("Certificate chain is empty: at least one certificate required.")
+        }
+
+        var ifNotFirst = false
+        for (cert in chain) {
+            let entry = PemEntry(PemEntry.LABEL_CERTIFICATE, cert.encodeToDer())
+            useAddCertImpl(context, entry, add: ifNotFirst, exception: exception)
+            ifNotFirst = true
+        }
+        setKeylessPrivateKeyImpl(context, exception)
+        setKeylessCallbacks(signCallbackWrapper(), decryptCallbackWrapper(), exception)
+    }
+
     private func setCertificateChainAndPrivateKey(
         context: CPointer<Ctx>,
         chain: Array<X509Certificate>,
@@ -76,6 +133,16 @@ extend TlsContext {
             if (ret <= 0) {
                 throw TlsException("The Certificate chain doesn't match the private key.")
             }
+        }
+    }
+
+    private func setKeylessPrivateKeyImpl(
+        context: CPointer<Ctx>,
+        exception: CPointer<ExceptionData>
+    ) {
+        let setKeyResult = unsafe { CJ_TLS_SetKeylessPrivateKey(context, exception) }
+        if (setKeyResult == 0) {
+            unsafe { exception.read().throwException(fallback: "Failed to set keyless private key.") }
         }
     }
 
@@ -249,6 +316,12 @@ foreign {
         dynMsg: CPointer<DynMsg>
     ): Int32
 
+    func CJ_TLS_DYN_SetKeylessPrivateKey(
+        context: CPointer<Ctx>,
+        exception: CPointer<ExceptionData>,
+        dynMsg: CPointer<DynMsg>
+    ): Int32
+
     func CJ_TLS_DYN_SetDHParam(
         context: CPointer<Ctx>,
         key: CPointer<Unit>,
@@ -301,6 +374,18 @@ func CJ_TLS_SetPrivateKey(
     unsafe {
         var dynMsg = DynMsg()
         let res = CJ_TLS_DYN_SetPrivateKey(context, key, length, exception, inout dynMsg)
+        checkDynMsg(dynMsg)
+        return res
+    }
+}
+
+func CJ_TLS_SetKeylessPrivateKey(
+    context: CPointer<Ctx>,
+    exception: CPointer<ExceptionData>
+): Int32 {
+    unsafe {
+        var dynMsg = DynMsg()
+        let res = CJ_TLS_DYN_SetKeylessPrivateKey(context, exception, inout dynMsg)
         checkDynMsg(dynMsg)
         return res
     }

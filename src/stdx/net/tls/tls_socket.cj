@@ -13,9 +13,23 @@ import stdx.crypto.x509.*
 import stdx.crypto.common.*
 import std.net.{StreamingSocket, SocketAddress}
 import std.sync.*
+import std.collection.HashMap
+
+foreign {
+    /* For keyless provider */
+    func CJ_TLS_GetCertId(data: CPointer<Byte>, len: Int64): CString
+    func CJ_TLS_GetKeylessKeyId(ctx: CPointer<Ctx>): CString
+    func CJ_TLS_FreeKeylessId(id: CString): Unit
+    func DYN_CJ_TLS_InitEmbeddedKeylessProvider(dynMsg: DynMsg): Bool 
+    func DYN_CJ_TLS_RegisterKeylessSignCallback(keyId: CString, cb: CKeylessSignCallback, exception: CPointer<ExceptionData>, dynMsg: DynMsg): Unit
+    func DYN_CJ_TLS_RegisterKeylessDecryptCallback(keyId: CString, cb: CKeylessDecryptCallback, exception: CPointer<ExceptionData>, dynMsg: DynMsg): Unit
+}
 
 public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
     private static let idCounter = AtomicInt64(1)
+
+    static var keylessCallback = HashMap<String, (KeylessSignCallback, ?KeylessDecryptCallback)>()
+
     static let defaultTimeout: Duration = Duration.second * 30
 
     private let state: AtomicReference<TlsSocketState>
@@ -59,6 +73,25 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
         serverConfig!: TlsServerConfig
     ): TlsSocket {
         TlsSocket(socket, HandshakeConfig.Server(serverConfig, session))
+    }
+
+    public static func server(
+        socket: StreamingSocket,
+        session!: ?TlsServerSession = None,
+        serverConfig!: KeylessTlsServerConfig
+    ): TlsSocket {
+        let (cert, _) = serverConfig.serverCertificate
+        unsafe {
+            let data = cert[0].encodeToDer().body
+            let cp = acquireArrayRawData(data)
+            let keyId = CJ_TLS_GetCertId(cp.pointer, data.size)
+            releaseArrayRawData(cp)
+            TlsSocket.keylessCallback.add(keyId.toString(), (serverConfig.keylessSignCallback, None<KeylessDecryptCallback>))
+            println("Server keyId: ${keyId}")
+            LibC.free(keyId)
+        }
+        
+        TlsSocket(socket, HandshakeConfig.KeylessServer(serverConfig, None))
     }
 
     /**
@@ -195,7 +228,7 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
             if (let Some(v) <- connState.peerCertificate) {
                 return v
             }
- 
+
             if (connState.isClient) {
                 return None
             }
@@ -236,10 +269,12 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
 
         let success = try {
             match (handshake) {
-                case HandshakeConfig.Client(config, session) => connect(started.socket, timeout ?? defaultTimeout,
-                    config, session)
-                case HandshakeConfig.Server(config, context) => handleAccepted(started.socket, timeout ?? defaultTimeout,
-                    config, context)
+                case HandshakeConfig.Client(config, session) => 
+                    connect(started.socket, timeout ?? defaultTimeout, config, session)
+                case HandshakeConfig.Server(config, context) => 
+                    handleAccepted(started.socket, timeout ?? defaultTimeout, config, context)
+                case HandshakeConfig.KeylessServer(config, context) => 
+                    handleAccepted(started.socket, timeout ?? defaultTimeout, config, context)
             }
         } catch (e: Exception) {
             if (isClosed()) {
@@ -319,12 +354,14 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
      * @throws SocketException or other exceptions from the underlying socket
      */
     public func close(): Unit {
+        println("Request to close TLS socket ${id}")
         close(selfClosed: false)
     }
 
     private func close(selfClosed!: Bool) {
         _handshakeResult = None
         do {
+            println("Closing TLS socket ${id}, current state: ${state.load()}")
             match (state.load()) {
                 case closed: SocketClosed where !closed.selfClosed => return
                 case currentState =>
@@ -518,6 +555,53 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
                 )
                 try {
                     Bridge.register(bridge)
+                    stream.handshake()
+                    // The server certificate is not supposed to be null
+                    let myCertificate = cfg.serverCertificate[0]
+                    let socketConnected = SocketConnected(stream, socket, myCertificate, false, bridge)
+
+                    let store = bridge.sessionStore ?? return socketConnected
+                    let certsOp = getAndStorePeerCertChain(store, stream)
+                    socketConnected.setPeerCerts(certsOp)
+
+                    return socketConnected
+                } catch (e: Exception) {
+                    Bridge.remove(bridge)
+                    stream.close()
+                    throw e
+                }
+            } finally {
+                context.close()
+                if (!socket.isClosed()) {
+                    socket.readTimeout = timeoutsBefore[0]
+                    socket.writeTimeout = timeoutsBefore[1]
+                }
+            }
+        }
+    }
+
+    private func handleAccepted(socket: StreamingSocket, timeout: Duration,
+        cfg: KeylessTlsServerConfig, sessionContext: ?TlsServerSession): SocketConnected {
+        unsafe {
+            let (cert, _) = cfg.serverCertificate
+            let leafCert = cert[0]
+            let timeoutsBefore = (socket.readTimeout, socket.writeTimeout)
+            socket.writeTimeout = timeout
+            socket.readTimeout = timeout
+
+            let context = TlsContext(server: true, enableKeylog: cfg.keylogCallback.isSome())
+            try {
+                context.configureServer(cfg, sessionContext)
+ 
+                let stream = context.createStream(socket)
+                let bridge = stream.createBridge(
+                    this,
+                    sessionStore: sessionContext?.store,
+                    keylogCallback: cfg.keylogCallback
+                )
+                try {
+                    Bridge.register(bridge)
+
                     stream.handshake()
                     // The server certificate is not supposed to be null
                     let myCertificate = cfg.serverCertificate[0]
