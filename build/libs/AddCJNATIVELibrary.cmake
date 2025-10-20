@@ -92,6 +92,17 @@ set_target_properties(stdx.encoding.json PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.encoding.json DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
 make_cangjie_lib(
+    chir IS_SHARED
+    CANGJIE_STD_LIB_LINK
+        std-core
+        std-collection
+    OBJECTS ${output_cj_object_dir}/stdx/chir.o)
+
+add_library(stdx.chir STATIC ${output_cj_object_dir}/stdx/chir.o)
+set_target_properties(stdx.chir PROPERTIES LINKER_LANGUAGE C)
+install(TARGETS stdx.chir DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+
+make_cangjie_lib(
     encoding.json.stream IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}JsonStream
         stdx.encoding.json.streamFFI
@@ -919,3 +930,14 @@ add_cangjie_library(
     MODULE_NAME "stdx"
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
+
+add_cangjie_library(
+    cangjie${BACKEND_TYPE}Chir
+    NO_SUB_PKG
+    IS_STDXLIB
+    IS_PACKAGE
+    IS_CJNATIVE_BACKEND
+    PACKAGE_NAME "chir"
+    MODULE_NAME "stdx"
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/chir
+    DEPENDS ${CHIR_DEPENDENCIES})
