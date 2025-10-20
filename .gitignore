@@ -6,6 +6,9 @@
 
 build_temp/
 target/
+third_party/boundscheck-v*
+third_party/flatbuffers
+third_party/zlib
 
 src/stdx/encoding/json/native/*.a
 src/stdx/encoding/json/native/json_api.h

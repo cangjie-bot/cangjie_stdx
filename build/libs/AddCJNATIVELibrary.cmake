@@ -91,6 +91,20 @@ add_library(stdx.encoding.json STATIC ${JSONFFI_OBJS} ${output_cj_object_dir}/st
 set_target_properties(stdx.encoding.json PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.encoding.json DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
+if(CANGJIE_CHIR_PLUGIN)
+make_cangjie_lib(
+    chir IS_SHARED
+    DEPENDS FLATC_OUTPUTS_STD_CHIR
+    CANGJIE_STD_LIB_LINK
+        std-core
+        std-collection
+    OBJECTS ${output_cj_object_dir}/stdx/chir.o)
+
+add_library(stdx.chir STATIC ${output_cj_object_dir}/stdx/chir.o)
+set_target_properties(stdx.chir PROPERTIES LINKER_LANGUAGE C)
+install(TARGETS stdx.chir DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+endif()
+
 make_cangjie_lib(
     encoding.json.stream IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}JsonStream
@@ -953,4 +967,17 @@ if("$ENV{NO_ASPECTCJ}" STREQUAL "")
             SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
             DEPENDS ${SYNTAX_DEPENDENCIES})
     endif()
+endif()
+
+if(CANGJIE_CHIR_PLUGIN)
+add_cangjie_library(
+    cangjie${BACKEND_TYPE}Chir
+    NO_SUB_PKG
+    IS_STDXLIB
+    IS_PACKAGE
+    IS_CJNATIVE_BACKEND
+    PACKAGE_NAME "chir"
+    MODULE_NAME "stdx"
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/chir
+    DEPENDS ${CHIR_DEPENDENCIES} FLATC_OUTPUTS_STD_CHIR)
 endif()
