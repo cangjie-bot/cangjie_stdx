@@ -8,11 +8,11 @@ public class ECDSAPrivateKey <: PrivateKey {
 }
 ```
 
-Functionality: ECDSA private key class that provides the capability to generate ECDSA private keys. ECDSA private keys support signing operations and can be encoded/decoded in both PEM and DER formats. For usage examples, see [ECDSA Key Examples](../keys_samples/sample_keys.md#ecdsa-key-example).
+Functionality: ECDSA private key class that provides the capability to generate ECDSA private keys. ECDSA private keys support signing operations and can be encoded/decoded in PEM and DER formats. For usage examples, see [ECDSA Key Samples](../keys_samples/sample_keys.md#ecdsa-key-samples).
 
 Parent Types:
 
-- [PrivateKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-privatekey)
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
 
 ### init(Curve)
 
@@ -24,11 +24,11 @@ Functionality: Initializes and generates a private key.
 
 Parameters:
 
-- curve: [Curve](keys_package_enums.md#enum-curve) - The type of elliptic curve.
+- curve: [Curve](keys_package_enums.md#enum-curve) - The elliptic curve type.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if initialization fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if initialization fails.
 
 ### static func decodeDer(DerBlob)
 
@@ -40,7 +40,7 @@ Functionality: Decodes a private key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The binary-format private key object.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The private key object in binary format.
 
 Return Value:
 
@@ -48,7 +48,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails.
 
 ### static func decodeDer(DerBlob, ?String)
 
@@ -60,8 +60,8 @@ Functionality: Decodes an encrypted private key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The binary-format private key object.
-- password!: ?String - The password required to decrypt the private key. If the password is None, decryption is not performed.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The private key object in binary format.
+- password!: ?String - The password required to decrypt the private key. If None, no decryption is performed.
 
 Return Value:
 
@@ -69,7 +69,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, decryption fails, or if the password parameter is an empty string.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, decryption fails, or if the password parameter is an empty string.
 
 ### static func decodeFromPem(String)
 
@@ -81,7 +81,7 @@ Functionality: Decodes a private key from PEM format.
 
 Parameters:
 
-- text: String - The PEM-format private key character stream.
+- text: String - The private key character stream in PEM format.
 
 Return Value:
 
@@ -89,7 +89,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, the character stream does not conform to PEM format, or the file header does not meet the private key header standard.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
 
 ### static func decodeFromPem(String, ?String)
 
@@ -101,8 +101,8 @@ Functionality: Decodes a private key from PEM format.
 
 Parameters:
 
-- text: String - The PEM-format private key character stream.
-- password!: ?String - The password required to decrypt the private key. If the password is None, decryption is not performed.
+- text: String - The private key character stream in PEM format.
+- password!: ?String - The password required to decrypt the private key. If None, no decryption is performed.
 
 Return Value:
 
@@ -110,7 +110,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, decryption fails, the password parameter is an empty string, the character stream does not conform to PEM format, or the file header does not meet the private key header standard.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, decryption fails, the password parameter is an empty string, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
 
 ### func encodeToDer()
 
@@ -122,11 +122,11 @@ Functionality: Encodes the private key into DER format.
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The encoded DER-format private key.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The encoded private key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### func encodeToDer(?String)
 
@@ -138,31 +138,51 @@ Functionality: Encrypts the private key using AES-256-CBC and encodes it into DE
 
 Parameters:
 
-- password!: ?String - The password required to encrypt the private key. If the password is None, encryption is not performed.
+- password!: ?String - The password required to encrypt the private key. If None, no encryption is performed.
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The encoded DER-format private key.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The encoded private key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails, encryption fails, or if the password parameter is an empty string.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails, encryption fails, or if the password parameter is an empty string.
 
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
 Functionality: Encodes the private key into PEM format.
 
 Return Value:
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - The PEM-format private key object.
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The private key object in PEM format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
+
+### func encodeToPem(?String)
+
+```cangjie
+public func encodeToPem(password!: ?String): PemEntry
+```
+
+Functionality: Encodes the encrypted private key into PEM format.
+
+Parameters:
+
+- password!: ?String - The password required to encrypt the private key. If None, no encryption is performed.
+
+Return Value:
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The private key object in PEM format.
+
+Exceptions:
+
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails, encryption fails, or if the password parameter is an empty string.
 
 ### func sign(Array\<Byte>)
 
@@ -182,7 +202,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if signing fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if signing fails.
 
 ### func toString()
 
@@ -190,7 +210,7 @@ Exceptions:
 public override func toString(): String
 ```
 
-Functionality: Outputs the type of private key.
+Functionality: Outputs the private key type.
 
 Return Value:
 
@@ -204,11 +224,11 @@ public class ECDSAPublicKey <: PublicKey {
 }
 ```
 
-Functionality: ECDSA public key class that provides the capability to generate ECDSA public keys. ECDSA public keys support signature verification and can be encoded/decoded in both PEM and DER formats. For usage examples, see [ECDSA Key Examples](../keys_samples/sample_keys.md#ecdsa-key-example).
+Functionality: ECDSA public key class that provides the capability to generate ECDSA public keys. ECDSA public keys support signature verification and can be encoded/decoded in PEM and DER formats. For usage examples, see [ECDSA Key Samples](../keys_samples/sample_keys.md#ecdsa-key-samples).
 
 Parent Types:
 
-- [PublicKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-publickey)
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### init(ECDSAPrivateKey)
 
@@ -224,7 +244,7 @@ Parameters:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if initialization fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if initialization fails.
 
 ### static func decodeDer(DerBlob)
 
@@ -236,7 +256,7 @@ Functionality: Decodes a public key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The binary-format public key object.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The public key object in binary format.
 
 Return Value:
 
@@ -244,7 +264,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### static func decodeFromPem(String)
 
@@ -256,7 +276,7 @@ Functionality: Decodes a public key from PEM format.
 
 Parameters:
 
-- text: String - The PEM-format public key character stream.
+- text: String - The public key character stream in PEM format.
 
 Return Value:
 
@@ -264,7 +284,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, the character stream does not conform to PEM format, or the file header does not meet the public key header standard.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, the character stream does not conform to PEM format, or the file header does not meet public key header standards.
 
 ### func encodeToDer()
 
@@ -276,27 +296,27 @@ Functionality: Encodes the public key into DER format.
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The encoded DER-format public key.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The encoded public key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
 Functionality: Encodes the public key into PEM format.
 
 Return Value:
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - The [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) object.
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The public key object in PEM format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### func toString()
 
@@ -304,11 +324,11 @@ Exceptions:
 public override func toString(): String
 ```
 
-Function: Outputs the type of public key.
+Functionality: Outputs the public key type.
 
 Return Value:
 
-- String - Description of the key type.
+- String - The description of the key type.
 
 ### func verify(Array\<Byte>, Array\<Byte>)
 
@@ -316,16 +336,242 @@ Return Value:
 public func verify(digest: Array<Byte>, sig: Array<Byte>): Bool
 ```
 
-Function: Verifies the signature result.
+Functionality: Verifies the signature result.
 
 Parameters:
 
-- digest: Array\<Byte> - Digest result of the data.
-- sig: Array\<Byte> - Signature result of the data.
+- digest: Array\<Byte> - The digest result of the data.
+- sig: Array\<Byte> - The signature result of the data.
 
 Return Value:
 
-- Bool - Returns true if verification succeeds, false if it fails.
+- Bool - Returns true if verification succeeds, false otherwise.
+
+## class GeneralPrivateKey
+
+```cangjie
+public class GeneralPrivateKey <: PrivateKey
+```
+
+Functionality: Implements general private key parameter encryption and decryption.
+
+Parent Types:
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
+
+### static func decodeDer(DerBlob)
+
+```cangjie
+static func decodeDer(encoded: DerBlob): PrivateKey
+```
+
+Functionality: Decodes a private key from DER format.
+
+Parameters:
+
+- encoded: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The private key object in DER format.
+
+Return Value:
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - The decoded private key from DER format.
+
+### static func decodeDer(DerBlob, ?String)
+
+```cangjie
+static func decodeDer(encoded: DerBlob, password!: ?String): PrivateKey
+```
+
+Functionality: Decrypts and decodes a private key in DER format into a [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) object. If the password is None, no decryption is performed.
+
+Parameters:
+
+- encoded: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The private key in DER format.
+- password!: ?String - The decryption password.
+
+Return Value:
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - The decrypted and decoded private key object.
+
+### static func decodeFromPem(String)
+
+```cangjie
+static func decodeFromPem(text: String): PrivateKey
+```
+
+Functionality: Decodes a private key from PEM format.
+
+Parameters:
+
+- text: String - The private key character stream in PEM format.
+
+Return Value:
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - The decoded private key from PEM format.
+
+### static func decodeFromPem(String, ?String)
+
+```cangjie
+static func decodeFromPem(text: String, password!: ?String): PrivateKey
+```
+
+Functionality: Decrypts and decodes a private key in PEM format into a [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) object. If the password is None, no decryption is performed.
+
+Parameters:
+
+- text: String - The private key in PEM format.
+- password!: ?String - The decryption password.
+
+Return Value:
+
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - The decrypted and decoded private key object.
+
+### func encodeToDer()
+
+```cangjie
+func encodeToDer(): DerBlob
+```
+
+Functionality: Encodes the private key into DER format.
+
+Return Value:
+
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The private key in DER format.
+
+### func encodeToDer(?String)
+
+```cangjie
+func encodeToDer(password!: ?String): DerBlob
+```
+
+Functionality: Encrypts and encodes the private key into DER format. If the password is None, no encryption is performed.
+
+Parameters:
+
+- password!: ?String - The encryption password.
+
+Return Value:
+
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The encrypted private key in DER format.
+
+### func encodeToPem()
+
+```cangjie
+func encodeToPem(): PemEntry
+```
+
+Functionality: Encodes the private key into PEM format.
+
+Return Value:
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The encoded private key in PEM format.
+
+### func encodeToPem(?String)
+
+```cangjie
+func encodeToPem(password!: ?String): PemEntry
+```
+
+Functionality: Encrypts and encodes the private key into PEM format. If the password is None, no encryption is performed.
+
+Parameters:
+
+- password!: ?String - The encryption password.
+
+Return Value:
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The encrypted private key in PEM format.
+
+### func toString()
+
+```cangjie
+public func toString(): String
+```
+
+Functionality: Converts to string format.
+
+Return Value:
+
+- String - The string representation.
+
+## class GeneralPublicKey
+
+```cangjie
+public class GeneralPublicKey <: PublicKey
+```
+
+Function: Provides generic public key parameter encryption/decryption functionality.
+
+Parent Types:
+
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
+
+### static func decodeDer(DerBlob)
+
+```cangjie
+static func decodeDer(encoded: DerBlob): PublicKey
+```
+
+Function: Decodes a public key from DER format.
+
+Parameters:
+
+- encoded: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Public key object in DER format.
+
+Return Value:
+
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey) - Public key decoded from DER format.
+
+### static func decodeFromPem(String)
+
+```cangjie
+static func decodeFromPem(text: String): PublicKey
+```
+
+Function: Decodes a public key from PEM format.
+
+Parameters:
+
+- text: String - Public key character stream in PEM format.
+
+Return Value:
+
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey) - Public key decoded from PEM format.
+
+### func encodeToDer()
+
+```cangjie
+func encodeToDer(): DerBlob
+```
+
+Function: Encodes the public key into DER format.
+
+Return Value:
+
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Public key in DER format.
+
+### func encodeToPem()
+
+```cangjie
+func encodeToPem(): PemEntry
+```
+
+Function: Encodes the public key into PEM format.
+
+Return Value:
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - Object generated from PEM format encoding of public key data.
+
+### func toString()
+
+```cangjie
+public func toString(): String
+```
+
+Function: Converts to string format.
+
+Return Value:
+
+- String - String representation.
 
 ## class RSAPrivateKey
 
@@ -336,11 +582,11 @@ public class RSAPrivateKey <: PrivateKey{
 }
 ```
 
-Function: RSA private key class, providing the capability to generate RSA private keys. RSA private keys support signing and decryption operations, and can be encoded/decoded in PEM and DER formats, complying with the PKCS1 standard. For usage examples, see [RSA Key Example](../keys_samples/sample_keys.md#rsa-key-example).
+Function: RSA private key class providing RSA private key generation capability. RSA private keys support signing and decryption operations, with encoding/decoding in PEM and DER formats compliant with PKCS1 standard. Usage examples see [RSA Key Examples](../keys_samples/sample_keys.md#rsa-密钥示例).
 
-Parent Type:
+Parent Types:
 
-- [PrivateKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-privatekey)
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
 
 ### init(Int32)
 
@@ -348,15 +594,15 @@ Parent Type:
 public init(bits: Int32)
 ```
 
-Function: Initializes and generates a private key with a default public exponent value of 65537, which is industry-recommended. The size of the public exponent (e) directly affects the security and encryption efficiency of the RSA algorithm. Generally, a smaller e value results in faster encryption but lower security.
+Function: Initializes and generates a private key with default public exponent value of 65537 (industry recommendation). The size of public exponent e directly affects RSA algorithm security and encryption efficiency. Generally, smaller e values result in faster encryption but lower security.
 
 Parameters:
 
-- bits: Int32 - Key length, which must be greater than or equal to 512 bits and less than or equal to 16384 bits.
+- bits: Int32 - Key length, must be ≥512 bits and ≤16384 bits.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if the key length does not meet requirements or initialization fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if key length is invalid or initialization fails.
 
 ### init(Int32, BigInt)
 
@@ -364,16 +610,16 @@ Exceptions:
 public init(bits: Int32, e: BigInt)
 ```
 
-Function: Initializes and generates a private key, allowing the user to specify the public exponent.
+Function: Initializes and generates a private key allowing custom public exponent specification.
 
 Parameters:
 
-- bits: Int32 - Key length, which must be greater than or equal to 512 bits and less than or equal to 16384 bits. A key length of at least 3072 bits is recommended.
-- e: BigInt - Public exponent, which must be an odd number in the range [3, 2^256-1].
+- bits: Int32 - Key length, must be ≥512 bits and ≤16384 bits (recommended ≥3072 bits).
+- e: BigInt - Public exponent, must be an odd number in range [3, 2^256-1].
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if the key length or public exponent does not meet requirements, or if initialization fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if key length is invalid, public exponent is invalid, or initialization fails.
 
 ### static func decodeDer(DerBlob)
 
@@ -385,7 +631,7 @@ Function: Decodes a private key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Binary-format private key object.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Private key object in binary format.
 
 Return Value:
 
@@ -393,7 +639,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if decoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if decoding fails.
 
 ### static func decodeDer(DerBlob, ?String)
 
@@ -405,8 +651,8 @@ Function: Decodes an encrypted private key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Binary-format private key object.
-- password!: ?String - Password required to decrypt the private key. If None, no decryption is performed.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Private key object in binary format.
+- password!: ?String - Password required for decryption (None means no decryption).
 
 Return Value:
 
@@ -414,7 +660,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if decoding fails, decryption fails, or the password parameter is an empty string.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if decoding fails, decryption fails, or password is empty string.
 
 ### static func decodeFromPem(String)
 
@@ -426,7 +672,7 @@ Function: Decodes a private key from PEM format.
 
 Parameters:
 
-- text: String - PEM-format private key character stream.
+- text: String - Private key character stream in PEM format.
 
 Return Value:
 
@@ -434,7 +680,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if decoding fails, decryption fails, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if decoding fails, decryption fails, stream doesn't match PEM format, or header doesn't match private key standard.
 
 ### static func decodeFromPem(String, ?String)
 
@@ -446,8 +692,8 @@ Function: Decodes a private key from PEM format.
 
 Parameters:
 
-- text: String - PEM-format private key character stream.
-- password!: ?String - Password required to decrypt the private key. If None, no decryption is performed.
+- text: String - Private key character stream in PEM format.
+- password!: ?String - Password required for decryption (None means no decryption).
 
 Return Value:
 
@@ -455,7 +701,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if decoding fails, decryption fails, the password parameter is an empty string, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if decoding fails, decryption fails, password is empty string, stream doesn't match PEM format, or header doesn't match private key standard.
 
 ### func decrypt(InputStream, OutputStream, PadOption)
 
@@ -463,17 +709,17 @@ Exceptions:
 public func decrypt(input: InputStream, output: OutputStream, padType!: PadOption): Unit
 ```
 
-Function: Decrypts the original data.
+Function: Decrypts original data.
 
 Parameters:
 
 - input: InputStream - Encrypted data.
 - output: OutputStream - Decrypted data.
-- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode, which can be PKCS1 or OAEP. PSS mode is not supported. For higher security requirements, OAEP padding mode is recommended.
+- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode (PKCS1 or OAEP; PSS not supported). OAEP is recommended for higher security scenarios.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if setting the padding mode fails or decryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if padding mode setting fails or decryption fails.
 
 ### func encodeToDer()
 
@@ -485,11 +731,11 @@ Function: Encodes the private key into DER format.
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Encoded DER-format private key.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Encoded private key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if encoding fails.
 
 ### func encodeToDer(?String)
 
@@ -497,35 +743,55 @@ Exceptions:
 public func encodeToDer(password!: ?String): DerBlob
 ```
 
-Function: Encrypts the private key using AES-256-CBC and encodes it into DER format.
+Function: Encrypts private key using AES-256-CBC and encodes into DER format.
 
 Parameters:
 
-- password!: ?String - Password required to encrypt the private key. If None, no encryption is performed.
+- password!: ?String - Password required for encryption (None means no encryption).
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Encoded DER-format private key.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Encoded private key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if encoding fails, encryption fails, or the password parameter is an empty string.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if encoding fails, encryption fails, or password is empty string.
 
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
 Function: Encodes the private key into PEM format.
 
 Return Value:
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - PEM-format private key object.
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - Private key object in PEM format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if encoding fails.
+
+### func encodeToPem(?String)
+
+```cangjie
+public func encodeToPem(password!: ?String): PemEntry
+```
+
+Function: Encodes an encrypted private key into PEM format.
+
+Parameters:
+
+- password!: ?String - Password required for encryption (None means no encryption).
+
+Return Value:
+
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - Private key object in PEM format.
+
+Exceptions:
+
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if encoding fails, encryption fails, or password is empty string.
 
 ### func sign(Digest, Array\<Byte>, PadOption)
 
@@ -533,13 +799,13 @@ Exceptions:
 public func sign(hash: Digest, digest: Array<Byte>, padType!: PadOption): Array<Byte>
 ```
 
-Function: Signs the digest result of the data.
+Function: Signs the digest result of data.
 
 Parameters:
 
-- hash: Digest - Digest method used to obtain the digest result.
-- digest: Array\<Byte> - Digest result of the data.
-- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode, which can be PKCS1 or PSS. OAEP mode is not supported. For higher security requirements, PSS padding mode is recommended.
+- hash: Digest - Digest method used to obtain digest result.
+- digest: Array\<Byte> - Digest result of data.
+- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode (PKCS1 or PSS; OAEP not supported). PSS is recommended for higher security scenarios.
 
 Return Value:
 
@@ -547,7 +813,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if setting the digest method fails, setting the padding mode fails, or signing fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if digest method setting fails, padding mode setting fails, or signing fails.
 
 ### func toString()
 
@@ -555,11 +821,11 @@ Exceptions:
 public override func toString(): String
 ```
 
-Function: Outputs the type of private key.
+Function: Outputs private key type.
 
 Return Value:
 
-- String - Description of the key type.
+- String - Key type description.
 
 ## class RSAPublicKey
 
@@ -569,11 +835,11 @@ public class RSAPublicKey <: PublicKey {
 }
 ```
 
-Function: RSA public key class, providing the capability to generate RSA public keys. RSA public keys support signature verification and encryption operations, and can be encoded/decoded in PEM and DER formats. For usage examples, see [RSA Key Example](../keys_samples/sample_keys.md#rsa-key-example).
+Function: RSA public key class providing RSA public key generation capability. RSA public keys support signature verification and encryption operations, with encoding/decoding in PEM and DER formats. Usage examples see [RSA Key Examples](../keys_samples/sample_keys.md#rsa-密钥示例).
 
-Parent Type:
+Parent Types:
 
-- [PublicKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-publickey)
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### init(RSAPrivateKey)
 
@@ -581,7 +847,7 @@ Parent Type:
 public init(pri: RSAPrivateKey)
 ```
 
-Function: Initializes the public key by extracting it from the corresponding private key.
+Function: Initializes public key by extracting corresponding public key from private key.
 
 Parameters:
 
@@ -589,7 +855,7 @@ Parameters:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Thrown if initialization fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if initialization fails.
 
 ### static func decodeDer(DerBlob)
 
@@ -597,9 +863,11 @@ Exceptions:
 public static func decodeDer(blob: DerBlob): RSAPublicKey
 ```
 
-Function: Decodes a public key from DER format.Parameters:
+Function: Decodes a public key from DER format.
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Public key object in binary format.
+Parameters:
+
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Public key object in binary format.
 
 Return Value:
 
@@ -607,7 +875,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when decoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if decoding fails.
 
 ### static func decodeFromPem(String)
 
@@ -615,7 +883,7 @@ Exceptions:
 public static func decodeFromPem(text: String): RSAPublicKey
 ```
 
-Function: Decodes public key from PEM format.
+Function: Decodes a public key from PEM format.
 
 Parameters:
 
@@ -627,7 +895,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when decoding fails, the character stream does not conform to PEM format, or the file header does not meet public key header standards.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if decoding fails, stream doesn't match PEM format, or header doesn't match public key standard.
 
 ### func encodeToDer()
 
@@ -635,31 +903,31 @@ Exceptions:
 public override func encodeToDer(): DerBlob
 ```
 
-Function: Encodes public key to DER format.
+Function: Encodes the public key into DER format.
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Encoded public key in DER format.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Encoded public key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if encoding fails.
 
 ### func encodeToPem()
 
 ```cangjie
-public override func encodeToPem(): PemEntry
+public func encodeToPem(): PemEntry
 ```
 
-Function: Encodes public key to PEM format.
+Function: Encodes the public key into PEM format.
 
 Return Value:
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - Returns a [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) object.
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) object.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if encoding fails.
 
 ### func encrypt(InputStream, OutputStream, PadOption)
 
@@ -667,17 +935,17 @@ Exceptions:
 public func encrypt(input: InputStream, output: OutputStream, padType!: PadOption): Unit
 ```
 
-Function: Encrypts a data segment.
+Function: Encrypts data.
 
 Parameters:
 
 - input: InputStream - Data to be encrypted.
 - output: OutputStream - Encrypted data.
-- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode, which can be PKCS1 or OAEP mode (PSS mode is not supported). For higher security scenarios, OAEP padding mode is recommended.
+- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode (PKCS1 or OAEP; PSS not supported). OAEP is recommended for higher security scenarios.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when setting padding mode fails or encryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if padding mode setting fails or encryption fails.
 
 ### func toString()
 
@@ -689,7 +957,7 @@ Function: Outputs public key type.
 
 Return Value:
 
-- String - Description of key category.
+- String - Key type description.
 
 ### func verify(Digest, Array\<Byte>, Array\<Byte>, PadOption)
 
@@ -701,10 +969,10 @@ Function: Verifies signature result.
 
 Parameters:
 
-- hash: Digest - Digest method, the digest method used to obtain the digest result.
-- digest: Array\<Byte> - Digest result of the data.
-- sig: Array\<Byte> - Signature result of the data.
-- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode, which can be PKCS1 or PSS mode (OAEP mode is not supported). For higher security scenarios, PSS padding mode is recommended.
+- hash: Digest - Digest method used to obtain digest result.
+- digest: Array\<Byte> - Digest result of data.
+- sig: Array\<Byte> - Signature result of data.
+- padType!: [PadOption](keys_package_enums.md#enum-padoption) - Padding mode (PKCS1 or PSS; OAEP not supported). PSS is recommended for higher security scenarios.
 
 Return Value:
 
@@ -712,7 +980,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when setting padding mode fails or verification fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws exception if padding mode setting fails or verification fails.
 
 ## class SM2PrivateKey
 
@@ -722,11 +990,11 @@ public class SM2PrivateKey <: PrivateKey {
 }
 ```
 
-Function: SM2 private key class, providing the capability to generate SM2 private keys. SM2 private keys support signing and decryption operations, and support encoding/decoding in PEM and DER formats, complying with PKCS1 standards. For usage examples, see [SM2 Key Examples](../keys_samples/sample_keys.md#sm2-key-examples).
+Function: SM2 private key class, providing the capability to generate SM2 private keys. SM2 private keys support signing and decryption operations, and can be encoded/decoded in PEM and DER formats, compliant with PKCS1 standard. For usage examples, see [SM2 Key Samples](../keys_samples/sample_keys.md#sm2-key-samples).
 
-Parent Type:
+Parent Types:
 
-- [PrivateKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-privatekey)
+- [PrivateKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey)
 
 ### init()
 
@@ -738,7 +1006,7 @@ Function: Initializes and generates a private key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when initialization fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if initialization fails.
 
 ### static func decodeDer(DerBlob)
 
@@ -746,19 +1014,19 @@ Exceptions:
 public static func decodeDer(blob: DerBlob): SM2PrivateKey
 ```
 
-Function: Decodes private key from DER format.
+Function: Decodes a private key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Private key object in binary format.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Private key object in binary format.
 
 Return Value:
 
-- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - Decoded SM2 private key.
+- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - The decoded SM2 private key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when decoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails.
 
 ### static func decodeDer(DerBlob, ?String)
 
@@ -766,20 +1034,20 @@ Exceptions:
 public static func decodeDer(blob: DerBlob, password!: ?String): SM2PrivateKey
 ```
 
-Function: Decodes encrypted private key from DER format.
+Function: Decodes an encrypted private key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Private key object in binary format.
-- password!: ?String - Password required to decrypt the private key. If the password is None, no decryption is performed.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Private key object in binary format.
+- password!: ?String - Password required to decrypt the private key. If None, no decryption is performed.
 
 Return Value:
 
-- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - Decoded SM2 private key.
+- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - The decoded SM2 private key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when decoding fails, decryption fails, or the password parameter is an empty string.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, decryption fails, or the password parameter is an empty string.
 
 ### static func decodeFromPem(String)
 
@@ -787,7 +1055,7 @@ Exceptions:
 public static func decodeFromPem(text: String): SM2PrivateKey
 ```
 
-Function: Decodes private key from PEM format.
+Function: Decodes a private key from PEM format.
 
 Parameters:
 
@@ -795,11 +1063,11 @@ Parameters:
 
 Return Value:
 
-- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - Decoded SM2 private key.
+- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - The decoded SM2 private key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when decoding fails, decryption fails, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, decryption fails, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
 
 ### static func decodeFromPem(String, ?String)
 
@@ -807,20 +1075,20 @@ Exceptions:
 public static func decodeFromPem(text: String, password!: ?String): SM2PrivateKey
 ```
 
-Function: Decodes private key from PEM format.
+Function: Decodes a private key from PEM format.
 
 Parameters:
 
 - text: String - Private key character stream in PEM format.
-- password!: ?String - Password required to decrypt the private key. If the password is None, no decryption is performed.
+- password!: ?String - Password required to decrypt the private key. If None, no decryption is performed.
 
 Return Value:
 
-- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - Decoded SM2 private key.
+- [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - The decoded SM2 private key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when decoding fails, decryption fails, the password parameter is an empty string, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, decryption fails, the password parameter is an empty string, the character stream does not conform to PEM format, or the file header does not meet private key header standards.
 
 ### func decrypt(Array\<Byte>)
 
@@ -840,7 +1108,7 @@ Return Value:
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when decryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decryption fails.
 
 ### func encodeToDer()
 
@@ -848,15 +1116,15 @@ Exceptions:
 public func encodeToDer(): DerBlob
 ```
 
-Function: Encodes private key to DER format.
+Function: Encodes the private key into DER format.
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Encoded private key in DER format.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The encoded private key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### func encodeToDer(?String)
 
@@ -864,37 +1132,39 @@ Exceptions:
 public func encodeToDer(password!: ?String): DerBlob
 ```
 
-Function: Encrypts the private key using AES-256-CBC and encodes it to DER format.
+Function: Encrypts the private key using AES-256-CBC and encodes it into DER format.
 
 Parameters:
 
-- password!: ?String - Password required to encrypt the private key. If the password is None, no encryption is performed.
+- password!: ?String - Password required to encrypt the private key. If None, no encryption is performed.
 
 Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - Encoded public key in DER format.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The encoded public key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws exception when encoding fails, encryption fails, or the password parameter is an empty string.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails, encryption fails, or the password parameter is an empty string.
 
 ### func encodeToPem(?String)
 
 ```cangjie
-public func encodeToPem(password!: ?String): PemEntry 
+public func encodeToPem(password!: ?String): PemEntry
 ```
 
-Function: Encodes the encrypted private key to PEM format.
+Function: Encodes the encrypted private key into PEM format.
 
 Parameters:
 
-- password!: ?String - Password required to encrypt the private key. If the password is None, no encryption is performed.
+- password!: ?String - Password required to encrypt the private key. If None, no encryption is performed.
 
 Return Value:
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - Private key object in PEM format.
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The private key object in PEM format.
 
-Exceptions:- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when encoding fails, encryption fails, or the parameter password is an empty string.
+Exceptions:
+
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails, encryption fails, or the password parameter is an empty string.
 
 ### func encodeToPem()
 
@@ -904,13 +1174,13 @@ public func encodeToPem(): PemEntry
 
 Function: Encodes the private key into PEM format.
 
-Return value:
+Return Value:
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - The private key object in PEM format.
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The private key object in PEM format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### func sign(Array\<Byte>)
 
@@ -918,19 +1188,19 @@ Exceptions:
 public func sign(data: Array<Byte>): Array<Byte>
 ```
 
-Function: Signs the data using the [SM3](../../digest/digest_package_api/digest_package_classes.md#class-sm3) digest algorithm for SM2.
+Function: Signs the data. SM2 uses the [SM3](../../digest/digest_package_api/digest_package_classes.md#class-sm3) digest algorithm.
 
 Parameters:
 
-- data: Array\<Byte> - The data to be signed.
+- data: Array\<Byte> - Data to be signed.
 
-Return value:
+Return Value:
 
-- Array\<Byte> - The signed data.
+- Array\<Byte> - Signed data.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when signing fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if signing fails.
 
 ### func toString()
 
@@ -938,9 +1208,9 @@ Exceptions:
 public override func toString(): String
 ```
 
-Function: Outputs the type of private key.
+Function: Outputs the private key type.
 
-Return value:
+Return Value:
 
 - String - Description of the key type.
 
@@ -952,11 +1222,11 @@ public class SM2PublicKey <: PublicKey {
 }
 ```
 
-Function: SM2 public key class, providing the capability to generate SM2 public keys. SM2 public keys support signature verification and encryption operations, with encoding/decoding in PEM and DER formats. For usage examples, see [SM2 Key Example](../keys_samples/sample_keys.md#sm2-key-example).
+Function: SM2 public key class, providing the capability to generate SM2 public keys. SM2 public keys support signature verification and encryption operations, and can be encoded/decoded in PEM and DER formats. For usage examples, see [SM2 Key Samples](../keys_samples/sample_keys.md#sm2-key-samples).
 
-Parent type:
+Parent Types:
 
-- [PublicKey](../../x509/x509_package_api/x509_package_interfaces.md#interface-publickey)
+- [PublicKey](../../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-publickey)
 
 ### init(SM2PrivateKey)
 
@@ -964,15 +1234,15 @@ Parent type:
 public init(pri: SM2PrivateKey)
 ```
 
-Function: Initializes the public key by deriving it from the corresponding private key.
+Function: Initializes the public key by extracting it from the corresponding private key.
 
 Parameters:
 
-- pri: [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - The SM2 private key.
+- pri: [SM2PrivateKey](keys_package_classes.md#class-sm2privatekey) - SM2 private key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when initialization fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if initialization fails.
 
 ### static func decodeDer(DerBlob)
 
@@ -980,19 +1250,19 @@ Exceptions:
 public static func decodeDer(blob: DerBlob): SM2PublicKey
 ```
 
-Function: Decodes the public key from DER format.
+Function: Decodes a public key from DER format.
 
 Parameters:
 
-- blob: [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The public key object in binary format.
+- blob: [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - Public key object in binary format.
 
-Return value:
+Return Value:
 
 - [SM2PublicKey](keys_package_classes.md#class-sm2publickey) - The decoded SM2 public key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when decoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails.
 
 ### static func decodeFromPem(String)
 
@@ -1000,19 +1270,19 @@ Exceptions:
 public static func decodeFromPem(text: String): SM2PublicKey
 ```
 
-Function: Decodes the public key from PEM format.
+Function: Decodes a public key from PEM format.
 
 Parameters:
 
-- text: String - The public key character stream in PEM format.
+- text: String - Public key character stream in PEM format.
 
-Return value:
+Return Value:
 
 - [SM2PublicKey](keys_package_classes.md#class-sm2publickey) - The decoded SM2 public key.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when decoding fails, the character stream does not conform to PEM format, or the file header does not meet public key header standards.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if decoding fails, the character stream does not conform to PEM format, or the file header does not meet public key header standards.
 
 ### func encodeToDer()
 
@@ -1022,13 +1292,13 @@ public func encodeToDer(): DerBlob
 
 Function: Encodes the public key into DER format.
 
-Return value:
+Return Value:
 
-- [DerBlob](../../x509/x509_package_api/x509_package_structs.md#struct-derblob) - The encoded public key in DER format.
+- [DerBlob](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-derblob) - The encoded public key in DER format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### func encodeToPem()
 
@@ -1038,33 +1308,33 @@ public func encodeToPem(): PemEntry
 
 Function: Encodes the public key into PEM format.
 
-Return value:
+Return Value:
 
-- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - Returns a [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) object.
+- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - The public key object in PEM format.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when encoding fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encoding fails.
 
 ### func encrypt(Array\<Byte>)
 
 ```cangjie
-public func encrypt(input: Array<Byte>): Array<Byte> 
+public func encrypt(input: Array<Byte>): Array<Byte>
 ```
 
-Function: Encrypts a segment of data, with the output ciphertext following ASN.1 encoding rules.
+Function: Encrypts a piece of data. The output ciphertext follows ASN.1 encoding rules.
 
 Parameters:
 
-- input: Array\<Byte> - The data to be encrypted.
+- input: Array\<Byte> - Data to be encrypted.
 
-Return value:
+Return Value:
 
-- Array\<Byte> - The encrypted data.
+- Array\<Byte> - Encrypted data.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when encryption fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if encryption fails.
 
 ### func toString()
 
@@ -1072,9 +1342,9 @@ Exceptions:
 public override func toString(): String
 ```
 
-Function: Outputs the type of public key.
+Function: Outputs the public key type.
 
-Return value:
+Return Value:
 
 - String - Description of the key type.
 
@@ -1088,13 +1358,13 @@ Function: Verifies the signature result.
 
 Parameters:
 
-- data: Array\<Byte> - The data.
-- sig: Array\<Byte> - The signature result of the data.
+- data: Array\<Byte> - Data.
+- sig: Array\<Byte> - Signature result of the data.
 
-Return value:
+Return Value:
 
 - Bool - Returns true if verification succeeds, false otherwise.
 
 Exceptions:
 
-- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - Throws an exception when setting the padding mode fails or verification fails.
+- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - Throws an exception if setting the padding mode fails or verification fails.

@@ -62,7 +62,7 @@ func certificateFromPem(text: String): Array<Certificate>
 
 返回值：
 
-- [Certificate](#interface-certificate) - 解码得到的证书。
+- Array\<[Certificate](#interface-certificate)> - 解码得到的证书集合。
 
 ### func dhParametersFromDer(DerBlob)
 
@@ -210,8 +210,6 @@ func publicKeyFromPem(text: String): PublicKey
 
 ```cangjie
 public interface DHParameters <: Key {
-    func encodeToDer(): DerBlob
-    func encodeToPem(): PemEntry
     static func decodeDer(encoded: DerBlob): DHParameters
     static func decodeFromPem(text: String): DHParameters
 }
@@ -259,30 +257,6 @@ static func decodeFromPem(text: String): DHParameters
 返回值：
 
 - [DHParameters](#interface-dhparameters) - 由 PEM 格式解码出的 DH 密钥参数。
-
-### func encodeToDer()
-
-```cangjie
-func encodeToDer(): DerBlob
-```
-
-功能：将 DH 密钥参数编码为 DER 格式。
-
-返回值：
-
-- [DerBlob](./crypto_common_package_structs.md#struct-derblob) - DH 密钥参数数据 DER 格式编码生成的对象。
-
-### func encodeToPem()
-
-```cangjie
-func encodeToPem(): PemEntry
-```
-
-功能：将 DH 密钥参数编码为 PEM 格式。
-
-返回值：
-
-- [PemEntry](./crypto_common_package_structs.md#struct-pementry) - DH 密钥参数数据 PEM 格式编码生成的对象。
 
 ## interface Key
 
@@ -361,8 +335,6 @@ func encodeToPem(): PemEntry
 
 ```cangjie
 public interface PrivateKey <: Key {
-    func encodeToDer(): DerBlob
-    func encodeToPem(): PemEntry
     func encodeToDer(password!: ?String): DerBlob
     func encodeToPem(password!: ?String): PemEntry
     static func decodeDer(encoded: DerBlob): PrivateKey
@@ -444,18 +416,6 @@ static func decodeFromPem(text: String, password!: ?String): PrivateKey
 
 - [PrivateKey](#interface-privatekey) - 解密解码后的私钥对象。
 
-### func encodeToDer()
-
-```cangjie
-func encodeToDer(): DerBlob
-```
-
-功能：将私钥编码成 DER 格式。
-
-返回值：
-
-- [DerBlob](./crypto_common_package_structs.md#struct-derblob) - DER 格式的私钥。
-
 ### func encodeToDer(?String)
 
 ```cangjie
@@ -471,18 +431,6 @@ func encodeToDer(password!: ?String): DerBlob
 返回值：
 
 - [DerBlob](./crypto_common_package_structs.md#struct-derblob) - 加密后的 DER 格式的私钥。
-
-### func encodeToPem()
-
-```cangjie
-func encodeToPem(): PemEntry
-```
-
-功能：将私钥编码成 PEM 格式。
-
-返回值：
-
-- [PemEntry](./crypto_common_package_structs.md#struct-pementry) - 编码后的 PEM 格式的私钥。
 
 ### func encodeToPem(?String)
 
@@ -504,8 +452,6 @@ func encodeToPem(password!: ?String): PemEntry
 
 ```cangjie
 public interface PublicKey <: Key {
-    func encodeToDer(): DerBlob
-    func encodeToPem(): PemEntry
     static func decodeDer(encoded: DerBlob): PublicKey
     static func decodeFromPem(text: String): PublicKey
 }
@@ -548,30 +494,6 @@ static func decodeFromPem(text: String): PublicKey
 返回值：
 
 - [PublicKey](#interface-publickey) - 由 PEM 格式解码出的公钥。
-
-### func encodeToDer()
-
-```cangjie
-func encodeToDer(): DerBlob
-```
-
-功能：将公钥编码成 DER 格式。
-
-返回值：
-
-- [DerBlob](./crypto_common_package_structs.md#struct-derblob) - DER 格式的公钥。
-
-### func encodeToPem()
-
-```cangjie
-func encodeToPem(): PemEntry
-```
-
-功能：将公钥编码为 PEM 格式。
-
-返回值：
-
-- [PemEntry](./crypto_common_package_structs.md#struct-pementry) - 公钥数据 PEM 格式编码生成的对象。
 
 ## interface RandomGenerator
 

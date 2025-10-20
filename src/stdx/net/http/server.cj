@@ -828,7 +828,7 @@ public class Server {
         getGlobalCryptoKit().certificateFromPem(String.fromUtf8(File.readFrom(path))).map({c => c})
     }
 
-    public func privateKeyFromFile(path: String): PrivateKey {
+    func privateKeyFromFile(path: String): PrivateKey {
         getGlobalCryptoKit().privateKeyFromPem(String.fromUtf8(File.readFrom(path)))
     }
 }

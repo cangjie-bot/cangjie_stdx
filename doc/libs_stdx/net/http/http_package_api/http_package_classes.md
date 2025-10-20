@@ -1161,6 +1161,18 @@ public prop responseBuilder: HttpResponseBuilder
 
 类型：[HttpResponseBuilder](http_package_classes.md#class-httpresponsebuilder)
 
+### func isClosed()
+
+```cangjie
+public func isClosed(): Bool
+```
+
+功能：使用 HTTP/1.1协议时，判断 socket 是否已关闭；使用 HTTP/2 协议时，判断 HTTP/2 流是否已关闭。
+
+返回值：
+
+- Bool - 如果 HTTP/1.1 的 socket 或 HTTP/2 的流已关闭，返回true，否则返回 false。
+
 ## class HttpHeaders
 
 ```cangjie
@@ -1340,19 +1352,6 @@ public prop bodySize: Option<Int64>
 
 类型：Option\<Int64>
 
-### prop close
-
-```cangjie
-public prop close: Bool
-```
-
-功能：表示该请求 header 是否包含 `Connection: close`。
-
-- 对于服务端，close 为 true 表示处理完该请求应该关闭连接。
-- 对于客户端，close 为 true 表示如果收到响应后服务端未关闭连接，客户端应主动关闭连接。
-
-类型：Bool
-
 ### prop form
 
 ```cangjie
@@ -1380,6 +1379,19 @@ public prop headers: HttpHeaders
 功能：获取 headers，headers 详述见 [HttpHeaders](http_package_classes.md#class-httpheaders) 类，获取后，可通过调用 [HttpHeaders](http_package_classes.md#class-httpheaders) 实例成员函数，修改该请求的 headers。
 
 类型：[HttpHeaders](http_package_classes.md#class-httpheaders)
+
+### prop isPersistent
+
+```cangjie
+public prop isPersistent: Bool
+```
+
+功能：表示该请求是否为长连接，即请求 header 是否不包含 `Connection: close`。包含 `Connection: close` 为 false，否则为 true。
+
+- 对于服务端，isPersistent 为 false 表示处理完该请求应该关闭连接。
+- 对于客户端，isPersistent 为 false 表示如果收到响应后服务端未关闭连接，客户端应主动关闭连接。
+
+类型：Bool
 
 ### prop method
 
@@ -1457,8 +1469,7 @@ public prop writeTimeout: ?Duration
 public override func toString(): String
 ```
 
-功能：把请求转换为字符串，包括 start line，headers，body size，trailers。
-例如：`"GET /path HTTP/1.1\r\nhost: www.example.com\r\n\r\nbody size: 5\r\nbar: foo\r\n"`。
+功能：把请求转换为字符串，包括 start line，headers，body size，trailers。例如：`"GET /path HTTP/1.1\r\nhost: www.example.com\r\n\r\nbody size: 5\r\nbar: foo\r\n"`。
 
 返回值：
 
@@ -1926,20 +1937,6 @@ public prop bodySize: Option<Int64>
 
 类型：Option\<Int64>
 
-### prop close
-
-```cangjie
-public prop close: Bool
-```
-
-功能：表示该响应 header 是否包含 Connection: close。
-
-对于服务端，close 为 true 表示处理完该请求应该关闭连接；
-
-对于客户端，close 为 true 表示如果收到响应后服务端未关闭连接，客户端应主动关闭连接。
-
-类型：Bool
-
 ### prop headers
 
 ```cangjie
@@ -1949,6 +1946,20 @@ public prop headers: HttpHeaders
 功能：获取 headers，headers 详述见 [HttpHeaders](http_package_classes.md#class-httpheaders) 类，获取后，可通过调用 [HttpHeaders](http_package_classes.md#class-httpheaders) 实例成员函数，修改该请求的 headers。
 
 类型：[HttpHeaders](http_package_classes.md#class-httpheaders)
+
+### prop isPersistent
+
+```cangjie
+public prop isPersistent: Bool
+```
+
+功能：表示该响应是否为长连接，即响应 header 是否不包含 `Connection: close`。包含 `Connection: close` 为 false，否则为 true。
+
+对于服务端，isPersistent 为 false 表示处理完该请求应关闭连接；
+
+对于客户端，isPersistent 为 false 表示读完响应体后客户端应主动关闭连接。
+
+类型：Bool
 
 ### prop request
 
@@ -1990,6 +2001,18 @@ public prop version: Protocol
 
 类型：[Protocol](http_package_enums.md#enum-protocol)
 
+### func close()
+
+```cangjie
+public func close(): Unit
+```
+
+功能：如果用户不再需要未读完的 body 数据，可以调用此接口关闭连接以释放资源。如果是 HTTP/2 协议，会发送一个 Reset 帧关闭对应的流。
+
+> **注意：**
+>
+> 如果使用者已读完 body，无需调用此接口再释放资源。
+
 ### func toString()
 
 ```cangjie
@@ -2010,7 +2033,7 @@ public override func toString(): String
 extend HttpResponse
 ```
 
-功能：为 HttpResonse 扩展 HTTP/2.0 特有的方法。
+功能：为 HttpResponse 扩展 HTTP/2.0 特有的方法。
 
 #### func getPush()
 
@@ -3564,7 +3587,7 @@ read 函数返回一个 [WebSocketFrame](http_package_classes.md#class-websocket
 ### func write(WebSocketFrameType, Array\<UInt8>, Int64)
 
 ```cangjie
-public func write(frameType: WebSocketFrameType, byteArray: Array<UInt8>, frameSize!: Int64 = FRAMESIZE): Unit
+public func write(frameType: WebSocketFrameType, byteArray: Array<UInt8>, frameSize!: Int64 = 4096): Unit
 ```
 
 功能：发送数据，非线程安全（即对同一个 [WebSocket](http_package_classes.md#class-websocket) 对象不支持多线程写）。

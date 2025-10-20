@@ -145,7 +145,7 @@ class HttpNormalBody <: SeekableInputStream {
     }
 }
 
-class HttpNormalBodyProvider <: SeekableInputStream {
+class HttpNormalBodyProvider <: SeekableInputStream & Resource {
     var readLen: Int64 = 0
     let conn: BufferedConn
     var eof = false
@@ -191,6 +191,15 @@ class HttpNormalBodyProvider <: SeekableInputStream {
         return len
     }
 
+    public func close(): Unit {
+        timer.cancel()
+        providerConn.closeConn()
+    }
+
+    public func isClosed(): Bool {
+        providerConn.getBufferConn().isClosed()
+    }
+
     public func seek(_: SeekPosition): Int64 {
         0
     }
@@ -211,7 +220,7 @@ class HttpNormalBodyProvider <: SeekableInputStream {
  * chunk-data     = 1*OCTET ; a sequence of chunk-size octets
  * RFC 9112 7.1.
  */
-class HttpChunkedBodyProvider <: InputStream {
+class HttpChunkedBodyProvider <: InputStream & Resource {
     var eof: Bool = false
     var contentLength = 0
     var remainChunkSize = 0
@@ -269,6 +278,15 @@ class HttpChunkedBodyProvider <: InputStream {
             throw e
         }
         return dstReadLen
+    }
+
+    public func close(): Unit {
+        timer.cancel()
+        providerConn.closeConn()
+    }
+
+    public func isClosed(): Bool {
+        providerConn.getBufferConn().isClosed()
     }
 
     private func getRemainSize(remainChunkSize: Int64): Int64 {

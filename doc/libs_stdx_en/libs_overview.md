@@ -1,4 +1,4 @@
-# Cangjie Programming Language Extension Library API
+# Cangjie Programming Language Extension Library Overview
 
 The Cangjie programming language extension library (stdx) contains several packages that provide related functionalities.
 

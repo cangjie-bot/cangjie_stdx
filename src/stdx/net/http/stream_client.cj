@@ -827,7 +827,7 @@ class Http2ClientEngineConn <: StreamingSocket {
     }
 }
 
-class Http2ClientBodyProvider <: InputStream & WebSocketConn {
+class Http2ClientBodyProvider <: InputStream & WebSocketConn & Resource {
     var readEnd = false
     let isConnect: Bool
     let conn: Http2ClientEngineConn
@@ -880,5 +880,9 @@ class Http2ClientBodyProvider <: InputStream & WebSocketConn {
         }
         conn.writeWebSocketReset()
         conn.close()
+    }
+
+    public func isClosed(): Bool {
+        conn.quit
     }
 }

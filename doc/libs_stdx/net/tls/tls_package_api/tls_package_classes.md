@@ -137,7 +137,6 @@ public override operator func ==(other: TlsClientSession): Bool
 
 - Bool - 若会话对象相同，返回 `true`；否则，返回 `false`。
 
-
 ## class TlsServerSession
 
 ```cangjie
@@ -152,6 +151,7 @@ public class TlsServerSession <: TlsSession & Equatable<TlsServerSession> & ToSt
 
 父类型：
 
+- [TlsSession](./../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession)
 - Equatable\<[TlsServerSession](#class-tlsserversession)>
 - ToString
 
