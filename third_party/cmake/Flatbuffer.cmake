@@ -44,4 +44,6 @@ ExternalProject_Add(
         # Build only necessary targets.
         -DFLATBUFFERS_BUILD_FLATHASH=OFF
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
-        ${FLATBUFFERS_COMPILE_OPTIONS})
+        ${FLATBUFFERS_COMPILE_OPTIONS}
+    # Ensure rebuild when patch or sources change
+    BUILD_ALWAYS ON)
