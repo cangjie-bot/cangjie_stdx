@@ -6,6 +6,9 @@
 # See https://cangjie-lang.cn/pages/LICENSE for license information.
 
 add_subdirectory(dynamicLoader)
+if(CANGJIE_CHIR_PLUGIN)
+add_subdirectory(chir)
+endif()
 add_subdirectory(compress)
 add_subdirectory(serialization)
 add_subdirectory(encoding)
