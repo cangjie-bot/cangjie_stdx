@@ -189,5 +189,5 @@ if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
     )
     install(TARGETS boundscheck-static DESTINATION ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 endif()
-
+add_subdirectory(third_party)
 add_subdirectory(src)
