@@ -44,4 +44,13 @@ ExternalProject_Add(
         # Build only necessary targets.
         -DFLATBUFFERS_BUILD_FLATHASH=OFF
         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
-        ${FLATBUFFERS_COMPILE_OPTIONS})
+        ${FLATBUFFERS_COMPILE_OPTIONS}
+    # Ensure rebuild when patch or sources change
+    BUILD_ALWAYS ON)
+
+if(UNIX)
+    message("begin grep idl_gen_cangjie.cpp")
+    execute_process(COMMAND sed -r -n /LENGTH,\ repeat:\ /p ${FLATBUFFERS_SRC}/src/idl_gen_cangjie.cpp OUTPUT_VARIABLE sed_out)
+    message(${sed_out})
+    message("end grep idl_gen_cangjie.cpp")
+endif()
