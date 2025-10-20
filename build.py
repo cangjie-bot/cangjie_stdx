@@ -292,6 +292,9 @@ def clean(args):
     # Remove entire build directory by default
     output_dirs.append(BUILD_DIR)
     output_dirs.append(CMAKE_OUTPUT_DIR)
+    chir_dir = os.path.join(HOME_DIR, "src", "stdx", "chir")
+    for chir_generated_source in ["decode.cj", "flatbuffer_object.cj", "PackageFormat_generated.cj", "table.cj"]:
+        output_dirs.append(os.path.join(chir_dir, chir_generated_source))
     for file_path in output_dirs:
         abs_file_path = os.path.join(HOME_DIR, file_path)
         if os.path.isdir(abs_file_path):
