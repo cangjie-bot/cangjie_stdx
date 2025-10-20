@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This source file is part of the Cangjie project, licensed under Apache-2.0
+ * with Runtime Library Exception.
+ *
+ * See https://cangjie-lang.cn/pages/LICENSE for license information.
+ */
+
+package stdx.net.tls.common
+
+import std.collection.Map
+import std.deriving.Derive
+import std.net.StreamingSocket
+import stdx.crypto.common.{Certificate, PrivateKey}
+
+/* ===== Emitted by MacroCall @Derive in tls_common.cj:16:1 ===== */
+/* 16.1 */public enum TlsVersion {
+/* 16.2 */    V1_2 | V1_3 | TLCP | ...
+/* 16.3 */}
+/* 16.4 */extend TlsVersion <: ToString {
+/* 16.5 */    public func toString(): String {
+/* 16.6 */        let sb = StringBuilder()
+/* 16.7 */        sb.append("TlsVersion")
+/* 16.8 */        match(this) {
+/* 16.9 */            case V1_2 => sb.append(".V1_2")
+/* 16.10 */            ()
+/* 16.11 */            case V1_3 => sb.append(".V1_3")
+/* 16.12 */            ()
+/* 16.13 */            case TLCP => sb.append(".TLCP")
+/* 16.14 */            ()
+/* 16.15 */            case _ => throw Exception("Should never happen")
+/* 16.16 */        }
+/* 16.17 */        return sb.toString()
+/* 16.18 */    }
+/* 16.19 */}
+/* 16.20 */extend TlsVersion <: Hashable {
+/* 16.21 */    public func hashCode(): Int64 {
+/* 16.22 */        var hasher = DefaultHasher()
+/* 16.23 */        match(this) {
+/* 16.24 */            case V1_2 => hasher.write(0)
+/* 16.25 */            case V1_3 => hasher.write(1)
+/* 16.26 */            case TLCP => hasher.write(2)
+/* 16.27 */            case _ => throw Exception("Should never happen")
+/* 16.28 */        }
+/* 16.29 */        return hasher.finish()
+/* 16.30 */    }
+/* 16.31 */    private func hh < T >(hasher: DefaultHasher, item: T): DefaultHasher where T <: Hashable {
+/* 16.32 */        var hasher2 = hasher
+/* 16.33 */        hasher2.write(item.hashCode())
+/* 16.34 */        return hasher2
+/* 16.35 */    }
+/* 16.36 */    private func hh < T >(hasher: DefaultHasher, item: Int64): DefaultHasher {
+/* 16.37 */        var hasher2 = hasher
+/* 16.38 */        hasher2.write(item)
+/* 16.39 */        return hasher2
+/* 16.40 */    }
+/* 16.41 */    private func hh < T >(hasher: DefaultHasher, item: String): DefaultHasher {
+/* 16.42 */        var hasher2 = hasher
+/* 16.43 */        hasher2.write(item)
+/* 16.44 */        return hasher2
+/* 16.45 */    }
+/* 16.46 */}
+/* 16.47 */extend TlsVersion <: Equatable < TlsVersion > {
+/* 16.48 */    public operator func ==(other: TlsVersion): Bool {
+/* 16.49 */        return match((this, other)) {
+/* 16.50 */            case(V1_2, V1_2) => true
+/* 16.51 */            case(V1_3, V1_3) => true
+/* 16.52 */            case(TLCP, TLCP) => true
+/* 16.53 */            case _ => false
+/* 16.54 */        }
+/* 16.55 */    }
+/* 16.56 */    public operator func !=(other: TlsVersion): Bool {
+/* 16.57 */        !(this == other)
+/* 16.58 */    }
+/* 16.59 */}
+/* 16.60 */
+/* ===== End of the Emit ===== */
+
+/**
+ * Certificate verification mode. A TLS client, once connected, received a server certificate and
+ * should verify it to ensure that the connection has been established to the right peer.
+ * The default behavior is to use the system trust store. However there are cases when it's required
+ * to trust all certificates (in testing and development, usually) or we have a custom CA server whose
+ * certificates couldn't be installed into the system trust store for some reason.
+ */
+public enum CertificateVerifyMode {
+    | Default // default verification mode: validate certificates against the system CAs
+    | TrustAll // trust all certificates
+    | CustomCA(Array<Certificate>) // validate against the provided list of CAs
+    | CustomVerify((Array<Certificate>) -> Bool)
+}
+
+public interface TlsConfig {
+    mut prop verifyMode: CertificateVerifyMode
+    mut prop supportedAlpnProtocols: Array<String>
+    mut prop supportedVersions: Array<TlsVersion>
+    mut prop supportedCipherSuites: Map<TlsVersion, Array<String>> // generalization of old `cipherSuitesV1_x` API
+    mut prop certificate: ?(Array<Certificate>, PrivateKey)
+}
+
+public interface TlsConnection <: StreamingSocket {
+    func handshake(timeout!: ?Duration): TlsHandshakeResult
+    prop handshakeResult: ?TlsHandshakeResult
+}
+
+public interface TlsHandshakeResult {
+    prop version: TlsVersion
+    prop cipherSuite: String
+    prop peerCertificate: Array<Certificate>
+    prop session: ?TlsSession
+    prop alpnProtocol: String
+    prop serverName: String
+}
+
+public interface TlsSession {}
