@@ -192,7 +192,7 @@ public func startObject(): Unit
 
 ```cangjie
 public class JsonWriter {
-    public var writeConfig = WriteConfig.compact
+    public var writeConfig: WriteConfig = WriteConfig.compact
     public init(out: OutputStream)
 }
 ```
@@ -212,10 +212,12 @@ public class JsonWriter {
 ### var writeConfig
 
 ```cangjie
-public var writeConfig = WriteConfig.compact
+public var writeConfig: WriteConfig = WriteConfig.compact
 ```
 
 功能：序列化格式配置。详见 [WriteConfig](./encoding_json_stream_package_structs.md#struct-writeconfig)。
+
+类型：[WriteConfig](./encoding_json_stream_package_structs.md#struct-writeconfig)
 
 ### init(OutputStream)
 
@@ -273,6 +275,10 @@ public func jsonValue(value: String): JsonWriter
 >
 > 此函数不会对值 value 进行转义，也不会为入参添加双引号。如果使用者能够保证输入的值 value 符合数据转换标准[ECMA-404 The JSON Data Interchange Standard](https://www.ecma-international.org/publications-and-standards/standards/ecma-404/)， 建议使用该函数。
 
+参数：
+
+- value: String - 待写入的字符串。
+
 返回值：
 
 - [JsonWriter](encoding_json_stream_package_classes.md#class-jsonwriter) - 为方便链式调用，返回值为当前 [JsonWriter](encoding_json_stream_package_classes.md#class-jsonwriter) 的引用。
@@ -313,6 +319,10 @@ public func writeName(name: String): JsonWriter
 
 功能：在 object 结构中写入 name。
 
+参数：
+
+- name: String - 待写入的字符串。
+
 返回值：
 
 - [JsonWriter](encoding_json_stream_package_classes.md#class-jsonwriter) - 当前 [JsonWriter](encoding_json_stream_package_classes.md#class-jsonwriter) 引用。
@@ -346,6 +356,10 @@ public func writeValue<T>(v: T): JsonWriter where T <: JsonSerializable
 功能：将实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable) 接口的类型写入到 Stream 中。该接口会调用泛型 T 的 toJson 方法向输出流中写入数据。
 
 json.stream 包已经为基础类型 Int64、UInt64、Float64、Bool、String类型扩展实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable)， 并且为 Collection 类型 Array、ArrayList和 HashMap 扩展实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable)。
+
+参数：
+
+- v: T - 待写入的对象，类型为 T。
 
 返回值：
 

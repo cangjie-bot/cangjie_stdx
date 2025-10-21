@@ -2511,6 +2511,8 @@ protected open mut prop server: Server
 
 功能：返回 [Server](#class-server) 实例，提供默认实现，设置为绑定的 [Server](#class-server) 实例。
 
+类型：Server
+
 ### prop writeTimeout
 
 ```cangjie
