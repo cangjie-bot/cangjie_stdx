@@ -148,7 +148,7 @@ prop peerCertificate: Array<Certificate>
 
 功能：获取对端证书。
 
-类型：[Certificate](../../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)
+类型：Array\<[Certificate](../../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>
 
 ### prop serverName
 
