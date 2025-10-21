@@ -10,10 +10,6 @@ public abstract class Command<Res> {
 
 功能：该抽象类表示一种可以被触发和处理的**效应（effect）**。
 
-参数:
-
-- Res：当该效应被执行后，预期返回的结果类型。
-
 ### func defaultImpl()
 
 ```cangjie
@@ -24,7 +20,7 @@ public open func defaultImpl(): Res
 
 返回值：
 
-- Res：效应执行后的结果（如果你提供了默认实现的话）。
+- Res - 效应执行后的结果（如果你提供了默认实现的话）。
 
 异常：
 
