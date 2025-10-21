@@ -47,7 +47,7 @@ public func toString():String
 ### operator func !=(SignatureAlgorithm)
 
 ```cangjie
-public operator func !=(other: SignatureAlgorithm) : Bool
+public operator func !=(other: SignatureAlgorithm): Bool
 ```
 
 功能：判断签名算法类型是否不同。
@@ -63,7 +63,7 @@ public operator func !=(other: SignatureAlgorithm) : Bool
 ### operator func ==(SignatureAlgorithm)
 
 ```cangjie
-public operator func ==(other: SignatureAlgorithm) : Bool
+public operator func ==(other: SignatureAlgorithm): Bool
 ```
 
 功能：判断签名算法类型是否相同。
@@ -318,7 +318,7 @@ public func toString(): String
 ### operator func !=(SignatureType)
 
 ```cangjie
-public operator func !=(other: SignatureType) : Bool
+public operator func !=(other: SignatureType): Bool
 ```
 
 功能：判断两者是否为不同的签名算法。
@@ -334,7 +334,7 @@ public operator func !=(other: SignatureType) : Bool
 ### operator func ==(SignatureType)
 
 ```cangjie
-public operator func ==(other: SignatureType) : Bool
+public operator func ==(other: SignatureType): Bool
 ```
 
 功能：判断两者是否为相同的签名算法。

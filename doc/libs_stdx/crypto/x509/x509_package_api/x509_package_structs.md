@@ -673,6 +673,8 @@ public var subject: ?X509Name
 
 功能：记录证书签名请求的实体可辨识名称。
 
+类型：?[X509Name](x509_package_classes.md#class-x509name)
+
 ### init(?X509Name, Array\<String>, Array\<String>, Array\<IP>)
 
 ```cangjie

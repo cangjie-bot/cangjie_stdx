@@ -236,7 +236,7 @@ public struct PemEntry <: ToString {
 ### static let LABEL_CERTIFICATE
 
 ```cangjie
-public static let LABEL_CERTIFICATE = "CERTIFICATE"
+public static let LABEL_CERTIFICATE: String = "CERTIFICATE"
 ```
 
 功能：记录条目类型为证书。
@@ -246,7 +246,7 @@ public static let LABEL_CERTIFICATE = "CERTIFICATE"
 ### static let LABEL_CERTIFICATE_REQUEST
 
 ```cangjie
-public static let LABEL_CERTIFICATE_REQUEST = "CERTIFICATE REQUEST"
+public static let LABEL_CERTIFICATE_REQUEST: String = "CERTIFICATE REQUEST"
 ```
 
 功能：记录条目类型为证书签名请求。
@@ -256,7 +256,7 @@ public static let LABEL_CERTIFICATE_REQUEST = "CERTIFICATE REQUEST"
 ### static let LABEL_DH_PARAMETERS
 
 ```cangjie
-public static let LABEL_DH_PARAMETERS = "DH PARAMETERS"
+public static let LABEL_DH_PARAMETERS: String = "DH PARAMETERS"
 ```
 
 功能：记录条目类型为 DH 密钥参数。
@@ -266,7 +266,7 @@ public static let LABEL_DH_PARAMETERS = "DH PARAMETERS"
 ### static let LABEL_EC_PARAMETERS
 
 ```cangjie
-public static let LABEL_EC_PARAMETERS = "EC PARAMETERS"
+public static let LABEL_EC_PARAMETERS: String = "EC PARAMETERS"
 ```
 
 功能：记录条目类型为椭圆曲线参数。
@@ -276,7 +276,7 @@ public static let LABEL_EC_PARAMETERS = "EC PARAMETERS"
 ### static let LABEL_EC_PRIVATE_KEY
 
 ```cangjie
-public static let LABEL_EC_PRIVATE_KEY = "EC PRIVATE KEY"
+public static let LABEL_EC_PRIVATE_KEY: String = "EC PRIVATE KEY"
 ```
 
 功能：记录条目类型为椭圆曲线私钥。
@@ -286,7 +286,7 @@ public static let LABEL_EC_PRIVATE_KEY = "EC PRIVATE KEY"
 ### static let LABEL_ENCRYPTED_PRIVATE_KEY
 
 ```cangjie
-public static let LABEL_ENCRYPTED_PRIVATE_KEY = "ENCRYPTED PRIVATE KEY"
+public static let LABEL_ENCRYPTED_PRIVATE_KEY: String = "ENCRYPTED PRIVATE KEY"
 ```
 
 功能：记录条目类型为 PKCS #8 标准加密的私钥。
@@ -296,7 +296,7 @@ public static let LABEL_ENCRYPTED_PRIVATE_KEY = "ENCRYPTED PRIVATE KEY"
 ### static let LABEL_PRIVATE_KEY
 
 ```cangjie
-public static let LABEL_PRIVATE_KEY = "PRIVATE KEY"
+public static let LABEL_PRIVATE_KEY: String = "PRIVATE KEY"
 ```
 
 功能：记录条目类型为 PKCS #8 标准未加密的私钥。
@@ -306,7 +306,7 @@ public static let LABEL_PRIVATE_KEY = "PRIVATE KEY"
 ### static let LABEL_PUBLIC_KEY
 
 ```cangjie
-public static let LABEL_PUBLIC_KEY = "PUBLIC KEY"
+public static let LABEL_PUBLIC_KEY: String = "PUBLIC KEY"
 ```
 
 功能：记录条目类型为公钥。
@@ -316,7 +316,7 @@ public static let LABEL_PUBLIC_KEY = "PUBLIC KEY"
 ### static let LABEL_RSA_PRIVATE_KEY
 
 ```cangjie
-public static let LABEL_RSA_PRIVATE_KEY = "RSA PRIVATE KEY"
+public static let LABEL_RSA_PRIVATE_KEY: String = "RSA PRIVATE KEY"
 ```
 
 功能：记录条目类型为 RSA 私钥。
@@ -326,7 +326,7 @@ public static let LABEL_RSA_PRIVATE_KEY = "RSA PRIVATE KEY"
 ### static let LABEL_SM2_PRIVATE_KEY
 
 ```cangjie
-public static let LABEL_SM2_PRIVATE_KEY = "SM2 PRIVATE KEY"
+public static let LABEL_SM2_PRIVATE_KEY: String = "SM2 PRIVATE KEY"
 ```
 
 功能：记录条目类型为 SM2 私钥。
@@ -336,7 +336,7 @@ public static let LABEL_SM2_PRIVATE_KEY = "SM2 PRIVATE KEY"
 ### static let LABEL_X509_CRL
 
 ```cangjie
-public static let LABEL_X509_CRL = "X509 CRL"
+public static let LABEL_X509_CRL: String = "X509 CRL"
 ```
 
 功能：记录条目类型为证书吊销列表。
