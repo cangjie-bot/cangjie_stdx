@@ -50,6 +50,12 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
         this.commentsPropInfo = commentsPropInfo
     }
 
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode)) {
+        this.nodePos = params[0]
+        this.nodeImpl = params[1]
+        this.parentNode = params[2]
+    }
+
     func transTokenList(node: SyntaxNodeImpl): Tokens {
         let content = ArrayList<Token>()
         if (let Some(nt) <- (node as NonTerminal)) {
@@ -974,6 +980,19 @@ public class ParameterList <: SyntaxTreeNode {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with parameter list.
+     */
+    public init(parameters: Array<Parameter>) {
+        super(SyntaxNodeImplCreator.createParameterListImpl(parameters))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ParameterList>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
