@@ -248,6 +248,19 @@ public class MacroExpandExpr <: Expr {
     }
 
     /**
+     * @brief Initialize node with callee, attributes and inputs.
+     */
+    public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput) {
+        super(SyntaxNodeImplCreator.createMacroExpandExprImpl(calleeMacro, macroAttrs, macroInputs))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MacroExpandExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The expression of the macro being called.
      */
     public prop calleeMacro: Expr {
@@ -518,6 +531,19 @@ public class QuoteInterpolationExpr <: Expr {
     }
 
     /**
+     * @brief Initialize node with quoted expr.
+     */
+    public init(expr: Expr) {
+        super(SyntaxNodeImplCreator.createQuoteInterpolationExprImpl(expr))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<QuoteInterpolationExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The expression to be interpolated.
      */
     public prop expr: Expr {
@@ -545,6 +571,17 @@ public class QuoteToken <: SyntaxTreeNode {
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode) {
         super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        this.startPos = startPos
+    }
+
+    /**
+     * @brief Initialize node with quoted tokens.
+     */
+    public init(content: Tokens) {
+        super(SyntaxNodeImplCreator.createQuoteTokenImpl(content))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<QuoteToken>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
         this.startPos = startPos
     }
 
@@ -637,6 +674,19 @@ public class QuoteExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with array of quoted content.
+     */
+    public init(tokensOrRefExpr: Array<QuoteExprContent>) {
+        super(SyntaxNodeImplCreator.createQuoteExprImpl(tokensOrRefExpr))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<QuoteExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**

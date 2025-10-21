@@ -85,6 +85,19 @@ public class ImportAlias <: ImportContent {
     }
 
     /**
+     * @brief Initialize node with prefixes, package name and alias name.
+     */
+    public init(prefixes: Array<String>, identifier: String, alias: String) {
+        super(SyntaxNodeImplCreator.createImportAliasImpl(prefixes, identifier, alias), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportAlias>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.aliasName_ = alias
+        this.identifier_ = identifier
+    }
+
+    /**
      * @brief The name of the alias.
      */
     public prop aliasName: String {
@@ -137,6 +150,17 @@ public class ImportAll <: ImportContent {
         importContentPosInfos: ImportContentPosInfos, prefixes_: Array<String>) {
         super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_)
         this.posInfos = posInfos
+    }
+
+    /**
+     * @brief Initialize node with prefixes.
+     */
+    public init(prefixes: Array<String>) {
+        super(SyntaxNodeImplCreator.createImportAllImpl(prefixes), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportAll>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
     }
 }
 
@@ -209,6 +233,14 @@ public open class ImportContent <: SyntaxTreeNode {
         this.prefixes_ = prefixes_
     }
 
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode), prefixes: Array<String>) {
+        super(params)
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        this.prefixes_ = prefixes
+        this.startPos = CodePosition(1, 1, FileInfos("", ""))
+        this.posInfos = ImportContentPosInfos(Array<CodePosition>(), Array<CodePosition>())
+    }
+
     /**
      * @brief The prefixes of the import content.
      */
@@ -265,6 +297,20 @@ public class ImportList <: SyntaxTreeNode {
         this.posInfos = posInfos
         this.propInfos = propInfos
         this.kind_ = kind_
+    }
+
+    /**
+     * @brief Initialize node with imported content, import kind and modifier.
+     */
+    public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>) {
+        super(SyntaxNodeImplCreator.createImportListImpl(contents, kind, modifier))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportList>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.kind_ = kind
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -384,6 +430,18 @@ public class ImportMulti <: ImportContent {
     }
 
     /**
+     * @brief Initialize node with prefixes, package name and sub package import contents.
+     */
+    public init(prefixes: Array<String>, identifier: String, contents: Array<ImportContent>) {
+        super(SyntaxNodeImplCreator.createImportMultiImpl(prefixes, identifier, contents), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportMulti>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+    }
+
+    /**
      * @brief List of import contents.
      */
     public prop contents: Array<ImportContent> {
@@ -441,6 +499,18 @@ public class ImportSingle <: ImportContent {
         super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_)
         this.posInfos = posInfos
         this.identifier_ = identifier_
+    }
+
+    /**
+     * @brief Initialize node with prefixes, package name and alias name.
+     */
+    public init(prefixes: Array<String>, identifier: String) {
+        super(SyntaxNodeImplCreator.createImportSingleImpl(prefixes, identifier), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportSingle>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.identifier_ = identifier
+        this.posInfos = redNode.posInfos
     }
 
     /**
