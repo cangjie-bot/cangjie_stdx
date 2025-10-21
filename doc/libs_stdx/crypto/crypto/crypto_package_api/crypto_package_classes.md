@@ -43,7 +43,7 @@ public func nextBits(bits: UInt64): UInt64
 
 功能：生成一个指定位长的随机整数。
 
-参数:
+参数：
 
 - bits: UInt64 - 要生成的随机数的位数，取值范围 (0, 64]。
 
