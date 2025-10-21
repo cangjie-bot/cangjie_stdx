@@ -20,12 +20,12 @@ Function: Creates an [InsertAtEntry](aspectCJ_package_classes.md#class-insertate
 
 Parameters:
 
-- packageName: String - The package name of the target function, e.g., "default", "std.core";
-- className: String - For member functions, specifies the class name; for global functions, leave empty;
-- methodName: String - The name of the target function, e.g., "foo";
-- isStatic: Bool - Indicates whether the target function is a static member function;
-- funcTypeStr: String - The type signature string of the target function (without spaces). For custom types, the package name must be included and separated by `.`. Does not include the implicit this parameter type. Example: "(Int64,std.core.Object)->Unit";
-- recursive: Bool - For member functions, indicates whether to weave into override versions in subclasses; otherwise, this field should be false.
+- packageName!: String - The package name of the target function, e.g., "default", "std.core";
+- className!: String - For member functions, specifies the class name; for global functions, leave empty;
+- methodName!: String - The name of the target function, e.g., "foo";
+- isStatic!: Bool - Indicates whether the target function is a static member function;
+- funcTypeStr!: String - The type signature string of the target function (without spaces). For custom types, the package name must be included and separated by `.`. Does not include the implicit this parameter type. Example: "(Int64,std.core.Object)->Unit";
+- recursive!: Bool - For member functions, indicates whether to weave into override versions in subclasses; otherwise, this field should be false.
 
 ## class InsertAtExit
 
@@ -47,12 +47,12 @@ Function: Creates an [InsertAtExit](aspectCJ_package_classes.md#class-insertatex
 
 Parameters:
 
-- packageName: String - The package name of the target function, e.g., "default", "std.core";
-- className: String - For member functions, specifies the class name; for global functions, leave empty;
-- methodName: String - The name of the target function, e.g., "foo";
-- isStatic: Bool - Indicates whether the target function is a static member function;
-- funcTypeStr: String - The type signature string of the target function (without spaces). For custom types, the package name must be included and separated by `.`. Does not include the implicit this parameter type. Example: "(Int64,std.core.Object)->Unit";
-- recursive: Bool - For member functions, indicates whether to weave into override versions in subclasses; otherwise, this field should be false.
+- packageName!: String - The package name of the target function, e.g., "default", "std.core";
+- className!: String - For member functions, specifies the class name; for global functions, leave empty;
+- methodName!: String - The name of the target function, e.g., "foo";
+- isStatic!: Bool - Indicates whether the target function is a static member function;
+- funcTypeStr!: String - The type signature string of the target function (without spaces). For custom types, the package name must be included and separated by `.`. Does not include the implicit this parameter type. Example: "(Int64,std.core.Object)->Unit";
+- recursive!: Bool - For member functions, indicates whether to weave into override versions in subclasses; otherwise, this field should be false.
 
 ## class ReplaceFuncBody
 
@@ -74,8 +74,8 @@ Function: Creates a [ReplaceFuncBody](aspectCJ_package_classes.md#class-replacef
 
 Parameters:
 
-- packageName: String - The package name of the target function, e.g., "default", "std.core";
-- className: String - For member functions, specifies the class name; for global functions, leave empty;
-- methodName: String - The name of the target function, e.g., "foo";
-- isStatic: Bool - Indicates whether the target function is a static member function;
-- recursive: Bool - For member functions, indicates whether to apply to override versions in subclasses; otherwise, this field should be false.
+- packageName!: String - The package name of the target function, e.g., "default", "std.core";
+- className!: String - For member functions, specifies the class name; for global functions, leave empty;
+- methodName!: String - The name of the target function, e.g., "foo";
+- isStatic!: Bool - Indicates whether the target function is a static member function;
+- recursive!: Bool - For member functions, indicates whether to apply to override versions in subclasses; otherwise, this field should be false.
