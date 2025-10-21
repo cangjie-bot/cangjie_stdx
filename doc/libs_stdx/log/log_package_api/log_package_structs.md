@@ -37,6 +37,8 @@ public static const ALL: LogLevel = LogLevel("ALL", -0x8000_0000)
 
 功能：获取一个日志打印级别的静态常量实例，等级为所有。
 
+类型：[LogLevel](#struct-loglevel)
+
 ### static const DEBUG
 
 ```cangjie
@@ -44,6 +46,8 @@ public static const DEBUG: LogLevel = LogLevel("DEBUG", 2000)
 ```
 
 功能：获取一个日志打印级别的静态常量实例，等级为调试。
+
+类型：[LogLevel](#struct-loglevel)
 
 ### static const ERROR
 
@@ -53,6 +57,8 @@ public static const ERROR: LogLevel = LogLevel("ERROR", 5000)
 
 功能：获取一个日志打印级别的静态常量实例，等级为错误。
 
+类型：[LogLevel](#struct-loglevel)
+
 ### static const FATAL
 
 ```cangjie
@@ -60,6 +66,8 @@ public static const FATAL: LogLevel = LogLevel("FATAL", 6000)
 ```
 
 功能：获取一个日志打印级别的静态常量实例，等级为严重错误。
+
+类型：[LogLevel](#struct-loglevel)
 
 ### static const INFO
 
@@ -69,6 +77,8 @@ public static const INFO: LogLevel = LogLevel("INFO", 3000)
 
 功能：获取一个日志打印级别的静态常量实例，等级为通知。
 
+类型：[LogLevel](#struct-loglevel)
+
 ### static const OFF
 
 ```cangjie
@@ -76,6 +86,8 @@ public static const OFF: LogLevel = LogLevel("OFF", 0x7FFF_FFFF)
 ```
 
 功能：获取一个日志打印级别的静态常量实例，等级为禁用。
+
+类型：[LogLevel](#struct-loglevel)
 
 ### static const TRACE
 
@@ -85,6 +97,8 @@ public static const TRACE: LogLevel = LogLevel("TRACE", 1000)
 
 功能：获取一个日志打印级别的静态常量实例，等级为跟踪。
 
+类型：[LogLevel](#struct-loglevel)
+
 ### static const WARN
 
 ```cangjie
@@ -92,6 +106,8 @@ public static const WARN: LogLevel = LogLevel("WARN", 4000)
 ```
 
 功能：获取一个日志打印级别的静态常量实例，等级为警告。
+
+类型：[LogLevel](#struct-loglevel)
 
 ### let name
 
@@ -101,6 +117,8 @@ public let name: String
 
 功能：日志级别名。
 
+类型：String
+
 ### let value
 
 ```cangjie
@@ -108,6 +126,8 @@ public let value: Int32
 ```
 
 功能：日志级别值。
+
+类型：Int32
 
 ### const init(String, Int32)
 
