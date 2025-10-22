@@ -133,11 +133,14 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
         parts.add(pattern.nodeImpl)
+        parts.add(builder.buildSpace(1))
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.InToken))
         parts.add(builder.buildSpace(1))
         parts.add(expr.nodeImpl)
+        parts.add(builder.buildSpace(1))
         if (let Some(p) <- patternGuard) {
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.WhereToken))
+            parts.add(builder.buildSpace(1))
             parts.add(p.nodeImpl)
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
@@ -164,14 +167,11 @@ class SyntaxNodeImplCreator {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.VArrayToken))
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LtToken))
         parts.add(vArrayType.nodeImpl)
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.GtToken))
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
         parts.add(argument.nodeImpl)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ReturnExpr, parts.toArray())
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.VArrayExpr, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
     }
 
@@ -179,12 +179,12 @@ class SyntaxNodeImplCreator {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
-        parts.add(operand.nodeImpl)
         match (opKind) {
             case UnaryOpKind.Not => parts.add(builder.buildBasicTerminal(SyntaxNodeKind.NotToken))
             case UnaryOpKind.Sub => parts.add(builder.buildBasicTerminal(SyntaxNodeKind.SubToken))
             case _ => throw Exception("Init UnaryExpr: opKind error")
         }
+        parts.add(operand.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.UnaryExpr, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
     }
@@ -215,26 +215,10 @@ class SyntaxNodeImplCreator {
         let tokenArray = ArrayList<SyntaxNodeImpl>()
         for (tok in content) {
             parts.add(builder.buildTokenTerminal(tok.kind, tok.value))
+            if (tok.kind != TokenKind.NL) {
+                parts.add(builder.buildSpace(1))
+            }
         }
-        // var curLine = -1
-        // var curCol = -1
-        // let curFileID = content[0].pos.fileID
-        // for (i in 0..content.size) {
-        //     if (content[i].pos.fileID != curFileID) {
-        //         throw Exception("Init QuoteToken: tokens are not in the same file")
-        //     }
-        //     if (curLine == -1) {
-        //         curLine = content[i].pos.line
-        //     }
-        //     if (curCol == -1) {
-        //         curCol = content[i].pos.column
-        //     }
-        //     if (content[i].pos.line == curLine) {
-        //         parts.add(builder.buildSpace(content[i].pos.column - curCol))
-        //     } else if (content[i].kind == TokenKind.NL) {
-        //         curLine++
-        //     }
-        // }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.QuoteTokenExpr, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
     }
@@ -473,9 +457,9 @@ class SyntaxNodeImplCreator {
                 }
             }
             parts.add(builder.buildSpace(1))
-            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.WhereToken))
-            parts.add(builder.buildSpace(1))
             if (let Some(pcond) <- patternGuardCond) {
+                parts.add(builder.buildBasicTerminal(SyntaxNodeKind.WhereToken))
+                parts.add(builder.buildSpace(1))
                 parts.add(pcond.nodeImpl)
                 parts.add(builder.buildSpace(1))
             }
@@ -485,12 +469,14 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DoubleArrowToken))
         parts.add(builder.buildSpace(1))
+        let matchCaseBody = ArrayList<SyntaxNodeImpl>()
         for (i in 0..body.size) {
-            parts.add(body[i].nodeImpl)
+            matchCaseBody.add(body[i].nodeImpl)
             if (i < body.size - 1) {
-                parts.add(builder.buildNewline(1))
+                matchCaseBody.add(builder.buildNewline(1))
             }
         }
+        parts.add(builder.buildNonTerminal(SyntaxNodeKind.MatchCaseBody, matchCaseBody.toArray()))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.MatchCase, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
     }
