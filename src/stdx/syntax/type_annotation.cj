@@ -506,7 +506,7 @@ public class AtomicType <: TypeAnnotation {
     public init(kind: AtomicTypeKind) {
         super(SyntaxNodeImplCreator.createAtomicTypeImpl(kind))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
-        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let curNode = (this.nodeImpl as Terminal).getOrThrow()
         let redNode = cast<AtomicType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
         this.kind_ = kind
         this.startPos = startPos

@@ -214,9 +214,27 @@ class SyntaxNodeImplCreator {
         // TODO: is this right ?
         let tokenArray = ArrayList<SyntaxNodeImpl>()
         for (tok in content) {
-            tokenArray.add(builder.buildTokenTerminal(tok.kind, tok.value))
+            parts.add(builder.buildTokenTerminal(tok.kind, tok.value))
         }
-        parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, tokenArray.toArray()))
+        // var curLine = -1
+        // var curCol = -1
+        // let curFileID = content[0].pos.fileID
+        // for (i in 0..content.size) {
+        //     if (content[i].pos.fileID != curFileID) {
+        //         throw Exception("Init QuoteToken: tokens are not in the same file")
+        //     }
+        //     if (curLine == -1) {
+        //         curLine = content[i].pos.line
+        //     }
+        //     if (curCol == -1) {
+        //         curCol = content[i].pos.column
+        //     }
+        //     if (content[i].pos.line == curLine) {
+        //         parts.add(builder.buildSpace(content[i].pos.column - curCol))
+        //     } else if (content[i].kind == TokenKind.NL) {
+        //         curLine++
+        //     }
+        // }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.QuoteTokenExpr, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
     }
@@ -748,18 +766,19 @@ class SyntaxNodeImplCreator {
 
     static func createTupleTypeImpl(elements: Array<TypeAnnotation>, labels: Array<String>): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
-        if (elements.size != labels.size) {
+        if (elements.size != labels.size && labels.size != 0) {
             throw Exception("Init TupleType: number of elements and labels mismatch")
         }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
-        // 每个 element 有对应的 label
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
         for (i in 0..elements.size) {
-            parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, labels[i]))
-            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.ColonToken))
-            parts.add(builder.buildSpace(1))
+            if (labels.size != 0) {
+                parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, labels[i]))
+                parts.add(builder.buildBasicTerminal(SyntaxNodeKind.ColonToken))
+                parts.add(builder.buildSpace(1))
+            }
             parts.add(elements[i].nodeImpl)
             if (i < elements.size - 1) {
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
@@ -785,7 +804,7 @@ class SyntaxNodeImplCreator {
             parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, labels[i]))
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.ColonToken))
             parts.add(builder.buildSpace(1))
-            parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, labels[i]))
+            parts.add(paramTypes[i].nodeImpl)
             if (i < labels.size - 1) {
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
                 parts.add(builder.buildSpace(1))
