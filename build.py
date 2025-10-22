@@ -117,6 +117,7 @@ def generate_cmake_defs(args):
         "-DCANGJIE_INCLUDE=" + (";".join(args.include) if args.include else ""),
         "-DCANGJIE_TARGET_SYSROOT=" + (args.target_sysroot if args.target_sysroot else ""),
         "-DCANGJIE_BUILD_WITHOUT_EFFECT_HANDLERS=" + bool_to_opt(args.without_effect_handlers),
+        "-DCANGJIE_BUILD_STDLIB_WITH_COVERAGE=" + bool_to_opt(args.stdlib_coverage),
         "-DCANGJIE_BUILD_ARGS=" + (";".join(args.build_args) if args.build_args else "")]
     if args.target and "aarch64-linux-android" in args.target:
         android_api_level = re.match(r'aarch64-linux-android(\d{2})?', args.target).group(1)
@@ -366,6 +367,9 @@ def main():
     parser_build.add_argument(
         "--target-sysroot", dest="target_sysroot", type=str,
         help="pass this argument to C/CXX compiler as --sysroot"
+    )
+    parser_build.add_argument(
+        "--stdlib-coverage", action="store_true", help="build stdlib with coverage"
     )
     parser_build.add_argument(
         "--build-args", dest="build_args", type=str, action='append', default=[],
