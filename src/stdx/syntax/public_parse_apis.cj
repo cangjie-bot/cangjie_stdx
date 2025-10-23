@@ -59,3 +59,16 @@ public func parseText(text: String): ParsingResult<SyntaxTreeNode> {
     }
     ParsingResult<SyntaxTreeNode>(res, diags)
 }
+
+/**
+ * @brief Parse the input tokens and return the parsing result along with diagnostic information.
+ *
+ * @param tokens The tokens that need to be parsed.
+ * @return A ParsingResult object containing the parsed node or an error.
+ *
+ * @throws Exception if there is an issue parsing the tokens.
+ */
+public func parseTokens(tokens: Tokens): ParsingResult<SyntaxTreeNode> {
+    let (res, diags) = Parser.parseTokens(tokens)
+    ParsingResult<SyntaxTreeNode>(res, diags)
+}

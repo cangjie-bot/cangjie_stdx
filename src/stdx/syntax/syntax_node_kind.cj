@@ -466,9 +466,9 @@ enum SyntaxNodeKind <: ToString {
             case SynchronizedToken => "synchronized"
             case UpperBoundToken => "<:"
             case MainToken => "main"
-            case IdentToken => ""
-            case PackageIdentifierToken => ""
-            case IntegerLiteralToken => ""
+            case IdentToken => "IdentToken"
+            case PackageIdentifierToken => "PackageIdentifierToken"
+            case IntegerLiteralToken => "IntegerLiteralToken"
             case CharBytePrefixToken => 'b'
             case FloatLiteralToken => ""
             case CommentToken => ""

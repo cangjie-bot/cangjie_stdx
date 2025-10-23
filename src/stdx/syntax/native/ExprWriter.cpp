@@ -721,6 +721,6 @@ flatbuffers::Offset<NodeFormat::Expr> NodeWriter::SerializeExpr(AstExpr expr)
     if (serializeFunc != serializeExprMap.end()) {
         return serializeFunc->second(*this, expr);
     }
-    Errorln("Expr Not Supported in Libast Yet\n");
+    Errorln("Expr Not Supported in Syntax Yet\n");
     return flatbuffers::Offset<NodeFormat::Expr>();
 }
