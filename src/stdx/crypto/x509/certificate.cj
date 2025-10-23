@@ -590,7 +590,8 @@ func getSystemRootCerts(): Array<X509Certificate> {
 
 @When[os != "Windows"]
 func getSystemRootCerts(): Array<X509Certificate> {
-    var result = HashSet<X509Certificate>()
+    let result = HashSet<X509Certificate>()
+    result.add(all: getOhosRootCerts())
     let rootList = 
         [
             "/etc/ssl/certs/",
@@ -603,6 +604,35 @@ func getSystemRootCerts(): Array<X509Certificate> {
         ]
     for (root in rootList) {
         getCertsRecursively(Path(root), result)
+    }
+    result.toArray()
+}
+
+@When[os != "Windows"]
+func getOhosRootCerts(): Array<X509Certificate> {
+    let OH_CA_LIST = [
+        "/etc/security/certificates",
+        "/etc/security/certificates_gm"
+    ]
+    let result = HashSet<X509Certificate>()
+
+    func getOhCertRecursively(root: Path, result: HashSet<X509Certificate>): Unit {
+        if (isRegular(root)) {
+            try {
+                let pem = String.fromUtf8(File.readFrom(root))
+                result.add(all: X509Certificate.decodeFromPem(pem))
+            } catch (_: Exception) {}
+        } else if (isDirectory(root)) {
+            // File and Directories
+            Directory.walk(root) { entry =>
+                getOhCertRecursively(entry.path, result)
+                true
+            }
+        }
+    }
+
+    for (root in OH_CA_LIST) {
+        getOhCertRecursively(Path(root), result)
     }
     result.toArray()
 }
