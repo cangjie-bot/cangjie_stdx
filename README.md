@@ -2,24 +2,25 @@
 
 ## Introduction
 
-The extension library `stdx` is an extension module provided by the Cangjie programming language (i.e., a non-core standard library, but an official supplementary feature set). It is a key component of the language ecosystem, supplementing Cangjie with more practical capabilities covering multiple domains, including aspect-oriented programming, compression and decompression, security (secure encryption capabilities/message digest algorithms/Asymmetric encryption and decryption and signature algorithms/digital certificate processing functions), encoding and decoding (base64/hex/json/url), networking (http/tls), logging, unit test extensions, concurrent programming model, non-local control operation and serialization.
+The extension library `stdx` is an extension module provided by the Cangjie programming language (i.e., a non-core standard library, but an official supplementary feature set). It is a key component of the language ecosystem, supplementing Cangjie with more practical capabilities covering multiple domains, including aspect-oriented programming, compression and decompression, security (secure encryption capabilities/message digest algorithms/Asymmetric encryption and decryption and signature algorithms/digital certificate processing functions), encoding and decoding (base64/hex/json/url), networking (http/tls), logging, syntax parsing, unit test extensions, concurrent programming model, non-local control operation and serialization.
 
 Architecture Diagram:
 
 ![](figures/stdx_Architecture_Diagram_en.png)
 
+- actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
 - aspectCJ: Provides annotations related to aspect-oriented programming in Cangjie.
 - compress: Provides compression and decompression functions.
 - crypto: Provides a utility library for cryptographic operations.
+- effect: Provides a powerful non-local control operation.
 - encoding: Provides a basic utility library for data encoding and decoding.
 - fuzz: Provides an automated software testing method.
 - log: Provides a single logging API.
 - logger: Provides log printing functions in text format and JSON format.
 - net: Provides network communication and secure transmission functions.
 - serialization: Provides the capability of serialization and deserialization.
+- syntax: Provides Cangjie source code syntax parsing functions.
 - unittest: Provides the capability to supply test data in serialized input formats when writing unit test code for Cangjie projects.
-- actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
-- effect: Provides a powerful non-local control operation.
 
 ## Operating Instructions
 
@@ -39,7 +40,7 @@ For relevant guidance, please refer to [Development Guide](https://gitcode.com/C
 │       ├── aspectCJ            # Provides AOP
 │       ├── compress            # Provides compression and decompression
 │       ├── crypto              # Provide security related capabilities
-|       ├── effect              # Provides user-level APIs for handling the Effect Handler feature. This is an experimental feature and requires the use of a Cangjie compiler that supports this mechanism.
+│       ├── effect              # Provides user-level APIs for handling the Effect Handler feature. This is an experimental feature and requires the use of a Cangjie compiler that supports this mechanism.
 │       ├── dynamicLoader       # Openssl dynamic loading module
 │       ├── encoding            # Provide JSON and string encoding related capabilities
 │       ├── fuzz                # Provides the Cangjie fuzz engine based on coverage feedback
@@ -47,7 +48,8 @@ For relevant guidance, please refer to [Development Guide](https://gitcode.com/C
 │       ├── logger              # Provides log printing functions in text format and JSON format
 │       ├── net                 # Provide network communication and other capabilities
 │       ├── serialization       # Provides serialization and deserialization
-│       └─  unittest            # Provides unit testing extension
+│       ├── syntax              # Provides syntax parsing functions
+│       └── unittest            # Provides unit testing extension
 │
 ├─ third_party                  # Directory of third-party components
 └─ target                       # Directory of constructed products
