@@ -57,7 +57,7 @@ TrustAll
 
 ```cangjie
 @Derive[ToString, Hashable, Equatable]
-public enum TlsVersion {
+public enum TlsVersion <: ToString & Hashable & Equatable<TlsVersion>{
     V1_2 | V1_3 | TLCP | ...
 }
 ```
@@ -117,6 +117,22 @@ public override func toString(): String
 返回值：
 
 - String - 当前 [TlsVersion](#enum-tlsversion) 的字符串表示。
+
+### operator func !=(TlsVersion)
+
+```cangjie
+public operator func !=(that: TlsVersion): Bool
+```
+
+功能：比较两个 [TlsVersion](#enum-tlsversion) 是否不等。
+
+参数：
+
+- that: [TlsVersion](#enum-tlsversion) - 待比较的 TLS 版本。
+
+返回值：
+
+- Bool - 若不等返回 `true`，否则返回 `false`。
 
 ### operator func ==(TlsVersion)
 
