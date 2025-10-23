@@ -96,6 +96,7 @@ ParseRes* CJ_ParseText(const char* text)
     ParserSyntax parser(rawString, diag, sm, {0, 1, 1}, true);
 
     auto textParsed = parser.ParseExprOrDecl(ScopeKind::UNKNOWN_SCOPE);
+
     ParseRes* res = createParseResult();
     if (textParsed == nullptr) {
         return res;

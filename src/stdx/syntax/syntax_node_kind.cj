@@ -37,6 +37,11 @@ enum SyntaxNodeKind <: ToString {
     | LetPattern
     | AtomicCondition
     | TokenList
+    | Comment
+    | CommentGroup
+    | CommentGroupList
+    | Modifier
+    | GenericParam
     | ImportSpec
     // ImportCotent
     | ImportAlias
@@ -44,6 +49,7 @@ enum SyntaxNodeKind <: ToString {
     | ImportMulti
     | ImportSingle
     // Type_annotations
+    | PrimitiveType
     | RefType
     | FuncType
     | ThisType
@@ -75,6 +81,7 @@ enum SyntaxNodeKind <: ToString {
     | MacroExpandDecl
     | MacroExpandParam
     // Exprs
+    | ValuedLiteral
     | UnitLiteral
     | RuneLiteral
     | LineStringLiteral
@@ -530,7 +537,7 @@ enum SyntaxNodeKind <: ToString {
                 | ContinueExpr | SubscriptExpr | Lambda | MatchExpr | TryCatch | ThrowExpr | SynchronizedExpr
                 | SpawnExpr | IfExpr | WhileExpr | DoWhileExpr | ForInExpr | JumpExpr | LambdaExpr | TryExpr
                 | InterpolationExpr | QuoteTokenExpr | QuoteExpr | QuoteInterpolationExpr | TrailingClosureExpr
-                | UnsafeExpr | MacroExpandExpr => true
+                | UnsafeExpr | MacroExpandExpr | ValuedLiteral => true
             case _ => false
         }
     }
@@ -540,7 +547,7 @@ enum SyntaxNodeKind <: ToString {
             case RefType | FuncType | ThisType | ParenType | QualifiedType | OptionType | OptionalType | VArrayType
                 | TupleType | CompositeType | Int8Token | Int16Token | Int32Token | Int64Token | IntNativeToken
                 | UInt8Token | UInt16Token | UInt32Token | UInt64Token | UIntNativeToken | Float16Token | Float32Token
-                | Float64Token | RuneToken | BooleanToken | NothingToken | UnitToken | ThisTypeToken => true
+                | Float64Token | RuneToken | BooleanToken | NothingToken | UnitToken | ThisTypeToken | PrimitiveType => true
             case _ => false
         }
     }

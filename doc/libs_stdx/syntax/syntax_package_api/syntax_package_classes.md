@@ -881,6 +881,38 @@ public func getUpperBoundPos(): Option<CodePositionRange>
  
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `<:` 的位置（若不存在返回 `None`）。
 
+## class Comment
+
+```cangjie
+public class Comment <: SyntaxTreeNode {}
+```
+
+功能：表示一个注释信息节点。例如 `// comment`。
+
+父类型：
+
+- [SyntaxTreeNode](#class-syntaxtreenode)
+
+### prop content
+
+```cangjie
+public prop content: String
+```
+
+功能：表示注释信息的内容。
+
+类型：String
+
+### prop kind
+
+```cangjie
+public prop kind: CommentKind
+```
+
+功能：表示注释的类型。
+
+类型：[CommentKind](syntax_package_enums.md#enum-commentkind)
+
 ## class CompositeType
 
 ```cangjie
@@ -5675,6 +5707,7 @@ public func getSynchronizedKeyWordPos(): CodePositionRange
 
 ```cangjie
 sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTreeNode> {
+    public let comments: Array<Comment>
     public let nodePos: CodePositionRange
     public let parentNode: Option<SyntaxTreeNode>
 }
@@ -5689,6 +5722,16 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
 - ToString
 - Hashable
 - Equatable\<[SyntaxTreeNode](#class-syntaxtreenode)>
+
+### let comments
+
+```cangjie
+public let comments: Array<Comment>
+```
+
+功能：获取当前语法树节点的注释节点信息。
+
+类型：Array\<[Comment](#class-comment)>
 
 ### let nodePos
 

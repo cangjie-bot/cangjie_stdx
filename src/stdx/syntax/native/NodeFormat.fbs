@@ -1059,6 +1059,28 @@ table NodeBase {
   end: Position;
   ast_kind: string;
   file_path: string;
+  comments: CommentGroups;
+}
+
+enum CommentKind:int8 {
+  COMMENT_LINE,
+  COMMENT_BLOCK,
+  COMMENT_DOCUMENT,
+}
+
+table CommentGroups {
+    leadingComments: [CommentGroup];
+    innerComments: [CommentGroup];
+    trailingComments: [CommentGroup];
+}
+
+table CommentGroup {
+    cms: [Comment];
+}
+
+table Comment {
+    kind: CommentKind=COMMENT_LINE;
+    info: Token;
 }
 
 table Node {

@@ -1126,6 +1126,65 @@ flatbuffers::Offset<NodeFormat::Modifier> NodeWriter::SerializeModifier(AstModif
     return NodeFormat::CreateModifier(builder, base, kind, isExplicit);
 }
 
+flatbuffers::Offset<NodeFormat::CommentGroups> NodeWriter::SerializeCommentGroups(AstCommentGroups comments)
+{
+    auto leadsVecs = CommentGroupVectorCreateHelper(comments.leadingComments);
+    auto leads = builder.CreateVector(leadsVecs);
+    auto innersVecs = CommentGroupVectorCreateHelper(comments.innerComments);
+    auto inners = builder.CreateVector(innersVecs);
+    auto trailsVecs = CommentGroupVectorCreateHelper(comments.trailingComments);
+    auto trails = builder.CreateVector(trailsVecs);
+
+    return NodeFormat::CreateCommentGroups(builder, leads, inners, trails);
+}
+
+flatbuffers::Offset<NodeFormat::CommentGroup> NodeWriter::SerializeCommentGroup(AstCommentGroup commentGroup)
+{
+    auto cmsVecs = CommentVectorCreateHelper(commentGroup.cms);
+    auto cms = builder.CreateVector(cmsVecs);
+
+    return NodeFormat::CreateCommentGroup(builder, cms);
+}
+
+flatbuffers::Offset<NodeFormat::Comment> NodeWriter::SerializeComment(AstComment comment)
+{
+    auto kind = comment.kind == CommentKind::LINE ? NodeFormat::CommentKind_COMMENT_LINE
+        : comment.kind == CommentKind::BLOCK ? NodeFormat:: CommentKind_COMMENT_BLOCK
+                                            : NodeFormat:: CommentKind_COMMENT_DOCUMENT;
+    auto token = comment.info;
+    auto tokenKind = static_cast<uint16_t>(token.kind);
+    auto value = builder.CreateString(token.Value());
+    auto pos = FlatPosCreateHelper(token.Begin());
+    auto delimiterNum = token.delimiterNum;
+    auto isSingleQuote = token.isSingleQuote;
+    auto hasEscape = false;
+
+    auto info = NodeFormat::CreateToken(builder, tokenKind, value, &pos, delimiterNum, isSingleQuote, hasEscape);
+    return NodeFormat::CreateComment(builder, kind, info);
+}
+
+std::vector<flatbuffers::Offset<NodeFormat::CommentGroup>> NodeWriter::CommentGroupVectorCreateHelper(
+    std::vector<Cangjie::AST::CommentGroup> commentGroupVector)
+{
+    std::vector<flatbuffers::Offset<NodeFormat::CommentGroup>> vecGroup;
+    for (auto& cmtGroup : commentGroupVector) {
+        auto commentGroup = SerializeCommentGroup(cmtGroup);
+        vecGroup.push_back(commentGroup);
+    }
+    return vecGroup;
+}
+
+std::vector<flatbuffers::Offset<NodeFormat::Comment>> NodeWriter::CommentVectorCreateHelper(
+    std::vector<Cangjie::AST::Comment> commentVector)
+{
+    std::vector<flatbuffers::Offset<NodeFormat::Comment>> vecGroup;
+    for (auto& cmt : commentVector) {
+        auto comment = SerializeComment(cmt);
+        vecGroup.push_back(comment);
+    }
+    return vecGroup;
+}
+
 std::vector<flatbuffers::Offset<NodeFormat::Token>> NodeWriter::TokensVectorCreateHelper(
     std::vector<Cangjie::Token> tokenVector)
 {
