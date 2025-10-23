@@ -37,6 +37,7 @@ stdx 含若干包，提供了丰富的扩展功能：
 | [net.tls](./net/tls/tls_package_overview.md)                                   | tls 包用于进行安全加密的网络通信，提供创建 TLS 服务器、基于协议进行 TLS 握手、收发加密数据、恢复 TLS 会话等能力。                                                                     |
 | [net.tls.common](./net/tls/common/tls_common_package_overview.md)              | tls.common 包提供了 TLS 相关的抽象接口，用于适配多种 TLS 实现。                                                                                                                       |
 | [serialization](./serialization/serialization_package_overview.md)             | serialization 包提供了序列化和反序列化能力。                                                                                                                                          |
+| [syntax](./syntax/syntax_package_overview.md)                                  | syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点，提供语法解析函数。                                                                                                                                                 |
 | [unittest.data](./unittest/data/data_package_overview.md)                      | unittest 模块提供了单元测试扩展能力。                                                                                                                                                 |
 
 ## 使用指导
@@ -74,6 +75,7 @@ static/stdx 是静态产物，包含静态文件、cjo、bc 文件。
 | import stdx.log.*                         | stdx.log                                                                                                                                                                                                                       |
 | import stdx.logger.*                      | stdx.logger                                                                                                                                                                                                                    |
 | import stdx.serialization.serialization.* | stdx.serialization.serialization                                                                                                                                                                                               |
+| import stdx.syntax.*                      | stdx.syntax                                                                                                                                                                                               |
 | import stdx.fuzz.fuzz.*                   | stdx.fuzz.fuzz                                                                                                                                                                                                                 |
 | import stdx.net.http .*                   | stdx.net.http、stdx.net.tls.common、stdx.logger、stdx.log、stdx.encoding.url、stdx.encoding.json.stream、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64 |
 | import stdx.net.tls.*                     | stdx.net.tls、stdx.net.tls.common、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                       |
@@ -107,6 +109,7 @@ import stdx.net.tls.*
 import stdx.net.http.*
 import stdx.log.*
 import stdx.logger.*
+import stdx.syntax.*
 import stdx.serialization.serialization.*
 main() {
     0
@@ -117,13 +120,13 @@ main() {
 Linux 和 mac 的编译命令：
 
 ```shell
-cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -ldl --import-path $CANGJIE_STDX_PATH -o main.out
+cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -lstdx.syntax -lstdx.syntaxFFI -ldl --import-path $CANGJIE_STDX_PATH -o main.out
 ```
 
 windows 编译命令：
 
 ```shell
-cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -lcrypt32 --import-path $CANGJIE_STDX_PATH -o main.out
+cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -lstdx.syntax -lstdx.syntaxFFI -lcrypt32 --import-path $CANGJIE_STDX_PATH -o main.out
 ```
 
 CANGJIE_STDX_PATH 是设置的 stdx 路径。
