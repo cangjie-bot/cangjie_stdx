@@ -102,6 +102,12 @@ class SyntaxNodeImplTranslator {
 
     func transNonTerminal(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ?SyntaxTreeNode {
         match (node.kind) {
+            case SyntaxNodeKind.GenericParam => transGenericParam(node, startPos, parent)
+            case SyntaxNodeKind.PrimitiveType => transAtomicType(node, startPos, parent)
+            case SyntaxNodeKind.ValuedLiteral => transValuedLitConstExpr(node, startPos, parent)
+            case SyntaxNodeKind.Modifier => transModifier(node, startPos, parent)
+            case SyntaxNodeKind.Comment => transComment(node, startPos, parent)
+            case SyntaxNodeKind.CommentGroup => transCommentGroup(node, startPos, parent)
             case SyntaxNodeKind.Argument => transArgument(node, startPos, parent)
             case SyntaxNodeKind.Annotation => transAnnotation(node, startPos, parent)
             case SyntaxNodeKind.CatchPattern => transCatchPattern(node, startPos, parent)
@@ -206,21 +212,7 @@ class SyntaxNodeImplTranslator {
 
     private func transTerminal(node: Terminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ?SyntaxTreeNode {
         match (node.kind) {
-            case SyntaxNodeKind.IntegerLiteralToken | SyntaxNodeKind.FloatLiteralToken
-                | SyntaxNodeKind.BooleanLiteralToken => transValuedLitConstExpr(node, startPos, parent)
-            case SyntaxNodeKind.AbstractToken | SyntaxNodeKind.InternalToken | SyntaxNodeKind.MutToken
-                | SyntaxNodeKind.OpenToken | SyntaxNodeKind.OperatorToken | SyntaxNodeKind.OverrideToken
-                | SyntaxNodeKind.PrivateToken | SyntaxNodeKind.ProtectedToken | SyntaxNodeKind.PublicToken
-                | SyntaxNodeKind.RedefToken | SyntaxNodeKind.SealedToken | SyntaxNodeKind.StaticToken
-                | SyntaxNodeKind.UnsafeToken | SyntaxNodeKind.ConstToken => transModifier(node, startPos, parent)
-            case SyntaxNodeKind.UnitToken | SyntaxNodeKind.Int8Token | SyntaxNodeKind.Int16Token
-                | SyntaxNodeKind.Int32Token | SyntaxNodeKind.Int64Token | SyntaxNodeKind.IntNativeToken
-                | SyntaxNodeKind.UInt8Token | SyntaxNodeKind.UInt16Token | SyntaxNodeKind.UInt32Token
-                | SyntaxNodeKind.UInt64Token | SyntaxNodeKind.UIntNativeToken | SyntaxNodeKind.Float16Token
-                | SyntaxNodeKind.Float32Token | SyntaxNodeKind.Float64Token | SyntaxNodeKind.RuneToken
-                | SyntaxNodeKind.NothingToken | SyntaxNodeKind.BooleanToken | SyntaxNodeKind.ThisTypeToken => transAtomicType(
-                node, startPos, parent)
-            case SyntaxNodeKind.IdentToken => transGenericParam(node, startPos, parent) // only genericParam bind identToken now
+            // case SyntaxNodeKind.IdentToken => transGenericParam(node, startPos, parent) // only genericParam bind identToken now
             case _ =>
                 fail("terminal node kind - ${node.kind.toString()} - ${node.toString()} need to be translated");
                 None
@@ -252,15 +244,50 @@ class SyntaxNodeImplTranslator {
             importListsPropInfo.add(PropInfo(lp.cur - 1, lp.offset))
             lp.moveOffset(v)
         }
+        let predictDecl = {
+            kind: SyntaxNodeKind => kind.isDecl()
+        }
         let declsPropInfo = ArrayList<PropInfo>()
-        while (!lp.isEnd()) {
+        while (lp.look(predictDecl)) {
             let declNode = lp.consume()
             declsPropInfo.add(PropInfo(lp.cur - 1, lp.offset))
             lp.moveOffset(declNode)
         }
-        let propInfos = SourceFilePropInfos(importListsPropInfo.toArray(),
-            pkgHeaderPropInfo, declsPropInfo.toArray(), ftrDirectivePropInfo)
-        SourceFile(node, beginPos, parent, fileName, filePath, propInfos)
+        let propInfos = SourceFilePropInfos(importListsPropInfo.toArray(), pkgHeaderPropInfo, declsPropInfo.toArray(),
+            ftrDirectivePropInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        SourceFile(node, beginPos, parent, fileName, filePath, propInfos, commentsPropInfos)
+    }
+
+    private func transCommentGroup(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): CommentGroup {
+        let lp = LocalParser(node.children)
+
+        let commentsPropInfo = ArrayList<PropInfo>()
+        while (lp.look(SyntaxNodeKind.Comment)) {
+            let cmtNode = lp.consume()
+            commentsPropInfo.add(PropInfo(lp.cur - 1, lp.offset))
+            lp.moveOffset(cmtNode)
+        }
+        let propInfos = CommentGroupPropInfos(commentsPropInfo.toArray())
+        CommentGroup(node, startPos, parent, propInfos)
+    }
+
+    private func transComment(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Comment {
+        let lp = LocalParser(node.children)
+
+        var kind = CommentKind.Line
+        var content = ""
+        let tokenNode = lp.consume()
+        if (let Some(tkNode) <- tokenNode && let Some(tk) <- (tkNode as TokenTerminal)) {
+            content = tk.value
+        }
+        if (content.startsWith("/**")) {
+            kind = CommentKind.Document
+        } else if (content.startsWith("/*")) {
+            kind = CommentKind.Block
+        }
+        Comment(node, startPos, parent, kind, content)
     }
 
     private func transFeaturesDirective(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): FeaturesDirective {
@@ -319,8 +346,7 @@ class SyntaxNodeImplTranslator {
         let lp = LocalParser(node.children)
 
         var modifierPropInfo: ?PropInfo = None
-        if (lp.look(SyntaxNodeKind.PublicToken) || lp.look(SyntaxNodeKind.ProtectedToken) || lp.look(
-            SyntaxNodeKind.InternalToken)) {
+        if (lp.look(SyntaxNodeKind.Modifier)) {
             let modifierNode = lp.consume()
             modifierPropInfo = PropInfo(lp.cur - 1, lp.offset)
             lp.offset.move(modifierNode?.offset)
@@ -356,7 +382,10 @@ class SyntaxNodeImplTranslator {
         let propInfos = PackageHeaderPropInfos(modifierPropInfo)
         let posInfo = PackageHeaderPosInfos(macroKeyWordPos, packageKeyWordPos, pkgIdentifiersPos.toArray(),
             dotsPos.toArray())
-        PackageHeader(node, startPos, parent, isMacroPkg, packageNameIdentifiers.toArray(), posInfo, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        PackageHeader(node, startPos, parent, isMacroPkg, packageNameIdentifiers.toArray(), posInfo, propInfos,
+            commentsPropInfos)
     }
 
     private func transPackageName(node: SyntaxNodeImpl, startPos: CodePosition) {
@@ -428,7 +457,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = AnnotationPropInfos(argumentPropInfos.toArray())
         let posInfo = AnnotationPosInfos(atOpPos, lSquarePos, rSquarePos, identifierPos, commasPos.toArray())
-        Annotation(node, startPos, parent, identifier, opKind, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        Annotation(node, startPos, parent, identifier, opKind, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transArgument(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Argument {
@@ -469,11 +500,15 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = ArgumentPropInfos(valuePropInfo)
         let posInfo = ArgumentPosInfos(inoutKeyWordPos, identifierPos, colonPos)
-        Argument(node, startPos, parent, identifier, isInOut, isNamed, posInfo, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        Argument(node, startPos, parent, identifier, isInOut, isNamed, posInfo, propInfos, commentsPropInfos)
     }
 
-    private func transModifier(node: Terminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Modifier {
-        let kind = match (node.kind) {
+    private func transModifier(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Modifier {
+        let lp = LocalParser(node.children)
+        let kindNode = (lp.consume().getOrThrow() as Terminal).getOrThrow()
+        let kind = match (kindNode.kind) {
             case SyntaxNodeKind.AbstractToken => ModifierKind.Abstract
             case SyntaxNodeKind.InternalToken => ModifierKind.Internal
             case SyntaxNodeKind.MutToken => ModifierKind.Mut
@@ -490,7 +525,10 @@ class SyntaxNodeImplTranslator {
             case SyntaxNodeKind.ConstToken => ModifierKind.Const
             case _ => throw Exception("ParseException: This SyntaxNode kind is not modifier.")
         }
-        Modifier(node, startPos, parent, kind)
+        lp.moveOffset(kindNode)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        Modifier(node, startPos, parent, kind, commentsPropInfos)
     }
 
     private func transBlock(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Block {
@@ -518,7 +556,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = BlockPropInfos(nodesPropInfo)
         let posInfos = BlockPosInfos(lCurlPos, rCurlPos)
-        Block(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        Block(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transLambdaParam(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): LambdaParam {
@@ -543,7 +583,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = LambdaParamPropInfos(typeAnnotationPropInfo)
         let posInfo = LambdaParamPosInfos(identifierPos, colonPos)
-        LambdaParam(node, startPos, parent, name, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        LambdaParam(node, startPos, parent, name, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transFuncParam(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): FuncParam {
@@ -599,7 +641,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = FuncParamPropInfos(defaultValuePropInfo, tyAnnoPropInfo)
         let posInfo = FuncParamPosInfos(varKindKeyWordPos, identifierPos, colonPos, assignPos, notPos)
-        FuncParam(node, startPos, parent, kind, name, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        FuncParam(node, startPos, parent, kind, name, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transParameterList(node: SyntaxNodeImpl, startPos: CodePosition, parent: ?SyntaxTreeNode): ParameterList {
@@ -631,7 +675,9 @@ class SyntaxNodeImplTranslator {
         }
         let propInfo = ParameterListPropInfos(paramsPropInfo.toArray())
         let posInfo = ParameterListPosInfos(lParenPos, commasPos.toArray(), rParenPos)
-        ParameterList(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ParameterList(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transImportAll(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ImportAll {
@@ -644,7 +690,9 @@ class SyntaxNodeImplTranslator {
         let mulPos = startPos + lp.offset
         let posInfo = ImportAllPosInfos(mulPos)
         let posInfo1 = ImportContentPosInfos(dotsPos.toArray(), identPos.toArray())
-        ImportAll(node, startPos, parent, posInfo, posInfo1, prefixes)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ImportAll(node, startPos, parent, posInfo, posInfo1, prefixes, commentsPropInfos)
     }
 
     private func transImportSingle(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ImportSingle {
@@ -656,7 +704,9 @@ class SyntaxNodeImplTranslator {
         let sz = identPos.size
         let posInfo = ImportSinglePosInfos(identPos[sz - 1])
         let posInfo1 = ImportContentPosInfos(dotsPos.toArray(), identPos.toArray()[..sz - 1])
-        ImportSingle(node, startPos, parent, posInfo, posInfo1, prefixes[sz - 1], prefixes[..sz - 1])
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ImportSingle(node, startPos, parent, posInfo, posInfo1, prefixes[sz - 1], prefixes[..sz - 1], commentsPropInfos)
     }
 
     private func transImportAlias(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ImportAlias {
@@ -673,7 +723,10 @@ class SyntaxNodeImplTranslator {
         let sz = identPos.size
         let posInfo = ImportAliasPosInfos(identPos[sz - 1], asPos, aliasNamePos)
         let posInfo1 = ImportContentPosInfos(dotsPos.toArray(), identPos.toArray()[..sz - 1])
-        ImportAlias(node, startPos, parent, posInfo, posInfo1, getValue(aliasName), prefixes[sz - 1], prefixes[..sz - 1])
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ImportAlias(node, startPos, parent, posInfo, posInfo1, getValue(aliasName), prefixes[sz - 1], prefixes[..sz - 1],
+            commentsPropInfos)
     }
 
     private func transImportMulti(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ImportMulti {
@@ -711,7 +764,9 @@ class SyntaxNodeImplTranslator {
         let posInfo = ImportMultiPosInfos(lCurlPos, rCurlPos, commasPos.toArray())
         let posInfo1 = ImportContentPosInfos(dotsPos.toArray(), identPos.toArray())
         let propInfo = ImportMultiPropInfos(contentsPropInfo)
-        ImportMulti(node, startPos, parent, posInfo, propInfo, posInfo1, prefixes)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ImportMulti(node, startPos, parent, posInfo, propInfo, posInfo1, prefixes, commentsPropInfos)
     }
 
     private func transImportList(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ImportList {
@@ -722,8 +777,7 @@ class SyntaxNodeImplTranslator {
         var kind = ImportKind.Alias
         var contentsPropInfo = PropInfo()
         var modifierPropInfo: ?PropInfo = None
-        if (lp.look(SyntaxNodeKind.PublicToken) || lp.look(SyntaxNodeKind.PrivateToken) || lp.look(
-            SyntaxNodeKind.ProtectedToken) || lp.look(SyntaxNodeKind.InternalToken)) {
+        if (lp.look(SyntaxNodeKind.Modifier)) {
             let curNode = lp.consume()
             modifierPropInfo = PropInfo(lp.cur - 1, lp.offset)
             lp.moveOffset(curNode)
@@ -745,7 +799,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = ImportListPosInfos(importKeyWordPos)
         let propInfo = ImportListPropInfos(contentsPropInfo, modifierPropInfo)
-        ImportList(node, startPos, None, posInfo, propInfo, kind)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ImportList(node, startPos, None, posInfo, propInfo, kind, commentsPropInfos)
     }
 
     private func transGenericConstraint(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): GenericConstraint {
@@ -773,7 +829,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = GenericConstraintPropInfos(tyAnnoPropInfo, upperBoundsPropInfos.toArray())
         let posInfo = GenericConstraintPosInfos(upBoundPos, bitEndPos.toArray())
-        GenericConstraint(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        GenericConstraint(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transGenericConstraints(node: SyntaxNodeImpl, startPos: CodePosition, parent: ?SyntaxTreeNode): GenericConstraints {
@@ -797,13 +855,49 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = GenericConstraintsPropInfos(constraintsPropInfos.toArray())
         let posInfo = GenericConstraintsPosInfos(wherePos, commasPos.toArray())
-        GenericConstraints(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        GenericConstraints(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     // Decl
 
-    private func transGenericParam(node: Terminal, startPos: CodePosition, parent: ?SyntaxTreeNode): GenericParam {
-        GenericParam(node, startPos, parent)
+    private func transGenericParam(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): GenericParam {
+        let lp = LocalParser(node.children)
+        var name: String = ""
+
+        if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.IdentToken)) {
+            name = getValue(v)
+            lp.offset.move(v.offset)
+        }
+
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        GenericParam(node, startPos, parent, name, commentsPropInfos)
+    }
+
+    private func transFuncDeclModifierList(startPos: CodePosition, modifierList: NonTerminal, lp: LocalParser) {
+        var operatorFlag = false
+        var kind = FuncKind.PrimaryConstructor
+        var funcKindKeyWordPos: Option<CodePosition> = None
+        let mlp = LocalParser(modifierList.children)
+        while (!mlp.isEnd() && let Some(modifier) <- mlp.consume()) {
+            let mp = LocalParser((modifier as NonTerminal).getOrThrow().children)
+            while (!mp.isEnd() && let Some(vm) <- mp.consume()) {
+                match (vm.kind) {
+                    case SyntaxNodeKind.ForeignToken =>
+                        kind = FuncKind.Foreign
+                        funcKindKeyWordPos = startPos + lp.offset + mlp.offset + mp.offset
+                        mp.offset.move(vm.offset)
+                    case SyntaxNodeKind.OperatorToken =>
+                        operatorFlag = true
+                        mp.offset.move(vm.offset)
+                    case _ => mp.offset.move(vm.offset)
+                }
+            }
+            mlp.moveOffset(modifier)
+        }
+        return (kind, funcKindKeyWordPos, operatorFlag)
     }
 
     private func transFuncDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): FuncDecl {
@@ -816,21 +910,8 @@ class SyntaxNodeImplTranslator {
         var kind = FuncKind.PrimaryConstructor
         var funcKindKeyWordPos: Option<CodePosition> = None
         // check if foreign func
-        if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.ModifierList)) {
-            let ret = ArrayList<Modifier>()
-            let mp = LocalParser((v as NonTerminal).getOrThrow().children)
-            while (!mp.isEnd() && let Some(vm) <- mp.consume()) {
-                match (vm.kind) {
-                    case SyntaxNodeKind.ForeignToken =>
-                        kind = FuncKind.Foreign
-                        funcKindKeyWordPos = startPos + lp.offset + mp.offset
-                        mp.offset.move(vm.offset)
-                    case SyntaxNodeKind.OperatorToken =>
-                        operatorFlag = true
-                        mp.offset.move(vm.offset)
-                    case _ => mp.offset.move(vm.offset)
-                }
-            }
+        if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.ModifierList) && let Some(modifierList) <- (v as NonTerminal)) {
+            (kind, funcKindKeyWordPos, operatorFlag) = transFuncDeclModifierList(startPos, modifierList, lp)
             lp.offset.move(v.offset)
         }
         var funcKeyWordPos: Option<CodePosition> = None
@@ -911,7 +992,9 @@ class SyntaxNodeImplTranslator {
             retTyAnnotationPropInfo)
         let posInfo = FuncDeclPosInfos(funcKindKeyWordPos, funcKeyWordPos, identifierPos, genericParamsLAnglePos,
             genericParamsCommasPos, genericParamsRAnglePos, retTyAnnotationColonPos)
-        FuncDecl(node, startPos, parent, name, kind, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        FuncDecl(node, startPos, parent, name, kind, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transVarKind(node: SyntaxNodeImpl): VarKind {
@@ -975,7 +1058,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = VarDeclPropInfos(initializerPropInfo, patternPropInfo, tyAnnoPropInfo)
         let posInfos = VarDeclPosInfos(varKindKeyWordPos, identifierPos, tyAnnotationColonPos, assignPos)
-        VarDecl(node, startPos, parent, kind, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        VarDecl(node, startPos, parent, kind, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transMainDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MainDecl {
@@ -1008,7 +1093,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = MainDeclPropInfos(blockPropInfo, paramsPropInfo, retTyAnnotationPropInfo)
         let posInfo = MainDeclPosInfos(mainKeyWordPos, retTyAnnotationColonPos)
-        MainDecl(node, startPos, parent, posInfo, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MainDecl(node, startPos, parent, posInfo, propInfos, commentsPropInfos)
     }
 
     private func transTypeAlias(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TypeAlias {
@@ -1047,7 +1134,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = TypeAliasPropInfos(tyAnnoPropInfo, typeParametersPropInfo)
         let posInfo = TypeAliasPosInfos(typeAliasKeyWordPos, identifierPos, assignPos)
-        TypeAlias(node, startPos, parent, aliasName, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TypeAlias(node, startPos, parent, aliasName, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transBody(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Body {
@@ -1088,7 +1177,9 @@ class SyntaxNodeImplTranslator {
         let propInfos = BodyPropInfos(memberDeclsPropInfo.toArray())
         let enumBodyPosInfos = EnumBodyPosInfos(bitOrsPos.toArray(), ellipsisPos)
         let posInfos = BodyPosInfos(lCurlPos, rCurlPos)
-        Body(node, startPos, parent, posInfos, enumBodyPosInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        Body(node, startPos, parent, posInfos, enumBodyPosInfos, propInfos, commentsPropInfos)
     }
 
     private func transClassDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ClassDecl {
@@ -1153,7 +1244,9 @@ class SyntaxNodeImplTranslator {
             superTyAnnotationsPropInfo.toArray())
         let posInfos = ClassDeclPosInfos(classKeyWordPos, identifierPos, genericParamsLAnglePos, genericParamsCommasPos,
             genericParamsRAnglePos, upperBoundPos, superTyAnnotationsBitAndPos.toArray())
-        ClassDecl(node, startPos, parent, name, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ClassDecl(node, startPos, parent, name, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transPropGetterOrSetter(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): PropGetterOrSetter {
@@ -1211,7 +1304,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = PropGetterOrSetterPropInfos(blockPropInfo)
         let posInfos = PropGetterOrSetterPosInfos(getKeyWordPos, setKeyWordPos, identifierPos, lParenPos, rParenPos)
-        PropGetterOrSetter(node, startPos, parent, identifier, isGetter, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        PropGetterOrSetter(node, startPos, parent, identifier, isGetter, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transPropDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): PropDecl {
@@ -1277,7 +1372,27 @@ class SyntaxNodeImplTranslator {
         }
         let propInfos = PropDeclPropInfos(getterPropInfo, setterPropInfo, tyAnnotationPropInfo)
         let posInfos = PropDeclPosInfos(propKeyWordPos, identifierPos, tyAnnotationColonPos, lCurlPos, rCurlPos)
-        PropDecl(node, startPos, parent, name, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        PropDecl(node, startPos, parent, name, posInfos, propInfos, commentsPropInfos)
+    }
+
+    private func transStaticInitModifierList(startPos: CodePosition, modifierList: NonTerminal, lp: LocalParser) {
+        var staticKeyWordPos: CodePosition = CodePosition()
+        let mlp = LocalParser(modifierList.children)
+        while (!mlp.isEnd() && let Some(modifier) <- mlp.consume()) {
+            let mp = LocalParser((modifier as NonTerminal).getOrThrow().children)
+            while (!mp.isEnd() && let Some(vm) <- mp.consume()) {
+                match (vm.kind) {
+                    case SyntaxNodeKind.StaticToken =>
+                        staticKeyWordPos = startPos + lp.offset + mlp.offset + mp.offset
+                        break
+                    case _ => continue
+                }
+            }
+            mlp.moveOffset(modifier)
+        }
+        staticKeyWordPos
     }
 
     private func transStaticInit(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): StaticInit {
@@ -1285,16 +1400,10 @@ class SyntaxNodeImplTranslator {
         let lp = LocalParser(node.children)
 
         var staticKeyWordPos: CodePosition = CodePosition()
-        if (let Some(node) <- cast<NonTerminal, SyntaxNodeImpl>(lp.lookAndConsume(SyntaxNodeKind.ModifierList))) {
-            for (child in node.children) {
-                match (child.kind) {
-                    case SyntaxNodeKind.StaticToken =>
-                        staticKeyWordPos = startPos + lp.offset
-                        break
-                    case _ => continue
-                }
-            }
-            lp.offset.move(node.offset)
+
+        if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.ModifierList) && let Some(modifierList) <- (v as NonTerminal)) {
+            staticKeyWordPos = transStaticInitModifierList(startPos, modifierList, lp)
+            lp.offset.move(v.offset)
         }
         let initNode = lp.consume(kind: SyntaxNodeKind.InitToken)
         let initKeyWordPos = startPos + lp.offset
@@ -1312,7 +1421,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = StaticInitPropInfos(bodyPropInfo)
         let posInfo = StaticInitPosInfos(staticKeyWordPos, initKeyWordPos, lParenPos, rParenPos)
-        StaticInit(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        StaticInit(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transStructDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): StructDecl {
@@ -1377,7 +1488,9 @@ class SyntaxNodeImplTranslator {
             superTyAnnotationsPropInfo.toArray())
         let posInfos = StructDeclPosInfos(structKeyWordPos, identifierPos, genericParamsLAnglePos,
             genericParamsCommasPos, genericParamsRAnglePos, upperBoundPos, superTyAnnotationsBitAndPos.toArray())
-        StructDecl(node, startPos, parent, name, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        StructDecl(node, startPos, parent, name, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transInterfaceDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): InterfaceDecl {
@@ -1442,7 +1555,9 @@ class SyntaxNodeImplTranslator {
             superTyAnnotationsPropInfo.toArray())
         let posInfos = InterfaceDeclPosInfos(interfaceKeyWordPos, identifierPos, genericParamsLAnglePos,
             genericParamsCommasPos, genericParamsRAnglePos, upperBoundPos, superTyAnnotationsBitAndPos.toArray())
-        InterfaceDecl(node, startPos, parent, name, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        InterfaceDecl(node, startPos, parent, name, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transExtendDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ExtendDecl {
@@ -1513,7 +1628,9 @@ class SyntaxNodeImplTranslator {
             genericParamsPropInfo, superTyAnnotationsPropInfo.toArray())
         let posInfos = ExtendDeclPosInfos(extendKeyWordPos, genericParamsLAnglePos, genericParamsCommasPos,
             genericParamsRAnglePos, upperBoundPos, superTyAnnotationsBitAndPos.toArray())
-        ExtendDecl(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ExtendDecl(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transEnumDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): EnumDecl {
@@ -1589,7 +1706,9 @@ class SyntaxNodeImplTranslator {
         let posInfos = EnumDeclPosInfos(enumKeyWordPos, identifierPos, genericParamsLAnglePos, genericParamsCommasPos,
             genericParamsRAnglePos, upperBoundPos, superTyAnnotationsBitAndPos.toArray(), caseSeparatorPos,
             nonExhaustiveTripleDotPos)
-        EnumDecl(node, startPos, parent, isNonExhaustive, name, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        EnumDecl(node, startPos, parent, isNonExhaustive, name, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transEnumConstructor(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): EnumConstructor {
@@ -1637,7 +1756,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = EnumConstructorPropInfos(paramTyAnnotationsPorpInfo.toArray())
         let posInfos = EnumConstructorPosInfos(identifierPos, lParenPos, paramsCommasPos.toArray(), rParenPos)
-        EnumConstructor(node, startPos, parent, name, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        EnumConstructor(node, startPos, parent, name, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transMacroDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MacroDecl {
@@ -1686,7 +1807,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = MacroDeclPropInfos(bodyPropInfo, paramsPropInfo, retTyAnnotationPropInfo)
         let posInfos = MacroDeclPosInfos(macroPos, identifierPos, retTyAnnotationColonPos)
-        MacroDecl(node, startPos, parent, name, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MacroDecl(node, startPos, parent, name, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transMacroExpandDecl(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MacroExpandDecl {
@@ -1740,7 +1863,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = MacroExpandDeclPropInfos(calleePropInfo, macroAttrsPropInfo, macroInputsPropInfo)
         let posInfos = MacroExpandDeclPosInfos(atPos, lSquarePos, rSquarePos, lParenPos, rParenPos)
-        MacroExpandDecl(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MacroExpandDecl(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transMacroExpandParam(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MacroExpandParam {
@@ -1793,27 +1918,37 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = MacroExpandParamPropInfos(calleePropInfo, macroAttrsPropInfo, macroInputsPropInfo)
         let posInfos = MacroExpandParamPosInfos(atPos, lSquarePos, rSquarePos, lParenPos, rParenPos)
-        MacroExpandParam(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MacroExpandParam(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     // Expr
-    private func transValuedLitConstExpr(node: Terminal, startPos: CodePosition, parent: ?SyntaxTreeNode): LitConstExpr {
-        var kind: LitConstKind = match (node.kind) {
+    private func transValuedLitConstExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): LitConstExpr {
+        let lp = LocalParser(node.children)
+        let litNode = lp.consume().getOrThrow()
+        var kind: LitConstKind = match (litNode.kind) {
             case SyntaxNodeKind.IntegerLiteralToken => LitConstKind.IntergerLiteral
             case SyntaxNodeKind.FloatLiteralToken => LitConstKind.FloatLiteral
             case SyntaxNodeKind.BooleanLiteralToken => LitConstKind.BoolLiteral
             case _ => throw Exception(
                 "ParseException: This SyntaxNode kind is not interger literal, float literal or bool literal.")
         }
-        let rawValue = match (node) {
+        let rawValue = match (litNode) {
             case vt: ValuedTerminal => vt.value
             case _ => ""
         }
-        LitConstExpr(node, startPos, parent, kind, rawValue)
+        lp.moveOffset(litNode)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        LitConstExpr(node, startPos, parent, kind, rawValue, commentsPropInfos)
     }
 
     private func transUnitLitConstExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): LitConstExpr {
-        LitConstExpr(node, startPos, parent, LitConstKind.UnitLiteral, node.toString())
+        let lp = LocalParser(node.children)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        LitConstExpr(node, startPos, parent, LitConstKind.UnitLiteral, node.toString(), commentsPropInfos)
     }
 
     private func transLitConstRuneExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): LitConstRuneExpr {
@@ -1826,7 +1961,10 @@ class SyntaxNodeImplTranslator {
                 case _ => ()
             }
         }
-        LitConstRuneExpr(node, startPos, parent, rawValue, isSingleQuote)
+        let lp = LocalParser(node.children)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        LitConstRuneExpr(node, startPos, parent, rawValue, isSingleQuote, commentsPropInfos)
     }
 
     private func transInterpolationExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): StrInterpolationContent {
@@ -1836,9 +1974,10 @@ class SyntaxNodeImplTranslator {
         lp.offset.move(lp.consume()?.offset)
         lp.consume()
         let blockPropInfo = PropInfo(lp.cur - 1, lp.offset)
-
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
         StrInterpolationContent(node, startPos, parent, StrInterpolationContentPosInfos(dollarPos),
-            StrInterpolationContentPropInfos(blockPropInfo))
+            StrInterpolationContentPropInfos(blockPropInfo), commentsPropInfos)
     }
 
     private func transStringLitConstExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): LitConstStrExpr {
@@ -1887,8 +2026,10 @@ class SyntaxNodeImplTranslator {
             }
             lp.moveOffset(child)
         }
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
         LitConstStrExpr(node, startPos, parent, delimiterNum, isSingleQuote, rawValue, kind,
-            LitConstStrExprPropInfos(strPartExprsPropInfo))
+            LitConstStrExprPropInfos(strPartExprsPropInfo), commentsPropInfos)
     }
 
     private func getIsSingleQuote(node: Terminal): Bool {
@@ -1920,7 +2061,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = SymbolRefPropInfos(typeArgumentsPropInfo)
         let posInfo = SymbolRefPosInfos(identifierPos, lAnglePos, rAnglePos, commasPos.toArray())
-        SymbolRef(node, startPos, parent, name, posInfo, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        SymbolRef(node, startPos, parent, name, posInfo, propInfos, commentsPropInfos)
     }
 
     private func transArrayLiteralExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ArrayLiteral {
@@ -1955,7 +2098,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = ArrayLiteralPosInfos(lSquarePos, rSquarePos, commasPos.toArray())
         let propInfo = ArrayLiteralPropInfos(exprsPropInfo)
-        ArrayLiteral(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ArrayLiteral(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transTupleLiteralExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TupleLiteral {
@@ -1990,7 +2135,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = TupleLiteralPosInfos(lParenPos, rParenPos, commasPos.toArray())
         let propInfo = TupleLiteralPropInfos(exprsPropInfo)
-        TupleLiteral(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TupleLiteral(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transVArrayExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): VArrayExpr {
@@ -2018,7 +2165,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = VArrayExprPosInfos(lParenPos, rParenPos)
         let propInfo = VArrayExprPropInfos(argumentPropInfo, vArrayTypePropInfo)
-        VArrayExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        VArrayExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transCallExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): CallExpr {
@@ -2059,7 +2208,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = CallExprPropInfos(calleePropInfo, argumentPropInfo.toArray())
         let posInfos = CallExprPosInfos(lParenPos, rParenPos, commasPos.toArray())
-        CallExpr(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        CallExpr(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transTypeConvExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TypeConvExpr {
@@ -2084,7 +2235,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = TypeConvExprPropInfos(srcValPropInfo, targetTypeAnnotationPropInfo)
         let posInfo = TypeConvExprPosInfos(lParenPos, rParenPos)
-        TypeConvExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TypeConvExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transOptionalExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): OptionalExpr {
@@ -2097,8 +2250,9 @@ class SyntaxNodeImplTranslator {
         let questPos = startPos + lp.offset
         let posInfo = OptionalExprPosInfos(questPos)
         let propInfo = OptionalExprPropInfos(basePropInfo)
-
-        OptionalExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        OptionalExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transAssignOpKind(node: SyntaxNodeImpl): AssignOpKind {
@@ -2144,8 +2298,9 @@ class SyntaxNodeImplTranslator {
 
         let posInfo = AssignExprPosInfos(opPos)
         let propInfo = AssignExprPropInfos(lhsPropInfo, rhsPropInfo)
-
-        AssignExpr(node, startPos, parent, opKind, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        AssignExpr(node, startPos, parent, opKind, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transBinaryOpKind(node: SyntaxNodeImpl): BinaryOpKind {
@@ -2197,7 +2352,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = BinaryExprPropInfos(lhsPropInfo, rhsPropInfo)
         let posInfo = BinaryExprPosInfos(opPos)
-        BinaryExpr(node, startPos, parent, opKind, posInfo, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        BinaryExpr(node, startPos, parent, opKind, posInfo, propInfos, commentsPropInfos)
     }
 
     private func transUnaryExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): UnaryExpr {
@@ -2216,7 +2373,9 @@ class SyntaxNodeImplTranslator {
         let operandPropInfo = PropInfo(lp.cur - 1, lp.offset)
         let posInfo = UnaryExprPosInfos(opPos)
         let propInfo = UnaryExprPropInfos(operandPropInfo)
-        UnaryExpr(node, startPos, parent, opKind, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        UnaryExpr(node, startPos, parent, opKind, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transIsExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): IsExpr {
@@ -2236,7 +2395,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = IsExprPropInfos(exprPropInfo, typePropInfo)
         let posInfo = IsExprPosInfos(isPos)
-        IsExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        IsExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transAsExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): AsExpr {
@@ -2257,7 +2418,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = AsExprPropInfos(exprPropInfo, typePropInfo)
         let posInfo = AsExprPosInfos(asPos)
-        AsExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        AsExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transParenExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ParenExpr {
@@ -2276,7 +2439,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = ParenExprPropInfos(exprPropInfo)
         let posInfo = ParenExprPosInfos(lParenPos, rParenPos)
-        ParenExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ParenExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transReturnExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ReturnExpr {
@@ -2293,7 +2458,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = ReturnExprPosInfos(returnPos)
         let propInfo = (ReturnExprPropInfos(retValPropInfo))
-        ReturnExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ReturnExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transIncOrDecExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): IncOrDecExpr {
@@ -2321,7 +2488,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = IncOrDecExprPropInfos(exprPropInfo)
         let posInfo = IncOrDecExprPosInfos(opPos)
-        IncOrDecExpr(node, startPos, parent, kind, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        IncOrDecExpr(node, startPos, parent, kind, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transRangeExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): RangeExpr {
@@ -2367,15 +2536,31 @@ class SyntaxNodeImplTranslator {
 
         let propInfo = RangeExprPropInfos(startPropInfo, stepPropInfo, endPropInfo)
         let posInfo = RangeExprPosInfos(opPos, colonPos)
-        RangeExpr(node, startPos, parent, kind, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        RangeExpr(node, startPos, parent, kind, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transBreakExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): BreakExpr {
-        BreakExpr(node, startPos, parent)
+        let lp = LocalParser(node.children)
+        if (lp.look(SyntaxNodeKind.BreakToken)) {
+            let breakNode = lp.consume()
+            lp.offset.move(breakNode?.offset)
+        }
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        BreakExpr(node, startPos, parent, commentsPropInfos)
     }
 
     private func transContinueExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ContinueExpr {
-        ContinueExpr(node, startPos, parent)
+        let lp = LocalParser(node.children)
+        if (lp.look(SyntaxNodeKind.ContinueToken)) {
+            let continueNode = lp.consume()
+            lp.offset.move(continueNode?.offset)
+        }
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ContinueExpr(node, startPos, parent, commentsPropInfos)
     }
 
     private func transMemberAccess(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MemberAccess {
@@ -2403,7 +2588,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = MemberAccessPropInfos(basePropInfo, fieldPropInfo)
         let posInfo = MemberAccessPosInfos(dotPos)
-        MemberAccess(node, startPos, parent, posInfo, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MemberAccess(node, startPos, parent, posInfo, propInfos, commentsPropInfos)
     }
 
     private func transSubscriptExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): SubscriptExpr {
@@ -2448,8 +2635,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = SubscriptExprPosInfos(lSquarePos, rSquarePos, commasPos.toArray())
         let propInfo = SubscriptExprPropInfos(basePropInfo, indexsPropInfo)
-
-        SubscriptExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        SubscriptExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transLambda(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Lambda {
@@ -2490,7 +2678,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = LambdaPosInfos(lCurlPos, rCurlPos, doubleArrowPos)
         let propInfo = LambdaPropInfos(bodyPropInfo, paramsPropInfo)
-        Lambda(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        Lambda(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transThrowExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ThrowExpr {
@@ -2512,7 +2702,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = ThrowExprPosInfos(throwKeyWordPos)
         let propInfo = ThrowExprPropInfos(throwValPropInfo)
-        ThrowExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ThrowExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transSynchronizedExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): SynchronizedExpr {
@@ -2538,7 +2730,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = SynchronizedExprPosInfos(lParenPos, rParenPos, synchronizedKeywordPos)
         let propInfo = SynchronizedExprPropInfos(blockPropInfo, structuredMutexPropInfo)
-        SynchronizedExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        SynchronizedExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transSpawnExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): SpawnExpr {
@@ -2568,7 +2762,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = SpawnExprPosInfos(spawnKeyWordPos, lParenPos, rParenPos)
         let propInfo = SpawnExprPropInfos(threadContextPropInfo, trailingLambdaExprPropInfo)
-        SpawnExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        SpawnExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transIfExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): IfExpr {
@@ -2611,7 +2807,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = IfExprPosInfos(ifKeyWordPos, condLParenPos, condRParenPos, elseKeyWordPos)
         let propInfo = IfExprPropInfos(conditionPropInfo, elseBlockPropInfo, elseIfPropInfo, ifBlockPropInfo)
-        IfExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        IfExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transParenCondition(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ParenCondition {
@@ -2632,7 +2830,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = ParenConditionPropInfo(condPropInfo)
         let posInfos = ParenConditionPosInfo(lParenPos, rParenPos)
-        ParenCondition(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ParenCondition(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transDisjunctionCondition(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): DisjunctionCondition {
@@ -2653,7 +2853,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = DisjunctionConditionPropInfos(condPropInfo.toArray())
         let posInfos = DisjunctionConditionPosInfos(orPos.toArray())
-        DisjunctionCondition(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        DisjunctionCondition(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transConjunctionCondition(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ConjunctionCondition {
@@ -2678,7 +2880,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = ConjunctionConditionPropInfos(condPropInfo.toArray())
         let posInfos = ConjunctionConditionPosInfos(andPos.toArray())
-        ConjunctionCondition(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ConjunctionCondition(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transLetPattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): LetPattern {
@@ -2720,7 +2924,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = LetPatternPropInfo(exprPropInfo, patternsPropInfo.toArray())
         let posInfos = LetPatternPosInfo(letPos, bitOrPos.toArray(), backArrowPos)
-        LetPattern(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        LetPattern(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transWhileExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): WhileExpr {
@@ -2748,7 +2954,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = WhileExprPosInfos(lParenPos, rParenPos, whileKeyWordPos)
         let propInfo = WhileExprPropInfos(bodyPropInfo, conditionPropInfo)
-        WhileExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        WhileExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transDoWhileExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): DoWhileExpr {
@@ -2779,7 +2987,9 @@ class SyntaxNodeImplTranslator {
         lp.moveOffset(curNode)
         let posInfo = DoWhileExprPosInfos(lParenPos, rParenPos, doKeyWordPos, whileKeyWordPos)
         let propInfo = DoWhileExprPropInfos(bodyPropInfo, conditionPropInfo)
-        DoWhileExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        DoWhileExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transForInExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ForInExpr {
@@ -2826,7 +3036,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = ForInExprPosInfos(forKeyWordPos, inKeywordPos, lParenPos, rParenPos, whereKeyWordPos)
         let propInfo = ForInExprPropInfos(bodyPropInfo, exprPropInfo, patternPropInfo, patternGuardPropInfo)
-        ForInExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ForInExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transTryCatch(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TryCatch {
@@ -2909,11 +3121,16 @@ class SyntaxNodeImplTranslator {
             finallyKeyWordPos)
         let propInfo = TryExprPropInfos(catchBlocksPropInfo.toArray(), catchPatternsPropInfo.toArray(),
             finallyBlockPropInfo, resourceSpecPropInfo, tryBlockPropInfo)
-        TryCatch(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TryCatch(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transQuoteTokenExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): QuoteToken {
-        QuoteToken(node, startPos, parent)
+        let lp = LocalParser(node.children)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        QuoteToken(node, startPos, parent, commentsPropInfos)
     }
 
     private func transQuoteInterpolationExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): QuoteInterpolationExpr {
@@ -2947,8 +3164,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = QuoteInterpolationExprPosInfos(dollarPos, lParenPos, rParenPos)
         let propInfo = QuoteInterpolationExprPropInfos(exprPropInfo)
-
-        QuoteInterpolationExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        QuoteInterpolationExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transQuoteExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): QuoteExpr {
@@ -2978,7 +3196,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = QuoteExprPosInfos(quoteKeyWordPos, lParenPos, rParenPos)
         let propInfo = QuoteExprPropInfos(tokensOrRefExprPropInfo.toArray())
-        QuoteExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        QuoteExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transTrailingClosureExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TrailingClosureExpr {
@@ -3025,7 +3245,9 @@ class SyntaxNodeImplTranslator {
         }
         let posInfo = TrailingClosureExprPosInfos(commasPos.toArray(), lParenPos, rParenPos)
         let propInfo = TrailingClosureExprPropInfos(argumentsPropInfo, calleePropInfo, trailingLambdaExprPropInfo)
-        TrailingClosureExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TrailingClosureExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transUnsafeExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): UnsafeExpr {
@@ -3043,7 +3265,10 @@ class SyntaxNodeImplTranslator {
             blockPropInfo = PropInfo(lp.cur - 1, lp.offset)
             lp.moveOffset(curNode)
         }
-        UnsafeExpr(node, startPos, parent, UnsafeExprPosInfos(unsafePos), UnsafeExprPropInfos(blockPropInfo))
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        UnsafeExpr(node, startPos, parent, UnsafeExprPosInfos(unsafePos), UnsafeExprPropInfos(blockPropInfo),
+            commentsPropInfos)
     }
 
     private func transMacroExpandExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MacroExpandExpr {
@@ -3096,7 +3321,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = MacroExpandExprPropInfos(calleePropInfo, macroAttrsPropInfo, macroInputsPropInfo)
         let posInfos = MacroExpandExprPosInfos(atPos, lSquarePos, rSquarePos, lParenPos, rParenPos)
-        MacroExpandExpr(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MacroExpandExpr(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transMatchExpr(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MatchExpr {
@@ -3141,7 +3368,9 @@ class SyntaxNodeImplTranslator {
         let posInfo = MatchExprPosInfos(matchKeyWordPos, selectorLParenPos, selectorRParenPos, matchCasesLCurlPos,
             matchCasesRCurlPos)
         let propInfo = MatchExprPropInfos(matchCasesPropInfo.toArray(), selectorPropInfo)
-        MatchExpr(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MatchExpr(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transMatchCase(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): MatchCase {
@@ -3203,7 +3432,9 @@ class SyntaxNodeImplTranslator {
         let propInfos = MatchCasePropInfos(bodyPropInfo, caseCondPropInfo, patternGuardCondPropInfo,
             patternsPropInfo.toArray())
         let posInfos = MatchCasePosInfos(casePos, bitOrsPos.toArray(), wherePos, doubleArrowPos)
-        MatchCase(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        MatchCase(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transConstPattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ConstPattern {
@@ -3214,11 +3445,16 @@ class SyntaxNodeImplTranslator {
         lp.moveOffset(litExprNode)
 
         let propInfos = ConstPatternPropInfos(exprPropInfo)
-        ConstPattern(node, startPos, parent, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ConstPattern(node, startPos, parent, propInfos, commentsPropInfos)
     }
 
     private func transWildcardPattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): WildcardPattern {
-        WildcardPattern(node, startPos, parent)
+        let lp = LocalParser(node.children)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        WildcardPattern(node, startPos, parent, commentsPropInfos)
     }
 
     private func transVarBindingPattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): VarPattern {
@@ -3228,7 +3464,9 @@ class SyntaxNodeImplTranslator {
         if (let Some(id) <- lp.consume(kind: SyntaxNodeKind.IdentToken)) {
             name = getValue(id)
         }
-        VarPattern(node, startPos, parent, name)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        VarPattern(node, startPos, parent, name, commentsPropInfos)
     }
 
     private func transVarOrEnumPattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): VarOrEnumPattern {
@@ -3238,7 +3476,9 @@ class SyntaxNodeImplTranslator {
         if (let Some(id) <- lp.consume(kind: SyntaxNodeKind.IdentToken)) {
             name = getValue(id)
         }
-        VarOrEnumPattern(node, startPos, parent, name)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        VarOrEnumPattern(node, startPos, parent, name, commentsPropInfos)
     }
 
     private func transTypePattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TypePattern {
@@ -3262,7 +3502,9 @@ class SyntaxNodeImplTranslator {
         }
         let propInfos = TypePatternPropInfos(patternTyPropInfo, subPatternPropInfo)
         let posInfos = TypePatternPosInfos(colonPos)
-        TypePattern(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TypePattern(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transEnumPattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): EnumPattern {
@@ -3307,7 +3549,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = EnumPatternPropInfos(enumConstructorPropInfo, enumTypePropInfo, subPatternsPropInfo.toArray())
         let posInfos = EnumPatternPosInfos(dotPos, lParenPos, rParenPos, commasPos.toArray())
-        EnumPattern(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        EnumPattern(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transTuplePattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TuplePattern {
@@ -3335,7 +3579,9 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = TuplePatternPropInfos(subPatternsPropInfo.toArray())
         let posInfos = TuplePatternPosInfos(lParenPos, rParenPos, commasPos.toArray())
-        TuplePattern(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TuplePattern(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     private func transCatchPattern(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): CatchPattern {
@@ -3366,12 +3612,16 @@ class SyntaxNodeImplTranslator {
 
         let propInfos = CatchPatternPropInfos(exceptionTypesPropInfo.toArray(), patternPropInfo)
         let posInfos = CatchPatternPosInfos(colonPos, bitOrsPos.toArray())
-        CatchPattern(node, startPos, parent, posInfos, propInfos)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        CatchPattern(node, startPos, parent, posInfos, propInfos, commentsPropInfos)
     }
 
     // TypeAnnotation
-    private func transAtomicType(node: Terminal, startPos: CodePosition, parent: ?SyntaxTreeNode): AtomicType {
-        let kind = match (node.kind) {
+    private func transAtomicType(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): AtomicType {
+        let lp = LocalParser(node.children)
+        let kindNode = lp.consume().getOrThrow()
+        let kind = match (kindNode.kind) {
             case SyntaxNodeKind.BooleanToken => AtomicTypeKind.BoolType
             case SyntaxNodeKind.Float16Token => AtomicTypeKind.Float16Type
             case SyntaxNodeKind.Float32Token => AtomicTypeKind.Float32Type
@@ -3392,7 +3642,10 @@ class SyntaxNodeImplTranslator {
             case SyntaxNodeKind.ThisTypeToken => AtomicTypeKind.ThisType
             case _ => throw Exception("ParseException: This SyntaxNode kind is not Atomic type.")
         }
-        AtomicType(node, startPos, parent, kind)
+        lp.moveOffset(kindNode)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        AtomicType(node, startPos, parent, kind, commentsPropInfos)
     }
 
     private func transCompositeType(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): CompositeType {
@@ -3415,8 +3668,10 @@ class SyntaxNodeImplTranslator {
             identPos.toArray())
         let propInfo = CompositeTypePropInfos(typeArgumentsPropInfo)
         let size = ids.size
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
         CompositeType(node, startPos, parent, posInfo, propInfo, getValue(ids[size - 1]),
-            Array(size - 1, {i => getValue(ids[i])}))
+            Array(size - 1, {i => getValue(ids[i])}), commentsPropInfos)
     }
 
     private func transTupleType(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): TupleType {
@@ -3467,7 +3722,9 @@ class SyntaxNodeImplTranslator {
         let posInfo = TupleTypePosInfos(lParenPos, rParenPos, commaPos.toArray(), labelsPos.toArray(),
             colonPos.toArray())
         let propInfo = TupleTypePropInfos(elementsPropInfo)
-        TupleType(node, startPos, parent, posInfo, propInfo, labels.toArray())
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        TupleType(node, startPos, parent, posInfo, propInfo, labels.toArray(), commentsPropInfos)
     }
 
     private func transFuncType(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): FuncType {
@@ -3525,7 +3782,9 @@ class SyntaxNodeImplTranslator {
         let posInfo = FuncTypePosInfos(lParenPos, rParenPos, commaPos.toArray(), arrowPos, labelsPos.toArray(),
             colonPos.toArray())
         let propInfo = FuncTypePropInfos(paramTypesPropInfo, retTypePropInfo)
-        FuncType(node, startPos, parent, posInfo, propInfo, labels.toArray())
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        FuncType(node, startPos, parent, posInfo, propInfo, labels.toArray(), commentsPropInfos)
     }
 
     private func transVArrayType(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): VArrayType {
@@ -3548,9 +3807,9 @@ class SyntaxNodeImplTranslator {
         let dollarPos = startPos + lp.offset
         lp.moveOffset(curNode)
 
-        var arraySize: Int64 = 0
-        if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.IntegerLiteralToken)) {
-            arraySize = Int64.parse(getValue(v))
+        var sizePropInfo = PropInfo()
+        if (let Some(v) <- lp.lookAndConsume(ValuedLiteral)) {
+            sizePropInfo = PropInfo(lp.cur - 1, lp.offset)
             lp.moveOffset(v)
         }
 
@@ -3559,8 +3818,10 @@ class SyntaxNodeImplTranslator {
         lp.moveOffset(curNode)
 
         let posInfo = VArrayTypePosInfos(varrayPos, lAngelPos, rAngelPos, dollarPos, commaPos)
-        let propInfo = VArrayTypePropInfos(elementPropInfo)
-        VArrayType(node, startPos, parent, posInfo, propInfo, arraySize)
+        let propInfo = VArrayTypePropInfos(elementPropInfo, sizePropInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        VArrayType(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transTypeArguments(node: SyntaxNodeImpl, startPos: CodePosition): (CodePosition, ArrayList<CodePosition>, 
@@ -3623,7 +3884,9 @@ class SyntaxNodeImplTranslator {
 
         let posInfo = ParenTypePosInfos(lParenPos, rParenPos)
         let propInfo = ParenTypePropInfos(subTypePropInfo)
-        ParenType(node, startPos, parent, posInfo, propInfo)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        ParenType(node, startPos, parent, posInfo, propInfo, commentsPropInfos)
     }
 
     private func transPrefixType(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): PrefixType {
@@ -3647,7 +3910,9 @@ class SyntaxNodeImplTranslator {
 
         let posInfo = PrefixTypePosInfos(prefixTypeOpPos)
         let propInfo = PrefixTypePropInfos(baseTypePropInfo)
-        PrefixType(node, startPos, parent, posInfo, propInfo, prefixTypeOpKind)
+        lp.consumeToEnd()
+        let commentsPropInfos = lp.commentGroupListPropInfos.toArray()
+        PrefixType(node, startPos, parent, posInfo, propInfo, prefixTypeOpKind, commentsPropInfos)
     }
 }
 
@@ -3655,6 +3920,7 @@ class LocalParser {
     var cur: Int64 = 0
     private let end: Int64
     let offset: Offset
+    let commentGroupListPropInfos: ArrayList<PropInfo> = ArrayList<PropInfo>()
 
     LocalParser(let nodes: Array<SyntaxNodeImpl>) {
         end = nodes.size
@@ -3774,9 +4040,23 @@ class LocalParser {
     }
 
     func consumeWhitespace() {
-        while (!isEnd() && nodes[cur].kind.isWhitespace()) {
-            moveOffset(nodes[cur])
-            cur++
+        while (!isEnd()) {
+            if (nodes[cur].kind.isWhitespace()) {
+                moveOffset(nodes[cur])
+                cur++
+            } else if (nodes[cur].kind == CommentGroupList) {
+                commentGroupListPropInfos.add(PropInfo(cur, offset))
+                moveOffset(nodes[cur])
+                cur++
+            } else {
+                break
+            }
+        }
+    }
+
+    func consumeToEnd() {
+        while (!isEnd()) {
+            moveOffset(consume())
         }
     }
 }

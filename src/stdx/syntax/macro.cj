@@ -102,8 +102,8 @@ public class MacroExpandDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: MacroExpandDeclPosInfos, propInfos: MacroExpandDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: MacroExpandDeclPosInfos, propInfos: MacroExpandDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -240,8 +240,8 @@ public class MacroExpandExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: MacroExpandExprPosInfos, propInfos: MacroExpandExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: MacroExpandExprPosInfos, propInfos: MacroExpandExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -395,8 +395,8 @@ public class MacroExpandParam <: Parameter {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: MacroExpandParamPosInfos, propInfos: MacroExpandParamPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: MacroExpandParamPosInfos, propInfos: MacroExpandParamPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -510,8 +510,9 @@ public class QuoteInterpolationExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: QuoteInterpolationExprPosInfos, propInfos: QuoteInterpolationExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: QuoteInterpolationExprPosInfos, propInfos: QuoteInterpolationExprPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -543,8 +544,9 @@ class QuoteTokenPropInfos {
 public class QuoteToken <: SyntaxTreeNode {
     private let startPos: CodePosition
 
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
     }
 
@@ -632,8 +634,8 @@ public class QuoteExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: QuoteExprPosInfos,
-        propInfos: QuoteExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: QuoteExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
