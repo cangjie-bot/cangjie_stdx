@@ -48,7 +48,7 @@ unsafe func parse(input: Tokens, nativeParse: (CPointer<UInt8>) -> CPointer<Pars
         LibC.free(pTokensBytes)
         throw Exception("Unable to get parseResult.")
     }
-    
+
     /*
      * If not use isNull(), there will be segfault for some cases for cjnative backend.
      * isNull() API only exists for cjnative.

@@ -14,7 +14,7 @@ import std.collection.ArrayList
  *
  * This class serves as a base for other syntax tree node classes.
  */
-sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTreeNode> {
+abstract sealed class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTreeNode> {
     /**
      * @brief The parent node of this node.
      *
@@ -31,6 +31,8 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
 
     let nodeImpl: SyntaxNodeImpl
 
+    let commentsPropInfo: Array<PropInfo>
+
     /**
      * @brief Returns a string representation of the node.
      *
@@ -40,14 +42,16 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
         nodeImpl.preWhiteSpaceString() + nodeImpl.toString()
     }
 
-    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode) {
+    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
         this.nodePos = nodePos
         this.nodeImpl = nodeImpl
         this.parentNode = parentNode
+        this.commentsPropInfo = commentsPropInfo
     }
 
     func transTokenList(node: SyntaxNodeImpl): Tokens {
-        var content = ArrayList<Token>()
+        let content = ArrayList<Token>()
         if (let Some(nt) <- (node as NonTerminal)) {
             for (child in nt.children) {
                 if (let Some(tk) <- (child as TokenTerminal)) {
@@ -84,6 +88,44 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
         df.write(nodePos.filePath)
         df.write(nodeImpl.id)
         df.finish()
+    }
+
+    func transCommentGroupList(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): Array<CommentGroup> {
+        let lp = LocalParser(node.children)
+
+        let elements = ArrayList<CommentGroup>()
+        while (lp.look(SyntaxNodeKind.CommentGroup)) {
+            let cmtGroupNode = lp.consume().getOrThrow()
+            elements.add(
+                cast<CommentGroup>(
+                    SyntaxNodeImplTranslator.translate((cmtGroupNode as NonTerminal).getOrThrow(), startPos + lp.offset,
+                        parent)).getOrThrow())
+            lp.moveOffset(cmtGroupNode)
+        }
+        elements.toArray()
+    }
+
+    /**
+     * @brief The comments array of the SyntaxTreeNode.
+     *
+     * This array field contains the comments of the node.
+     */
+    public prop comments: Array<Comment> {
+        get() {
+            let cmts = ArrayList<Comment>()
+
+            for (propInfo in commentsPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                let stPos = CodePosition(nodePos.beginLine, nodePos.beginColumn,
+                    FileInfos(nodePos.fileName, nodePos.filePath))
+                let commentGroupList = transCommentGroupList((curNode as NonTerminal).getOrThrow(), stPos + offset, this)
+                for (commentGroup in commentGroupList) {
+                    cmts.add(all: commentGroup.elements)
+                }
+            }
+            cmts.toArray()
+        }
     }
 }
 
@@ -207,8 +249,9 @@ public class Annotation <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, identifier_: String,
-        opKind_: AtOpKind, posInfos: AnnotationPosInfos, propInfos: AnnotationPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        opKind_: AtOpKind, posInfos: AnnotationPosInfos, propInfos: AnnotationPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.identifier_ = identifier_
         this.opKind_ = opKind_
@@ -331,8 +374,9 @@ public class Argument <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, identifier_: Option<String>,
-        isInOut_: Bool, isNamed_: Bool, posInfos: ArgumentPosInfos, propInfos: ArgumentPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        isInOut_: Bool, isNamed_: Bool, posInfos: ArgumentPosInfos, propInfos: ArgumentPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.identifier_ = identifier_
         this.isInOut_ = isInOut_
         this.isNamed_ = isNamed_
@@ -437,8 +481,8 @@ public class Block <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: BlockPosInfos,
-        propInfos: BlockPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: BlockPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -528,8 +572,8 @@ public class Body <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: BodyPosInfos,
-        enumBodyPosInfos: EnumBodyPosInfos, propInfos: BodyPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        enumBodyPosInfos: EnumBodyPosInfos, propInfos: BodyPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.propInfos = propInfos
         this.posInfos = posInfos
@@ -550,6 +594,94 @@ public class Body <: SyntaxTreeNode {
                 decls.add(cast<Decl>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow())
             }
             decls.toArray()
+        }
+    }
+}
+
+/**
+ * @brief Enumeration representing different comment kinds.
+ */
+public enum CommentKind {
+    | Line
+    | Block
+    | Document
+    | ...
+}
+
+/**
+ * @brief Represents the comment of a SyntaxTreeNode
+ *
+ * This class is used to represent the comment of a SyntaxTreeNode.
+ * It records the comment content and kind.
+ */
+public class Comment <: SyntaxTreeNode {
+    private let startPos: CodePosition
+
+    private let kind_: CommentKind
+
+    private let content_: String
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: CommentKind,
+        content_: String) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, Array<PropInfo>())
+        this.startPos = startPos
+        this.kind_ = kind_
+        this.content_ = content_
+    }
+
+    /**
+     * @brief The kind of the comment.
+     *
+     * This variable represents the kind of the comment.
+     */
+    public prop kind: CommentKind {
+        get() {
+            kind_
+        }
+    }
+
+    /**
+     * @brief The content of the comment.
+     *
+     * This variable holds the content of the comment.
+     */
+    public prop content: String {
+        get() {
+            content_
+        }
+    }
+}
+
+class CommentGroupPropInfos {
+    let elementsPropInfo: Array<PropInfo>
+
+    init(elementsPropInfo: Array<PropInfo>) {
+        this.elementsPropInfo = elementsPropInfo
+    }
+}
+
+class CommentGroup <: SyntaxTreeNode {
+    private let startPos: CodePosition
+
+    private let propInfos: CommentGroupPropInfos
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, propInfos: CommentGroupPropInfos) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, Array<PropInfo>())
+        this.startPos = startPos
+        this.propInfos = propInfos
+    }
+
+    prop elements: Array<Comment> {
+        get() {
+            let eles = ArrayList<Comment>()
+            for (propInfo in propInfos.elementsPropInfo) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                let offset = propInfo.offset
+                eles.add(
+                    cast<Comment>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, parentNode))
+                        .getOrThrow())
+            }
+            eles.toArray()
         }
     }
 }
@@ -608,8 +740,8 @@ public class GenericConstraint <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: GenericConstraintPosInfos, propInfos: GenericConstraintPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: GenericConstraintPosInfos, propInfos: GenericConstraintPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.propInfos = propInfos
         this.posInfos = posInfos
@@ -700,8 +832,8 @@ public class GenericConstraints <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: GenericConstraintsPosInfos, propInfos: GenericConstraintsPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: GenericConstraintsPosInfos, propInfos: GenericConstraintsPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.propInfos = propInfos
         this.posInfos = posInfos
@@ -756,8 +888,9 @@ public enum ModifierKind {
 public class Modifier <: SyntaxTreeNode {
     private let kind_: ModifierKind
 
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: ModifierKind) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: ModifierKind,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.kind_ = kind_
     }
 
@@ -836,8 +969,8 @@ public class ParameterList <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ParameterListPosInfos,
-        propInfos: ParameterListPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ParameterListPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -901,8 +1034,8 @@ public class SourceFile <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String, path_: String,
-        propInfos: SourceFilePropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: SourceFilePropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.path_ = path_
         this.startPos = startPos
@@ -993,7 +1126,8 @@ public class SourceFile <: SyntaxTreeNode {
             if (let Some(propInfo) <- propInfos.ftrDirectivePropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
-                cast<FeaturesDirective>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
+                cast<FeaturesDirective>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this))
+                    .getOrThrow()
             } else {
                 None
             }

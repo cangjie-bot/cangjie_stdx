@@ -77,8 +77,9 @@ public class ImportAlias <: ImportContent {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ImportAliasPosInfos,
-        importContentPosInfos: ImportContentPosInfos, aliasName_: String, identifier_: String, prefixes_: Array<String>) {
-        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_)
+        importContentPosInfos: ImportContentPosInfos, aliasName_: String, identifier_: String, prefixes_: Array<String>,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_, commentsPropInfo)
         this.posInfos = posInfos
         this.aliasName_ = aliasName_
         this.identifier_ = identifier_
@@ -134,8 +135,8 @@ public class ImportAll <: ImportContent {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ImportAllPosInfos,
-        importContentPosInfos: ImportContentPosInfos, prefixes_: Array<String>) {
-        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_)
+        importContentPosInfos: ImportContentPosInfos, prefixes_: Array<String>, commentsPropInfo: Array<PropInfo>) {
+        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_, commentsPropInfo)
         this.posInfos = posInfos
     }
 }
@@ -202,8 +203,8 @@ public open class ImportContent <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ImportContentPosInfos,
-        prefixes_: Array<String>) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        prefixes_: Array<String>, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.prefixes_ = prefixes_
@@ -259,8 +260,8 @@ public class ImportList <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ImportListPosInfos,
-        propInfos: ImportListPropInfos, kind_: ImportKind) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ImportListPropInfos, kind_: ImportKind, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -377,8 +378,9 @@ public class ImportMulti <: ImportContent {
      * @param contents The list of import contents.
      */
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ImportMultiPosInfos,
-        propInfos: ImportMultiPropInfos, importContentPosInfos: ImportContentPosInfos, prefixes_: Array<String>) {
-        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_)
+        propInfos: ImportMultiPropInfos, importContentPosInfos: ImportContentPosInfos, prefixes_: Array<String>,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_, commentsPropInfo)
         this.posInfos = posInfos
         this.propInfos = propInfos
     }
@@ -437,8 +439,9 @@ public class ImportSingle <: ImportContent {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ImportSinglePosInfos,
-        importContentPosInfos: ImportContentPosInfos, identifier_: String, prefixes_: Array<String>) {
-        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_)
+        importContentPosInfos: ImportContentPosInfos, identifier_: String, prefixes_: Array<String>,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_, commentsPropInfo)
         this.posInfos = posInfos
         this.identifier_ = identifier_
     }
@@ -662,8 +665,9 @@ public class PackageHeader <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, isMacroPkg_: Bool,
-        packageNameIdentifiers_: Array<String>, posInfos: PackageHeaderPosInfos, propInfos: PackageHeaderPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        packageNameIdentifiers_: Array<String>, posInfos: PackageHeaderPosInfos, propInfos: PackageHeaderPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.isMacroPkg_ = isMacroPkg_
         this.packageNameIdentifiers_ = packageNameIdentifiers_
         this.startPos = startPos
@@ -836,8 +840,7 @@ public class FeaturesDirective <: SyntaxTreeNode {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 ret.add(
                     cast<FeatureId>(SyntaxNodeImplTranslator.translate(curNode, startPos + propInfo.offset, this))
-                        .getOrThrow()
-                )
+                        .getOrThrow())
             }
             return ret.toArray()
         }

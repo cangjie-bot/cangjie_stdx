@@ -10,7 +10,7 @@ package stdx.syntax
 
 // Diagnostic
 public enum DiagnosticInfo {
-    | Warning(String, String) 
+    | Warning(String, String)
     | Error(String, String)
     | ...
 }

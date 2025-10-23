@@ -110,8 +110,8 @@ public class CompositeType <: TypeAnnotation {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: CompositeTypePosInfos,
-        propInfos: CompositeTypePropInfos, name_: String, prefixes_: Array<String>) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: CompositeTypePropInfos, name_: String, prefixes_: Array<String>, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -276,8 +276,8 @@ public class FuncType <: TypeAnnotation {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: FuncTypePosInfos,
-        propInfos: FuncTypePropInfos, labels_: Array<String>) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: FuncTypePropInfos, labels_: Array<String>, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -380,8 +380,8 @@ public class PrefixType <: TypeAnnotation {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: PrefixTypePosInfos,
-        propInfos: PrefixTypePropInfos, prefixTypeOpKind_: PrefixTypeOpKind) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: PrefixTypePropInfos, prefixTypeOpKind_: PrefixTypeOpKind, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -444,8 +444,9 @@ public class AtomicType <: TypeAnnotation {
     private let kind_: AtomicTypeKind
     private let startPos: CodePosition
 
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: AtomicTypeKind) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: AtomicTypeKind,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.kind_ = kind_
     }
@@ -510,8 +511,8 @@ public class ParenType <: TypeAnnotation {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ParenTypePosInfos,
-        propInfos: ParenTypePropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ParenTypePropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -622,8 +623,8 @@ public class TupleType <: TypeAnnotation {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: TupleTypePosInfos,
-        propInfos: TupleTypePropInfos, labels_: Array<String>) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: TupleTypePropInfos, labels_: Array<String>, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -689,9 +690,11 @@ class VArrayTypePosInfos {
 
 class VArrayTypePropInfos {
     let elementPropInfo: PropInfo
+    let sizePropInfo: PropInfo
 
-    init(elementPropInfo: PropInfo) {
+    init(elementPropInfo: PropInfo, sizePropInfo: PropInfo) {
         this.elementPropInfo = elementPropInfo
+        this.sizePropInfo = sizePropInfo
     }
 }
 
@@ -700,7 +703,6 @@ class VArrayTypePropInfos {
  */
 public class VArrayType <: TypeAnnotation {
     private let startPos: CodePosition
-    private let size_: Int64
 
     private let posInfos: VArrayTypePosInfos
     private let propInfos: VArrayTypePropInfos
@@ -753,12 +755,11 @@ public class VArrayType <: TypeAnnotation {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: VArrayTypePosInfos,
-        propInfos: VArrayTypePropInfos, size_: Int64) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: VArrayTypePropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
-        this.size_ = size_
     }
 
     /**
@@ -777,7 +778,11 @@ public class VArrayType <: TypeAnnotation {
      */
     public prop size: Int64 {
         get() {
-            size_
+            let propInfo = propInfos.sizePropInfo
+            let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+            let literal = cast<LitConstExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos + propInfo.offset,
+                this)).getOrThrow()
+            Int64.parse(literal.rawValue)
         }
     }
 }

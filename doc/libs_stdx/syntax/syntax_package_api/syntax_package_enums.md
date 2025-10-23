@@ -581,6 +581,43 @@ Sub
 
 功能：表示减法 `-` 类型的二元操作符。
 
+## enum CommentKind
+
+```cangjie
+public enum CommentKind {
+    | Block
+    | Document
+    | Line
+    | ...
+}
+```
+
+功能：表示语法树节点注释信息的类型。
+
+### Block
+
+```cangjie
+Block
+```
+
+功能：表示注释信息 `\* *\` 的块注释类型。
+
+### Document
+
+```cangjie
+Document
+```
+
+功能：表示注释信息 `\** *\` 的文档注释类型。
+
+### Line
+
+```cangjie
+Line
+```
+
+功能：表示注释信息 `\\` 的行注释类型。
+
 ## enum DiagnosticInfo
 
 ```cangjie

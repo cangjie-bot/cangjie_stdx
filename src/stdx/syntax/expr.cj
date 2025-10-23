@@ -10,9 +10,10 @@ package stdx.syntax
 
 import std.collection.ArrayList
 
-sealed abstract class Expr <: SyntaxTreeNode {
-    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode) {
-        super(nodePos, nodeImpl, parentNode)
+abstract sealed class Expr <: SyntaxTreeNode {
+    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
 }
 
@@ -83,8 +84,8 @@ public class ArrayLiteral <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ArrayLiteralPosInfos,
-        propInfos: ArrayLiteralPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ArrayLiteralPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -158,8 +159,8 @@ public class AsExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfo: AsExprPosInfos,
-        propInfo: AsExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfo: AsExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
@@ -278,8 +279,8 @@ public class AssignExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, assignOpKind_: AssignOpKind,
-        posInfos: AssignExprPosInfos, propInfos: AssignExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: AssignExprPosInfos, propInfos: AssignExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.assignOpKind_ = assignOpKind_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -445,8 +446,8 @@ public class BinaryExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, opKInd_: BinaryOpKind,
-        posInfos: BinaryExprPosInfos, propInfos: BinaryExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: BinaryExprPosInfos, propInfos: BinaryExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.opKInd_ = opKInd_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -480,8 +481,9 @@ public class BinaryExpr <: Expr {
  * @brief Represents a break expression used to exit loops.
  */
 public class BreakExpr <: Expr {
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
     }
 }
 
@@ -556,8 +558,8 @@ public class CallExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: CallExprPosInfos,
-        propInfos: CallExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: CallExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -640,8 +642,8 @@ public class CatchPattern <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: CatchPatternPosInfos,
-        propInfos: CatchPatternPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: CatchPatternPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -720,8 +722,9 @@ public class ConjunctionCondition <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: ConjunctionConditionPosInfos, propInfos: ConjunctionConditionPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: ConjunctionConditionPosInfos, propInfos: ConjunctionConditionPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -762,8 +765,9 @@ public class ConjunctionCondition <: SyntaxTreeNode {
  * @brief Represents a continue expression used to skip to the next iteration of a loop.
  */
 public class ContinueExpr <: Expr {
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
     }
 }
 
@@ -811,8 +815,9 @@ public class DisjunctionCondition <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: DisjunctionConditionPosInfos, propInfos: DisjunctionConditionPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: DisjunctionConditionPosInfos, propInfos: DisjunctionConditionPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -912,8 +917,8 @@ public class DoWhileExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: DoWhileExprPosInfos,
-        propInfos: DoWhileExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: DoWhileExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -1029,8 +1034,8 @@ public class ForInExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ForInExprPosInfos,
-        propInfos: ForInExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ForInExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -1166,8 +1171,8 @@ public class IfExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: IfExprPosInfos,
-        propInfos: IfExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: IfExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -1282,8 +1287,8 @@ public class IncOrDecExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: IncOrDecOpKind,
-        posInfos: IncOrDecExprPosInfos, propInfos: IncOrDecExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: IncOrDecExprPosInfos, propInfos: IncOrDecExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.kind_ = kind_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -1360,8 +1365,8 @@ public class IsExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfo: IsExprPosInfos,
-        propInfo: IsExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfo: IsExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
@@ -1464,8 +1469,8 @@ public class Lambda <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: LambdaPosInfos,
-        propInfos: LambdaPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: LambdaPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -1575,8 +1580,8 @@ public class LetPattern <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: LetPatternPosInfo,
-        propInfos: LetPatternPropInfo) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: LetPatternPropInfo, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -1639,8 +1644,8 @@ public open class LitConstExpr <: Expr {
     private let rawValue_: String
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: LitConstKind,
-        rawValue_: String) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        rawValue_: String, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.kind_ = kind_
         this.rawValue_ = rawValue_
@@ -1683,8 +1688,8 @@ public class LitConstRuneExpr <: LitConstExpr {
     private let isSingleQuote_: Bool
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, rawValue_: String,
-        isSingleQuote_: Bool) {
-        super(nodeImpl, startPos, parentNode, LitConstKind.RuneLiteral, rawValue_)
+        isSingleQuote_: Bool, commentsPropInfo: Array<PropInfo>) {
+        super(nodeImpl, startPos, parentNode, LitConstKind.RuneLiteral, rawValue_, commentsPropInfo)
         this.startPos = startPos
         this.isSingleQuote_ = isSingleQuote_
     }
@@ -1756,8 +1761,9 @@ public class LitConstStrExpr <: LitConstExpr {
     private let propInfos: LitConstStrExprPropInfos
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, delimiterNum_: Int64,
-        isSingleQuote_: Bool, rawValue_: String, strKind_: LitConstStrKind, propInfos: LitConstStrExprPropInfos) {
-        super(nodeImpl, startPos, parentNode, LitConstKind.StringLiteral, rawValue_)
+        isSingleQuote_: Bool, rawValue_: String, strKind_: LitConstStrKind, propInfos: LitConstStrExprPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodeImpl, startPos, parentNode, LitConstKind.StringLiteral, rawValue_, commentsPropInfo)
         this.startPos = startPos
         this.delimiterNum_ = delimiterNum_
         this.isSingleQuote_ = isSingleQuote_
@@ -1938,8 +1944,8 @@ public class MatchCase <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: MatchCasePosInfos,
-        propInfos: MatchCasePropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: MatchCasePropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2109,8 +2115,8 @@ public class MatchExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: MatchExprPosInfos,
-        propInfos: MatchExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: MatchExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2188,8 +2194,8 @@ public class MemberAccess <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: MemberAccessPosInfos,
-        propInfos: MemberAccessPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: MemberAccessPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2256,8 +2262,8 @@ public class OptionalExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: OptionalExprPosInfos,
-        propInfos: OptionalExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: OptionalExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2328,8 +2334,8 @@ public class ParenCondition <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ParenConditionPosInfo,
-        propInfos: ParenConditionPropInfo) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ParenConditionPropInfo, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2406,8 +2412,8 @@ public class ParenExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfo: ParenExprPosInfos,
-        propInfo: ParenExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfo: ParenExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
@@ -2509,8 +2515,8 @@ public class RangeExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: RangeKind,
-        posInfo: RangeExprPosInfos, propInfo: RangeExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfo: RangeExprPosInfos, propInfo: RangeExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.kind_ = kind_
         this.startPos = startPos
         this.posInfos = posInfo
@@ -2622,8 +2628,8 @@ public class ReturnExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ReturnExprPosInfos,
-        propInfos: ReturnExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ReturnExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2710,8 +2716,8 @@ public class SpawnExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: SpawnExprPosInfos,
-        propInfos: SpawnExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: SpawnExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2780,8 +2786,9 @@ public class StrInterpolationContent <: SyntaxTreeNode {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: StrInterpolationContentPosInfos, propInfos: StrInterpolationContentPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: StrInterpolationContentPosInfos, propInfos: StrInterpolationContentPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2869,8 +2876,8 @@ public class SubscriptExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: SubscriptExprPosInfos,
-        propInfos: SubscriptExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: SubscriptExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -3005,8 +3012,8 @@ public class SymbolRef <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfos: SymbolRefPosInfos, propInfos: SymbolRefPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: SymbolRefPosInfos, propInfos: SymbolRefPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -3123,8 +3130,8 @@ public class SynchronizedExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: SynchronizedExprPosInfos, propInfos: SynchronizedExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: SynchronizedExprPosInfos, propInfos: SynchronizedExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -3191,8 +3198,8 @@ public class ThrowExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ThrowExprPosInfos,
-        propInfos: ThrowExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ThrowExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -3287,8 +3294,9 @@ public class TrailingClosureExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
-        posInfos: TrailingClosureExprPosInfos, propInfos: TrailingClosureExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: TrailingClosureExprPosInfos, propInfos: TrailingClosureExprPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -3505,8 +3513,8 @@ public class TryCatch <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: TryExprPosInfos,
-        propInfos: TryExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: TryExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -3665,8 +3673,8 @@ public class TupleLiteral <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: TupleLiteralPosInfos,
-        propInfos: TupleLiteralPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: TupleLiteralPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -3754,8 +3762,8 @@ public class TypeConvExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfo: TypeConvExprPosInfos,
-        propInfo: TypeConvExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfo: TypeConvExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
@@ -3847,8 +3855,8 @@ public class UnaryExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, opKind_: UnaryOpKind,
-        posInfos: UnaryExprPosInfos, propInfos: UnaryExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: UnaryExprPosInfos, propInfos: UnaryExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.opKind_ = opKind_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -3923,8 +3931,8 @@ public class UnsafeExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: UnsafeExprPosInfos,
-        propInfos: UnsafeExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: UnsafeExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -3997,8 +4005,8 @@ public class VArrayExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: VArrayExprPosInfos,
-        propInfos: VArrayExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: VArrayExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -4085,8 +4093,8 @@ public class WhileExpr <: Expr {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: WhileExprPosInfos,
-        propInfos: WhileExprPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: WhileExprPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
