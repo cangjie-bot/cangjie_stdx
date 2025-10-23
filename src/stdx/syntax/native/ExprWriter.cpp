@@ -556,7 +556,8 @@ flatbuffers::Offset<NodeFormat::NodeBase> NodeWriter::SerializeNodeBase(AstNode 
         path = sm->GetSource(node->begin.fileID).path;
     }
     auto filePath = builder.CreateString(path);
-    return NodeFormat::CreateNodeBase(builder, &beginPos, &endPos, astKind, filePath);
+    auto comments = SerializeCommentGroups(node->comments);
+    return NodeFormat::CreateNodeBase(builder, &beginPos, &endPos, astKind, filePath, comments);
 }
 
 flatbuffers::Offset<NodeFormat::Expr> NodeWriter::SerializeJumpExpr(AstExpr expr)

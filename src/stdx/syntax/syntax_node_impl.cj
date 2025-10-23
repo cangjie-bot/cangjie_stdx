@@ -237,21 +237,4 @@ class SyntaxNodeBuilder {
             buildBasicTerminal(SyntaxNodeKind.TripleDoubleQuoteToken)
         }
     }
-
-    func buildRuneLiteral(value: ValuedTerminal, isSingle: Bool, preChildren!: Array<SyntaxNodeImpl> = []): NonTerminal {
-        let ret = ArrayList<SyntaxNodeImpl>(preChildren)
-        let quoteToken = buildQuote(isSingle)
-        let prefix = buildBasicTerminal(SyntaxNodeKind.RunePrefixToken)
-        ret.add(all: [prefix, quoteToken, value, quoteToken])
-        buildNonTerminal(SyntaxNodeKind.RuneLiteral, ret.toArray())
-    }
-
-    func buildMultiLineRawStringLiteral(value: ValuedTerminal, delimiterNum: Int64, isSingle: Bool,
-        preChildren!: Array<SyntaxNodeImpl> = []): NonTerminal {
-        let ret = ArrayList<SyntaxNodeImpl>(preChildren)
-        let quoteToken = buildQuote(isSingle)
-        let hashToken = buildHash(delimiterNum)
-        ret.add(all: [hashToken, quoteToken, value, quoteToken, hashToken])
-        buildNonTerminal(SyntaxNodeKind.MultiLineRawStringLiteral, ret.toArray())
-    }
 }
