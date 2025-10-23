@@ -61,6 +61,9 @@ using AstFile = Ptr<const Cangjie::AST::File>;
 using AstFeaturesDirective = Ptr<const Cangjie::AST::FeaturesDirective>;
 using AstPackageSpec = Ptr<const Cangjie::AST::PackageSpec>;
 using AstImportSpec = Ptr<const Cangjie::AST::ImportSpec>;
+using AstCommentGroups = const Cangjie::AST::CommentGroups;
+using AstCommentGroup = const Cangjie::AST::CommentGroup;
+using AstComment = const Cangjie::AST::Comment;
 
 using NodeFormatDecl = flatbuffers::Offset<NodeFormat::Decl>;
 using NodeFormatExpr = flatbuffers::Offset<NodeFormat::Expr>;
@@ -103,6 +106,10 @@ private:
         const AST::MacroInvocation& macroInvocation);
     std::vector<flatbuffers::Offset<NodeFormat::Token>> TokensVectorCreateHelper(
         std::vector<Cangjie::Token> tokenVector);
+    std::vector<flatbuffers::Offset<NodeFormat::CommentGroup>> CommentGroupVectorCreateHelper(
+        std::vector<Cangjie::AST::CommentGroup> commentGroupVector);
+    std::vector<flatbuffers::Offset<NodeFormat::Comment>> CommentVectorCreateHelper(
+        std::vector<Cangjie::AST::Comment> commentVector);
     flatbuffers::Offset<NodeFormat::NodeBase> SerializeNodeBase(AstNode node, SourceManager* sm = nullptr);
 
     flatbuffers::Offset<NodeFormat::Pattern> SerializePattern(AstPattern pattern);
@@ -228,6 +235,9 @@ private:
     flatbuffers::Offset<NodeFormat::PackageSpec> SerializePackageSpec(AstPackageSpec packageSpec);
     flatbuffers::Offset<NodeFormat::FeaturesDirective> SerializeFeaturesDirective(AstFeaturesDirective featureDirective);
     flatbuffers::Offset<NodeFormat::FeatureId> SerializeFeatureId(const AST::FeatureId& featureId);
+    flatbuffers::Offset<NodeFormat::CommentGroups> SerializeCommentGroups(AstCommentGroups comments);
+    flatbuffers::Offset<NodeFormat::CommentGroup> SerializeCommentGroup(AstCommentGroup commentGroup);
+    flatbuffers::Offset<NodeFormat::Comment> SerializeComment(AstComment comment);
 };
 
 template <typename K, typename U, typename V>

@@ -11,8 +11,9 @@ package stdx.syntax
 import std.collection.ArrayList
 
 sealed abstract class Pattern <: SyntaxTreeNode {
-    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode) {
-        super(nodePos, nodeImpl, parentNode)
+    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
 }
 
@@ -32,8 +33,9 @@ public class ConstPattern <: Pattern {
 
     private let propInfos: ConstPatternPropInfos
 
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, propInfos: ConstPatternPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        propInfos: ConstPatternPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.propInfos = propInfos
     }
@@ -135,8 +137,8 @@ public class EnumPattern <: Pattern {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: EnumPatternPosInfos,
-        propInfos: EnumPatternPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: EnumPatternPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -253,8 +255,8 @@ public class TuplePattern <: Pattern {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: TuplePatternPosInfos,
-        propInfos: TuplePatternPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: TuplePatternPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -313,8 +315,8 @@ public class TypePattern <: Pattern {
     private let posInfos: TypePatternPosInfos
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: TypePatternPosInfos,
-        propInfos: TypePatternPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: TypePatternPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -348,8 +350,9 @@ public class TypePattern <: Pattern {
 public class VarOrEnumPattern <: Pattern {
     private let identifier_: String
 
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, identifier_: String) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, identifier_: String,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.identifier_ = identifier_
     }
 
@@ -369,8 +372,9 @@ public class VarOrEnumPattern <: Pattern {
 public class VarPattern <: Pattern {
     private let name_: String
 
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
     }
 
@@ -388,7 +392,8 @@ public class VarPattern <: Pattern {
  * @brief WildcardPattern class represents a wildcard pattern.
  */
 public class WildcardPattern <: Pattern {
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
     }
 }
