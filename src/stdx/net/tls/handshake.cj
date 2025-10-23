@@ -246,12 +246,14 @@ extend TlsContext {
         exception: CPointer<ExceptionData>
     ): Unit {
         match (verifyMode) {
-            case Default => ()
+            case Default => configureCustomCA(context, X509Certificate.systemRootCerts(), exception)
             case TrustAll => setContextTrustAll(context)
             case CustomCA(items) =>
                 let ca = items.map({c => c as X509Certificate ??
                     throw TlsException("Only certificates of type `X509Certificate` are allowed.")})
+                
                 configureCustomCA(context, ca, exception)
+                configureCustomCA(context, X509Certificate.systemRootCerts(), exception)
             case _ => TlsException("Unsupported verify mode.")
         }
     }
