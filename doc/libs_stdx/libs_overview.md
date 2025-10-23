@@ -22,7 +22,7 @@ stdx 含若干包，提供了丰富的扩展功能：
 | [crypto.crypto](./crypto/crypto/crypto_package_overview.md)                    | crypto 包提供安全加密能力。                                                                                                                                                           |
 | [crypto.digest](./crypto/digest/crypto_digest_package_overview.md)             | digest 包提供常用的消息摘要算法。                                                                                                                                                     |
 | [crypto.keys](./crypto/keys/keys_package_overview.md)                          | keys 包提供非对称加密和签名算法。                                                                                                                                                     |
-| [crypto.kit](./crypto/kit/crypto_kit_package_overview.md)                      | crypto.kit 包提供了一套 [CryptoKit](../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-cryptokit) 的默认实现，提供随机数生成器及解码 DER、PEM 的能力。 |
+| [crypto.kit](./crypto/kit/crypto_kit_package_overview.md)                      | crypto.kit 包提供了一套 [CryptoKit](./crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-cryptokit) 的默认实现，提供随机数生成器及解码 DER、PEM 的能力。 |
 | [crypto.x509](./crypto/x509/x509_package_overview.md)                          | x509 包提供处理数字证书功能。                                                                                                                                                         |
 | [effect](./effect/effect_package_overview.md)                                  | `stdx.effect` 包是 Cangjie 中用于使用 Effect Handler 的用户级 API。这是一项实验性功能，需要配合支持该机制的 Cangjie 编译器使用。                                                      |
 | [encoding.base64](./encoding/base64/base64_package_overview.md)                | base 包提供字符串的 Base64 编码及解码。                                                                                                                                               |
@@ -155,5 +155,5 @@ cjpm.toml 增加如下配置：
     path-option = ["${CANGJIE_STDX_PATH}"]
 ```
 
-上面配置中 x86_64-unknown-linux-gnu 这是表示的系统架构信息，需要通过 cjc -v 获取。并替换成自己获取的系统信息。
+上面配置中 x86_64-unknown-linux-gnu 表示的是系统架构信息，需要通过 cjc -v 获取，并替换成自己获取的系统架构信息。
 CANGJIE_STDX_PATH 是设置的 stdx 路径。
