@@ -12,6 +12,7 @@
  * This file implements the NodeWriter.
  */
 #include "TokenWriter.h"
+#include <algorithm>
 
 using namespace Cangjie;
 
@@ -57,52 +58,5 @@ std::string GetStringFromBytes(const uint8_t* pBuffer, uint32_t strLen)
     return value;
 }
 
-std::vector<Token> GetTokensFromBytes(const uint8_t* pBuffer)
-{
-    if (pBuffer == nullptr) {
-        return {};
-    }
-    std::vector<Token> tokens{};
-    uint32_t numberOfTokens = 0;
-    (void)std::copy(pBuffer, pBuffer + sizeof(uint32_t), reinterpret_cast<uint8_t*>(&numberOfTokens));
-    pBuffer += sizeof(uint32_t);
-    for (uint32_t i = 0; i < numberOfTokens; ++i) {
-        uint16_t kind = 0;
-        (void)std::copy(pBuffer, pBuffer + sizeof(uint16_t), reinterpret_cast<uint8_t*>(&kind));
-        pBuffer += sizeof(uint16_t);
-        uint32_t strLen = 0;
-        (void)std::copy(pBuffer, pBuffer + sizeof(uint32_t), reinterpret_cast<uint8_t*>(&strLen));
-        pBuffer += sizeof(uint32_t);
-        std::string value = GetStringFromBytes(pBuffer, strLen);
-        pBuffer += strLen;
-        uint32_t fileID = 0;
-        constexpr auto i4 = sizeof(int32_t);
-        (void)std::copy(pBuffer, pBuffer + i4, reinterpret_cast<uint8_t*>(&fileID));
-        pBuffer += i4;
-        int32_t line = 0;
-        int32_t column = 0;
-        (void)std::copy(pBuffer, pBuffer + i4, reinterpret_cast<uint8_t*>(&line));
-        pBuffer += i4;
-        (void)std::copy(pBuffer, pBuffer + i4, reinterpret_cast<uint8_t*>(&column));
-        pBuffer += i4;
-        Position begin{fileID, line, column};
-
-        uint16_t isSingle = 0;
-        (void)std::copy(pBuffer, pBuffer + sizeof(uint16_t), reinterpret_cast<uint8_t*>(&isSingle));
-        pBuffer += sizeof(uint16_t);
-        unsigned delimiterNum{1};
-        if (static_cast<TokenKind>(kind) == TokenKind::MULTILINE_RAW_STRING) {
-            (void)std::copy(pBuffer, pBuffer + sizeof(uint16_t), reinterpret_cast<uint8_t*>(&delimiterNum));
-            pBuffer += sizeof(uint16_t);
-        }
-        Position end{begin == INVALID_POSITION ? INVALID_POSITION
-            : begin + GetTokenLength(value.size(), static_cast<TokenKind>(kind), delimiterNum)};
-        Token token{static_cast<TokenKind>(kind), std::move(value), begin, end};
-        token.delimiterNum = delimiterNum;
-        token.isSingleQuote = (isSingle == 1) ? true : false;
-        (void)tokens.emplace_back(std::move(token));
-    }
-    return tokens;
-}
 } // namespace
 
