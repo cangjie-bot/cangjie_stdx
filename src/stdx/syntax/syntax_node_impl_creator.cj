@@ -486,9 +486,6 @@ class SyntaxNodeImplCreator {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CatchToken))
-        parts.add(builder.buildSpace(1))
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
         parts.add(pattern.nodeImpl)
         if (!exceptionType.isEmpty()) {
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.ColonToken))
@@ -502,8 +499,7 @@ class SyntaxNodeImplCreator {
                 }
             }
         }
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.MatchCase, parts.toArray())
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.CatchPattern, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
     }
 
@@ -620,9 +616,7 @@ class SyntaxNodeImplCreator {
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DollarToken))
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
         parts.add(interpolationBlock.nodeImpl)
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.InterpolationExpr, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
     }

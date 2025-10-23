@@ -701,8 +701,8 @@ public class CatchPattern <: SyntaxTreeNode {
     /**
      * @brief Initialize node with exception types and pattern.
      */
-    public init(patterns: Pattern, exceptionType: Array<TypeAnnotation>) {
-        super(SyntaxNodeImplCreator.createCatchPatternImpl(patterns, exceptionType))
+    public init(pattern: Pattern, exceptionType: Array<TypeAnnotation>) {
+        super(SyntaxNodeImplCreator.createCatchPatternImpl(pattern, exceptionType))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<CatchPattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
