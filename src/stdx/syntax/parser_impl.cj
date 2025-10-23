@@ -16,6 +16,19 @@ foreign func CJ_ParseFile(path: CString): CPointer<ParseRes>
 
 foreign func CJ_ParseText(text: CString): CPointer<ParseRes>
 
+foreign func CJ_ParseTokens(tokens: CPointer<UInt8>, tokenCounter: CPointer<Int64>): CPointer<ParseRes>
+
+func findError(diags: Array<Diagnostic>): String {
+    var res = ""
+    for (diag in diags) {
+        match (diag.diagInfo) {
+            case Error(err, hint) => res += err + "\n" + hint
+            case _ => ()
+        }
+    }
+    return res
+}
+
 class ParserImpl {
     ParserImpl(private let filePath: String) {}
 
@@ -28,17 +41,6 @@ class ParserImpl {
             None
         }
         (file, msg)
-    }
-
-    func findError(diags: Array<Diagnostic>): String {
-        var res = ""
-        for (diag in diags) {
-            match (diag.diagInfo) {
-                case Error(err, hint) => res += err + "\n" + hint
-                case _ => ()
-            }
-        }
-        return res
     }
 
     func parseText(text: String): (?SyntaxNodeImpl, Array<Diagnostic>) {
@@ -74,6 +76,17 @@ class ParserImpl {
                 }
             }
             FlatbufferNodeTranslator.translate(root, preChildren: preChildren.toArray())
+        } else {
+            None
+        }
+        (res, msg)
+    }
+
+    func parseTokens(tokens: Tokens): (?SyntaxNodeImpl, Array<Diagnostic>) {
+        let (node, msg) = NodeLoader.loadTokens(tokens)
+        // build impl tree by NodeFormat_Node
+        let res: ?SyntaxNodeImpl = if (let Some(root) <- node) {
+            FlatbufferNodeTranslator.translate(root)
         } else {
             None
         }
@@ -125,13 +138,23 @@ private func transDiags(diags: NodeFormat_Diags, filePath: String): Array<Diagno
 
 private class NodeLoader {
     private let text: String
+    private let tokens: Tokens
     // read 4 bytes for buffer size
     static const HEADER_SIZE: Int64 = 4
     private NodeLoader(private let filePath: String, private var diagInfo!: Array<Diagnostic> = []) {
         this.text = ""
+        this.tokens = Tokens()
     }
     private init(text!: String) {
         this.text = text
+        this.tokens = Tokens()
+        this.filePath = ""
+        this.diagInfo = []
+    }
+
+    private init(tokens!: Tokens) {
+        this.text = ""
+        this.tokens = tokens
         this.filePath = ""
         this.diagInfo = []
     }
@@ -144,6 +167,11 @@ private class NodeLoader {
     static func loadText(text: String): (?NodeFormat_Node, Array<Diagnostic>) {
         let loader = NodeLoader(text: text)
         (unsafe { loader.loadNodeFromText() }, loader.diagInfo)
+    }
+
+    static func loadTokens(tokens: Tokens): (?NodeFormat_Node, Array<Diagnostic>) {
+        let loader = NodeLoader(tokens: tokens)
+        (unsafe { loader.loadNodeFromTokens() }, loader.diagInfo)
     }
 
     private func tryFreeCString(data: ?CString) {
@@ -249,6 +277,53 @@ private class NodeLoader {
             tryFreeCPointer<UInt8>(nodePtr)
             tryFreeCPointer<UInt8>(diagPtr)
             tryFreeCPointer<ParseRes>(resPtr)
+        }
+    }
+
+    private unsafe func loadNodeFromTokens(): ?NodeFormat_Node {
+        var tokensPtr = CPointer<UInt8>()
+        var nodePtr = CPointer<UInt8>()
+        var resPtr = CPointer<ParseRes>()
+        var diagPtr = CPointer<UInt8>()
+        let sizeOfInt64 = 8
+        var tokensCounterPtr: CPointer<Int64> = LibC.malloc<Int64>(count: sizeOfInt64)
+        try {
+            tokensPtr = unsafePointerCastFromUint8Array(tokens.toBytes())
+            resPtr = CJ_ParseTokens(tokensPtr, tokensCounterPtr)
+            if (resPtr.isNull()) {
+                throw Exception("the parsing result is empty.")
+                return None
+            }
+            let res = resPtr.read()
+            if (!res.errMsg.isNull()) {
+                let diagNode = res.errMsg
+                diagPtr = diagNode // backup for free
+                getDiags(diagNode)
+            }
+            if (res.node.isNull()) {
+                if (res.errMsg.isNull()) {
+                    throw Exception("unsupported node type in parseTokens function.")
+                }
+                return None
+            }
+            let errMsg = findError(diagInfo)
+            if (errMsg != "") {
+                throw Exception("unsupported node type or parse error in parseTokens function:\n${errMsg}")
+            }
+            let tokenCnt: Int64 = tokensCounterPtr.read()
+            if (tokenCnt == 1) {
+                throw Exception("parseTokens function not support parse more than one node.")
+            }
+            let pnode = res.node
+            nodePtr = pnode // backup for free
+            return getNode(pnode)
+        } finally {
+            // free memory allocated in C.
+            tryFreeCPointer<UInt8>(tokensPtr)
+            tryFreeCPointer<UInt8>(nodePtr)
+            tryFreeCPointer<UInt8>(diagPtr)
+            tryFreeCPointer<ParseRes>(resPtr)
+            tryFreeCPointer<Int64>(tokensCounterPtr)
         }
     }
 }
