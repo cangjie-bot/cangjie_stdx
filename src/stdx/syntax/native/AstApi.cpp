@@ -96,6 +96,11 @@ ParseRes* CJ_ParseText(const char* text)
     ParserSyntax parser(rawString, diag, sm, {0, 1, 1}, true);
 
     auto textParsed = parser.ParseExprOrDecl(ScopeKind::UNKNOWN_SCOPE);
+
+    // std::vector<OwnedPtr<Node>>() vecNodes;
+    // vecNodes.push_back(textParsed);
+    // parser.AttachCommentToNodes(vecNodes);
+
     ParseRes* res = createParseResult();
     if (textParsed == nullptr) {
         return res;
