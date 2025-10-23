@@ -35,8 +35,9 @@ sealed abstract class Decl <: SyntaxTreeNode {
         typeArguments
     }
 
-    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode) {
-        super(nodePos, nodeImpl, parentNode)
+    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
 
     /**
@@ -195,8 +196,8 @@ public class ClassDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfos: ClassDeclPosInfos, propInfos: ClassDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: ClassDeclPosInfos, propInfos: ClassDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -370,8 +371,8 @@ public class EnumConstructor <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfos: EnumConstructorPosInfos, propInfos: EnumConstructorPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: EnumConstructorPosInfos, propInfos: EnumConstructorPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -576,8 +577,8 @@ public class EnumDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, isNonExhaustive_: Bool,
-        name_: String, posInfos: EnumDeclPosInfos, propInfos: EnumDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        name_: String, posInfos: EnumDeclPosInfos, propInfos: EnumDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.isNonExhaustive_ = isNonExhaustive_
         this.name_ = name_
         this.startPos = startPos
@@ -805,8 +806,8 @@ public class ExtendDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: ExtendDeclPosInfos,
-        propInfos: ExtendDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: ExtendDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -1073,8 +1074,8 @@ public class FuncDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String, kind_: FuncKind,
-        posInfos: FuncDeclPosInfos, propInfos: FuncDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: FuncDeclPosInfos, propInfos: FuncDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.kind_ = kind_
         this.startPos = startPos
@@ -1196,8 +1197,9 @@ public class FuncDecl <: Decl {
 }
 
 sealed abstract class Parameter <: Decl {
-    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode) {
-        super(nodePos, nodeImpl, parentNode)
+    init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode,
+        commentsPropInfo: Array<PropInfo>) {
+        super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
 }
 
@@ -1252,8 +1254,8 @@ public open class LambdaParam <: Parameter {
     private let posInfos: LambdaParamPosInfos
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfo: LambdaParamPosInfos, propInfo: LambdaParamPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfo: LambdaParamPosInfos, propInfo: LambdaParamPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.name_ = name_
         this.posInfos = posInfo
@@ -1395,8 +1397,8 @@ public open class FuncParam <: Parameter {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: Option<VarKind>,
-        name_: String, posInfo: FuncParamPosInfos, propInfo: FuncParamPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        name_: String, posInfo: FuncParamPosInfos, propInfo: FuncParamPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.kind_ = kind_
         this.name_ = name_
@@ -1469,8 +1471,12 @@ public open class FuncParam <: Parameter {
  * This class is used to represent a generic parameter in the syntax tree.
  */
 public class GenericParam <: Decl {
-    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+    // private let name_: String
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, 
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
+        // this.name_ = name
     }
 
     /**
@@ -1620,8 +1626,8 @@ public class InterfaceDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfos: InterfaceDeclPosInfos, propInfos: InterfaceDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: InterfaceDeclPosInfos, propInfos: InterfaceDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -1777,8 +1783,8 @@ public class MacroDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfos: MacroDeclPosInfos, propInfos: MacroDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: MacroDeclPosInfos, propInfos: MacroDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -1901,8 +1907,8 @@ public class MainDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfos: MainDeclPosInfos,
-        propInfos: MainDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfos: MainDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
@@ -2054,8 +2060,8 @@ public class PropDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfos: PropDeclPosInfos, propInfos: PropDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: PropDeclPosInfos, propInfos: PropDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -2237,8 +2243,9 @@ public class PropGetterOrSetter <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, identifier_: Option<String>,
-        isGetter_: Bool, posInfos: PropGetterOrSetterPosInfos, propInfos: PropGetterOrSetterPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        isGetter_: Bool, posInfos: PropGetterOrSetterPosInfos, propInfos: PropGetterOrSetterPropInfos,
+        commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.identifier_ = identifier_
         this.isGetter_ = isGetter_
         this.startPos = startPos
@@ -2359,8 +2366,8 @@ public class StaticInit <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, posInfo: StaticInitPosInfos,
-        propInfo: StaticInitPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        propInfo: StaticInitPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
@@ -2517,8 +2524,8 @@ public class StructDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name_: String,
-        posInfos: StructDeclPosInfos, propInfos: StructDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: StructDeclPosInfos, propInfos: StructDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.name_ = name_
         this.startPos = startPos
         this.posInfos = posInfos
@@ -2675,8 +2682,8 @@ public class TypeAlias <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, aliasName_: String,
-        posInfo: TypeAliasPosInfos, propInfo: TypeAliasPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfo: TypeAliasPosInfos, propInfo: TypeAliasPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.aliasName_ = aliasName_
         this.posInfos = posInfo
@@ -2851,8 +2858,8 @@ public class VarDecl <: Decl {
     }
 
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, kind_: VarKind,
-        posInfos: VarDeclPosInfos, propInfos: VarDeclPropInfos) {
-        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+        posInfos: VarDeclPosInfos, propInfos: VarDeclPropInfos, commentsPropInfo: Array<PropInfo>) {
+        super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.kind_ = kind_
         this.startPos = startPos
         this.posInfos = posInfos
