@@ -24,7 +24,7 @@ public open func defaultImpl(): Res
 
 返回值：
 
-- Res：效应执行后的结果（如果你提供了默认实现的话）。
+- Res - 效应执行后的结果（如果你提供了默认实现的话）。
 
 异常：
 
