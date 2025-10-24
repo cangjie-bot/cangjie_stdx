@@ -512,7 +512,7 @@ public prop memberDecls: Array<Decl>
 ### func getLCurlPos()
  
 ```cangjie
-public func getLCurlPos: CodePositionRange
+public func getLCurlPos(): CodePositionRange
 ```
  
 功能：获取 [Body](#class-body) 节点中 `{` 的位置。
@@ -524,7 +524,7 @@ public func getLCurlPos: CodePositionRange
 ### func getRCurlPos()
  
 ```cangjie
- public func getRCurlPos: CodePositionRange
+ public func getRCurlPos(): CodePositionRange
 ```
  
 功能：获取 [Body](#class-body) 节点中 `}` 的位置。
@@ -748,7 +748,7 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 ### func getClassKeyWordPos()
  
 ```cangjie
-public func getClassKeyWordPos: CodePositionRange
+public func getClassKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [ClassDecl](#class-classdecl) 节点中 `class` 关键字的位置。
@@ -760,7 +760,7 @@ public func getClassKeyWordPos: CodePositionRange
 ### func getGenericParamsCommasPos()
  
 ```cangjie
-public func getGenericParamsCommasPos: Array<CodePositionRange>
+public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [ClassDecl](#class-classdecl) 节点中泛型参数中 `,` 的位置。
@@ -772,7 +772,7 @@ public func getGenericParamsCommasPos: Array<CodePositionRange>
 ### func getGenericParamsLAnglePos()
 
 ```cangjie
-public func getGenericParamsLAnglePos: Option<CodePositionRange>
+public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [ClassDecl](#class-classdecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
@@ -784,7 +784,7 @@ public func getGenericParamsLAnglePos: Option<CodePositionRange>
 ### func getGenericParamsRAnglePos()
  
 ```cangjie
-public func getGenericParamsRAnglePos: Option<CodePositionRange>
+public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [ClassDecl](#class-classdecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
@@ -796,7 +796,7 @@ public func getGenericParamsRAnglePos: Option<CodePositionRange>
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: CodePositionRange
+public func getIdentifierPos(): CodePositionRange
 ```
  
 功能：获取 [ClassDecl](#class-classdecl) 节点中标识符的位置。
@@ -808,7 +808,7 @@ public func getIdentifierPos: CodePositionRange
 ### func getSuperTyAnnotationsBitAndsPos()
  
 ```cangjie
-public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
+public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [ClassDecl](#class-classdecl) 节点中父类型中 `&` 的位置。
@@ -820,7 +820,7 @@ public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
 ### func getUpperBoundPos()
  
 ```cangjie
-public func getUpperBoundPos: Option<CodePositionRange>
+public func getUpperBoundPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [ClassDecl](#class-classdecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
@@ -941,7 +941,7 @@ public prop cond: Array<AtomicCondition>
 
 功能：表示该模式节点中的原子条件列表。
 
-类型：Array\<[AtomicCondition](#class-atomiccondition)>
+类型：Array\<[AtomicCondition](syntax_package_enums.md#enum-atomiccondition)>
 
 ### func getAndsPos()
  
@@ -1127,7 +1127,7 @@ public prop condition: Expr
 ### func getCondLParenPos()
  
 ```cangjie
-public func getCondLParenPos: CodePositionRange
+public func getCondLParenPos(): CodePositionRange
 ```
  
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中条件的 `(` 的位置。
@@ -1139,7 +1139,7 @@ public func getCondLParenPos: CodePositionRange
 ### func getCondRParenPos()
  
 ```cangjie
-public func getCondRParenPos: CodePositionRange
+public func getCondRParenPos(): CodePositionRange
 ```
  
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中条件的 `)` 的位置。
@@ -1151,7 +1151,7 @@ public func getCondRParenPos: CodePositionRange
 ### func getDoKeyWordPos()
  
 ```cangjie
-public func getDoKeyWordPos: CodePositionRange
+public func getDoKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中 `do` 关键字的位置。
@@ -1163,7 +1163,7 @@ public func getDoKeyWordPos: CodePositionRange
 ### func getWhileKeyWordPos()
  
 ```cangjie
-public func getWhileKeyWordPos: CodePositionRange
+public func getWhileKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中 `while` 关键字的位置。
@@ -1209,7 +1209,7 @@ public prop paramTyAnnotations: Array<TypeAnnotation>
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: CodePositionRange
+public func getIdentifierPos(): CodePositionRange
 ```
  
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中标识符的位置。
@@ -1221,7 +1221,7 @@ public func getIdentifierPos: CodePositionRange
 ### func getParamsCommasPos()
  
 ```cangjie
-public func getParamsCommasPos: Array<CodePositionRange>
+public func getParamsCommasPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中参数间的 `,` 的位置。
@@ -1233,7 +1233,7 @@ public func getParamsCommasPos: Array<CodePositionRange>
 ### func getParamsLParenPos()
  
 ```cangjie
-public func getParamsLParenPos: Option<CodePositionRange>
+public func getParamsLParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中参数的 `(` 的位置（若不存在返回 `None`）。
@@ -1245,7 +1245,7 @@ public func getParamsLParenPos: Option<CodePositionRange>
 ### func getParamsRParenPos()
  
 ```cangjie
-public func getParamsRParenPos: Option<CodePositionRange>
+public func getParamsRParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中参数的 `)` 的位置（若不存在返回 `None`）。
@@ -1286,7 +1286,7 @@ public prop genericConstraints: Option<GenericConstraints>
 
 功能：获取当前枚举声明的泛型约束（若不存在返回 `None`）。
 
-类型：Option\<[GenericConstraints](#class-genericconstraint)>
+类型：Option\<[GenericConstraints](#class-genericconstraints)>
 
 ### prop genericParams
 
@@ -1331,7 +1331,7 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 ### func getCaseSeparatorsPos()
  
 ```cangjie
-public func getCaseSeparatorsPos: Array<CodePositionRange>
+public func getCaseSeparatorsPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `|` 的位置。
@@ -1343,7 +1343,7 @@ public func getCaseSeparatorsPos: Array<CodePositionRange>
 ### func getEnumKeyWordPos()
  
 ```cangjie
-public func getEnumKeyWordPos: CodePositionRange
+public func getEnumKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `enum` 关键字的位置。
@@ -1355,7 +1355,7 @@ public func getEnumKeyWordPos: CodePositionRange
 ### func getGenericParamsCommasPos()
  
 ```cangjie
-public func getGenericParamsCommasPos: Array<CodePositionRange>
+public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点中泛型参数中 `,` 的位置。
@@ -1367,7 +1367,7 @@ public func getGenericParamsCommasPos: Array<CodePositionRange>
 ### func getGenericParamsLAnglePos()
  
 ```cangjie
-public func getGenericParamsLAnglePos: Option<CodePositionRange>
+public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
@@ -1379,7 +1379,7 @@ public func getGenericParamsLAnglePos: Option<CodePositionRange>
 ### func getGenericParamsRAnglePos()
  
 ```cangjie
-public func getGenericParamsRAnglePos: Option<CodePositionRange>
+public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
@@ -1391,7 +1391,7 @@ public func getGenericParamsRAnglePos: Option<CodePositionRange>
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: CodePositionRange
+public func getIdentifierPos(): CodePositionRange
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点中标识符的位置。
@@ -1403,7 +1403,7 @@ public func getIdentifierPos: CodePositionRange
 ### func getNonExhaustiveTripleDotPos()
  
 ```cangjie
-public func getNonExhaustiveTripleDotPos: Option<CodePositionRange>
+public func getNonExhaustiveTripleDotPos(): Option<CodePositionRange>
 ```
 
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `...` 的位置（若不存在返回 `None`）。
@@ -1415,7 +1415,7 @@ public func getNonExhaustiveTripleDotPos: Option<CodePositionRange>
 ### func getSuperTyAnnotationsBitAndsPos()
  
 ```cangjie
-public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
+public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点的父类型中 `&` 的位置。
@@ -1427,7 +1427,7 @@ public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
 ### func getUpperBoundPos()
  
 ```cangjie
-public func getUpperBoundPos: Option<CodePositionRange>
+public func getUpperBoundPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
@@ -1608,7 +1608,7 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 ### func getExtendKeyWordPos()
  
 ```cangjie
-public func getExtendKeywordPos: CodePositionRange
+public func getExtendKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中 `extend` 关键字的位置。
@@ -1620,7 +1620,7 @@ public func getExtendKeywordPos: CodePositionRange
 ### func getGenericParamsCommasPos()
  
 ```cangjie
-public func getGenericParamsCommasPos: Array<CodePositionRange>
+public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中泛型参数中 `,` 的位置。
@@ -1632,7 +1632,7 @@ public func getGenericParamsCommasPos: Array<CodePositionRange>
 ### func getGenericParamsLAnglePos()
  
 ```cangjie
-public func getGenericParamsLAnglePos: Option<CodePositionRange>
+public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
@@ -1644,7 +1644,7 @@ public func getGenericParamsLAnglePos: Option<CodePositionRange>
 ### func getGenericParamsRAnglePos()
  
 ```cangjie
-public func getGenericParamsRAnglePos: Option<CodePositionRange>
+public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
@@ -1656,7 +1656,7 @@ public func getGenericParamsRAnglePos: Option<CodePositionRange>
 ### func getSuperTyAnnotationsBitAndsPos()
  
 ```cangjie
-public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
+public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中父类型中 `&` 的位置。
@@ -1668,7 +1668,7 @@ public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
 ### func getUpperBoundPos()
  
 ```cangjie
-public func getUpperBoundPos: Option<CodePositionRange>
+public func getUpperBoundPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
@@ -1734,7 +1734,7 @@ public prop patternGuard: Option<Expr>
 ### func getForKeyWordPos()
  
 ```cangjie
-public func getForKeyWordPos: CodePositionRange
+public func getForKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [ForInExpr](#class-forinexpr) 节点中 `for` 关键字的位置。
@@ -1746,7 +1746,7 @@ public func getForKeyWordPos: CodePositionRange
 ### func getInKeyWordPos()
  
 ```cangjie
-public func getInKeyWordPos: CodePositionRange
+public func getInKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [ForInExpr](#class-forinexpr) 节点中 `in` 关键字的位置。
@@ -1758,7 +1758,7 @@ public func getInKeyWordPos: CodePositionRange
 ### func getLParenPos()
  
 ```cangjie
-public func getLParenPos: CodePositionRange
+public func getLParenPos(): CodePositionRange
 ```
  
 功能：获取 [ForInExpr](#class-forinexpr) 节点中的 `(` 的位置。
@@ -1770,7 +1770,7 @@ public func getLParenPos: CodePositionRange
 ### func getRParenPos()
  
 ```cangjie
-public func getRParenPos: CodePositionRange
+public func getRParenPos(): CodePositionRange
 ```
  
 功能：获取 [ForInExpr](#class-forinexpr) 节点中的 `)` 的位置。
@@ -1782,7 +1782,7 @@ public func getRParenPos: CodePositionRange
 ### func getWhereKeyWordPos()
  
 ```cangjie
-public func getWhereKeyWordPos: Option<CodePositionRange>
+public func getWhereKeyWordPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [ForInExpr](#class-forinexpr) 节点中 `where` 关键字的位置（若不存在返回 `None`）。
@@ -2030,7 +2030,7 @@ public prop typeAnnotation: TypeAnnotation
 func getAssignPos(): Option<CodePositionRange>
 ```
 
-功能：获取 [FuncParam](#class-funcParam) 节点中 `=` 的位置。
+功能：获取 [FuncParam](#class-funcparam) 节点中 `=` 的位置。
 
 返回值：
 
@@ -2043,7 +2043,7 @@ func getAssignPos(): Option<CodePositionRange>
 func getIdentifierPos(): CodePositionRange
 ```
 
-功能：获取 [FuncParam](#class-funcParam) 节点中标识符的位置。
+功能：获取 [FuncParam](#class-funcparam) 节点中标识符的位置。
 
 返回值：
 
@@ -2056,7 +2056,7 @@ func getIdentifierPos(): CodePositionRange
 func getNotPos(): Option<CodePositionRange>
 ```
 
-功能：获取 [FuncParam](#class-funcParam) 节点中 `!` 的位置。
+功能：获取 [FuncParam](#class-funcparam) 节点中 `!` 的位置。
 
 返回值：
 
@@ -2068,7 +2068,7 @@ func getNotPos(): Option<CodePositionRange>
 func getTypeAnnotationColonPos(): CodePositionRange
 ```
 
-功能：获取 [FuncParam](#class-funcParam) 节点中 `:` 的位置。
+功能：获取 [FuncParam](#class-funcparam) 节点中 `:` 的位置。
 
 返回值：
 
@@ -2080,7 +2080,7 @@ func getTypeAnnotationColonPos(): CodePositionRange
 func getVarKindKeyWordPos(): Option<CodePositionRange>
 ```
 
-功能：获取 [FuncParam](#class-funcParam) 节点中关键字 `let` 或 `var` 的位置（若不存在返回 `None`）。
+功能：获取 [FuncParam](#class-funcparam) 节点中关键字 `let` 或 `var` 的位置（若不存在返回 `None`）。
 
 返回值：
 
@@ -2246,7 +2246,7 @@ public prop upperBounds: Array<TypeAnnotation>
 func getBitAndsPos(): Array<CodePositionRange>
 ```
 
-功能：获取 [GenericConstraint](#class-genericConstraint) 节点中 `&` 的位置。
+功能：获取 [GenericConstraint](#class-genericconstraint) 节点中 `&` 的位置。
 
 返回值：
 
@@ -2259,7 +2259,7 @@ func getBitAndsPos(): Array<CodePositionRange>
 func getUpperBoundPos(): CodePositionRange
 ```
 
-功能：获取 [GenericConstraint](#class-genericConstraint) 节点中 `<:` 的位置。
+功能：获取 [GenericConstraint](#class-genericconstraint) 节点中 `<:` 的位置。
 
 返回值：
 
@@ -2295,7 +2295,7 @@ public prop constraints: Array<GenericConstraint>
 func getCommasPos(): Array<CodePositionRange>
 ```
 
-功能：获取 [GenericConstraints](#class-genericConstraints) 节点中 `,` 的位置。
+功能：获取 [GenericConstraints](#class-genericconstraints) 节点中 `,` 的位置。
 
 返回值：
 
@@ -2307,7 +2307,7 @@ func getCommasPos(): Array<CodePositionRange>
 func getWhereKeyWordPos(): CodePositionRange
 ```
 
-功能：获取 [GenericConstraints](#class-genericConstraints) 节点中 `where` 关键字的位置。
+功能：获取 [GenericConstraints](#class-genericconstraints) 节点中 `where` 关键字的位置。
 
 返回值：
 
@@ -2396,7 +2396,7 @@ public prop ifBlock: Block
 ### func getCondLParenPos()
  
 ```cangjie
-public func getCondLParenPos: CodePositionRange
+public func getCondLParenPos(): CodePositionRange
 ```
  
 功能：获取 [IfExpr](#class-ifexpr) 节点中条件的 `(` 的位置。
@@ -2408,7 +2408,7 @@ public func getCondLParenPos: CodePositionRange
 ### func getCondRParenPos()
  
 ```cangjie
-public func getCondRParenPos: CodePositionRange
+public func getCondRParenPos(): CodePositionRange
 ```
  
 功能：获取 [IfExpr](#class-ifexpr) 节点中条件的 `)` 的位置。
@@ -2420,7 +2420,7 @@ public func getCondRParenPos: CodePositionRange
 ### func getElseKeyWordPos()
  
 ```cangjie
-public func getElseKeyWordPos: Option<CodePositionRange>
+public func getElseKeyWordPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [IfExpr](#class-ifexpr) 节点中 `else` 关键字的位置（若不存在返回 `None`）。
@@ -2432,7 +2432,7 @@ public func getElseKeyWordPos: Option<CodePositionRange>
 ### func getIfKeyWordPos()
  
 ```cangjie
-public func getIfKeyWordPos: CodePositionRange
+public func getIfKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [IfExpr](#class-ifexpr) 节点中 `if` 关键字的位置。
@@ -2655,10 +2655,10 @@ public prop contents: Array<ImportContent>
 
 功能：表示该包导入节点中的多个导入项的列表，如 `pkg.{a.*, b.c, d as p}` 中的 `[a.*, b.c, d as p]`。
 
-Array\<[ImportContent](#class-importcontent)>
+类型：Array\<[ImportContent](#class-importcontent)>
 
 ### func getCommasPos()
- 
+
 ```cangjie
 public func getCommasPos(): Array<CodePositionRange>
 ```
@@ -2838,7 +2838,7 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 ### func getGenericParamsCommasPos()
  
 ```cangjie
-public func getGenericParamsCommasPos: Array<CodePositionRange>
+public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中泛型参数中 `,` 的位置。
@@ -2850,7 +2850,7 @@ public func getGenericParamsCommasPos: Array<CodePositionRange>
 ### func getGenericParamsLAnglePos()
  
 ```cangjie
-public func getGenericParamsLAnglePos: Option<CodePositionRange>
+public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
@@ -2862,7 +2862,7 @@ public func getGenericParamsLAnglePos: Option<CodePositionRange>
 ### func getGenericParamsRAnglePos()
  
 ```cangjie
-public func getGenericParamsRAnglePos: Option<CodePositionRange>
+public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
@@ -2874,7 +2874,7 @@ public func getGenericParamsRAnglePos: Option<CodePositionRange>
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: CodePositionRange
+public func getIdentifierPos(): CodePositionRange
 ```
  
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中标识符的位置。
@@ -2886,7 +2886,7 @@ public func getIdentifierPos: CodePositionRange
 ### func getInterfaceKeyWordPos()
  
 ```cangjie
-public func getInterfaceKeyWordPos: CodePositionRange
+public func getInterfaceKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中 `interface` 关键字的位置。
@@ -2898,7 +2898,7 @@ public func getInterfaceKeyWordPos: CodePositionRange
 ### func getSuperTyAnnotationsBitAndsPos()
  
 ```cangjie
-public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
+public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中父类型中 `&` 的位置。
@@ -2910,7 +2910,7 @@ public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
 ### func getUpperBoundPos()
  
 ```cangjie
-public func getUpperBoundPos: Option<CodePositionRange>
+public func getUpperBoundPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
@@ -3065,7 +3065,7 @@ public prop name: String
 public prop typeAnnotation: Option<TypeAnnotation>
 ```
 
-功能：获取 [LambdaParam](#class-lambdaParam) 节点中的类型标注（若不存在返回 `None`）。
+功能：获取 [LambdaParam](#class-lambdaparam) 节点中的类型标注（若不存在返回 `None`）。
 
 类型：Option\<[TypeAnnotation](#class-typeannotation)>
 
@@ -3075,7 +3075,7 @@ public prop typeAnnotation: Option<TypeAnnotation>
 func getIdentifierPos(): CodePositionRange
 ```
 
-功能：获取 [LambdaParam](#class-lambdaParam) 节点中标识符的位置。
+功能：获取 [LambdaParam](#class-lambdaparam) 节点中标识符的位置。
 
 返回值：
 
@@ -3087,7 +3087,7 @@ func getIdentifierPos(): CodePositionRange
 func getTypeAnnotationColonPos(): Option<CodePositionRange>
 ```
 
-功能：获取 [LambdaParam](#class-lambdaParam) 节点中 `:` 的位置（若不存在返回 `None`）。
+功能：获取 [LambdaParam](#class-lambdaparam) 节点中 `:` 的位置（若不存在返回 `None`）。
 
 返回值：
 
@@ -3349,7 +3349,7 @@ public prop retTyAnnotation: Option<TypeAnnotation>
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: CodePositionRange
+public func getIdentifierPos(): CodePositionRange
 ```
  
 功能：获取 [MacroDecl](#class-macrodecl) 节点中标识符的位置。
@@ -3361,7 +3361,7 @@ public func getIdentifierPos: CodePositionRange
 ### func getMacroKeyWordPos()
  
 ```cangjie
-public func getMacroKeyWordPos: CodePositionRange
+public func getMacroKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [MacroDecl](#class-macrodecl) 节点中 `macro` 关键字的位置。
@@ -3373,7 +3373,7 @@ public func getMacroKeyWordPos: CodePositionRange
 ### func getRetTyAnnotationColonPos()
  
 ```cangjie
-public func getRetTyAnnotationColonPos: Option<CodePositionRange>
+public func getRetTyAnnotationColonPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroDecl](#class-macrodecl) 节点中返回类型的冒号的位置（若不存在返回 `None`）。
@@ -3429,7 +3429,7 @@ public prop macroInputs: MacroExpandInput
 ### func getAtPos()
  
 ```cangjie
-public func getAtPos: CodePositionRange
+public func getAtPos(): CodePositionRange
 ```
  
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `@` 的位置。
@@ -3441,7 +3441,7 @@ public func getAtPos: CodePositionRange
 ### func getLParenPos()
  
 ```cangjie
-public func getLParenPos: Option<CodePositionRange>
+public func getLParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `(` 的位置。
@@ -3453,7 +3453,7 @@ public func getLParenPos: Option<CodePositionRange>
 ### func getLSquarePos()
  
 ```cangjie
-public func getLSquarePos: Option<CodePositionRange>
+public func getLSquarePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `[` 的位置（若不存在返回 `None`）。
@@ -3465,7 +3465,7 @@ public func getLSquarePos: Option<CodePositionRange>
 ### func getRParenPos()
  
 ```cangjie
-public func getRParenPos: Option<CodePositionRange>
+public func getRParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `)` 的位置。
@@ -3477,7 +3477,7 @@ public func getRParenPos: Option<CodePositionRange>
 ### func getRSquarePos()
  
 ```cangjie
-public func getRSquarePos: Option<CodePositionRange>
+public func getRSquarePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `]` 的位置（若不存在返回 `None`）。
@@ -3528,12 +3528,12 @@ public prop macroInputs: MacroExpandInput
 
 功能：获取宏展开的输入声明，定义宏执行所需的上下文。
 
-类型：Array\<[MacroExpandInput](syntax_package_enums.md#enum-macroexpandinput)>
+类型：[MacroExpandInput](syntax_package_enums.md#enum-macroexpandinput)
 
 ### func getAtPos()
  
 ```cangjie
-public func getAtPos: CodePositionRange
+public func getAtPos(): CodePositionRange
 ```
  
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `@` 的位置。
@@ -3545,7 +3545,7 @@ public func getAtPos: CodePositionRange
 ### func getLParenPos()
  
 ```cangjie
-public func getLParenPos: Option<CodePositionRange>
+public func getLParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `(` 的位置（若不存在返回 `None`）。
@@ -3557,7 +3557,7 @@ public func getLParenPos: Option<CodePositionRange>
 ### func getLSquarePos()
  
 ```cangjie
-public func getLSquarePos: Option<CodePositionRange>
+public func getLSquarePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `[` 的位置（若不存在返回 `None`）。
@@ -3569,7 +3569,7 @@ public func getLSquarePos: Option<CodePositionRange>
 ### func getRParenPos()
  
 ```cangjie
-public func getRParenPos: Option<CodePositionRange>
+public func getRParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `)` 的位置（若不存在返回 `None`）。
@@ -3581,7 +3581,7 @@ public func getRParenPos: Option<CodePositionRange>
 ### func getRSquarePos()
  
 ```cangjie
-public func getRSquarePos: Option<CodePositionRange>
+public func getRSquarePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `]` 的位置（若不存在返回 `None`）。
@@ -3637,7 +3637,7 @@ public prop macroInputs: MacroExpandInput
 ### func getAtPos()
  
 ```cangjie
-public func getAtPos: CodePositionRange
+public func getAtPos(): CodePositionRange
 ```
  
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `@` 的位置。
@@ -3649,7 +3649,7 @@ public func getAtPos: CodePositionRange
 ### func getLParenPos()
  
 ```cangjie
-public func getLParenPos: Option<CodePositionRange>
+public func getLParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `(` 的位置（若不存在返回 `None`）。
@@ -3661,7 +3661,7 @@ public func getLParenPos: Option<CodePositionRange>
 ### func getLSquarePos()
  
 ```cangjie
-public func getLSquarePos: Option<CodePositionRange>
+public func getLSquarePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `[` 的位置（若不存在返回 `None`）。
@@ -3673,7 +3673,7 @@ public func getLSquarePos: Option<CodePositionRange>
 ### func getRParenPos()
  
 ```cangjie
-public func getRParenPos: Option<CodePositionRange>
+public func getRParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `)` 的位置（若不存在返回 `None`）。
@@ -3685,7 +3685,7 @@ public func getRParenPos: Option<CodePositionRange>
 ### func getRSquarePos()
  
 ```cangjie
-public func getRSquarePos: Option<CodePositionRange>
+public func getRSquarePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `]` 的位置（若不存在返回 `None`）。
@@ -3774,7 +3774,7 @@ public class MatchCase <: SyntaxTreeNode {}
 
 父类型：
 
-- [SyntaxTreeNode](#class-syntax)
+- [SyntaxTreeNode](#class-syntaxtreenode)
 
 ### prop body
 
@@ -4329,7 +4329,7 @@ public prop cond: DisjunctionCondition
 ### func getLParenPos()
  
 ```cangjie
-public func getLParenPos: CodePositionRange
+public func getLParenPos(): CodePositionRange
 ```
  
 功能：获取 [ParenCondition](#class-parencondition) 节点中的 `(` 的位置。
@@ -4341,7 +4341,7 @@ public func getLParenPos: CodePositionRange
 ### func getRParenPos()
  
 ```cangjie
-public func getRParenPos: CodePositionRange
+public func getRParenPos(): CodePositionRange
 ```
  
 功能：获取 [ParenCondition](#class-parencondition) 节点中的 `)` 的位置。
@@ -4601,7 +4601,7 @@ public prop isMut: Bool
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: CodePositionRange
+public func getIdentifierPos(): CodePositionRange
 ```
  
 功能：获取 [PropDecl](#class-propdecl) 节点中标识符的位置。
@@ -4613,7 +4613,7 @@ public func getIdentifierPos: CodePositionRange
 ### func getLCurlPos()
  
 ```cangjie
-public func getLCurlPos: Option<CodePositionRange>
+public func getLCurlPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [PropDecl](#class-propdecl) 节点中 `{` 的位置（若不存在返回 `None`）。
@@ -4625,7 +4625,7 @@ public func getLCurlPos: Option<CodePositionRange>
 ### func getPropKeyWordPos()
  
 ```cangjie
-public func getPropKeyWordPos: CodePositionRange
+public func getPropKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [PropDecl](#class-propdecl) 节点中 `prop` 关键字的位置。
@@ -4637,7 +4637,7 @@ public func getPropKeyWordPos: CodePositionRange
 ### func getRCurlPos()
  
 ```cangjie
-public func getRCurlPos: Option<CodePositionRange>
+public func getRCurlPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [PropDecl](#class-propdecl) 节点中 `}` 的位置（若不存在返回 `None`）。
@@ -4649,7 +4649,7 @@ public func getRCurlPos: Option<CodePositionRange>
 ### func getTyAnnotationColonPos()
  
 ```cangjie
-public func getTyAnnotationColonPos: CodePositionRange
+public func getTyAnnotationColonPos(): CodePositionRange
 ```
  
 功能：获取 [PropDecl](#class-propdecl) 节点中返回类型前的 `:` 的位置。
@@ -4703,7 +4703,7 @@ public prop isGetter: Bool
 ### func getGetKeyWordPos()
  
 ```cangjie
-public func getGetKeyWordPos: Option<CodePositionRange>
+public func getGetKeyWordPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `get` 关键字的位置（若不存在返回 `None`）。
@@ -4715,7 +4715,7 @@ public func getGetKeyWordPos: Option<CodePositionRange>
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: Option<CodePositionRange>
+public func getIdentifierPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中标识符的位置（若不存在返回 `None`）。
@@ -4727,7 +4727,7 @@ public func getIdentifierPos: Option<CodePositionRange>
 ### func getLParenPos()
  
 ```cangjie
-public func getLParenPos: CodePositionRange
+public func getLParenPos(): CodePositionRange
 ```
  
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `(` 的位置。
@@ -4739,7 +4739,7 @@ public func getLParenPos: CodePositionRange
 ### func getRParenPos()
  
 ```cangjie
-public func getRParenPos: CodePositionRange
+public func getRParenPos(): CodePositionRange
 ```
  
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `)` 的位置。
@@ -4751,7 +4751,7 @@ public func getRParenPos: CodePositionRange
 ### func getSetKeyWordPos()
  
 ```cangjie
-public func getSetKeyWordPos: Option<CodePositionRange>
+public func getSetKeyWordPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `set` 关键字的位置（若不存在返回 `None`）。
@@ -5115,7 +5115,7 @@ public prop trailingLambdaExpr: Lambda
 ### func getSpawnKeyWordPos()
  
 ```cangjie
-public func getSpawnKeyWordPos: CodePositionRange
+public func getSpawnKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [SpawnExpr](#class-spawnexpr) 节点中 `spawn` 关键字的位置。
@@ -5127,7 +5127,7 @@ public func getSpawnKeyWordPos: CodePositionRange
 ### func getThreadContextLParenPos()
  
 ```cangjie
-public func getThreadContextLParenPos: Option<CodePositionRange>
+public func getThreadContextLParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [SpawnExpr](#class-spawnexpr) 节点中线程上下文的 `(` 的位置。
@@ -5139,7 +5139,7 @@ public func getThreadContextLParenPos: Option<CodePositionRange>
 ### func getThreadContextRParenPos()
  
 ```cangjie
-public func getThreadContextRParenPos: Option<CodePositionRange>
+public func getThreadContextRParenPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [SpawnExpr](#class-spawnexpr) 节点中线程上下文的 `)` 的位置（若不存在返回 `None`）。
@@ -5173,7 +5173,7 @@ public prop body: Block
 ### func getInitKeyWordPos()
  
 ```cangjie
-public func getInitKeyWordPos: CodePositionRange
+public func getInitKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [StaticInit](#class-staticinit) 节点中 `init` 关键字的位置。
@@ -5185,7 +5185,7 @@ public func getInitKeyWordPos: CodePositionRange
 ### func getParamsLParenPos()
  
 ```cangjie
-public func getParamsLParenPos: CodePositionRange
+public func getParamsLParenPos(): CodePositionRange
 ```
  
 功能：获取 [StaticInit](#class-staticinit) 节点中参数左括号的位置。
@@ -5197,7 +5197,7 @@ public func getParamsLParenPos: CodePositionRange
 ### func getParamsRParenPos()
  
 ```cangjie
-public func getParamsRParenPos: CodePositionRange
+public func getParamsRParenPos(): CodePositionRange
 ```
  
 功能：获取 [StaticInit](#class-staticinit) 节点中参数右括号的位置。
@@ -5209,7 +5209,7 @@ public func getParamsRParenPos: CodePositionRange
 ### func getStaticKeyWordPos()
  
 ```cangjie
-public func getStaticKeyWordPos: CodePositionRange
+public func getStaticKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [StaticInit](#class-staticinit) 节点中 `static` 关键字的位置。
@@ -5321,7 +5321,7 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 ### func getGenericParamsCommasPos()
  
 ```cangjie
-public func getGenericParamsCommasPos: Array<CodePositionRange>
+public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [StructDecl](#class-structdecl) 节点中泛型参数中 `,` 的位置。
@@ -5333,7 +5333,7 @@ public func getGenericParamsCommasPos: Array<CodePositionRange>
 ### func getGenericParamsLAnglePos()
  
 ```cangjie
-public func getGenericParamsLAnglePos: Option<CodePositionRange>
+public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [StructDecl](#class-structdecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
@@ -5345,7 +5345,7 @@ public func getGenericParamsLAnglePos: Option<CodePositionRange>
 ### func getGenericParamsRAnglePos()
  
 ```cangjie
-public func getGenericParamsRAnglePos: Option<CodePositionRange>
+public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
  
 功能：获取 [StructDecl](#class-structdecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
@@ -5357,7 +5357,7 @@ public func getGenericParamsRAnglePos: Option<CodePositionRange>
 ### func getIdentifierPos()
  
 ```cangjie
-public func getIdentifierPos: CodePositionRange
+public func getIdentifierPos(): CodePositionRange
 ```
  
 功能：获取 [StructDecl](#class-structdecl) 节点中标识符的位置。
@@ -5369,7 +5369,7 @@ public func getIdentifierPos: CodePositionRange
 ### func getStructKeyWordPos()
  
 ```cangjie
-public func getStructKeyWordPos: CodePositionRange
+public func getStructKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [StructDecl](#class-structdecl) 节点中 `struct` 关键字的位置。
@@ -5381,7 +5381,7 @@ public func getStructKeyWordPos: CodePositionRange
 ### func getSuperTyAnnotationsBitAndsPos()
  
 ```cangjie
-public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
+public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
  
 功能：获取 [StructDecl](#class-structdecl) 节点中父类型中 `&` 的位置。
@@ -5393,7 +5393,7 @@ public func getSuperTyAnnotationsBitAndsPos: Array<CodePositionRange>
 ### func getUpperBoundPos()
  
 ```cangjie
-public func getUpperBoundPos: Option<CodePositionRange>
+public func getUpperBoundPos(): Option<CodePositionRange>
 ```
  
 功能：获取 [StructDecl](#class-structdecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
@@ -5586,7 +5586,7 @@ public prop structuredMutex: Expr
 ### func getLParenPos()
  
 ```cangjie
-public func getLParenPos: CodePositionRange
+public func getLParenPos(): CodePositionRange
 ```
  
 功能：获取 [SynchronizedExpr](#class-synchronizedexpr) 节点中 `(` 的位置。
@@ -5598,7 +5598,7 @@ public func getLParenPos: CodePositionRange
 ### func getRParenPos()
  
 ```cangjie
-public func getRParenPos: CodePositionRange
+public func getRParenPos(): CodePositionRange
 ```
  
 功能：获取 [SynchronizedExpr](#class-synchronizedexpr) 节点中 `)` 的位置。
@@ -5610,7 +5610,7 @@ public func getRParenPos: CodePositionRange
 ### func getSynchronizedKeyWordPos()
  
 ```cangjie
-public func getSynchronizedKeyWordPos: CodePositionRange
+public func getSynchronizedKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [SynchronizedExpr](#class-synchronizedexpr) 节点中 `synchronized` 关键字的位置。
@@ -5773,7 +5773,7 @@ public prop callee: Expr
 
 功能：获取调用表达式，即包含尾随闭包的函数调用。
 
-类型：Array\<[Expr](#class-expr)>
+类型：[Expr](#class-expr)
 
 ### prop trailingLambdaExpr
 
@@ -5783,7 +5783,7 @@ public prop trailingLambdaExpr: Lambda
 
 功能：获取尾随闭包对应的 `Lambda` 表达式。
 
-类型：Array\<[Lambda](#class-lambda)>
+类型：[Lambda](#class-lambda)
 
 ### func getCommasPos()
 
@@ -6659,7 +6659,7 @@ public prop argument: Argument
 
 功能：获取 [VArrayExpr](#class-varrayexpr) 中的初始化参数。
 
-类型：Array\<[Argument](#class-argument)>
+类型：[Argument](#class-argument)
 
 ### prop vArrayType
 
@@ -6826,7 +6826,7 @@ public prop condition: DisjunctionCondition
 ### func getCondLParenPos()
  
 ```cangjie
-public func getCondLParenPos: CodePositionRange
+public func getCondLParenPos(): CodePositionRange
 ```
  
 功能：获取 [WhileExpr](#class-whileexpr) 节点中条件的 `(` 的位置。
@@ -6838,7 +6838,7 @@ public func getCondLParenPos: CodePositionRange
 ### func getCondRParenPos()
  
 ```cangjie
-public func getCondRParenPos: CodePositionRange
+public func getCondRParenPos(): CodePositionRange
 ```
  
 功能：获取 [WhileExpr](#class-whileexpr) 节点中条件的 `)` 的位置。
@@ -6850,7 +6850,7 @@ public func getCondRParenPos: CodePositionRange
 ### func getWhileKeyWordPos()
  
 ```cangjie
-public func getWhileKeyWordPos: CodePositionRange
+public func getWhileKeyWordPos(): CodePositionRange
 ```
  
 功能：获取 [WhileExpr](#class-whileexpr) 节点中 `while` 关键字的位置。
