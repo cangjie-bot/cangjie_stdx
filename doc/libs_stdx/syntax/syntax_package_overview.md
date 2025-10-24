@@ -27,6 +27,7 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [ArrayLiteral](./syntax_package_api/syntax_package_classes.md#class-arrayliteral) | 表示 `Array` 字面量节点。 |
 | [AsExpr](./syntax_package_api/syntax_package_classes.md#class-asexpr) | 表示一个类型转换表达式。 |
 | [AssignExpr](./syntax_package_api/syntax_package_classes.md#class-assignexpr) | 表示赋值表达式节点。 |
+| [ASTVisitor](./syntax_package_api/syntax_package_classes.md#class-astvisotor) | 语法树的通用访问器基类。 |
 | [AtomicType](./syntax_package_api/syntax_package_classes.md#class-atomictype) | 表示一个基本类型节点。 |
 | [BinaryExpr](./syntax_package_api/syntax_package_classes.md#class-binaryexpr) | 表示一个二元操作表达式节点。 |
 | [Block](./syntax_package_api/syntax_package_classes.md#class-block) | 表示块节点。 |
@@ -144,6 +145,8 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [LitConstStrKind](./syntax_package_api/syntax_package_enums.md#enum-litconststrkind) | 表示字符串字面量表达式的类型，包括 `JStringLiteral`、`MultiLineString`、`MultiLineRawString` 和 `StringLiteral` 四种类型。|
 | [MacroExpandInput](./syntax_package_api/syntax_package_enums.md#enum-macroexpandinput) | 表示宏展开的输入形式，区分不同的宏调用语法形式，包括无括号和有括号形式的宏输入。|
 | [ModifierKind](./syntax_package_api/syntax_package_enums.md#enum-modifierkind) | 表示修饰符的类型，包括 `Abstract`、 `Internal`、 `Mut` 等。|
+| [PostActionMode](./syntax_package_api/syntax_package_enums.md#enum-postactionmode) | 表示控制 ASTVisitor 在访问节点完成后的行为策略，包括 `Continue`、`Stop` 等。|
+| [PreActionMode](./syntax_package_api/syntax_package_enums.md#enum-preactionmode) | 表示控制 ASTVisitor 在访问节点前的行为策略，包括 `Continue`、`Skip`、`Stop` 等。|
 | [PrefixTypeOpKind](./syntax_package_api/syntax_package_enums.md#enum-prefixtypeopkind) | 表示前缀类型中的前缀操作符类型，包括 `?` 等。|
 | [QuoteExprContent](./syntax_package_api/syntax_package_enums.md#enum-quoteexprcontent) | 表示 `quote` 表达式中由 `()` 括起的内容类型，包括 [QuoteToken](./syntax_package_api/syntax_package_classes.md#class-quotetoken) 和 [QuoteInterpolationExpr](./syntax_package_api/syntax_package_classes.md#class-quoteinterpolationexpr) 两种。|
 | [RangeKind](./syntax_package_api/syntax_package_enums.md#enum-rangekind) | 表示区间表达式的操作符类型，包括 `:` 和 `:=` 两种。|
