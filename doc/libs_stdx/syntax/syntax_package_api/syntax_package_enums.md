@@ -1021,6 +1021,69 @@ Const
 
 功能：表示 `const` 类型的修饰符。
 
+## enum PostActionMode
+
+```cangjie
+public enum PostActionMode {
+    | Continue
+    | Stop
+}
+```
+
+功能：控制 ASTVisitor 在访问节点完成后的行为策略。
+
+### Continue
+
+```cangjie
+Continue
+```
+
+功能：`func postAction` 的默认策略，继续遍历。
+
+### Stop
+
+```cangjie
+Stop
+```
+
+功能：立即停止整个遍历过程。
+
+## enum PreActionMode
+
+```cangjie
+public enum PreActionMode {
+    | Continue
+    | Skip
+    | Stop
+}
+```
+
+功能：控制 ASTVisitor 在访问节点前的行为策略。
+
+### Continue
+
+```cangjie
+Continue
+```
+
+功能：`func preAction` 的默认策略，继续访问当前节点及其所有子节点。
+
+### Skip
+
+```cangjie
+Skip
+```
+
+功能：跳过当前节点的子节点。
+
+### Stop
+
+```cangjie
+Stop
+```
+
+功能：立即停止整个遍历过程。
+
 ## enum PrefixTypeOpKind
 
 ```cangjie
