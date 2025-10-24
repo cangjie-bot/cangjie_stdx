@@ -59,13 +59,13 @@ static/stdx 是静态产物，包含静态文件、cjo、bc 文件。
 | import stdx.actors.*                      | stdx.actors                                                                                                                                                                                                                    |
 | import stdx.actors.macros.*               | stdx.actors.macros                                                                                                                                                                                                             |
 | import stdx.aspectCJ.*                    | stdx.aspectCJ                                                                                                                                                                                                                  |
-| import stdx.compress.zlip.*               | stdx.compress.zlib                                                                                                                                                                                                             |
+| import stdx.compress.zlib.*               | stdx.compress.zlib                                                                                                                                                                                                             |
 | import stdx.crypto.common.*               | stdx.crypto.common、stdx.encoding.base64                                                                                                                                                                                       |
 | import stdx.crypto.crypto.*               | stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                                                               |
 | import stdx.crypto.digest.*               | stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                                                                                   |
 | import stdx.crypto.keys.*                 | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
 | import stdx.crypto.kit.*                  | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
-| import stdx.crypto.x509.*                 | stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                          |                                                                                                                                                                                                                 |
+| import stdx.crypto.x509.*                 | stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                          |
 | import stdx.effect.*                      | stdx.effect                                                                                                                                                                                                                    |
 | import stdx.encoding.hex.*                | stdx.encoding.hex                                                                                                                                                                                                              |
 | import stdx.encoding.base64.*             | stdx.encoding.base64                                                                                                                                                                                                           |
@@ -132,6 +132,7 @@ cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -l
 CANGJIE_STDX_PATH 是设置的 stdx 路径。
 
 例如在 linux 系统中设置：
+
 ```shell
 export CANGJIE_STDX_PATH=/target/linux_x86_64_cjnative/dynamic/stdx
 ```
@@ -139,6 +140,7 @@ export CANGJIE_STDX_PATH=/target/linux_x86_64_cjnative/dynamic/stdx
 运行前 Linux 操作系统需要在 LD_LIBRARY_PATH 中设置扩展库的路径，Windows 操作系统需要在 PATH 中设置扩展库的路径，macOS 操作系统需要在 DYLD_LIBRARY_PATH 中设置扩展库的路径。
 
 例如在 linux 系统中设置：
+
 ```shell
 export LD_LIBRARY_PATH=/target/linux_x86_64_cjnative/dynamic/stdx:$LD_LIBRARY_PATH
 ```
