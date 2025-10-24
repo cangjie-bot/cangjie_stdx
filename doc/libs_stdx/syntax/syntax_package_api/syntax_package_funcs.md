@@ -3,7 +3,7 @@
 ## func parseFile(String)
 
 ```cangjie
-public func parseFile(filePath: String) : ParsingResult<SourceFile>
+public func parseFile(filePath: String): ParsingResult<SourceFile>
 ```
 
 功能：用于解析一个文本文件，获取一个符合仓颉语法的 [SourceFile](syntax_package_classes.md#class-sourcefile) 类型的抽象语法树。
@@ -23,7 +23,7 @@ public func parseFile(filePath: String) : ParsingResult<SourceFile>
 ## func parsePackage(String)
 
 ```cangjie
-public func parsePackage(dirPath: String) : ParsingResult<Package>
+public func parsePackage(dirPath: String): ParsingResult<Package>
 ```
 
 功能：用于解析一个文件目录，获取一个符合仓颉语法的 [Package](syntax_package_classes.md#class-package) 类型的抽象语法树。
