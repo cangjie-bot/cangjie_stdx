@@ -360,6 +360,58 @@ public func getAssignOpPos(): CodePositionRange
 
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回赋值操作符的位置。
 
+## class ASTVisitor
+
+```cangjie
+public open class ASTVisitor
+```
+
+功能：语法树的通用访问器基类。开发者可以通过遍历 [SyntaxTreeNode](#class-syntaxtreenode) 及其子类，实现对 Cangjie 源代码结构的统一访问与处理。
+
+### func walk
+
+```cangjie
+public func walk(root: SyntaxTreeNode): Unit
+```
+
+功能：从指定节点开始深度优先遍历 AST。
+
+参数：
+
+- root: SyntaxTreeNode – 遍历的起始节点。
+
+### func preAction
+
+```cangjie
+public open func preAction(node: SyntaxTreeNode): PreActionMode
+```
+
+功能：在进入节点前执行的钩子函数，用于决定是否继续、跳过或停止遍历。
+
+参数：
+
+- node – 当前即将访问的节点。
+
+返回值：
+
+- [PreActionMode](syntax_package_enums.md#preactionmode) – 访问节点前的行为策略。
+
+### func postAction
+
+```cangjie
+public open func postAction(node: SyntaxTreeNode): PostActionMode
+```
+
+功能：在离开节点后执行的钩子函数，用于决定是否继续或停止遍历。
+
+参数：
+
+- `node` – 当前已访问完成的节点。
+
+返回值：
+
+- [PostActionMode](syntax_package_enums.md#postactionmode) – 访问节点完成后的行为策略。
+
 ## class AtomicType
 
 ```cangjie
