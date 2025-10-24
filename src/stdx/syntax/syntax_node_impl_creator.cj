@@ -126,6 +126,9 @@ class SyntaxNodeImplCreator {
     // expr
     static func createForInExprImpl(body: Block, expr: Expr, pattern: Pattern, patternGuard: Option<Expr>): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
+        if (pattern.nodeImpl.kind != SyntaxNodeKind.WildcardPattern && pattern.nodeImpl.kind != SyntaxNodeKind.VarBindingPattern && pattern.nodeImpl.kind != SyntaxNodeKind.TuplePattern && pattern.nodeImpl.kind != SyntaxNodeKind.EnumPattern) {
+            throw Exception("Init ForInExpr: invalid pattern")
+        }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -237,6 +240,9 @@ class SyntaxNodeImplCreator {
 
     static func createTrailingClosureExprImpl(callee: Expr, arguments: Array<Argument>, trailingLambdaExpr: Lambda): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
+        if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.SymbolRef) {
+            throw Exception("Init TrailingClosureExpr: invalid callee")
+        }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -258,6 +264,9 @@ class SyntaxNodeImplCreator {
 
     static func createMacroExpandExprImpl(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
+        if (calleeMacro.nodeImpl.kind != SyntaxNodeKind.MemberAccess && calleeMacro.nodeImpl.kind != SyntaxNodeKind.SymbolRef) {
+            throw Exception("Init MacroExpandExpr: invalid calleeMacro")
+        }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -471,6 +480,9 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         let matchCaseBody = ArrayList<SyntaxNodeImpl>()
         for (i in 0..body.size) {
+            if (!body[i].nodeImpl.kind.isExpr() && body[i].nodeImpl.kind != SyntaxNodeKind.FuncDecl && body[i].nodeImpl.kind != SyntaxNodeKind.VarDecl) {
+                throw Exception("Init MatchCase: invalid body")
+            }
             matchCaseBody.add(body[i].nodeImpl)
             if (i < body.size - 1) {
                 matchCaseBody.add(builder.buildNewline(1))
@@ -483,6 +495,9 @@ class SyntaxNodeImplCreator {
 
     static func createCatchPatternImpl(pattern: Pattern, exceptionType: Array<TypeAnnotation>): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
+        if (pattern.nodeImpl.kind != SyntaxNodeKind.WildcardPattern && pattern.nodeImpl.kind != SyntaxNodeKind.ExceptionTypePattern) {
+            throw Exception("Init ForInExpr: invalid pattern")
+        }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -522,6 +537,9 @@ class SyntaxNodeImplCreator {
     }
 
     static func createCallExprImpl(callee: Expr, args: Array<Expr>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+        if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.SymbolRef) {
+            throw Exception("Init CallExpr: invalid callee")
+        }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()

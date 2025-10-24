@@ -34,15 +34,29 @@ public prop identifier: String
 类型：String
 
 ### prop opKind
- 
+
 ```cangjie
 public prop opKind: AtOpKind
 ```
- 
+
 功能：获取 [Annotation](#class-annotation) 节点的操作符，如 `@CallingConv[xxx]` 中的 `@`。
- 
+
 类型：[AtOpKind](syntax_package_enums.md#enum-atopkind)
- 
+
+### init(Array\<Argument>, String, AtOpKind)
+
+```cangjie
+public init(arguments: Array<Arguments>, identifier: String, opKind: AtOpKind)
+```
+
+功能：根据输入的参数列表、标识符和标注符号类型构造一个 [Annotation](#class-annotation) 对象。
+
+参数：
+
+- arguments - Array\<[Argument](#class-argument)> - 注解参数列表。
+- identifier - String - 注解标识符。
+- opKind - [AtOpKind](syntax_package_enums.md#enum-atopkind) - 注解符号种类。
+
 ### func getAtOpPos()
  
 ```cangjie
@@ -2557,6 +2571,20 @@ public prop identifier: String
 
 类型：String
 
+### init(Array\<String>, String, String)
+
+```cangjie
+public init(prefixes: Array<String>, identifier: String, alias: String)
+```
+
+功能：根据输入的包路径前缀、包名和包别名，构造一个 [ImportAlias](#class-importalias) 对象。
+
+参数：
+
+- prefixes - Array\<String> - 被导入的包路径前缀。
+- identifier - String - 被导入的包名。
+- alias - String - 导入包的别名。
+
 ### func getAliasNamePos()
  
 ```cangjie
@@ -2604,6 +2632,18 @@ public class ImportAll <: ImportContent {}
 父类型：
 
 - [ImportContent](#class-importcontent)
+
+### init(Array\<String>)
+
+```cangjie
+public init(prefixes: Array<String>)
+```
+
+功能：根据输入的包路径前缀，构造一个 [ImportAll](#class-importall) 对象。
+
+参数：
+
+- prefixes - Array\<String> - 被导入的包路径前缀。
 
 ### func getMulPos()
  
@@ -2707,6 +2747,20 @@ public prop modifier: Option<Modifier>
 
 类型：Option\<[Modifier](#class-modifier)>
 
+### init(ImportContent, ImportKind, Option\<Modifier>)
+
+```cangjie
+public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>)
+```
+
+功能：根据输入的包导入内容、导入类型和修饰符，构造一个 [ImportList](#class-importlist) 对象。
+
+参数：
+
+- contents - [ImportContent](#class-importcontent) - 导入内容。
+- kind - [ImportKind](syntax_package_enums.md#enum-importkind) - 导入类型。
+- modifier - Option\<[Modifier](#class-modifier)> - 包导入节点的修饰符。
+
 ### func getImportKeyWordPos()
  
 ```cangjie
@@ -2740,6 +2794,20 @@ public prop contents: Array<ImportContent>
 功能：表示该包导入节点中的多个导入项的列表，如 `pkg.{a.*, b.c, d as p}` 中的 `[a.*, b.c, d as p]`。
 
 类型：Array\<[ImportContent](#class-importcontent)>
+
+### init(Array\<String>, String, Array\<ImportContent>)
+
+```cangjie
+public init(prefixes: Array<String>, identifier: String, contents: Array<ImportContent>)
+```
+
+功能：根据输入的包路径前缀、包名和子包导入内容，构造一个 [ImportMulti](#class-importmulti) 对象。
+
+参数：
+
+- prefixes - Array\<String> - 被导入的包路径前缀。
+- identifier - String - 被导入的包名。
+- contents - Array\<[ImportContent](#class-importcontent)> - 被导入的子包。
 
 ### func getCommasPos()
 
@@ -2798,6 +2866,19 @@ public prop identifier: String
 功能：表示该包导入节点中的被导入的项，它可能是包中的顶层声明或声明，也可能是子包的名字，如 `pkg.a` 中的 `a`。
 
 类型：String
+
+### init(Array\<String>, String)
+
+```cangjie
+public init(prefixes: Array<String>, identifier: String)
+```
+
+功能：根据输入的包路径前缀和包名，构造一个 [ImportSingle](#class-importsingle) 对象。
+
+参数：
+
+- prefixes - Array\<String> - 被导入的包路径前缀。
+- identifier - String - 被导入的包名。
 
 ### func getIdentifierPos()
  
@@ -4352,6 +4433,18 @@ public prop params: Array<Parameter>
  
 类型：Array\<[Parameter](#class-parameter)>
 
+### init(Array\<Parameter>)
+
+```cangjie
+public init(parameters: Array<Parameter>)
+```
+
+功能：根据输入的参数数组，构造一个 [ParameterList](#class-parameterlist) 对象。
+
+参数：
+
+- parameters - Array\<[Parameter](#class-parameter)> - 将要构造 [ParameterList](#class-parameterlist) 类型的参数列表。
+
 ### func getParamsCommasPos()
 
 ```cangjie
@@ -4983,6 +5076,18 @@ public prop content: Tokens
 功能：获取 [QuoteToken](#class-quotetoken) 内的 Tokens。
 
 类型：Tokens
+
+### init(Tokens)
+
+```cangjie
+public init(content: Tokens)
+```
+
+功能：根据输入的词法单元，构造一个 [QuoteToken](#class-quotetoken) 对象。
+
+参数：
+
+- content - Tokens - 将要构造 [QuoteToken](#class-quotetoken) 类型的词法单元集合。
 
 ## class RangeExpr
 
