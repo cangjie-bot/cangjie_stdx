@@ -40,6 +40,26 @@ stdx 含若干包，提供了丰富的扩展功能：
 | [syntax](./syntax/syntax_package_overview.md)                                  | syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点，提供语法解析函数。                                                                                                                                                 |
 | [unittest.data](./unittest/data/data_package_overview.md)                      | unittest 模块提供了单元测试扩展能力。                                                                                                                                                 |
 
+## 平台支持说明
+
+扩展库提供的 API 支持在如下操作系统上运行：
+
+> **注意：**
+>
+> 部分 API 不支持在特定的操作系统运行，详情请参见对应 API 描述。
+
+| 操作系统       | CPU 架构  | 环境及其版本要求 |
+| ------------- | --------- | --------------- |
+| Linux         | x86_64    | glibc 2.22；Linux Kernel 4.12 或更高版本；系统安装 libstdc++ 6.0.24 或更高版本 |
+| Linux         | aarch64   | glibc 2.27；Linux Kernel 4.15 或更高版本；系统安装 libstdc++ 6.0.24 或更高版本 |
+| Windows       | x86_64    | Windows 10 或更高版本 |
+| macOS         | aarch64   | macOS 12.0 或更高版本 |
+| OpenHarmony   | aarch64   | OpenHarmony 5.1 或更高版本 |
+| OpenHarmony   | arm32     | OpenHarmony 5.1 或更高版本 |
+| HarmonyOS     | aarch64   | HarmonyOS 5.1 或更高版本 |
+| iOS           | aarch64   | iOS 11 或更高版本（ast 库需要 iOS 12 或更高版本） |
+| Android       | aarch64   | Android API 26 或更高版本 |
+
 ## 使用指导
 
 仓颉编程语言扩展库 stdx 二进制包包含静态（static）和 动态 （dynamic） 两部分，请按需引用。
