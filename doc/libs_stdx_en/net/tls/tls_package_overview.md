@@ -35,6 +35,7 @@ To use this package, external dependencies on the `ssl` and `crypto` dynamic lib
 
 | Class Name                                                                           | Functionality                                            |
 |--------------------------------------------------------------------------------------|---------------------------------------------------------|
+| [KeylessTlsServerConfig](./tls_package_api/tls_package_classes.md#classtls)        | Server configuration. |
 | [TlsSessionContext](./tls_package_api/tls_package_classes.md#class-tlssessioncontext) | Enables session resumption on the server side and stores sessions for client authentication types. |
 | [TlsSocket](./tls_package_api/tls_package_classes.md#class-tlssocket)                | Used to create encrypted transmission channels between clients and servers. |
 
@@ -57,6 +58,13 @@ To use this package, external dependencies on the `ssl` and `crypto` dynamic lib
 | [TlsClientConfig](./tls_package_api/tls_package_structs.md#struct-tlsclientconfig)        | Client configuration. |
 | [TlsServerConfig](./tls_package_api/tls_package_structs.md#struct-tlsserverconfig)        | Server configuration. |
 | [TlsSession](./tls_package_api/tls_package_structs.md#struct-tlssession)                  | After a successful TLS handshake, a session is generated. If the connection is lost for any reason, the client can reuse this session ID to resume the session, skipping the handshake process. |
+
+### Type Aliases
+
+| Type Alias                                                      | Functionality                     |
+| ----------------------------------------------------- | -------------------------------- |
+| [KeylessDecryptFunc](./tls_package_api/tls_package_type.md#type-keylessdecryptfunc) | Decryption callback function type for keyless handshakes. |
+| [KeylessSignFunc](./tls_package_api/tls_package_type.md#type-keylesssignfunc) | Signature callback function type for keyless handshakes. |
 
 ### Exception Classes  
 

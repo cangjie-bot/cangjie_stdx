@@ -1,5 +1,152 @@
 # Classes
 
+## class KeylessTlsServerConfig
+
+```cangjie
+public class KeylessTlsServerConfig <: TlsConfig {
+    public var clientIdentityRequired: TlsClientIdentificationMode = Disabled
+    public var keylogCallback: ?(TlsSocket, String) -> Unit = None
+    public var verifyMode: CertificateVerifyMode = CertificateVerifyMode.Default
+    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+}
+```
+
+Function: Provides server configuration for keyless handshake.
+
+> **Note:**
+>
+> Currently only supports three cipher suites: ECDHE-RSA-AES256-GCM-SHA384, TLS_AES_256_GCM_SHA384, and TLS_CHACHA20_POLY1305_SHA256. Other cipher suites are not guaranteed to be available.
+
+Parent Types:
+
+- [TlsConfig](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig)
+
+### var keylogCallback
+
+```cangjie
+public var keylogCallback: ?(TlsSocket, String) -> Unit = None
+```
+
+Function: Callback function during handshake process that provides TLS initial key data for debugging and record decryption.
+
+Type: ?([TlsSocket](tls_package_classes.md#class-tlssocket), String) -> Unit
+
+### prop certificate
+
+```cangjie
+public mut prop certificate: ?(Array<Certificate>, PrivateKey)
+```
+
+Function: Sets or gets the server certificate and corresponding private key file. The certificate must be of type [X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate). Cannot be set to None.
+
+> **Note:**
+>
+> The `PrivateKey` returned by this property is a meaningless dummy key and is unrelated to `Array\<Certificate>`.
+
+Type: ?(Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>, [PrivateKey](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey))
+
+Exceptions:
+
+- [TlsException](../common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - Thrown when the set server certificate is not of type [X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate); thrown when the server certificate and corresponding private key file are set to None.
+
+### prop clientIdentityRequired
+
+```cangjie
+public mut prop clientIdentityRequired: TlsClientIdentificationMode
+```
+
+Function: Sets or gets the authentication mode required by the server for clients. Default value is [TlsClientIdentificationMode](tls_package_enums.md#enum-tlsclientidentificationmode).Disable, which means no client authentication of server certificate is required, and no client certificate needs to be sent.
+
+Type: [TlsClientIdentificationMode](tls_package_enums.md#enum-tlsclientidentificationmode)
+
+### prop dhParameters
+
+```cangjie
+public mut prop dhParameters: ?DHParameters
+```
+
+Function: Specifies the server's DH key parameters. Default is `None`, which uses OpenSSL's automatically generated parameter values.
+
+Type: ?[DHParameters](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-dhparameters)
+
+### prop securityLevel
+
+```cangjie
+public mut prop securityLevel: Int32
+```
+
+Function: Specifies the server's security level. Default value is 2, with optional parameter values in the range [0,5]. For parameter value meanings, see [openssl-SSL_CTX_set_security_level](https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_security_level.html) documentation.
+
+Type: Int32
+
+Exceptions:
+
+- IllegalArgumentException - Thrown when the configuration value is not in the range 0-5.
+
+### prop supportedAlpnProtocols
+
+```cangjie
+public mut prop supportedAlpnProtocols: Array<String>
+```
+
+Function: Application Layer Protocol Negotiation protocols. If the client attempts to negotiate this protocol, the server will select the intersecting protocol names. If the client does not attempt protocol negotiation, this configuration will be ignored.
+
+Type: Array\<String>
+
+Exceptions:
+
+- IllegalArgumentException - Thrown when list elements contain '\0' characters.
+
+### prop supportedCipherSuites
+
+```cangjie
+public mut prop supportedCipherSuites: Map<TlsVersion, Array<String>>
+```
+
+Function: Sets or gets the cipher suites corresponding to each TLS version.
+
+Type: Map\<[TlsVersion](../common/tls_common_package_api/tls_common_package_enums.md#enum-tlsversion), Array\<String>>
+
+Exceptions:
+
+- IllegalArgumentException - Thrown when setting cipher suites through a `Map` parameter, if any TLS version's corresponding cipher suite string contains null character `\0`.
+
+### prop supportedVersions
+
+```cangjie
+public mut prop supportedVersions: Array<TlsVersion>
+```
+
+Function: Sets or gets the supported TLS versions.
+
+Type: Array\<[TlsVersion](../common/tls_common_package_api/tls_common_package_enums.md#enum-tlsversion)>
+
+### prop verifyMode
+
+```cangjie
+public mut prop verifyMode: CertificateVerifyMode
+```
+
+Function: Sets or gets the verification mode. Default value is [CertificateVerifyMode](../common/tls_common_package_api/tls_common_package_enums.md#enum-certificateverifymode).Default, which verifies system certificates.
+
+Type: [CertificateVerifyMode](../common/tls_common_package_api/tls_common_package_enums.md#enum-certificateverifymode)
+
+### init(Array\<X509Certificate>, KeylessSignFunc, ?KeylessDecryptFunc)
+
+```cangjie
+public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+```
+
+Function: Constructs a [KeylessTlsServerConfig](./tls_package_classes.md#class-keylesstlsserverconfig) object.
+
+Parameters:
+
+- certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - Certificate object.
+- signCallback: [KeylessSignFunc](./tls_package_type.md#type-keylesssignfunc) - Signing callback function.
+- decryptCallback: ?[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc) - Decryption callback function. Defaults to None.
+
+
+
 ## class TlsSessionContext
 
 ```cangjie
@@ -324,6 +471,28 @@ Parameters:
 Return Value:
 
 - [TlsSocket](tls_package_classes.md#class-tlssocket) - The constructed [TlsSocket](tls_package_classes.md#class-tlssocket) instance.
+### static func server(StreamingSocket, ?TlsServerSession, KeylessTlsServerConfig)
+
+```cangjie
+public static func server(
+    socket: StreamingSocket,
+    session!: ?TlsServerSession = None,
+    serverConfig!: KeylessTlsServerConfig
+): TlsSocket
+```
+
+Function: Creates a server TLS socket for the specified address using the provided StreamingSocket instance. This socket can be used for server TLS handshake and session in keyless scenarios.
+
+Parameters:
+
+- socket: StreamingSocket - The accepted socket after TCP connection establishment.
+- session!: ?[TlsServerSession](tls_package_classes.md#class-tlsserversession) - TLS session ID. If an available TLS session exists, this ID can be used to resume a historical TLS session, saving TLS connection establishment time. However, session negotiation may still fail. Defaults to None.
+- serverConfig!: [KeylessTlsServerConfig](./tls_package_classes.md#class-keylesstlsserverconfig) - Server configuration.
+
+Return Value:
+
+- [TlsSocket](tls_package_classes.md#class-tlssocket) - The constructed [TlsSocket](tls_package_classes.md#class-tlssocket) instance.
+
 
 ### static func server(StreamingSocket, ?TlsSessionContext, TlsServerConfig)
 
