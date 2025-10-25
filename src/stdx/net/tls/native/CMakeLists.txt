@@ -19,6 +19,11 @@ file(
     tls_keys_certs.c
     versions.c
     dhparam.c
+    provider_signature.c
+    provider_asymcipher.c
+    provider_keymgt.c
+    provider_helper.c
+    provider.c
 )
 
 set(libname stdx.net.tlsFFI)
