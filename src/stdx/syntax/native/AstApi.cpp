@@ -139,12 +139,12 @@ ParseRes* CJ_ParseText(const char* text)
     return getParseResult(res, diag, sm, textParsed.get());
 }
 
-ParseRes* CJ_ParseTokens(const uint8_t* tokensBytes, int64_t* tokenCounter)
+ParseRes* CJ_ParseTokens(const uint8_t* tokensBytes, int64_t* tokenCounter, bool refreshPos)
 {
     Cangjie::ICE::TriggerPointSetter iceSetter(CompileStage::PARSE);
     DiagnosticEngine diag;
     SourceManager sm;
-    std::vector<Token> tokens = tokensFormatter(tokensBytes);
+    std::vector<Token> tokens = refreshPos ? tokensFormatter(tokensBytes) : TokenSerialization::GetTokensFromBytes(tokensBytes);
 
     SetDiagEngine(diag, sm);
     ParserSyntax parser(tokens, diag, sm, true);
@@ -154,7 +154,7 @@ ParseRes* CJ_ParseTokens(const uint8_t* tokensBytes, int64_t* tokenCounter)
     if (tokensParsed == nullptr) {
         return res;
     }
-    if (tokenCounter != nullptr && static_cast<int64_t>(parser.GetProcessedTokens()) != tokens.size()) {
+    if (tokenCounter != nullptr && static_cast<uint64_t>(parser.GetProcessedTokens()) != tokens.size()) {
         *tokenCounter = 1;
     }
     return getParseResult(res, diag, sm, tokensParsed.get());

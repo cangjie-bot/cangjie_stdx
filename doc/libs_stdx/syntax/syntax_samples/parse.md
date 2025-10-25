@@ -106,10 +106,13 @@ import stdx.syntax.*
 
 main() {
     let tokens = quote(
-      let a = 1
+      let a    =    1
     )
-    let result = parseTokens(tokens) // 解析获得一个语法树节点，示例中为变量声明
+    let result = parseTokens(tokens) // 解析获得一个语法树节点，默认刷新位置信息，示例中为变量声明
     println(result.node.toString()) // 打印该语法树节点
+
+    let result_1 = parseTokens(tokens, refreshPos: false) // 不刷新位置信息解析，toString 结果保留原始位置
+    println(result_1.node.toString())
 }
 ```
 
@@ -117,4 +120,5 @@ main() {
 
 ```text
 let a = 1
+let a    =    1
 ```
