@@ -45,7 +45,7 @@ ParserSyntax::~ParserSyntax()
 {
 }
 
-OwnedPtr<Node> ParserSyntax::ParseExprOrDecl(ScopeKind sk)
+OwnedPtr<AST::Node> ParserSyntax::ParseExprOrDecl(ScopeKind sk)
 {
     if (implSyntax->SeeingMacroCall()) {
         return nullptr;
@@ -55,4 +55,9 @@ OwnedPtr<Node> ParserSyntax::ParseExprOrDecl(ScopeKind sk)
         return ParseExpr();
     }
     return nullptr;
+}
+
+void ParserSyntax::AttachComment(std::vector<OwnedPtr<AST::Node>>& nodes)
+{
+    AttachCommentToNodes(nodes);
 }

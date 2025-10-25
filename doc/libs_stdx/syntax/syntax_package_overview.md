@@ -17,7 +17,7 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [parseFile(String)](./syntax_package_api/syntax_package_funcs.md#func-parsefilestring)  | 用于解析一个文本文件，获取一个符合仓颉语法的 `SourceFile` 类型的抽象语法树。 |
 | [parsePackage(String)](./syntax_package_api/syntax_package_funcs.md#func-parsepackagestring)  | 用于解析一个文件目录，获取一个符合仓颉语法的 `Package` 类型的抽象语法树。 |
 | [parseText(String)](./syntax_package_api/syntax_package_funcs.md#func-parsetextstring)  | 用于解析一个字符串文本，获取一个符合仓颉语法的抽象语法树节点。 |
-| [parseTokens(Tokens)](./syntax_package_api/syntax_package_funcs.md#func-parsetokenstokens)  | 用于解析一组词法单元，获取一个符合仓颉语法的抽象语法树节点。 |
+| [parseTokens(Tokens, Bool)](./syntax_package_api/syntax_package_funcs.md#func-parsetokenstokens-bool)  | 用于解析一组词法单元，获取一个符合仓颉语法的抽象语法树节点。 |
 ### 类
 
 |                 类名               |                功能                |

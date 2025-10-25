@@ -54,8 +54,8 @@ class Parser {
         (res, diags)
     }
 
-    static func parseTokens(tokens: Tokens): (?SyntaxTreeNode, Array<Diagnostic>) {
-        let (node, diags) = Parser("").parseFromTokens(tokens)
+    static func parseTokens(tokens: Tokens, refreshPos: Bool): (?SyntaxTreeNode, Array<Diagnostic>) {
+        let (node, diags) = Parser("").parseFromTokens(tokens, refreshPos)
         let res: ?SyntaxTreeNode = if (let Some(root) <- node) {
             root as SyntaxTreeNode
         } else {
@@ -137,8 +137,8 @@ class Parser {
         (buildSyntaxTree(root), diags)
     }
 
-    private func parseFromTokens(tokens: Tokens): (?SyntaxTreeNode, Array<Diagnostic>) {
-        let (root, diags) = impl.parseTokens(tokens)
+    private func parseFromTokens(tokens: Tokens, refreshPos: Bool): (?SyntaxTreeNode, Array<Diagnostic>) {
+        let (root, diags) = impl.parseTokens(tokens, refreshPos)
         (buildSyntaxTree(root), diags)
     }
 
