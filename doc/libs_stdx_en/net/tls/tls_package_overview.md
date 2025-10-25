@@ -34,6 +34,7 @@ To use this package, external dependencies on the `ssl` and `crypto` dynamic lib
 | Class Name                                                                                | Functionality                                                                                                                                                       |
 | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | [DefaultTlsKit](./tls_package_api/tls_package_classes.md#class-defaulttlskit)             | Default implementation of [TlsKit](../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlskit). Used to obtain TLS server, client connections and server sessions. |
+| [KeylessTlsServerConfig](./tls_package_api/tls_package_classes.md#class-keylesstlsserverconfig) | Keyless server configuration.       |
 | [TlsClientSession](./tls_package_api/tls_package_classes.md#class-tlsclientsession)      | After successful TLS handshake on the client side, a session is generated. If the connection is lost for some reason, the client can reuse this session ID to resume the session, skipping the handshake process. |
 | [TlsServerSession](./tls_package_api/tls_package_classes.md#class-tlsserversession)       | The server enables session resumption feature, storing sessions for client authentication purposes.                                                              |
 | [TlsSocket](./tls_package_api/tls_package_classes.md#class-tlssocket)                     | Used to create encrypted transmission channels between client and server.                                                                                          |
@@ -54,3 +55,10 @@ To use this package, external dependencies on the `ssl` and `crypto` dynamic lib
 | [CipherSuite](./tls_package_api/tls_package_structs.md#struct-ciphersuite)           | Cipher suites in TLS. |
 | [TlsClientConfig](./tls_package_api/tls_package_structs.md#struct-tlsclientconfig)   | Client configuration. |
 | [TlsServerConfig](./tls_package_api/tls_package_structs.md#struct-tlsserverconfig)   | Server configuration. |
+
+### Type Aliases
+
+| Type Alias                                              | Functionality                             |
+| ----------------------------------------------------- | -------------------------------- |
+| [KeylessDecryptFunc](./tls_package_api/tls_package_type.md#type-keylessdecryptfunc) | Decryption callback function type for keyless handshake. |
+| [KeylessSignFunc](./tls_package_api/tls_package_type.md#type-keylesssignfunc) | Signature callback function type for keyless handshake. |
