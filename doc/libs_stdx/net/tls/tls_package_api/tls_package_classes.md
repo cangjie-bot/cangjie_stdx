@@ -64,6 +64,157 @@ public func getTlsServerSession(name: String): TlsSession
 
 - [TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession) - 创建的 [TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession) 实例。
 
+## class KeylessTlsServerConfig
+
+```cangjie
+public class KeylessTlsServerConfig <: TlsConfig {
+    public var clientIdentityRequired: TlsClientIdentificationMode = Disabled
+    public var keylogCallback: ?(TlsSocket, String) -> Unit = None
+    public var verifyMode: CertificateVerifyMode = CertificateVerifyMode.Default
+    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+}
+```
+
+功能：提供无私钥握手的服务端配置。
+
+> **注意：**
+>
+> 暂只支持 ECDHE-RSA-AES256-GCM-SHA384, TLS_AES_256_GCM_SHA384, TLS_CHACHA20_POLY1305_SHA256 三种算法套，其余算法套不保证可用性。
+
+
+父类型：
+
+- [TlsConfig](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig)
+
+### var keylogCallback
+
+```cangjie
+public var keylogCallback: ?(TlsSocket, String) -> Unit = None
+```
+
+功能：握手过程的回调函数，提供 TLS 初始秘钥数据，用于调试和解密记录使用。
+
+类型：?([TlsSocket](tls_package_classes.md#class-tlssocket), String) -> Unit
+
+### prop certificate
+
+```cangjie
+public mut prop certificate: ?(Array<Certificate>, PrivateKey)
+```
+
+功能：设置或获取服务端证书和对应的私钥文件。其中证书必须为 [X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate) 类型。不可设置为 None。
+
+> **注意：**
+>
+> 该属性返回的 `PrivateKey` 是一个无意义的 dummy key，与 `Array\<Certifiace>` 无关。
+
+类型：?(Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>, [PrivateKey](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey))
+
+异常：
+
+- [TlsException](../common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - 设置的服务端证书不是 [X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate) 类型时，抛出异常；设置服务端证书和对应的私钥文件为 None 时，抛出异常。
+
+### prop clientIdentityRequired
+
+```cangjie
+public mut prop clientIdentityRequired: TlsClientIdentificationMode
+```
+
+功能：设置或获取服务端要求客户端的认证模式，默认值为 [TlsClientIdentificationMode](tls_package_enums.md#enum-tlsclientidentificationmode).Disable，即不要求客户端认证服务端证书，也不要求客户端发送本端证书。
+
+类型：[TlsClientIdentificationMode](tls_package_enums.md#enum-tlsclientidentificationmode)
+
+### prop dhParameters
+
+```cangjie
+public mut prop dhParameters: ?DHParameters
+```
+
+功能：指定服务端的 DH 密钥参数，默认为 `None`， 默认情况下使用 openssl 自动生成的参数值。
+
+类型：?[DHParameters](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-dhparameters)
+
+### prop securityLevel
+
+```cangjie
+public mut prop securityLevel: Int32
+```
+
+功能：指定服务端的安全级别，默认值为2，可选参数值在 [0,5] 内，参数值含义参见 [openssl-SSL_CTX_set_security_level](https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_security_level.html) 说明。
+功能：指定服务端的安全级别，默认值为2，可选参数值在 0-5 内，参数值含义参见 openssl-SSL_CTX_set_security_level 说明。
+
+类型：Int32
+
+异常：
+
+- IllegalArgumentException - 当配置值不在 0-5 范围内时，抛出异常。
+
+### prop supportedAlpnProtocols
+
+```cangjie
+public mut prop supportedAlpnProtocols: Array<String>
+```
+
+功能：应用层协商协议，若客户端尝试协商该协议，服务端将与选取其中相交的协议名称。若客户端未尝试协商协议，则该配置将被忽略。
+
+类型：Array\<String>
+
+异常：
+
+- IllegalArgumentException - 列表元素有 '\0' 字符时，抛出异常。
+
+### prop supportedCipherSuites
+
+```cangjie
+public mut prop supportedCipherSuites: Map<TlsVersion, Array<String>>
+```
+
+功能：设置或获取每个 TLS 版本对应的密码套件。
+
+类型：Map\<[TlsVersion](../common/tls_common_package_api/tls_common_package_enums.md#enum-tlsversion), Array\<String>>
+
+异常：
+
+- IllegalArgumentException - 通过传入 `Map` 设置密码套件时，某个 TLS 版本对应的密码套件字符串中包含空字符 `\0`，则抛出异常。
+
+### prop supportedVersions
+
+```cangjie
+public mut prop supportedVersions: Array<TlsVersion>
+```
+
+功能：设置或获取支持的 TLS 版本。
+
+类型：Array\<[TlsVersion](../common/tls_common_package_api/tls_common_package_enums.md#enum-tlsversion)>
+
+### prop verifyMode
+
+```cangjie
+public mut prop verifyMode: CertificateVerifyMode
+```
+
+功能：设置或获取认证模式，默认值为 [CertificateVerifyMode](../common/tls_common_package_api/tls_common_package_enums.md#enum-certificateverifymode).Default，即认证系统证书。
+
+类型：[CertificateVerifyMode](../common/tls_common_package_api/tls_common_package_enums.md#enum-certificateverifymode)
+
+### init(Array\<X509Certificate>, KeylessSignFunc, ?KeylessDecryptFunc)
+
+```cangjie
+public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+```
+
+功能：构造 [KeylessTlsServerConfig](./tls_package_classes.md#class-keylesstlsserverconfig) 对象。
+
+参数：
+
+- certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - 证书对象。
+- signCallback: [KeylessSignFunc](./tls_package_type.md#type-keylesssignfunc) - 签名回调函数。
+- decryptCallback: ?[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc) - 解密回调函数，默认为 None\<[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc)>。
+
+异常：
+
+- IllegalArgumentException - 当 `certChain` 为空时，抛出异常。
+
 ## class TlsClientSession
 
 ```cangjie
@@ -348,6 +499,28 @@ public static func client(
 - socket: StreamingSocket - 已连接到服务端的客户端 TCP 套接字。
 - session!: ?[TlsClientSession](tls_package_classes.md#class-tlsclientsession) - TLS 会话 id，若存在可用的 TLS 会话， 则可通过该 id 恢复历史 TLS 会话，省去 TLS 建立连接时间，但使用该会话依然可能协商失败。默认为 `None`。
 - clientConfig!: [TlsClientConfig](tls_package_structs.md#struct-tlsclientconfig) - 客户端配置，默认为 [TlsClientConfig](tls_package_structs.md#struct-tlsclientconfig)()。
+
+返回值：
+
+- [TlsSocket](tls_package_classes.md#class-tlssocket) - 构造出的 [TlsSocket](tls_package_classes.md#class-tlssocket) 实例。
+
+### static func server(StreamingSocket, ?TlsServerSession, KeylessTlsServerConfig)
+
+```cangjie
+public static func server(
+    socket: StreamingSocket,
+    session!: ?TlsServerSession = None,
+    serverConfig!: KeylessTlsServerConfig
+): TlsSocket
+```
+
+功能：根据传入的 StreamingSocket 实例创建指定地址的服务端 TLS 套接字，该套接字可用于服务端无私钥场景下 TLS 握手及会话。
+
+参数：
+
+- socket: StreamingSocket - TCP 连接建立完成后接受到套接字。
+- session!: ?[TlsServerSession](tls_package_classes.md#class-tlsserversession) - TLS 会话 id， 若存在可用的 TLS 会话， 则可通过该 id 恢复历史 TLS 会话，省去 TLS 建立连接时间，但使用该会话依然可能协商失败。默认为 None。
+- serverConfig!: [KeylessTlsServerConfig](./tls_package_classes.md#class-keylesstlsserverconfig) - 服务端配置。
 
 返回值：
 
