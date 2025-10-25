@@ -112,6 +112,7 @@
         - [server](libs_stdx_en/net/http/http_samples/http_server.md)
         - [webSocket](libs_stdx_en/net/http/http_samples/webSocket.md)
 - [stdx.net.tls](libs_stdx_en/net/tls/tls_package_overview.md)
+    - [Type Aliases](libs_stdx_en/net/tls/tls_package_api/tls_package_type.md)
     - [Classes](libs_stdx_en/net/tls/tls_package_api/tls_package_classes.md)
     - [Enums](libs_stdx_en/net/tls/tls_package_api/tls_package_enums.md)
     - [Structs](libs_stdx_en/net/tls/tls_package_api/tls_package_structs.md)

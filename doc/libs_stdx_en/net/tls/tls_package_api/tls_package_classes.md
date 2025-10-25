@@ -6,7 +6,64 @@
 public class TlsSessionContext <: Equatable<TlsSessionContext> & ToString
 ```
 
-Function: This class represents a TLS session context, providing clients with information to ensure the server they connect to remains the same instance. Used for connection reuse to validate client legitimacy.
+Function: Creates a client TLS connection based on the provided StreamingSocket instance, which can be used for TLS handshake.
+
+Parameters:
+
+- socket: StreamingSocket - The socket obtained after TCP connection establishment.
+- config: [TlsConfig](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - Client TLS configuration.
+- session!: ?[TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession) - TLS session. If an available TLS session exists, it can be used for session resumption to save TLS connection establishment time.
+
+Return Value:
+
+- [TlsConnection](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconnection) - The constructed client TLS connection.
+
+### func getTlsServer(StreamingSocket, TlsConfig, ?TlsSession)
+
+```cangjie
+public func getTlsServer(socket: StreamingSocket, config: TlsConfig, session!: ?TlsSession): TlsConnection
+```
+
+Function: Creates a server TLS connection based on the provided StreamingSocket instance, which can be used for TLS handshake.
+
+Parameters:
+
+- socket: StreamingSocket - The socket obtained after TCP connection establishment.
+- config: [TlsConfig](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - Server TLS configuration.
+- session!: ?[TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession) - TLS session. If an available TLS session exists, it can be used for session resumption to save TLS connection establishment time.
+
+Return Value:
+
+- [TlsConnection](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconnection) - The constructed server TLS connection.
+
+### func getTlsServerSession(String)
+
+```cangjie
+public func getTlsServerSession(name: String): TlsSession
+```
+
+Function: Creates a [TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession) instance by name, which is used to distinguish TLS servers.
+
+Parameters:
+
+- name: String - Session name.
+
+Return Value:
+
+- [TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession) - The created [TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession) instance.
+
+## class KeylessTlsServerConfig
+
+```cangjie
+public class KeylessTlsServerConfig <: TlsConfig {
+    public mut prop clientIdentityRequired: TlsClientIdentificationMode
+    public mut prop keylogCallback: ?(TlsSocket, String) -> Unit
+    public mut prop verifyMode: CertificateVerifyMode
+    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback!: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+}
+```
+
+Function: Provides server configuration for keyless handshake.
 
 > **Note:**
 >
@@ -14,7 +71,226 @@ Function: This class represents a TLS session context, providing clients with in
 
 Parent Types:
 
-- Equatable\<[TlsSessionContext](#class-tlssessioncontext)>
+- [TlsConfig](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig)
+
+### var keylogCallback
+
+```cangjie
+public var keylogCallback: ?(TlsSocket, String) -> Unit = None
+```
+
+Function: Callback function during handshake process, provides TLS initial key data for debugging and decryption purposes.
+
+Type: ?([TlsSocket](tls_package_classes.md#class-tlssocket), String) -> Unit
+
+### prop certificate
+
+```cangjie
+public mut prop certificate: ?(Array<Certificate>, PrivateKey)
+```
+
+Function: Sets or gets the server certificate and corresponding private key file. The certificate must be of [X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate) type. Cannot be set to None.
+
+> **Note:**
+>
+> The `PrivateKey` returned by this property is a meaningless dummy key, unrelated to `Array<Certificate>`.
+
+Type: ?(Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>, [PrivateKey](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey))
+
+Exceptions:
+
+- [TlsException](../common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - Thrown when the server certificate is not of [X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate) type, or when the server certificate and corresponding private key file are set to None.
+
+### prop clientIdentityRequired
+
+```cangjie
+public mut prop clientIdentityRequired: TlsClientIdentificationMode
+```
+
+Function: Sets or gets the client authentication mode required by the server. Default value is [TlsClientIdentificationMode](tls_package_enums.md#enum-tlsclientidentificationmode).Disable, which means no client authentication of server certificate is required, and no client certificate is required.
+
+Type: [TlsClientIdentificationMode](tls_package_enums.md#enum-tlsclientidentificationmode)
+
+### prop dhParameters
+
+```cangjie
+public mut prop dhParameters: ?DHParameters
+```
+
+Function: Specifies the server's DH key parameters. Default is `None`, where OpenSSL automatically generated parameter values are used by default.
+
+Type: ?[DHParameters](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-dhparameters)
+
+### prop securityLevel
+
+```cangjie
+public mut prop securityLevel: Int32
+```
+
+Function: Specifies the server's security level. Default value is 2, with optional parameter values in the range [0,5]. For parameter value meanings, refer to [openssl-SSL_CTX_set_security_level](https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_security_level.html) documentation.
+
+Type: Int32
+
+Exceptions:
+
+- IllegalArgumentException - Thrown when the configuration value is not in the 0-5 range.
+
+### prop supportedAlpnProtocols
+
+```cangjie
+public mut prop supportedAlpnProtocols: Array<String>
+```
+
+Function: Application Layer Protocol Negotiation protocols. If the client attempts to negotiate these protocols, the server will select intersecting protocol names. If the client does not attempt to negotiate protocols, this configuration will be ignored.
+
+Type: Array\<String>
+
+Exceptions:
+
+- IllegalArgumentException - Thrown when list elements contain '\0' character.
+
+### prop supportedCipherSuites
+
+```cangjie
+public mut prop supportedCipherSuites: Map<TlsVersion, Array<String>>
+```
+
+Function: Sets or gets the cipher suites corresponding to each TLS version.
+
+Type: Map\<[TlsVersion](../common/tls_common_package_api/tls_common_package_enums.md#enum-tlsversion), Array\<String>>
+
+Exceptions:
+
+- IllegalArgumentException - Thrown when setting cipher suites through the `Map` parameter, if any TLS version's corresponding cipher suite string contains null character `\0`.
+
+### prop supportedVersions
+
+```cangjie
+public mut prop supportedVersions: Array<TlsVersion>
+```
+
+Function: Sets or gets the supported TLS versions.
+
+Type: Array\<[TlsVersion](../common/tls_common_package_api/tls_common_package_enums.md#enum-tlsversion)>
+
+### prop verifyMode
+
+```cangjie
+public mut prop verifyMode: CertificateVerifyMode
+```
+
+Function: Sets or gets the verification mode. Default value is [CertificateVerifyMode](../common/tls_common_package_api/tls_common_package_enums.md#enum-certificateverifymode).Default, which verifies system certificates.
+
+Type: [CertificateVerifyMode](../common/tls_common_package_api/tls_common_package_enums.md#enum-certificateverifymode)
+
+### init(Array\<X509Certificate>, KeylessSignFunc, ?KeylessDecryptFunc)
+
+```cangjie
+public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback!: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+```
+
+Function: Constructs a [KeylessTlsServerConfig](./tls_package_classes.md#class-keylesstlsserverconfig) object.
+
+Parameters:
+
+- certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - Certificate object.
+- signCallback: [KeylessSignFunc](./tls_package_type.md#type-keylesssignfunc) - Signing callback function.
+- decryptCallback!: ?[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc) - Decryption callback function. Defaults to None\<[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc)>.
+
+Exceptions:
+
+- IllegalArgumentException - Thrown when `certChain` is empty.
+
+
+## class TlsClientSession
+
+```cangjie
+public class TlsClientSession <: TlsSession & Equatable<TlsClientSession> & ToString & Hashable
+```
+
+Function: This struct represents an established client session. Users cannot create instances of this struct, and its internal structure is not visible to users.
+
+When a client TLS handshake succeeds, a session is generated. If the connection is lost for some reason, the client can reuse this session through the session ID, omitting the handshake process.
+
+Parent Types:
+
+- [TlsSession](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession)
+- Equatable\<[TlsClientSession](#class-tlsclientsession)>
+- ToString
+- Hashable
+
+### func hashCode()
+
+```cangjie
+public override func hashCode(): Int64
+```
+
+Function: Generates a hash value for the session ID.
+
+Return Value:
+
+- Int64 - The hash value of the session ID.
+
+### func toString()
+
+```cangjie
+public override func toString(): String
+```
+
+Function: Generates a string representation of the session ID.
+
+Return Value:
+
+- String - [TlsClientSession](tls_package_classes.md#class-tlsclientsession)(session ID string).
+
+### operator func !=(TlsClientSession)
+
+```cangjie
+public override operator func !=(other: TlsClientSession): Bool
+```
+
+Function: Determines whether the session IDs are different.
+
+Parameters:
+
+- other: [TlsClientSession](tls_package_classes.md#class-tlsclientsession) - The session object to compare.
+
+Return Value:
+
+- Bool - Returns `true` if the session objects are different; otherwise, returns `false`.
+
+### operator func ==(TlsClientSession)
+
+```cangjie
+public override operator func ==(other: TlsClientSession): Bool
+```
+
+Function: Determines whether the session IDs are the same.
+
+Parameters:
+
+- other: [TlsClientSession](tls_package_classes.md#class-tlsclientsession) - The session object to compare.
+
+Return Value:
+
+- Bool - Returns `true` if the session objects are the same; otherwise, returns `false`.
+
+## class TlsServerSession
+
+```cangjie
+public class TlsServerSession <: TlsSession & Equatable<TlsServerSession> & ToString
+```
+
+Function: This class represents the TLS session context, providing information to clients to ensure they are connecting to the same server instance. It is used to validate client legitimacy during connection resumption.
+
+> **Note:**
+>
+> When a client attempts to resume a session, both parties must ensure they are resuming the session with a legitimate peer.
+
+Parent Types:
+
+- [TlsSession](./../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlssession)
+- Equatable\<[TlsServerSession](#class-tlsserversession)>
 - ToString
 
 ### static func fromName(String)

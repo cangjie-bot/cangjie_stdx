@@ -51,8 +51,7 @@ static void InfoCallback(const SSL* ssl, int type, int val)
     if ((type & SSL_CB_READ_ALERT) && g_exceptionDataIndex != -1) {
         ExceptionData* exception = (ExceptionData*)DYN_SSL_get_ex_data(ssl, g_exceptionDataIndex, NULL);
         if (exception != NULL) {
-            HandleAlertError(
-                exception, DYN_SSL_alert_desc_string_long(val, NULL), DYN_SSL_alert_type_string(val, NULL), NULL);
+            HandleAlertError(exception, DYN_SSL_alert_desc_string_long(val, NULL), DYN_SSL_alert_type_string(val, NULL), NULL);
         }
     }
 }
@@ -77,8 +76,7 @@ static int CheckParams(const SSL* ssl, const char* buffer, int size, ExceptionDa
     return 0;
 }
 
-static BIO* MapInputBio(
-    SSL* ssl, void* rawInput, size_t rawInputSize, int rawInputLast, ExceptionData* exception, DynMsg* dynMsg)
+static BIO* MapInputBio(SSL* ssl, void* rawInput, size_t rawInputSize, int rawInputLast, ExceptionData* exception, DynMsg* dynMsg)
 {
     BIO* inputBio = DYN_SSL_get_rbio(ssl, dynMsg);
     if (inputBio == NULL) {
@@ -164,9 +162,8 @@ static int SslRead(SSL* ssl, char* buffer, int size, ExceptionData* exception, D
  * rawBytesProduced (to rawOutput) correspondingly
  * returns: CJTLS_OK | CJTLS_EOF | CJTLS_AGAIN | CJTLS_FAIL
  */
-extern int CJ_TLS_DYN_SslRead(SSL* ssl, char* dataBuffer, int dataBufferSize, void* rawInput, size_t rawInputSize,
-    int rawInputLast, void* rawOutput, size_t rawOutputSize, size_t* dataBytesRead, size_t* rawBytesConsumed,
-    size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
+extern int CJ_TLS_DYN_SslRead(SSL* ssl, char* dataBuffer, int dataBufferSize, void* rawInput, size_t rawInputSize, int rawInputLast, void* rawOutput, size_t rawOutputSize,
+                              size_t* dataBytesRead, size_t* rawBytesConsumed, size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
 {
     EXCEPTION_OR_FAIL(exception, dynMsg);
     NOT_NULL_OR_FAIL(exception, dataBuffer, dynMsg);
@@ -247,9 +244,8 @@ static int SSlWrite(SSL* ssl, char* buffer, int size, ExceptionData* exception, 
  * rawBytesProduced (to rawOutput) correspondingly
  * returns: CJTLS_OK | CJTLS_EOF | CJTLS_AGAIN | CJTLS_FAIL
  */
-extern int CJ_TLS_DYN_SslWrite(SSL* ssl, char* dataBuffer, int dataBufferSize, void* rawInput, size_t rawInputSize,
-    int rawInputLast, void* rawOutput, size_t rawOutputSize, size_t* dataBytesWritten, size_t* rawBytesConsumed,
-    size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
+extern int CJ_TLS_DYN_SslWrite(SSL* ssl, char* dataBuffer, int dataBufferSize, void* rawInput, size_t rawInputSize, int rawInputLast, void* rawOutput, size_t rawOutputSize,
+                               size_t* dataBytesWritten, size_t* rawBytesConsumed, size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
 {
     EXCEPTION_OR_FAIL(exception, dynMsg);
     NOT_NULL_OR_FAIL(exception, dataBuffer, dynMsg);
@@ -300,8 +296,7 @@ extern void CJ_TLS_DYN_SslInit(DynMsg* dynMsg)
 {
     DYN_OPENSSL_init(dynMsg);
 
-    int index =
-        DYN_CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL, 0, (void*)"ExceptionData pointer", NULL, NULL, NULL, dynMsg);
+    int index = DYN_CRYPTO_get_ex_new_index(CRYPTO_EX_INDEX_SSL, 0, (void*)"ExceptionData pointer", NULL, NULL, NULL, dynMsg);
 
     g_exceptionDataIndex = index;
 }
@@ -314,23 +309,21 @@ static int SetServerDefaults(SSL_CTX* ctx, ExceptionData* exception, DynMsg* dyn
     // it's less efficient but safe
 
     /* 禁用 TLS1.0, TLS1.1 以及重协商 */
-    DYN_SSL_CTX_set_options(
-        ctx, SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1 | SSL_OP_NO_RENEGOTIATION | SSL_OP_NO_TICKET, dynMsg);
+    DYN_SSL_CTX_set_options(ctx, SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1 | SSL_OP_NO_RENEGOTIATION | SSL_OP_NO_TICKET, dynMsg);
 
     /* 设置默认的 TLS1.2 加密套 */
     int ret = DYN_SSL_CTX_set_cipher_list(ctx,
-        "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:"
-        "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:"
-        "DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384",
-        dynMsg);
+                                          "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:"
+                                          "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:"
+                                          "DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384",
+                                          dynMsg);
     if (ret <= 0) {
         HandleError(exception, "TLS failed to configure ciphers: SSL_CTX_set_cipher_list() failed", dynMsg);
         return CJTLS_FAIL;
     }
 
     /* 设置默认的 TLS1.3 加密套 */
-    ret = DYN_SSL_CTX_set_ciphersuites(
-        ctx, "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256", dynMsg);
+    ret = DYN_SSL_CTX_set_ciphersuites(ctx, "TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256", dynMsg);
     if (ret <= 0) {
         HandleError(exception, "TLS failed to configure ciphers: SSL_CTX_set_ciphersuites() failed", dynMsg);
         return CJTLS_FAIL;
@@ -342,8 +335,7 @@ static int SetServerDefaults(SSL_CTX* ctx, ExceptionData* exception, DynMsg* dyn
 static int SetClientDefaults(SSL_CTX* ctx, ExceptionData* exception, DynMsg* dynMsg)
 {
     /* 默认禁用不安全的加密套 */
-    int ret = DYN_SSL_CTX_set_cipher_list(
-        ctx, "DEFAULT:!aNULL:!eNULL:!MD5:!3DES:!DES:!RC4:!IDEA:!SEED:!aDSS:!SRP:!PSK", dynMsg);
+    int ret = DYN_SSL_CTX_set_cipher_list(ctx, "DEFAULT:!aNULL:!eNULL:!MD5:!3DES:!DES:!RC4:!IDEA:!SEED:!aDSS:!SRP:!PSK", dynMsg);
     if (ret <= 0) {
         HandleError(exception, "TLS failed to configure ciphers: SSL_CTX_set_cipher_list() failed", dynMsg);
         return CJTLS_FAIL;
@@ -360,14 +352,12 @@ static int SetClientDefaults(SSL_CTX* ctx, ExceptionData* exception, DynMsg* dyn
 
 static unsigned long DefaultOptions(void)
 {
-    unsigned long options =
-        SSL_OP_ALL | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION | SSL_OP_SINGLE_DH_USE | SSL_OP_SINGLE_ECDH_USE;
+    unsigned long options = SSL_OP_ALL | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION | SSL_OP_SINGLE_DH_USE | SSL_OP_SINGLE_ECDH_USE;
     options &= ~SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS;
     return options;
 }
 
-extern SSL_CTX* CJ_TLS_DYN_CreateContext(
-    int server, void (*keylogCallback)(const SSL*, const char*), ExceptionData* exception, DynMsg* dynMsg)
+extern SSL_CTX* CJ_TLS_DYN_CreateContext(int server, void (*keylogCallback)(const SSL*, const char*), ExceptionData* exception, DynMsg* dynMsg)
 {
     EXCEPTION_OR_RETURN(exception, NULL, dynMsg);
 
@@ -409,9 +399,10 @@ extern SSL_CTX* CJ_TLS_DYN_CreateContext(
     }
 
     /**
-     * 设置 CA 证书默认路径和默认文件名，默认证书路径为OpenSSL默认路径下的 "certs" ，
-     * 默认证书名为 "cert.pem" 。默认证书路径可以通过环境变量 "SSL_CERT_DIR" 改变，默认
-     * 证书名可以通过环境变量 "SSL_CERT_FILE" 改变。
+     * Set default locations for trusted CA certificates, including the default path and file name.
+     * The default certificate path is "certs" under the OpenSSL default path, and the default certificate name is "cert.pem". 
+     * The default certificate path can be changed through the environment variable "SSL_CERT_DIR".
+     * The default certificate name can be changed through the environment variable "SSL_CERT_FILE".
      */
     if (DYN_SSL_CTX_set_default_verify_paths(ctx, dynMsg) != 1) {
         HandleError(exception, "OpenSSL SSL_CTX_set_default_verify_paths() failed", dynMsg);
@@ -419,8 +410,7 @@ extern SSL_CTX* CJ_TLS_DYN_CreateContext(
         return NULL;
     }
 
-    long mode = SSL_MODE_AUTO_RETRY | SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER | SSL_MODE_ENABLE_PARTIAL_WRITE |
-        SSL_MODE_RELEASE_BUFFERS;
+    long mode = SSL_MODE_AUTO_RETRY | SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER | SSL_MODE_ENABLE_PARTIAL_WRITE | SSL_MODE_RELEASE_BUFFERS;
     (void)DYN_SSL_CTX_set_mode(ctx, mode, dynMsg);
 
     int configResult;
@@ -526,6 +516,8 @@ static int SslHandshake(SSL* ssl, ExceptionData* exception, DynMsg* dynMsg)
             return CJTLS_NEED_READ;
         case SSL_ERROR_WANT_WRITE:
             return CJTLS_NEED_WRITE;
+        case SSL_ERROR_SSL:
+            return SslHandshakeFailed(ssl, exception, dynMsg);
         default:
             return SslHandshakeFailed(ssl, exception, dynMsg);
     }
@@ -537,8 +529,8 @@ static int SslHandshake(SSL* ssl, ExceptionData* exception, DynMsg* dynMsg)
  * rawBytesProduced (to rawOutput) correspondingly
  * returns: CJTLS_OK | CJTLS_EOF | CJTLS_AGAIN | CJTLS_FAIL
  */
-extern int CJ_TLS_DYN_SslHandshake(SSL* ssl, void* rawInput, size_t rawInputSize, int rawInputLast, void* rawOutput,
-    size_t rawOutputSize, size_t* rawBytesConsumed, size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
+extern int CJ_TLS_DYN_SslHandshake(SSL* ssl, void* rawInput, size_t rawInputSize, int rawInputLast, void* rawOutput, size_t rawOutputSize, size_t* rawBytesConsumed,
+                                   size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
 {
     EXCEPTION_OR_FAIL(exception, dynMsg);
     NOT_NULL_OR_FAIL(exception, ssl, dynMsg);
@@ -561,7 +553,6 @@ extern int CJ_TLS_DYN_SslHandshake(SSL* ssl, void* rawInput, size_t rawInputSize
     }
 
     int result = SslHandshake(ssl, exception, dynMsg);
-
     // we may potentially loose exception data if failing to unmap (that is unlikely)
     int inputConsumed = CJ_TLS_BIO_Unmap(inputBio, rawInputLast, exception, dynMsg);
     if (inputConsumed > 0) {
@@ -582,7 +573,18 @@ static int SslShutdown(SSL* ssl, ExceptionData* exception, DynMsg* dynMsg)
     NOT_NULL_OR_FAIL(exception, ssl, dynMsg);
 
     int result = DYN_SSL_shutdown(ssl, dynMsg);
-    if (result == 0 || result == 1) {
+    if (result == 1) {
+        return CJTLS_OK;
+    }
+
+    if (result == 0) {
+        unsigned int state = (unsigned int)DYN_SSL_get_shutdown(ssl, dynMsg);
+        if ((state & SSL_SENT_SHUTDOWN) == 0) {
+            return CJTLS_NEED_WRITE;
+        }
+        if ((state & SSL_RECEIVED_SHUTDOWN) == 0) {
+            return CJTLS_NEED_READ;
+        }
         return CJTLS_OK;
     }
 
@@ -601,8 +603,8 @@ static int SslShutdown(SSL* ssl, ExceptionData* exception, DynMsg* dynMsg)
     }
 }
 
-extern int CJ_TLS_DYN_SslShutdown(SSL* ssl, void* rawInput, size_t rawInputSize, int rawInputLast, void* rawOutput,
-    size_t rawOutputSize, size_t* rawBytesConsumed, size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
+extern int CJ_TLS_DYN_SslShutdown(SSL* ssl, void* rawInput, size_t rawInputSize, int rawInputLast, void* rawOutput, size_t rawOutputSize, size_t* rawBytesConsumed,
+                                  size_t* rawBytesProduced, ExceptionData* exception, DynMsg* dynMsg)
 {
     EXCEPTION_OR_FAIL(exception, dynMsg);
     NOT_NULL_OR_FAIL(exception, rawInput, dynMsg);
@@ -640,8 +642,7 @@ extern int CJ_TLS_DYN_SslShutdown(SSL* ssl, void* rawInput, size_t rawInputSize,
     return result;
 }
 
-extern int CJ_TLS_DYN_SetClientSignatureAlgorithms(
-    SSL_CTX* ctx, const unsigned char* sigalgs, ExceptionData* exception, DynMsg* dynMsg)
+extern int CJ_TLS_DYN_SetClientSignatureAlgorithms(SSL_CTX* ctx, const unsigned char* sigalgs, ExceptionData* exception, DynMsg* dynMsg)
 {
     if (ctx == NULL || sigalgs == NULL) {
         return -1;

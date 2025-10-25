@@ -227,10 +227,10 @@ Function: Constructs a [TlsClientConfig](tls_package_structs.md#struct-tlsclient
 ## struct TlsServerConfig
 
 ```cangjie
-public struct TlsServerConfig {
-    public var clientIdentityRequired: TlsClientIdentificationMode = Disabled
+public struct TlsServerConfig <: TlsConfig {
     public var keylogCallback: ?(TlsSocket, String) -> Unit = None
-    public var verifyMode: CertificateVerifyMode = CertificateVerifyMode.Default
+    public mut prop clientIdentityRequired: TlsClientIdentificationMode
+    public mut prop verifyMode: CertificateVerifyMode
     public init(certChain: Array<X509Certificate>, certKey: PrivateKey)
 }
 ```
