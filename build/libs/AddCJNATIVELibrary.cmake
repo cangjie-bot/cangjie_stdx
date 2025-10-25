@@ -248,6 +248,7 @@ make_cangjie_lib(
         crypto.x509
         crypto.digest
         crypto.common
+        crypto.keys
         net.tls.common
     CANGJIE_STD_LIB_LINK
         std-core
