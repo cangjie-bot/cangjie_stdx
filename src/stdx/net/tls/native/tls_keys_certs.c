@@ -10,7 +10,14 @@
 #include <stdint.h>
 #include <limits.h>
 #include <string.h>
+#include <openssl/ssl.h>
+#include <openssl/x509.h>
+#include <openssl/evp.h>
+#include <openssl/core_names.h>
+#include <openssl/params.h>
+#include <openssl/bn.h>
 #include "securec.h"
+#include "provider.h"
 #include "api.h"
 #include "opensslSymbols.h"
 
@@ -86,8 +93,8 @@ static EVP_PKEY* DecodePrivateKey(const void* keyBody, long keySize, ExceptionDa
     EVP_PKEY* pkey = (EVP_PKEY*)DYN_d2i_AutoPrivateKey(NULL, &dataptr, keySize, dynMsg);
     if (pkey == NULL) {
         HandleError(exception,
-            "Failed to load private key, it's either corrupted, password is wrong or the format is unsupported",
-            dynMsg);
+                    "Failed to load private key, it's either corrupted, password is wrong or the format is unsupported",
+                    dynMsg);
     }
 
     return pkey;
@@ -184,8 +191,8 @@ extern int CJ_TLS_DYN_Add_CA(SSL_CTX* ctx, const void* ca, size_t length, Except
     return 1;
 }
 
-static bool TryGetCtxAndCert(
-    SSL_CTX* ctx, const void* pem, size_t length, X509** outCert, ExceptionData* exception, DynMsg* dynMsg)
+static bool TryGetCtxAndCert(SSL_CTX* ctx, const void* pem, size_t length, X509** outCert, ExceptionData* exception,
+                             DynMsg* dynMsg)
 {
     NOT_NULL_OR_RETURN(exception, ctx, false, dynMsg);
     NOT_NULL_OR_RETURN(exception, pem, false, dynMsg);
@@ -248,8 +255,216 @@ extern int CJ_TLS_DYN_Add_Cert(SSL_CTX* ctx, const void* pem, size_t length, Exc
     return 1;
 }
 
-extern int CJ_TLS_DYN_SetPrivateKey(
-    SSL_CTX* ctx, const void* keyPem, size_t length, ExceptionData* exception, DynMsg* dynMsg)
+static EVP_PKEY* KeylessFromRsaPubkey(EVP_PKEY* pub, const char* keyId, DynMsg* dynMsg)
+{
+    BIGNUM *n = NULL, *e = NULL;
+    unsigned char *n_buf = NULL, *e_buf = NULL;
+    EVP_PKEY_CTX* ctx = NULL;
+    EVP_PKEY* out = NULL;
+
+    if (DYN_EVP_PKEY_get_bn_param(pub, OSSL_PKEY_PARAM_RSA_N, &n, dynMsg) <= 0 ||
+        DYN_EVP_PKEY_get_bn_param(pub, OSSL_PKEY_PARAM_RSA_E, &e, dynMsg) <= 0) {
+        goto end;
+    }
+
+    size_t nLen = (size_t)DYN_BN_num_bytes(n, dynMsg);
+    size_t eLen = (size_t)DYN_BN_num_bytes(e, dynMsg);
+    n_buf = DYN_OPENSSL_secure_malloc(nLen, dynMsg);
+    e_buf = DYN_OPENSSL_secure_malloc(eLen, dynMsg);
+    if (!n_buf || !e_buf) {
+        goto end;
+    }
+
+    DYN_BN_bn2bin(n, n_buf, dynMsg);
+    DYN_BN_bn2bin(e, e_buf, dynMsg);
+
+    ctx = DYN_EVP_PKEY_CTX_new_from_name(NULL, "RSA", "provider=keyless", dynMsg);
+    if (!ctx || DYN_EVP_PKEY_fromdata_init(ctx, dynMsg) <= 0) {
+        goto end;
+    }
+
+    OSSL_PARAM params[] = {DYN_OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_RSA_N, n_buf, nLen, dynMsg),
+                           DYN_OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_RSA_E, e_buf, eLen, dynMsg),
+                           DYN_OSSL_PARAM_construct_utf8_string("KEYLESS_ID", (char*)keyId, 0, dynMsg),
+                           DYN_OSSL_PARAM_construct_end(dynMsg)};
+    if (DYN_EVP_PKEY_fromdata(ctx, &out, EVP_PKEY_KEYPAIR, params, dynMsg) <= 0) {
+        out = NULL;
+    }
+
+end:
+    DYN_EVP_PKEY_CTX_free(ctx, dynMsg);
+    DYN_OPENSSL_secure_free(n_buf, dynMsg);
+    DYN_OPENSSL_secure_free(e_buf, dynMsg);
+    DYN_BN_free(n, dynMsg);
+    DYN_BN_free(e, dynMsg);
+    return out;
+}
+
+static EVP_PKEY* KeylessFromEcPubkey(EVP_PKEY* pub, const char* keyId, DynMsg* dynMsg)
+{
+    unsigned char* point = NULL;
+    size_t pointLen = 0;
+    char group[64] = {0};
+    EVP_PKEY_CTX* ctx = NULL;
+    EVP_PKEY* out = NULL;
+
+    if (DYN_EVP_PKEY_get_octet_string_param(pub, OSSL_PKEY_PARAM_PUB_KEY, NULL, 0, &pointLen, dynMsg) <= 0) {
+        goto end;
+    }
+    point = DYN_OPENSSL_secure_malloc(pointLen, dynMsg);
+    if (!point) {
+        goto end;
+    }
+    if (DYN_EVP_PKEY_get_octet_string_param(pub, OSSL_PKEY_PARAM_PUB_KEY, point, pointLen, &pointLen, dynMsg) <= 0) {
+        goto end;
+    }
+    if (DYN_EVP_PKEY_get_utf8_string_param(pub, OSSL_PKEY_PARAM_GROUP_NAME, group, sizeof(group), NULL, dynMsg) <= 0) {
+        goto end;
+    }
+
+    ctx = DYN_EVP_PKEY_CTX_new_from_name(NULL, "EC", "provider=keyless", dynMsg);
+    if (!ctx || DYN_EVP_PKEY_fromdata_init(ctx, dynMsg) <= 0) {
+        goto end;
+    }
+
+    OSSL_PARAM params[] = {DYN_OSSL_PARAM_construct_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME, group, 0, dynMsg),
+                           DYN_OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_PUB_KEY, point, pointLen, dynMsg),
+                           DYN_OSSL_PARAM_construct_utf8_string("KEYLESS_ID", (char*)keyId, 0, dynMsg),
+                           DYN_OSSL_PARAM_construct_end(dynMsg)};
+    if (DYN_EVP_PKEY_fromdata(ctx, &out, EVP_PKEY_KEYPAIR, params, dynMsg) <= 0) {
+        out = NULL;
+    }
+
+end:
+    DYN_EVP_PKEY_CTX_free(ctx, dynMsg);
+    DYN_OPENSSL_secure_free(point, dynMsg);
+    return out;
+}
+
+static EVP_PKEY* MakeKeylessFromPubkey(EVP_PKEY* pub, const char* keyId, DynMsg* dynMsg)
+{
+    int type = DYN_EVP_PKEY_get_id(pub, dynMsg);
+    if (type == EVP_PKEY_RSA) {
+        return KeylessFromRsaPubkey(pub, keyId, dynMsg);
+    }
+    if (type == EVP_PKEY_EC) {
+        return KeylessFromEcPubkey(pub, keyId, dynMsg);
+    }
+    KEYLESS_PROVIDER_LOG("[keyless] invalid type: %d\n", type);
+    return NULL;
+}
+
+EVP_PKEY* CreateKeylessKeyFromCtx(SSL_CTX* ctx, const char* keyId, DynMsg* dynMsg)
+{
+    EVP_PKEY* keyless = NULL;
+    EVP_PKEY* pub = NULL;
+    X509* ownedCert = NULL;
+    DynMsg prevDynMsg;
+    bool restoreDynMsg = false;
+    bool hadPrevDynMsg = false;
+
+    if (dynMsg) {
+        const DynMsg* current = KeylessProviderGetThreadDynMsg();
+        if (current) {
+            prevDynMsg = *current;
+            hadPrevDynMsg = true;
+        }
+        KeylessProviderSetThreadDynMsg(dynMsg);
+        restoreDynMsg = true;
+    }
+
+    if (!ctx || !keyId) {
+        KEYLESS_PROVIDER_LOG("[keyless] invalid args: ctx/keyId\n");
+        goto out;
+    }
+
+    X509* cert = DYN_SSL_CTX_get0_certificate(ctx, dynMsg);
+    if (!cert) {
+        KEYLESS_PROVIDER_LOG("[keyless] SSL_CTX has no configured certificate\n");
+        goto out;
+    }
+
+    if (!DYN_X509_up_ref(cert, dynMsg)) {
+        KEYLESS_PROVIDER_LOG("[keyless] X509_up_ref failed\n");
+        goto out;
+    }
+    ownedCert = cert;
+
+    pub = DYN_X509_get_pubkey(ownedCert, dynMsg);
+    DYN_X509_free(ownedCert, dynMsg);
+    ownedCert = NULL;
+    if (!pub) {
+        KEYLESS_PROVIDER_LOG("[keyless] cannot extract public key from ctx cert\n");
+        goto out;
+    }
+
+    keyless = MakeKeylessFromPubkey(pub, keyId, dynMsg);
+    if (!keyless) {
+        KEYLESS_PROVIDER_LOG("[keyless] MakeKeylessFromPubkey failed\n");
+    }
+
+out:
+    if (pub) {
+        DYN_EVP_PKEY_free(pub, dynMsg);
+    }
+    if (ownedCert) {
+        DYN_X509_free(ownedCert, dynMsg);
+    }
+    if (restoreDynMsg) {
+        if (hadPrevDynMsg) {
+            KeylessProviderSetThreadDynMsg(&prevDynMsg);
+        } else {
+            KeylessProviderSetThreadDynMsg(NULL);
+        }
+    }
+    return keyless;
+}
+
+extern int CJ_TLS_DYN_SetKeylessPrivateKey(SSL_CTX* ctx, ExceptionData* exception, DynMsg* dynMsg)
+{
+    EXCEPTION_OR_RETURN(exception, 0, dynMsg);
+    NOT_NULL_OR_RETURN(exception, ctx, 0, dynMsg);
+
+    X509* leaf = DYN_SSL_CTX_get0_certificate(ctx, dynMsg);
+    char* spki_hex = calloc(65, sizeof(char)); // 64 hexadecimal characters + a null terminator for a SHA-256 hash of the Subject Public Key Info. 
+    CertIssuerSerialSha256Hex(leaf, spki_hex);
+
+    EVP_PKEY* key = CreateKeylessKeyFromCtx(ctx, spki_hex, dynMsg);
+    if (!key) {
+        HandleError(exception, "Failed to create private key: CreateKeylessKeyFromCtx failed", dynMsg);
+        return 0;
+    }
+
+    if (DYN_SSL_CTX_use_PrivateKey(ctx, key, dynMsg) == 0) {
+        HandleError(exception, "Failed to apply private key: SSL_CTX_use_PrivateKey failed", dynMsg);
+        DYN_EVP_PKEY_free(key, dynMsg);
+        return 0;
+    }
+
+    DYN_EVP_PKEY_free(key, dynMsg); // decrement refcount
+
+    return 1;
+}
+
+extern char* CJ_TLS_GetKeylessKeyId(SSL_CTX* ctx)
+{
+    if (!ctx) {
+        return NULL;
+    }
+    X509* leaf = DYN_SSL_CTX_get0_certificate(ctx, NULL);
+    if (!leaf) {
+        return NULL;
+    }
+    return GetCertSha256Hex(leaf);
+}
+
+extern void CJ_TLS_FreeKeylessId(char* keyId)
+{
+    free(keyId);
+}
+
+extern int CJ_TLS_DYN_SetPrivateKey(SSL_CTX* ctx, const void* keyPem, size_t length, ExceptionData* exception,
+                                    DynMsg* dynMsg)
 {
     EXCEPTION_OR_RETURN(exception, 0, dynMsg);
     NOT_NULL_OR_RETURN(exception, ctx, 0, dynMsg);
@@ -352,7 +567,8 @@ extern int CJ_TLS_DYN_SetClientVerifyMode(SSL_CTX* ctx, int required, int verify
     return 1;
 }
 
-struct CertChainItem {
+struct CertChainItem
+{
     void* cert;
     int size;
 };
@@ -386,8 +602,8 @@ static bool EncodeCertTo(struct CertChainItem* result, X509* cert, DynMsg* dynMs
     return true;
 }
 
-extern struct CertChainItem* CJ_TLS_DYN_GetPeerCertificate(
-    const SSL* ssl, uint32_t* countPtr, ExceptionData* exception, DynMsg* dynMsg)
+extern struct CertChainItem* CJ_TLS_DYN_GetPeerCertificate(const SSL* ssl, uint32_t* countPtr, ExceptionData* exception,
+                                                           DynMsg* dynMsg)
 {
     EXCEPTION_OR_RETURN(exception, NULL, dynMsg);
     NOT_NULL_OR_RETURN(exception, ssl, NULL, dynMsg);
