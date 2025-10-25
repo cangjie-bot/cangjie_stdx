@@ -16,7 +16,7 @@ foreign func CJ_ParseFile(path: CString): CPointer<ParseRes>
 
 foreign func CJ_ParseText(text: CString): CPointer<ParseRes>
 
-foreign func CJ_ParseTokens(tokens: CPointer<UInt8>, tokenCounter: CPointer<Int64>): CPointer<ParseRes>
+foreign func CJ_ParseTokens(tokens: CPointer<UInt8>, tokenCounter: CPointer<Int64>, refreshPos: Bool): CPointer<ParseRes>
 
 func findError(diags: Array<Diagnostic>): String {
     var res = ""
@@ -82,8 +82,8 @@ class ParserImpl {
         (res, msg)
     }
 
-    func parseTokens(tokens: Tokens): (?SyntaxNodeImpl, Array<Diagnostic>) {
-        let (node, msg) = NodeLoader.loadTokens(tokens)
+    func parseTokens(tokens: Tokens, refreshPos: Bool): (?SyntaxNodeImpl, Array<Diagnostic>) {
+        let (node, msg) = NodeLoader.loadTokens(tokens, refreshPos)
         // build impl tree by NodeFormat_Node
         let res: ?SyntaxNodeImpl = if (let Some(root) <- node) {
             FlatbufferNodeTranslator.translate(root)
@@ -169,9 +169,9 @@ private class NodeLoader {
         (unsafe { loader.loadNodeFromText() }, loader.diagInfo)
     }
 
-    static func loadTokens(tokens: Tokens): (?NodeFormat_Node, Array<Diagnostic>) {
+    static func loadTokens(tokens: Tokens, refreshPos: Bool): (?NodeFormat_Node, Array<Diagnostic>) {
         let loader = NodeLoader(tokens: tokens)
-        (unsafe { loader.loadNodeFromTokens() }, loader.diagInfo)
+        (unsafe { loader.loadNodeFromTokens(refreshPos) }, loader.diagInfo)
     }
 
     private func tryFreeCString(data: ?CString) {
@@ -204,7 +204,7 @@ private class NodeLoader {
         let flatBuf = Array<UInt8>(dataSize, {x: Int64 => unsafe { pnode.read(x) }})
         return NodeFormat_Node(flatBuf[HEADER_SIZE..], 0)
     }
-    
+
     private unsafe func loadNodeFromFile(): ?NodeFormat_Node {
         var pathPtr: ?CString = None
         var nodePtr = CPointer<UInt8>()
@@ -280,7 +280,7 @@ private class NodeLoader {
         }
     }
 
-    private unsafe func loadNodeFromTokens(): ?NodeFormat_Node {
+    private unsafe func loadNodeFromTokens(refreshPos: Bool): ?NodeFormat_Node {
         var tokensPtr = CPointer<UInt8>()
         var nodePtr = CPointer<UInt8>()
         var resPtr = CPointer<ParseRes>()
@@ -289,7 +289,7 @@ private class NodeLoader {
         var tokensCounterPtr: CPointer<Int64> = LibC.malloc<Int64>(count: sizeOfInt64)
         try {
             tokensPtr = unsafePointerCastFromUint8Array(tokens.toBytes())
-            resPtr = CJ_ParseTokens(tokensPtr, tokensCounterPtr)
+            resPtr = CJ_ParseTokens(tokensPtr, tokensCounterPtr, refreshPos)
             if (resPtr.isNull()) {
                 throw Exception("the parsing result is empty.")
                 return None
