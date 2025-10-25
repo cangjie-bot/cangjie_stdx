@@ -8,6 +8,10 @@ public class DebugDataProvider <: FuzzDataProvider
 
 功能：此类继承了 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 类型，额外增加了调试信息。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 父类型：
 
 - [FuzzDataProvider](#class-fuzzdataprovider)
@@ -19,6 +23,10 @@ public override func consumeAll(): Array<UInt8>
 ```
 
 功能：将所有数据转换成 UInt8 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 返回值：
 
@@ -32,6 +40,10 @@ public override func consumeAllAsAscii(): String
 
 功能：将所有数据转换成 Ascii String 类型。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - String - Ascii String 类型实例。
@@ -44,6 +56,10 @@ public override func consumeAllAsString(): String
 
 功能：将所有数据转换成 utf8 String 类型。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - String - utf8 String 类型实例。
@@ -55,6 +71,10 @@ public override func consumeAsciiString(maxLength: Int64): String
 ```
 
 功能：将数据转换成 Ascii  String 类型实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -76,6 +96,10 @@ public override func consumeBool(): Bool
 
 功能：将数据转换成 Bool 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Bool - Bool 类型实例。
@@ -87,6 +111,10 @@ public override func consumeBools(count: Int64): Array<Bool>
 ```
 
 功能：将指定数量的数据转换成 Bool 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -108,6 +136,10 @@ public override func consumeByte(): Byte
 
 功能：将数据转换成 Byte 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Byte - Byte 类型实例。
@@ -119,6 +151,10 @@ public override func consumeBytes(count: Int64): Array<Byte>
 ```
 
 功能：将指定数量的数据转换成 Byte 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -140,6 +176,10 @@ public override func consumeFloat32(): Float32
 
 功能：将数据转换成 Float32 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Float32 - Float32 类型实例。
@@ -151,6 +191,10 @@ public override func consumeFloat64(): Float64
 ```
 
 功能：将数据转换成 Float64 类型实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 返回值：
 
@@ -164,6 +208,10 @@ public override func consumeInt16(): Int16
 
 功能：将数据转换成 Int16 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Int16 - Int16 类型实例。
@@ -175,6 +223,10 @@ public override func consumeInt16s(count: Int64): Array<Int16>
 ```
 
 功能：将指定数量的数据转换成 Int16 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -196,6 +248,10 @@ public override func consumeInt32(): Int32
 
 功能：将数据转换成 Int32 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Int32 - Int32 类型实例。
@@ -207,6 +263,10 @@ public override func consumeInt32s(count: Int64): Array<Int32>
 ```
 
 功能：将指定数量的数据转换成 Int32 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -228,6 +288,10 @@ public override func consumeInt64(): Int64
 
 功能：将数据转换成 Int64 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Int64 - Int64 类型实例。
@@ -239,6 +303,10 @@ public override func consumeInt64s(count: Int64): Array<Int64>
 ```
 
 功能：将指定数量的数据转换成 Int64 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -260,6 +328,10 @@ public override func consumeInt8(): Int8
 
 功能：将数据转换成 Int8 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Int8 - Int8 类型实例。
@@ -271,6 +343,10 @@ public override func consumeInt8s(count: Int64): Array<Int8>
 ```
 
 功能：将指定数量的数据转换成 Int8 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -292,6 +368,10 @@ public override func consumeRune(): Rune
 
 功能：将数据转换成 Rune 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Rune - Rune 类型实例。
@@ -303,6 +383,10 @@ public override func consumeString(maxLength: Int64): String
 ```
 
 功能：将数据转换成 utf8 String 类型实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -324,6 +408,10 @@ public override func consumeUInt16(): UInt16
 
 功能：将数据转换成 UInt16 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt16 - UInt16 类型实例。
@@ -335,6 +423,10 @@ public override func consumeUInt16s(count: Int64): Array<UInt16>
 ```
 
 功能：将指定数量的数据转换成 UInt16 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -356,6 +448,10 @@ public override func consumeUInt32(): UInt32
 
 功能：将数据转换成 UInt32 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt32 - UInt32 类型实例。
@@ -367,6 +463,10 @@ public override func consumeUInt32s(count: Int64): Array<UInt32>
 ```
 
 功能：将指定数量的数据转换成 UInt32 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -388,6 +488,10 @@ public override func consumeUInt64(): UInt64
 
 功能：将数据转换成 UInt64 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt64 - UInt64 类型实例。
@@ -399,6 +503,10 @@ public override func consumeUInt64s(count: Int64): Array<UInt64>
 ```
 
 功能：将指定数量的数据转换成 UInt64 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -420,6 +528,10 @@ public override func consumeUInt8(): UInt8
 
 功能：将数据转换成 UInt8 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt8 - UInt8 类型实例。
@@ -431,6 +543,10 @@ public override func consumeUInt8s(count: Int64): Array<UInt8>
 ```
 
 功能：将指定数量的数据转换成 UInt8 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -451,6 +567,10 @@ public static func wrap(dp: FuzzDataProvider): DebugDataProvider
 ```
 
 功能：根据 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 实例创建 [DebugDataProvider](fuzz_package_classes.md#class-debugdataprovider) 实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -473,6 +593,10 @@ public class Fuzzer {
 
 功能：[Fuzzer](fuzz_package_classes.md#class-fuzzer) 类提供了 fuzz 工具的创建。用户提供需要进行 fuzz 测试的函数 `targetFunction`，以及设置特定的 fuzz 运行参数 `args` 比如 fuzz 执行次数、初始种子、生成数据最大长度等，可创建相应类型的 [Fuzzer](fuzz_package_classes.md#class-fuzzer)。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 ### init((Array\<UInt8>) -> Int32)
 
 ```cangjie
@@ -480,6 +604,10 @@ public init(targetFunction: (Array<UInt8>) -> Int32)
 ```
 
 功能：根据以 UInt8 数组为参数，以 Int32 为返回值的目标函数，创建 [Fuzzer](fuzz_package_classes.md#class-fuzzer) 实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -492,6 +620,10 @@ public init(targetFunction: (Array<UInt8>) -> Int32, args: Array<String>)
 ```
 
 功能：根据以 UInt8 数组为参数，以 Int32 为返回值的目标函数，以及 Fuzz 运行参数，创建 [Fuzzer](fuzz_package_classes.md#class-fuzzer) 实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -506,6 +638,10 @@ public init(targetFunction: (FuzzDataProvider) -> Int32)
 
 功能：根据以 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 为参数，以 Int32 为返回值的目标函数，创建 [Fuzzer](fuzz_package_classes.md#class-fuzzer) 实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 参数：
 
 - targetFunction: ([FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider)) ->Int32 - 以 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 为参数，以 Int32 为返回值的目标函数。
@@ -517,6 +653,10 @@ public init(targetFunction: (FuzzDataProvider) -> Int32, args: Array<String>)
 ```
 
 功能：根据以 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 为参数，以 Int32 为返回值的目标函数，以及 Fuzz 运行参数，创建 [Fuzzer](fuzz_package_classes.md#class-fuzzer) 实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -531,6 +671,10 @@ public func disableDebugDataProvider(): Unit
 
 功能：关闭调试信息打印功能，当 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider).consumeXXX 被调用时，返回值将不被打印到 `stdout`。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 ### func disableFakeCoverage()
 
 ```cangjie
@@ -538,6 +682,10 @@ public func disableFakeCoverage(): Unit
 ```
 
 功能：关闭调用 `enableFakeCoverage` 对 Fuzz 的影响。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 ### func enableDebugDataProvider()
 
@@ -547,6 +695,10 @@ public func enableDebugDataProvider(): Unit
 
 功能：启用调试信息打印功能，当 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider).consumeXXX 被调用时，返回值将被打印到 `stdout`。该功能默认为关闭。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 ### func enableFakeCoverage()
 
 ```cangjie
@@ -555,6 +707,10 @@ public func enableFakeCoverage(): Unit
 
 功能：创建一块虚假的覆盖率反馈区域，保持 Fuzz 持续进行。在 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 模式下，前几轮运行时可能由于数据不足而导致没有覆盖率，libfuzzer 会退出。该功能默认为关闭。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 ### func getArgs()
 
 ```cangjie
@@ -562,6 +718,10 @@ public func getArgs(): Array<String>
 ```
 
 功能：获取 Fuzz 运行参数。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 返回值：
 
@@ -575,6 +735,10 @@ public func setArgs(args: Array<String>): Unit
 
 功能：设置 Fuzz 运行参数。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 参数：
 
 - args: Array\<String> - Fuzz 运行参数。
@@ -586,6 +750,10 @@ public func setTargetFunction(targetFunction: (Array<UInt8>) -> Int32): Unit
 ```
 
 功能：设置 Fuzz 目标函数。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -599,6 +767,10 @@ public func setTargetFunction(targetFunction: (FuzzDataProvider) -> Int32): Unit
 
 功能：设置 Fuzz 目标函数。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 参数：
 
 - targetFunction: ([FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider)) ->Int32 - 以 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 为参数，以 Int32 为返回值的目标函数。
@@ -611,6 +783,10 @@ public func startFuzz(): Unit
 
 功能：执行 Fuzz。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 ## class FuzzerBuilder
 
 ```cangjie
@@ -622,6 +798,10 @@ public class FuzzerBuilder {
 
 功能：此类用于 [Fuzzer](fuzz_package_classes.md#class-fuzzer) 类的构建。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 ### init((Array\<UInt8>) -> Int32)
 
 ```cangjie
@@ -629,6 +809,10 @@ public init(targetFunction: (Array<UInt8>) -> Int32)
 ```
 
 功能：根据以 UInt8 数组为参数，以 Int32 为返回值的目标函数，创建 [FuzzerBuilder](fuzz_package_classes.md#class-fuzzerbuilder) 实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -642,6 +826,10 @@ public init(targetFunction: (FuzzDataProvider) -> Int32)
 
 功能：根据以 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 为参数，以 Int32 为返回值的目标函数，创建 [FuzzerBuilder](fuzz_package_classes.md#class-fuzzerbuilder) 实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 参数：
 
 - targetFunction: ([FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider)) ->Int32 - 以 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 为参数，以 Int32 为返回值的目标函数。
@@ -654,6 +842,10 @@ public func build(): Fuzzer
 
 功能：生成一个 [Fuzzer](fuzz_package_classes.md#class-fuzzer) 实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - [Fuzzer](fuzz_package_classes.md#class-fuzzer) - [Fuzzer](fuzz_package_classes.md#class-fuzzer) 实例。
@@ -665,6 +857,10 @@ public func setArgs(args: Array<String>): FuzzerBuilder
 ```
 
 功能：设置 Fuzz 运行参数。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -682,6 +878,10 @@ public func setTargetFunction(targetFunction: (Array<UInt8>) -> Int32): FuzzerBu
 
 功能：设置 Fuzz 目标函数。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 参数：
 
 - targetFunction: (Array\<UInt8>) ->Int32 - 以 UInt8 数组为参数，以 Int32 为返回值的目标函数。
@@ -697,6 +897,10 @@ public func setTargetFunction(targetFunction: (FuzzDataProvider) -> Int32): Fuzz
 ```
 
 功能：设置 Fuzz 目标函数。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -717,6 +921,10 @@ public open class FuzzDataProvider {
 ```
 
 功能：[FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 是一个工具类，目的是将变异数据的字节流转化为标准的仓颉基本数据。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 当前支持的数据结构如下：
 
@@ -763,6 +971,10 @@ public let data: Array<UInt8>
 
 功能：变异数据。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 类型：Array\<UInt8>
 
 ### var offset
@@ -772,6 +984,10 @@ public var offset: Int64
 ```
 
 功能：已转化的字节数。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 类型：Int64
 
@@ -783,6 +999,10 @@ public var remainingBytes: Int64
 
 功能：剩余字节数。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 类型：Int64
 
 ### func consumeAll()
@@ -792,6 +1012,10 @@ public open func consumeAll(): Array<UInt8>
 ```
 
 功能：将所有数据转换成 UInt8 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 返回值：
 
@@ -805,6 +1029,10 @@ public open func consumeAllAsAscii(): String
 
 功能：将所有数据转换成 Ascii String 类型。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - String - Ascii String 类型实例。
@@ -817,6 +1045,10 @@ public open func consumeAllAsString(): String
 
 功能：将所有数据转换成 utf8 String 类型。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - String - utf8 String 类型实例。
@@ -828,6 +1060,10 @@ public open func consumeAsciiString(maxLength: Int64): String
 ```
 
 功能：将数据转换成 Ascii  String 类型实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -849,6 +1085,10 @@ public open func consumeBool(): Bool
 
 功能：将数据转换成 Bool 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Bool - Bool 类型实例。
@@ -860,6 +1100,10 @@ public open func consumeBools(count: Int64): Array<Bool>
 ```
 
 功能：将指定数量的数据转换成 Bool 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -881,6 +1125,10 @@ public open func consumeByte(): Byte
 
 功能：将数据转换成 Byte 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Byte - Byte 类型实例。
@@ -892,6 +1140,10 @@ public open func consumeBytes(count: Int64): Array<Byte>
 ```
 
 功能：将指定数量的数据转换成 Byte 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -913,6 +1165,10 @@ public open func consumeFloat32(): Float32
 
 功能：将数据转换成 Float32 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Float32 - Float32 类型实例。
@@ -925,6 +1181,10 @@ public open func consumeFloat64(): Float64
 
 功能：将数据转换成 Float64 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Float64 - Float64 类型实例。
@@ -936,6 +1196,10 @@ public open func consumeInt16(): Int16
 ```
 
 功能：将数据转换成 Int16 类型实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 返回值：
 
@@ -953,6 +1217,10 @@ public open func consumeInt16s(count: Int64): Array<Int16>
 
 功能：将指定数量的数据转换成 Int16 类型数组。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 参数：
 
 - count: Int64 - 指定转换的数据量。
@@ -969,6 +1237,10 @@ public open func consumeInt32(): Int32
 
 功能：将数据转换成 Int32 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Int32 - Int32 类型实例。
@@ -980,6 +1252,10 @@ public open func consumeInt32s(count: Int64): Array<Int32>
 ```
 
 功能：将指定数量的数据转换成 Int32 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1001,6 +1277,10 @@ public open func consumeInt64(): Int64
 
 功能：将数据转换成 Int64 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Int64 - Int64 类型实例。
@@ -1012,6 +1292,10 @@ public open func consumeInt64s(count: Int64): Array<Int64>
 ```
 
 功能：将指定数量的数据转换成 Int64 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1033,6 +1317,10 @@ public open func consumeInt8(): Int8
 
 功能：将数据转换成 Int8 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Int8 - Int8 类型实例。
@@ -1044,6 +1332,10 @@ public open func consumeInt8s(count: Int64): Array<Int8>
 ```
 
 功能：将指定数量的数据转换成 Int8 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1065,6 +1357,10 @@ public open func consumeRune(): Rune
 
 功能：将数据转换成 Rune 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - Rune - Rune 类型实例。
@@ -1076,6 +1372,10 @@ public open func consumeString(maxLength: Int64): String
 ```
 
 功能：将数据转换成 utf8 String 类型实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1097,6 +1397,10 @@ public open func consumeUInt16(): UInt16
 
 功能：将数据转换成 UInt16 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt16 - UInt16 类型实例。
@@ -1108,6 +1412,10 @@ public open func consumeUInt16s(count: Int64): Array<UInt16>
 ```
 
 功能：将指定数量的数据转换成 UInt16 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1129,6 +1437,10 @@ public open func consumeUInt32(): UInt32
 
 功能：将数据转换成 UInt32 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt32 - UInt32 类型实例。
@@ -1140,6 +1452,10 @@ public open func consumeUInt32s(count: Int64): Array<UInt32>
 ```
 
 功能：将指定数量的数据转换成 UInt32 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1161,6 +1477,10 @@ public open func consumeUInt64(): UInt64
 
 功能：将数据转换成 UInt64 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt64 - UInt64 类型实例。
@@ -1172,6 +1492,10 @@ public open func consumeUInt64s(count: Int64): Array<UInt64>
 ```
 
 功能：将指定数量的数据转换成 UInt64 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1193,6 +1517,10 @@ public open func consumeUInt8(): UInt8
 
 功能：将数据转换成 UInt8 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 返回值：
 
 - UInt8 - UInt8 类型实例。
@@ -1204,6 +1532,10 @@ public open func consumeUInt8s(count: Int64): Array<UInt8>
 ```
 
 功能：将指定数量的数据转换成 UInt8 类型数组。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
@@ -1225,6 +1557,10 @@ public static func withCangjieData(data: Array<UInt8>): FuzzDataProvider
 
 功能：使用 Array\<UInt8> 类型的数据生成 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 类型实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 参数：
 
 - data: Array\<UInt8> - 输入的外部数据。
@@ -1240,6 +1576,10 @@ public static unsafe func withNativeData(data: CPointer<UInt8>, length: Int64): 
 ```
 
 功能：使用 C 指针数据生成 [FuzzDataProvider](fuzz_package_classes.md#class-fuzzdataprovider) 类型实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 

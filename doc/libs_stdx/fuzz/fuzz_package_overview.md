@@ -8,9 +8,13 @@ fuzz 包为开发者提供基于覆盖率反馈的仓颉 fuzz 引擎及对应的
 
 使用此包需要配合覆盖率反馈插桩（SanitizerCoverage）功能使用，需要开发者对 fuzz 测试有一定的了解，初学者建议先学习 C 语言的 Fuzz 工具。
 
-使用本包需要外部依赖 LLVM 套件 `compiler-rt` 提供的 `libclang_rt.fuzzer_no_main.a` 静态库，当前支持 Linux 以及 macOS，不支持 Windows。
+使用本包需要外部依赖 LLVM 套件 `compiler-rt` 提供的 `libclang_rt.fuzzer_no_main.a` 静态库。
 
 通常使用包管理工具即可完成安装，例如 `Ubuntu 22.04` 系统上可使用 `sudo apt install clang` 进行安装，安装后可以在 `clang -print-runtime-dir` 指向的目录下找到对应的 `libclang_rt.fuzzer_no_main.a` 文件，例如 `/usr/lib/llvm-14/lib/clang/14.0.0/lib/linux/libclang_rt.fuzzer_no_main-x86_64.a`，将来在链接时会用到它。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 ## API 列表
 

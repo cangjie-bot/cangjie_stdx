@@ -11,6 +11,10 @@ public class ExhaustedException <: Exception {
 
 功能：此异常为转换数据时，剩余数据不足以转换时抛出的异常。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 父类型：
 
 - Exception
@@ -23,6 +27,10 @@ public init()
 
 功能：创建 [ExhaustedException](fuzz_package_exceptions.md#class-exhaustedexception) 实例。
 
+> **注意：**
+>
+> 不支持平台：Windows
+
 ### init(String)
 
 ```cangjie
@@ -30,6 +38,10 @@ public init(message: String)
 ```
 
 功能：创建 [ExhaustedException](fuzz_package_exceptions.md#class-exhaustedexception) 实例。
+
+> **注意：**
+>
+> 不支持平台：Windows
 
 参数：
 
