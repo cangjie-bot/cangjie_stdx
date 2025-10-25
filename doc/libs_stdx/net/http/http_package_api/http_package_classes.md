@@ -1469,8 +1469,7 @@ public prop writeTimeout: ?Duration
 public override func toString(): String
 ```
 
-功能：把请求转换为字符串，包括 start line，headers，body size，trailers。
-例如：`"GET /path HTTP/1.1\r\nhost: www.example.com\r\n\r\nbody size: 5\r\nbar: foo\r\n"`。
+功能：把请求转换为字符串，包括 start line，headers，body size，trailers。例如：`"GET /path HTTP/1.1\r\nhost: www.example.com\r\n\r\nbody size: 5\r\nbar: foo\r\n"`。
 
 返回值：
 
@@ -2510,6 +2509,8 @@ protected open mut prop server: Server
 ```
 
 功能：返回 [Server](#class-server) 实例，提供默认实现，设置为绑定的 [Server](#class-server) 实例。
+
+类型：Server
 
 ### prop writeTimeout
 

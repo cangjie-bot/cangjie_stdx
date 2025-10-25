@@ -70,7 +70,7 @@ function(add_cangjie_library target_name
             list(APPEND cangjie_compile_flags "--apc=1")
         endif()
     else()
-       if( CANGJIELIB_IS_CJNATIVE_BACKEND)
+       if(NOT CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
             list(APPEND cangjie_compile_flags "--trimpath")
             list(APPEND cangjie_compile_flags "${CMAKE_SOURCE_DIR}/src/")
         endif()
@@ -158,6 +158,10 @@ function(add_cangjie_library target_name
         list(APPEND COMPILE_CMD "$<IF:$<CONFIG:MinSizeRel>,-Os,-O2>")
         # The .bc files is for LTO mode and LTO mode does not support -Os and -Oz.
         list(APPEND COMPILE_BC_CMD "-O2")
+    endif()
+    
+    if(CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
+        list(APPEND COMPILE_CMD "--coverage")
     endif()
 
     set(ENV{LD_LIBRARY_PATH} $ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib)
