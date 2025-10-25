@@ -356,7 +356,7 @@ public override func hashCode(): Int64
 public static func systemRootCerts(): Array<X509Certificate>
 ```
 
-功能：返回操作系统的根证书，支持 Linux，MacOS 和 Windows 平台。
+功能：返回操作系统的根证书。
 
 返回值：
 
