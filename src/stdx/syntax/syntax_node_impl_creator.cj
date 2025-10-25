@@ -240,7 +240,7 @@ class SyntaxNodeImplCreator {
 
     static func createTrailingClosureExprImpl(callee: Expr, arguments: Array<Argument>, trailingLambdaExpr: Lambda): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
-        if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.SymbolRef) {
+        if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.RefExpr) {
             throw Exception("Init TrailingClosureExpr: invalid callee")
         }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
@@ -264,7 +264,7 @@ class SyntaxNodeImplCreator {
 
     static func createMacroExpandExprImpl(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
-        if (calleeMacro.nodeImpl.kind != SyntaxNodeKind.MemberAccess && calleeMacro.nodeImpl.kind != SyntaxNodeKind.SymbolRef) {
+        if (calleeMacro.nodeImpl.kind != SyntaxNodeKind.MemberAccess && calleeMacro.nodeImpl.kind != SyntaxNodeKind.RefExpr) {
             throw Exception("Init MacroExpandExpr: invalid calleeMacro")
         }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
@@ -495,7 +495,7 @@ class SyntaxNodeImplCreator {
 
     static func createCatchPatternImpl(pattern: Pattern, exceptionType: Array<TypeAnnotation>): (CodePositionRange, 
         SyntaxNodeImpl, ?SyntaxTreeNode) {
-        if (pattern.nodeImpl.kind != SyntaxNodeKind.WildcardPattern && pattern.nodeImpl.kind != SyntaxNodeKind.ExceptionTypePattern) {
+        if (pattern.nodeImpl.kind != SyntaxNodeKind.WildcardPattern && pattern.nodeImpl.kind != SyntaxNodeKind.ExceptTypePattern) {
             throw Exception("Init ForInExpr: invalid pattern")
         }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
@@ -537,7 +537,7 @@ class SyntaxNodeImplCreator {
     }
 
     static func createCallExprImpl(callee: Expr, args: Array<Expr>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
-        if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.SymbolRef) {
+        if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.RefExpr) {
             throw Exception("Init CallExpr: invalid callee")
         }
         let startPos = CodePosition(1, 1, FileInfos("", ""))
