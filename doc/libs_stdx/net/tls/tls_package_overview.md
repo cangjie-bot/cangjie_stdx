@@ -29,11 +29,19 @@ tls 包用于进行安全加密的网络通信，提供创建 TLS 服务器、�
 
 ## API 列表
 
+### 类型别名
+
+| 类型别名                                              | 功能                             |
+| ----------------------------------------------------- | -------------------------------- |
+| [KeylessDecryptFunc](./tls_package_api/tls_package_type.md#type-keylessdecryptfunc) | 供无私钥握手使用的解密回调函数类型。 |
+| [KeylessSignFunc](./tls_package_api/tls_package_type.md#type-keylesssignfunc) | 供无私钥握手使用的签名回调函数类型。 |
+
 ### 类
 
 | 类名                                                                                | 功能                                                                                                                                                       |
 | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [DefaultTlsKit](./tls_package_api/tls_package_classes.md#class-defaulttlskit)       | [TlsKit](../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlskit) 的默认实现。用于获取 TLS 服务端、客户端连接和服务端会话。 |
+| [KeylessTlsServerConfig](./tls_package_api/tls_package_classes.md#class-keylesstlsserverconfig) | 无私钥服务端配置。       |
 | [TlsClientSession](./tls_package_api/tls_package_classes.md#class-tlsclientsession) | 当客户端 TLS 握手成功后，将会生成一个会话，当连接因一些原因丢失后，客户端可以通过这个会话 id 复用此次会话，省略握手流程。                                  |
 | [TlsServerSession](./tls_package_api/tls_package_classes.md#class-tlsserversession) | 服务端启用 session 特性恢复会话，存储 session 用于对客户端进行验证类型。                                                                                   |
 | [TlsSocket](./tls_package_api/tls_package_classes.md#class-tlssocket)               | 用于在客户端及服务端间创建加密传输通道。                                                                                                                   |
