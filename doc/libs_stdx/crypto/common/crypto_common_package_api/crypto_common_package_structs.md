@@ -146,7 +146,7 @@ public static func decode(text: String): Pem
 
 异常：
 
-- [X509Exception](./x509_package_exceptions.md#class-x509exception) - 数据为空时，或解码失败抛出异常。
+- [X509Exception](./../../x509/x509_package_api/x509_package_exceptions.md#class-x509exception) - 数据为空时，或解码失败抛出异常。
 
 ### func encode()
 
