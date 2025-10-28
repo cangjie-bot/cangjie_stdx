@@ -8,10 +8,13 @@
 
 package stdx.syntax
 
-class PropInfo {
-    var index: Int64 = 0
-    var offset: Offset = Offset()
-    init() {}
+struct PropInfo {
+    let index: Int64
+    let offset: Offset
+    init() {
+        this.index = 0
+        this.offset = Offset()
+    }
     init(index: Int64, offset: Offset) {
         this.index = index
         this.offset = Offset(offset.line, offset.column)

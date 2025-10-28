@@ -567,7 +567,7 @@ public class CallExpr <: Expr {
 
     public prop arguments: Array<Argument> {
         get() {
-            var arguments = ArrayList<Argument>()
+            let arguments = ArrayList<Argument>()
             for (propInfo in propInfos.argumentPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
@@ -654,7 +654,7 @@ public class CatchPattern <: SyntaxTreeNode {
      */
     public prop exceptionType: Array<TypeAnnotation> {
         get() {
-            var types = ArrayList<TypeAnnotation>()
+            let types = ArrayList<TypeAnnotation>()
             for (propInfo in propInfos.exceptionTypePropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
@@ -743,7 +743,7 @@ public class ConjunctionCondition <: SyntaxTreeNode {
      */
     public prop cond: Array<AtomicCondition> {
         get() {
-            var conds = ArrayList<AtomicCondition>()
+            let conds = ArrayList<AtomicCondition>()
             for (propInfo in propInfos.condPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
@@ -835,7 +835,7 @@ public class DisjunctionCondition <: SyntaxTreeNode {
      */
     public prop cond: Array<ConjunctionCondition> {
         get() {
-            var conds = ArrayList<ConjunctionCondition>()
+            let conds = ArrayList<ConjunctionCondition>()
             for (propInfo in propInfos.condPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
@@ -1603,7 +1603,7 @@ public class LetPattern <: SyntaxTreeNode {
      */
     public prop patterns: Array<Pattern> {
         get() {
-            var pats = ArrayList<Pattern>()
+            let pats = ArrayList<Pattern>()
             for (propInfo in propInfos.patternsPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
@@ -1956,7 +1956,7 @@ public class MatchCase <: SyntaxTreeNode {
      */
     public prop body: Array<SyntaxTreeNode> {
         get() {
-            var bodys = ArrayList<SyntaxTreeNode>()
+            let bodys = ArrayList<SyntaxTreeNode>()
 
             let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfos.bodyPropInfo.index]
             let offset = propInfos.bodyPropInfo.offset
@@ -2008,7 +2008,7 @@ public class MatchCase <: SyntaxTreeNode {
      */
     public prop patterns: Array<Pattern> {
         get() {
-            var arguments = ArrayList<Pattern>()
+            let arguments = ArrayList<Pattern>()
             for (propInfo in propInfos.patternsPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
@@ -3039,7 +3039,7 @@ public class SymbolRef <: Expr {
      */
     public prop typeArguments: Array<TypeAnnotation> {
         get() {
-            var typeArguments = ArrayList<TypeAnnotation>()
+            let typeArguments = ArrayList<TypeAnnotation>()
 
             if (let Some(propInfo) <- propInfos.typeArgumentsPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]

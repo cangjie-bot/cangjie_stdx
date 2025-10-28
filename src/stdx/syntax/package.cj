@@ -484,7 +484,7 @@ public class Package <: SyntaxTreeNode {
     public func toString(): String {
         var res: String = ""
         let srcFile_ = srcFile
-        var size = srcFile_.size
+        let size = srcFile_.size
         for (i in 0..size) {
             res += "// " + srcFile_[i].name + NEWLINE
             if (i < size - 1) {
