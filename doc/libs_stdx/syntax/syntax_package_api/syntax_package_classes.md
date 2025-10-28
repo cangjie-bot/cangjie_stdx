@@ -402,7 +402,7 @@ public open func preAction(node: SyntaxTreeNode): PreActionMode
 public open func postAction(node: SyntaxTreeNode): PostActionMode
 ```
 
-功能：在离开节点后执行的钩子函数，用于决定是否继续或停止遍历。
+功能：在离开节点后执行的钩子函数，用于决定是否继续或停止遍历, 当 preAction 停止时， postAction 也会立即停止。
 
 参数：
 
