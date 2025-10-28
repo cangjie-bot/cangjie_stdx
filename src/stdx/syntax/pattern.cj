@@ -177,7 +177,7 @@ public class EnumPattern <: Pattern {
      */
     public prop subPatterns: Array<Pattern> {
         get() {
-            var pats = ArrayList<Pattern>()
+            let pats = ArrayList<Pattern>()
             for (propInfo in propInfos.subPatternsPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
@@ -267,7 +267,7 @@ public class TuplePattern <: Pattern {
      */
     public prop subPatterns: Array<Pattern> {
         get() {
-            var pats = ArrayList<Pattern>()
+            let pats = ArrayList<Pattern>()
             for (propInfo in propInfos.subPatternsPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
                 let offset = propInfo.offset
