@@ -33,6 +33,9 @@ public open class ASTVisitor {
     }
 
     private func visit(node: SyntaxTreeNode) {
+        for (comment in node.comments) {
+            walk(comment)
+        }
         match (node) {
             case binaryExpr: BinaryExpr => visitBinaryExpr(binaryExpr)
             case varDecl: VarDecl => visitVarDecl(varDecl)
@@ -49,6 +52,7 @@ public open class ASTVisitor {
             case callExpr: CallExpr => visitCallExpr(callExpr)
             case catchPattern: CatchPattern => visitCatchPattern(catchPattern)
             case classDecl: ClassDecl => visitClassDecl(classDecl)
+            case comment: Comment => return
             case compositeType: CompositeType => visitCompositeType(compositeType)
             case conjunctionCondition: ConjunctionCondition => visitConjunctionCondition(conjunctionCondition)
             case constPattern: ConstPattern => visitConstPattern(constPattern)
