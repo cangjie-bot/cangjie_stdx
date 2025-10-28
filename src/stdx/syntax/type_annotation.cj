@@ -89,7 +89,7 @@ public class CompositeType <: TypeAnnotation {
      * @return An array of CodePositionRange objects, each representing the start and end positions of a comma.
      */
     public func getCommasPos(): Array<CodePositionRange> {
-        var commasPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let commasPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (pos in posInfos.commasPos) {
             let endPos = pos + SyntaxNodeKind.CommaToken.size
             commasPos.add(CodePositionRange(pos, endPos))
@@ -103,7 +103,7 @@ public class CompositeType <: TypeAnnotation {
      * @return An array of CodePositionRange objects, each representing the start and end positions of a comma.
      */
     public func getDotsPos(): Array<CodePositionRange> {
-        var dotsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let dotsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (pos in posInfos.dotsPos) {
             let endPos = pos + SyntaxNodeKind.DotToken.size
             dotsPos.add(CodePositionRange(pos, endPos))
@@ -146,7 +146,7 @@ public class CompositeType <: TypeAnnotation {
     public prop typeArguments: Array<TypeAnnotation> {
         get() {
             // Array<TypeAnnotation>()
-            var typeArguments = ArrayList<TypeAnnotation>()
+            let typeArguments = ArrayList<TypeAnnotation>()
 
             if (let Some(propInfo) <- propInfos.typeArgumentsPropInfo) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
@@ -234,7 +234,7 @@ public class FuncType <: TypeAnnotation {
      * @return Array of CodePositionRange objects representing the positions of commas.
      */
     public func getCommasPos(): Array<CodePositionRange> {
-        var commasPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let commasPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (pos in posInfos.commasPos) {
             let endPos = pos + SyntaxNodeKind.CommaToken.size
             commasPos.add(CodePositionRange(pos, endPos))
@@ -256,7 +256,7 @@ public class FuncType <: TypeAnnotation {
      * @return Array of CodePositionRange objects representing the positions of labels.
      */
     public func getLabelsPos(): Array<CodePositionRange> {
-        var labelsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let labelsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (i in 0..posInfos.labelsPos.size) {
             let endPos = posInfos.labelsPos[i] + labels[i].size
             labelsPos.add(CodePositionRange(posInfos.labelsPos[i], endPos))
@@ -269,7 +269,7 @@ public class FuncType <: TypeAnnotation {
      * @return Array of CodePositionRange objects representing the positions of colons.
      */
     public func getColonsPos(): Array<CodePositionRange> {
-        var colonsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let colonsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (pos in posInfos.colonsPos) {
             let endPos = pos + SyntaxNodeKind.ColonToken.size
             colonsPos.add(CodePositionRange(pos, endPos))
@@ -590,7 +590,7 @@ public class TupleType <: TypeAnnotation {
      * @return An array of CodePositionRange objects representing the position ranges of commas.
      */
     public func getCommasPos(): Array<CodePositionRange> {
-        var commasPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let commasPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (pos in posInfos.commasPos) {
             let endPos = pos + SyntaxNodeKind.CommaToken.size
             commasPos.add(CodePositionRange(pos, endPos))
@@ -603,7 +603,7 @@ public class TupleType <: TypeAnnotation {
      * @return An array of CodePositionRange objects representing the position ranges of labels.
      */
     public func getLabelsPos(): Array<CodePositionRange> {
-        var labelsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let labelsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (i in 0..posInfos.labelsPos.size) {
             let endPos = posInfos.labelsPos[i] + labels[i].size
             labelsPos.add(CodePositionRange(posInfos.labelsPos[i], endPos))
@@ -616,7 +616,7 @@ public class TupleType <: TypeAnnotation {
      * @return An array of CodePositionRange objects representing the position ranges of colons.
      */
     public func getColonsPos(): Array<CodePositionRange> {
-        var colonsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
+        let colonsPos: ArrayList<CodePositionRange> = ArrayList<CodePositionRange>()
         for (pos in posInfos.colonsPos) {
             let endPos = pos + SyntaxNodeKind.ColonToken.size
             colonsPos.add(CodePositionRange(pos, endPos))

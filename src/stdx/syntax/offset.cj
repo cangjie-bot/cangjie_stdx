@@ -29,7 +29,7 @@ class Offset {
         }
     }
     func moveString(str: String) {
-        var strSplit = str.split(NEWLINE)
+        let strSplit = str.split(NEWLINE)
         if (strSplit.size > 1) {
             this.line += Int32(strSplit.size) - 1
             this.column = Int32(strSplit[strSplit.size - 1].toRuneArray().size + 1)
