@@ -46,15 +46,45 @@ get_platform_arch() {
 # --- Main Script ---
 
 # 1. Argument Parsing
-if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <version> [<platform-arch>] [<extract-dir>]"
-    echo "Example: $0 1.0.3.1 linux-x64 ./output"
+PLATFORM_ARCH=""
+DEST_DIR="."
+
+usage() {
+    echo "Usage: $0 [-p <platform-arch>] [-d <extract-dir>] <version>"
+    echo "Example: $0 -p linux-x64 -d ./output 1.0.3.1"
     exit 1
+}
+
+while getopts ":p:d:" opt; do
+  case ${opt} in
+    p )
+      PLATFORM_ARCH=$OPTARG
+      ;;
+    d )
+      DEST_DIR=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      ;;
+    : )
+      echo "Invalid option: -$OPTARG requires an argument" >&2
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+if [ "$#" -ne 1 ]; then
+    usage
 fi
 
 VERSION="$1"
-PLATFORM_ARCH="${2:-$(get_platform_arch)}"
-DEST_DIR="${3:-.}"
+
+# Set defaults if not provided
+if [ -z "$PLATFORM_ARCH" ]; then
+    PLATFORM_ARCH=$(get_platform_arch)
+fi
 
 # Validate platform-architecture
 case "$PLATFORM_ARCH" in
