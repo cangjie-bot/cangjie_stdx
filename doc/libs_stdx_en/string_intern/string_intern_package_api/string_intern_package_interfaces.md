@@ -39,7 +39,7 @@ Function: Obtain a cached string object that matches the content of the input ar
 
 Parameters:
 
-- str: Array\<Byte> - A Byte array created at runtime, intended for use in constructing a string.
+- array: Array\<Byte> - A Byte array created at runtime, intended for use in constructing a string.
 
 Return value:
 

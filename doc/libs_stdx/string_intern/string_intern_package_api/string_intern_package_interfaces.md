@@ -39,7 +39,7 @@ static func intern(array: Array<Byte>): String
 
 参数：
 
-- str: Array\<Byte> - 运行时创建的Byte数组，该数组计划用于创建一个字符串。
+- array: Array\<Byte> - 运行时创建的Byte数组，该数组计划用于创建一个字符串。
 
 返回值：
 
