@@ -50,10 +50,17 @@ PLATFORM_ARCH=""
 DEST_DIR="."
 
 usage() {
-    echo "Usage: $0 [-p <platform-arch>] [-d <extract-dir>] <version>"
-    echo "Example: $0 -p linux-x64 -d ./output 1.0.3.1"
+    echo "Usage: $0 <version> [-p <platform-arch>] [-d <extract-dir>]"
+    echo "Example: $0 1.0.3.1 -p linux-x64 -d ./output"
     exit 1
 }
+
+if [ "$#" -lt 1 ] || [[ "$1" == -* ]]; then
+    usage
+fi
+
+VERSION="$1"
+shift # Remove version from argument list
 
 while getopts ":p:d:" opt; do
   case ${opt} in
@@ -75,11 +82,10 @@ while getopts ":p:d:" opt; do
 done
 shift $((OPTIND -1))
 
-if [ "$#" -ne 1 ]; then
+if [ "$#" -gt 0 ]; then
+    echo "Error: Unexpected arguments found."
     usage
 fi
-
-VERSION="$1"
 
 # Set defaults if not provided
 if [ -z "$PLATFORM_ARCH" ]; then
