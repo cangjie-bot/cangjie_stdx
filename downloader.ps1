@@ -7,25 +7,29 @@
     It caches the downloaded file and extracts it to a specified directory.
 .PARAMETER Version
     The version number to download (e.g., '1.0.3.1'). This is a mandatory parameter.
-.PARAMETER PlatformArch
-    The platform and architecture combination (e.g., 'windows-x64'). If not specified, it defaults to the current system's platform and architecture.
+.PARAMETER Platform
+    Alias 'p'. The platform and architecture combination (e.g., 'windows-x64'). If not specified, it defaults to the current system's platform and architecture.
     Supported values: linux-aarch64, linux-x64, mac-aarch64, mac-x64, ohos-aarch64, ohos-x64, windows-x64.
 .PARAMETER Destination
-    The directory where the file will be extracted. Defaults to the current directory.
+    Alias 'd'. The directory where the file will be extracted. Defaults to the current directory.
 .EXAMPLE
     .\downloader.ps1 -Version 1.0.3.1
     Downloads the latest version for the current platform and extracts to the current directory.
 .EXAMPLE
-    .\downloader.ps1 -Version 1.0.1.2 -PlatformArch windows-x64 -Destination C:\libs
+    .\downloader.ps1 -Version 1.0.1.2 -Platform windows-x64 -Destination C:\libs
     Downloads the windows-x64 version 1.0.1.2 and extracts it to C:\libs.
 #>
 param (
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $true, Position=0)]
     [string]$Version,
 
+    [Parameter(Mandatory = $false)]
+    [Alias('p')]
     [ValidateSet('linux-aarch64', 'linux-x64', 'mac-aarch64', 'mac-x64', 'ohos-aarch64', 'ohos-x64', 'windows-x64')]
-    [string]$PlatformArch,
+    [string]$Platform,
 
+    [Parameter(Mandatory = $false)]
+    [Alias('d')]
     [string]$Destination = '.'
 )
 
@@ -70,17 +74,17 @@ function Get-PlatformArch {
 # --- Main Script ---
 try {
     # 1. Argument Defaulting
-    if (-not $PSBoundParameters.ContainsKey('PlatformArch')) {
-        $PlatformArch = Get-PlatformArch
+    if (-not $PSBoundParameters.ContainsKey('Platform')) {
+        $Platform = Get-PlatformArch
     }
 
     # 2. Define Variables
     $RepoUrl = "https://gitcode.com/Cangjie/cangjie_stdx"
-    $FileName = "cangjie-stdx-${PlatformArch}-${Version}.zip"
+    $FileName = "cangjie-stdx-${Platform}-${Version}.zip"
     $DownloadUrl = "$RepoUrl/releases/download/v${Version}/${FileName}"
     $CacheDir = Join-Path $HOME ".cangjie_stdx/v${Version}"
     $CachedFile = Join-Path $CacheDir $FileName
-    $ExtractedDirName = "cangjie-stdx-${PlatformArch}-${Version}"
+    $ExtractedDirName = "cangjie-stdx-${Platform}-${Version}"
 
     # 3. Destination Directory Check
     $DestDirAbs = Resolve-Path -Path $Destination
