@@ -162,5 +162,11 @@ mv "$TOP_LEVEL_DIR" "$FINAL_PATH"
 # Clean up temp directory
 rm -rf "$TMP_EXTRACT_DIR"
 
-# 6. Success Output
+# 6. Post-extraction for macOS
+if [[ "$(uname -s)" == "Darwin" && "$PLATFORM_ARCH" == mac-* ]]; then
+    echo "Removing quarantine attribute for macOS..."
+    xattr -d -r com.apple.quarantine "$FINAL_PATH" 2>/dev/null || true
+fi
+
+# 7. Success Output
 echo "Successfully extracted to: $FINAL_PATH"
