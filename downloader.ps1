@@ -13,10 +13,10 @@
 .PARAMETER Destination
     Alias 'd'. The directory where the file will be extracted. Defaults to the current directory.
 .EXAMPLE
-    .\downloader.ps1 -Version 1.0.3.1
+    .\downloader.ps1 1.0.3.1
     Downloads the latest version for the current platform and extracts to the current directory.
 .EXAMPLE
-    .\downloader.ps1 -Version 1.0.1.2 -Platform windows-x64 -Destination C:\libs
+    .\downloader.ps1 1.0.1.2 -Platform windows-x64 -Destination C:\libs
     Downloads the windows-x64 version 1.0.1.2 and extracts it to C:\libs.
 #>
 param (
