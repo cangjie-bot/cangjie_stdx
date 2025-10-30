@@ -110,6 +110,22 @@ public class MacroExpandDecl <: Decl {
     }
 
     /**
+     * @brief Initialize a new MacroExpandDecl node.
+     */
+    public init(calleeMacro: Expr, macroAttrs: Tokens,
+        macroInputs: MacroExpandInput, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createMacroExpandDeclImpl(calleeMacro, macroAttrs,
+            macroInputs, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MacroExpandDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The expression of the macro being called.
      */
     public prop calleeMacro: Expr {
@@ -400,6 +416,23 @@ public class MacroExpandParam <: Parameter {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new MacroExpandParam node.
+     */
+    public init(calleeMacro: Expr, macroAttrs: Tokens,
+        macroInputs: MacroExpandInput, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createMacroExpandParamImpl(calleeMacro, macroAttrs,
+                macroInputs, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MacroExpandParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**

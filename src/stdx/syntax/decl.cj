@@ -40,6 +40,10 @@ sealed abstract class Decl <: SyntaxTreeNode {
         super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
 
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>)) {
+        super(params)
+    }
+
     /**
      * @brief The array of annotations applied to the declaration.
      *
@@ -202,6 +206,25 @@ public class ClassDecl <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new ClassDecl node.
+     */
+    public init(body: Body,
+        genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>, name: String,
+        superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createClassDeclImpl(body, genericConstraints, genericParams,
+                name, superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ClassDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -377,6 +400,22 @@ public class EnumConstructor <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new EnumConstructor node.
+     */
+    public init(name: String,
+        paramTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createEnumConstructorImpl(name, paramTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<EnumConstructor>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -584,6 +623,26 @@ public class EnumDecl <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new EnumDecl node.
+     */
+    public init(body: Body,
+        genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>, isNonExhaustive: Bool,
+        name: String, superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createEnumDeclImpl(body, genericConstraints, genericParams,
+                isNonExhaustive, name, superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<EnumDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.isNonExhaustive_ = isNonExhaustive
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -811,6 +870,24 @@ public class ExtendDecl <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new ExtendDecl node.
+     */
+    public init(body: Body,
+        extendedTyAnnotation: TypeAnnotation, genericConstraints: Option<GenericConstraints>,
+        genericParams: Array<GenericParam>, superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createExtendDeclImpl(body, extendedTyAnnotation,
+                genericConstraints, genericParams, superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ExtendDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -1084,6 +1161,26 @@ public class FuncDecl <: Decl {
     }
 
     /**
+     * @brief Initialize a new FuncDecl node.
+     */
+    public init(body: Option<Block>,
+        genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>, kind: FuncKind,
+        name: String, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createFuncDeclImpl(body, genericConstraints, genericParams,
+                kind, name, params, retTyAnnotation, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<FuncDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.kind_ = kind
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The optional block representing the body of the function.
      *
      * This variable holds an optional block that represents the body of the
@@ -1196,10 +1293,14 @@ public class FuncDecl <: Decl {
     }
 }
 
-sealed abstract class Parameter <: Decl {
+abstract sealed class Parameter <: Decl {
     init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode,
         commentsPropInfo: Array<PropInfo>) {
         super(nodePos, nodeImpl, parentNode, commentsPropInfo)
+    }
+
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>)) {
+        super(params)
     }
 }
 
@@ -1260,6 +1361,22 @@ public open class LambdaParam <: Parameter {
         this.name_ = name_
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize a new LambdaParam node.
+     */
+    public init(name: String,
+        typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createLambdaParamImpl(name, typeAnnotation, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<LambdaParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
     }
 
     /**
@@ -1407,6 +1524,23 @@ public open class FuncParam <: Parameter {
     }
 
     /**
+     * @brief Initialize a new FuncParam node.
+     */
+    public init(defaultValue: Option<Expr>,
+        kind: Option<VarKind>, name: String, typeAnnotation: TypeAnnotation, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createFuncParamImpl(defaultValue, kind, name, typeAnnotation, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<FuncParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.kind_ = kind
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+    }
+
+    /**
      * @brief The optional default value for the parameter.
      *
      * This variable holds an optional expression that represents the default
@@ -1476,6 +1610,18 @@ public class GenericParam <: Decl {
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode, name: String,
         commentsPropInfo: Array<PropInfo>) {
         super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
+        this.name_ = name
+    }
+
+    /**
+     * @brief Initialize a new GenericParam node.
+     */
+    public init(name: String, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createGenericParamImpl(name, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<GenericParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
         this.name_ = name
     }
 
@@ -1632,6 +1778,25 @@ public class InterfaceDecl <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new InterfaceDecl node.
+     */
+    public init(body: Body,
+        genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>, name: String,
+        superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createInterfaceDeclImpl(body, genericConstraints,
+                genericParams, name, superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<InterfaceDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -1792,6 +1957,22 @@ public class MacroDecl <: Decl {
     }
 
     /**
+     * @brief Initialize a new MacroDecl node.
+     */
+    public init(body: Block, name: String,
+        params: ParameterList, retTyAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createMacroDeclImpl(body, name, params, retTyAnnotation, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MacroDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The block representing the body of the macro.
      *
      * This variable holds the block that represents the body of the
@@ -1912,6 +2093,21 @@ public class MainDecl <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new MainDecl node.
+     */
+    public init(body: Block, params: ParameterList,
+        retTyAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createMainDeclImpl(body, params, retTyAnnotation, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MainDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -2066,6 +2262,23 @@ public class PropDecl <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new PropDecl node.
+     */
+    public init(isMut: Bool,
+        getter: Option<PropGetterOrSetter>, name: String, setter: Option<PropGetterOrSetter>,
+        tyAnnotation: TypeAnnotation, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createPropDeclImpl(isMut, getter, name, setter, tyAnnotation, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<PropDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     public prop isMut: Bool {
@@ -2254,6 +2467,23 @@ public class PropGetterOrSetter <: Decl {
     }
 
     /**
+     * @brief Initialize a new PropGetterOrSetter node.
+     */
+    public init(block: Block, identifier: Option<String>,
+        isGetter: Bool, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createPropGetterOrSetterImpl(block, identifier, isGetter, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<PropGetterOrSetter>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.identifier_ = identifier
+        this.isGetter_ = isGetter
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The block representing the body of the getter or setter.
      *
      * This variable holds the block that represents the body of the
@@ -2371,6 +2601,20 @@ public class StaticInit <: Decl {
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize a new StaticInit node.
+     */
+    public init(body: Block, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createStaticInitImpl(body, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<StaticInit>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -2533,6 +2777,25 @@ public class StructDecl <: Decl {
     }
 
     /**
+     * @brief Initialize a new StructDecl node.
+     */
+    public init(body: Body,
+        genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>, name: String,
+        superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createStructDeclImpl(body, genericConstraints, genericParams,
+                name, superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<StructDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The body of the struct declaration.
      *
      * This variable represents the body of the struct declaration, which can
@@ -2688,6 +2951,24 @@ public class TypeAlias <: Decl {
         this.aliasName_ = aliasName_
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize a new TypeAlias node.
+     */
+    public init(aliasName: String,
+        originalTyAnnotation: TypeAnnotation, typeParameters: Array<GenericParam>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createTypeAliasImpl(aliasName, originalTyAnnotation,
+                typeParameters, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<TypeAlias>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.aliasName_ = aliasName
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -2864,6 +3145,23 @@ public class VarDecl <: Decl {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new VarDecl node.
+     */
+    public init(initializer: Option<Expr>, kind: VarKind,
+        name: String, pattern: Pattern, tyAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createVarDeclImpl(initializer, kind, name, pattern,
+            tyAnnotation, annotations: annotations, modifiers: modifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<VarDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.kind_ = kind
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**

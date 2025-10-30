@@ -15,6 +15,10 @@ sealed abstract class Expr <: SyntaxTreeNode {
         commentsPropInfo: Array<PropInfo>) {
         super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
+
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>)) {
+        super(params)
+    }
 }
 
 class ArrayLiteralPosInfos {
@@ -92,6 +96,20 @@ public class ArrayLiteral <: Expr {
     }
 
     /**
+     * @brief Initialize a new ArrayLiteral node.
+     */
+    public init(elements: Array<Expr>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createArrayLiteralImpl(elements, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ArrayLiteral>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief Array of expressions.
      *
      * This member variable stores an array of expressions of type Expr.
@@ -164,6 +182,19 @@ public class AsExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize node with source value and target type.
+     */
+    public init(srcVal: Expr, targetTypeAnnotation: TypeAnnotation, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createAsExprImpl(srcVal, targetTypeAnnotation, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<AsExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -285,6 +316,21 @@ public class AssignExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new AssignExpr node.
+     */
+    public init(assignOpKind_: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createAssignExprImpl(assignOpKind_, lhs, rhs, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<AssignExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.assignOpKind_ = assignOpKind_
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -454,6 +500,20 @@ public class BinaryExpr <: Expr {
         this.propInfos = propInfos
     }
 
+    /**
+     * @brief Initialize node with left expr, operator and right expr.
+     */
+    public init(lhs: Expr, opKind: BinaryOpKind, rhs: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createBinaryExprImpl(lhs, opKind, rhs, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<BinaryExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+        this.opKInd_ = opKind
+    }
+
     public prop lhs: Expr {
         get() {
             let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfos.lhsPropInfo.index]
@@ -484,6 +544,13 @@ public class BreakExpr <: Expr {
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
         commentsPropInfo: Array<PropInfo>) {
         super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
+    }
+
+    /**
+     * @brief Initialize node.
+     */
+    public init(comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createBreakExprImpl(comments: comments))
     }
 }
 
@@ -563,6 +630,19 @@ public class CallExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with callee and arguments.
+     */
+    public init(callee: Expr, arguments: Array<Argument>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createCallExprImpl(callee, arguments, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<CallExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     public prop arguments: Array<Argument> {
@@ -650,6 +730,19 @@ public class CatchPattern <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize node with exception types and pattern.
+     */
+    public init(pattern: Pattern, exceptionType: Array<TypeAnnotation>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createCatchPatternImpl(pattern, exceptionType, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<CatchPattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+    }
+
+    /**
      * @brief The array of exception types that this catch pattern handles.
      */
     public prop exceptionType: Array<TypeAnnotation> {
@@ -731,6 +824,19 @@ public class ConjunctionCondition <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize node with conditions.
+     */
+    public init(cond: Array<AtomicCondition>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createConjunctionConditionImpl(cond, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ConjunctionCondition>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+    }
+
+    /**
      * @brief The array of atomic conditions in this conjunction.
      *
      * This member holds the list of AtomicConditions that are AND'ed together.
@@ -768,6 +874,13 @@ public class ContinueExpr <: Expr {
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
         commentsPropInfo: Array<PropInfo>) {
         super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
+    }
+
+    /**
+     * @brief Initialize node.
+     */
+    public init(comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createContinueExprImpl(comments: comments))
     }
 }
 
@@ -821,6 +934,19 @@ public class DisjunctionCondition <: SyntaxTreeNode {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with conditions.
+     */
+    public init(cond: Array<ConjunctionCondition>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createDisjunctionConditionImpl(cond, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<DisjunctionCondition>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -922,6 +1048,20 @@ public class DoWhileExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new DoWhileExpr node.
+     */
+    public init(body: Block, condition: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createDoWhileExprImpl(body, condition, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<DoWhileExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -1039,6 +1179,19 @@ public class ForInExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with loop body, range expr, iterator pattern and condition expr.
+     */
+    public init(body: Block, expr: Expr, pattern: Pattern, patternGuard: Option<Expr>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createForInExprImpl(body, expr, pattern, patternGuard, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ForInExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -1179,6 +1332,20 @@ public class IfExpr <: Expr {
     }
 
     /**
+     * @brief Initialize a new IfExpr node.
+     */
+    public init(condition: DisjunctionCondition, elseBlock: Option<Block>, elseIf: Option<IfExpr>, ifBlock: Block, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createIfExprImpl(condition, elseBlock, elseIf, ifBlock, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<IfExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The condition of the if statement.
      */
     public prop condition: DisjunctionCondition {
@@ -1296,6 +1463,20 @@ public class IncOrDecExpr <: Expr {
     }
 
     /**
+     * @brief Initialize node with operand and operator.
+     */
+    public init(kind: IncOrDecOpKind, operand: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createIncOrDecExprImpl(kind, operand, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<IncOrDecExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+        this.kind_ = kind
+    }
+
+    /**
      * @brief Type of increment or decrement operation.
      *
      * This member variable stores the kind of operation specified by the
@@ -1370,6 +1551,19 @@ public class IsExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize node with source value and target type.
+     */
+    public init(srcVal: Expr, targetTypeAnnotation: TypeAnnotation, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createIsExprImpl(srcVal, targetTypeAnnotation, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<IsExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -1474,6 +1668,20 @@ public class Lambda <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new Lambda node.
+     */
+    public init(body: Array<SyntaxTreeNode>, params: ParameterList, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createLambdaImpl(body, params, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<Lambda>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -1588,6 +1796,19 @@ public class LetPattern <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize node with source expr and patterns.
+     */
+    public init(expr: Expr, patterns: Array<Pattern>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createLetPatternImpl(expr, patterns, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<LetPattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+    }
+
+    /**
      * @brief The expression whose value is to be bound to the pattern.
      */
     public prop expr: Expr {
@@ -1651,6 +1872,26 @@ public open class LitConstExpr <: Expr {
         this.rawValue_ = rawValue_
     }
 
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>), kind_: LitConstKind,
+        rawValue_: String, startPos: CodePosition) {
+        super(params)
+        this.startPos = startPos
+        this.kind_ = kind_
+        this.rawValue_ = rawValue_
+    }
+
+    /**
+     * @brief Initialize a new LitConstExpr node.
+     */
+    public init(kind: LitConstKind, rawValue: String, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createLitConstExprImpl(kind, rawValue, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+
+        this.startPos = startPos
+        this.kind_ = kind
+        this.rawValue_ = rawValue
+    }
+
     /**
      * @brief Type of literal constant.
      *
@@ -1692,6 +1933,20 @@ public class LitConstRuneExpr <: LitConstExpr {
         super(nodeImpl, startPos, parentNode, LitConstKind.RuneLiteral, rawValue_, commentsPropInfo)
         this.startPos = startPos
         this.isSingleQuote_ = isSingleQuote_
+    }
+
+    /**
+     * @brief Initialize a new LitConstRuneExpr node.
+     */
+    public init(kind: LitConstKind, rawValue: String, isSingleQuote: Bool, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createLitConstRuneExprImpl(kind, rawValue, isSingleQuote, comments: comments), kind, rawValue,
+            CodePosition(1, 1, FileInfos("", "")))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<LitConstRuneExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.isSingleQuote_ = isSingleQuote
     }
 
     /**
@@ -1769,6 +2024,25 @@ public class LitConstStrExpr <: LitConstExpr {
         this.isSingleQuote_ = isSingleQuote_
         this.strKind_ = strKind_
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new LitConstStrExpr node.
+     */
+    public init(kind: LitConstKind, rawValue: String, delimiterNum: Int64, isSingleQuote: Bool,
+        strKind: LitConstStrKind, strPartExprs: Array<StrLiteralPart>, comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createLitConstStrExprImpl(kind, rawValue, delimiterNum, isSingleQuote, strKind,
+                strPartExprs, comments: comments), kind, rawValue, CodePosition(1, 1, FileInfos("", "")))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<LitConstStrExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.delimiterNum_ = delimiterNum
+        this.isSingleQuote_ = isSingleQuote
+        this.strKind_ = strKind
+        this.propInfos = redNode.propInfos
     }
 
     /**
@@ -1952,6 +2226,19 @@ public class MatchCase <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize node with body, case condition, pattern guard condition and pattern.
+     */
+    public init(patterns: Array<Pattern>, patternGuardCond: Option<Expr>, caseCond: Option<Expr>, body: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createMatchCaseImpl(patterns, patternGuardCond, caseCond, body, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MatchCase>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+    }
+
+    /**
      * @brief The body of the match case as an array of syntax tree nodes.
      */
     public prop body: Array<SyntaxTreeNode> {
@@ -2123,6 +2410,20 @@ public class MatchExpr <: Expr {
     }
 
     /**
+     * @brief Initialize a new MatchExpr node.
+     */
+    public init(matchCases: Array<MatchCase>, selector: Option<Expr>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createMatchExprImpl(matchCases, selector, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MatchExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The cases of the match expression.
      */
     public prop matchCases: Array<MatchCase> {
@@ -2202,6 +2503,20 @@ public class MemberAccess <: Expr {
     }
 
     /**
+     * @brief Initialize a new MemberAccess node.
+     */
+    public init(base: Expr, field: SymbolRef, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createMemberAccessImpl(base, field, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<MemberAccess>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The base expression.
      */
     public prop base: Expr {
@@ -2267,6 +2582,20 @@ public class OptionalExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new OptionalExpr node.
+     */
+    public init(base: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createOptionalExprImpl(base, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<OptionalExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -2339,6 +2668,19 @@ public class ParenCondition <: SyntaxTreeNode {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with conditions.
+     */
+    public init(cond: DisjunctionCondition, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createParenConditionImpl(cond, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ParenCondition>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -2417,6 +2759,19 @@ public class ParenExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize node with expr in the parentheses.
+     */
+    public init(subExpr: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createParenExprImpl(subExpr, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ParenExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -2521,6 +2876,20 @@ public class RangeExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize node with range start, kind, end and range step.
+     */
+    public init(start: Option<Expr>, kind: RangeKind, end: Option<Expr>, step: Option<Expr>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createRangeExprImpl(start, kind, end, step, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<RangeExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+        this.kind_ = kind
     }
 
     /**
@@ -2636,6 +3005,19 @@ public class ReturnExpr <: Expr {
     }
 
     /**
+     * @brief Initialize node with the returned value.
+     */
+    public init(retVal: Option<Expr>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createReturnExprImpl(retVal, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ReturnExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+    }
+
+    /**
      * @brief The expression being returned, optional.
      */
     public prop retVal: Option<Expr> {
@@ -2724,6 +3106,20 @@ public class SpawnExpr <: Expr {
     }
 
     /**
+     * @brief Initialize a new SpawnExpr node.
+     */
+    public init(threadContext: Option<Expr>, trailingLambdaExpr: Lambda, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createSpawnExprImpl(threadContext, trailingLambdaExpr, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<SpawnExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The optional thread context expression.
      */
     public prop threadContext: Option<Expr> {
@@ -2792,6 +3188,19 @@ public class StrInterpolationContent <: SyntaxTreeNode {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with interpolation block.
+     */
+    public init(interpolationBlock: Block, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createStrInterpolationContentImpl(interpolationBlock, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<StrInterpolationContent>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -2881,6 +3290,20 @@ public class SubscriptExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new SubscriptExpr node.
+     */
+    public init(base: Expr, indexs: Array<Expr>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createSubscriptExprImpl(base, indexs, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<SubscriptExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -3021,6 +3444,21 @@ public class SymbolRef <: Expr {
     }
 
     /**
+     * @brief Initialize a new SymbolRef node.
+     */
+    public init(name: String, typeArguments: Array<TypeAnnotation>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createSymbolRefImpl(name, typeArguments, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<SymbolRef>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.name_ = name
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief Name of the symbol being referenced.
      *
      * This member variable stores the name of the symbol that is being referenced.
@@ -3138,6 +3576,20 @@ public class SynchronizedExpr <: Expr {
     }
 
     /**
+     * @brief Initialize a new SynchronizedExpr node.
+     */
+    public init(block: Block, structuredMutex: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createSynchronizedExprImpl(block, structuredMutex, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<SynchronizedExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The block of code to be synchronized.
      */
     public prop block: Block {
@@ -3203,6 +3655,20 @@ public class ThrowExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new ThrowExpr node.
+     */
+    public init(throwVal: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createThrowExprImpl(throwVal, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ThrowExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -3300,6 +3766,19 @@ public class TrailingClosureExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with callee, arguments and trailing lambda expr.
+     */
+    public init(callee: Expr, arguments: Array<Argument>, trailingLambdaExpr: Lambda, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createTrailingClosureExprImpl(callee, arguments, trailingLambdaExpr, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<TrailingClosureExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
     }
 
     /**
@@ -3521,6 +4000,21 @@ public class TryCatch <: Expr {
     }
 
     /**
+     * @brief Initialize a new TryCatch node.
+     */
+    public init(catchBlocks: Array<Block>, catchPatterns: Array<CatchPattern>, finallyBlock: Option<Block>,
+        resourceSpec: Array<VarDecl>, tryBlock: Block, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createTryCatchImpl(catchBlocks, catchPatterns, finallyBlock, resourceSpec, tryBlock, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<TryCatch>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The array of catch blocks.
      */
     public prop catchBlocks: Array<Block> {
@@ -3681,6 +4175,20 @@ public class TupleLiteral <: Expr {
     }
 
     /**
+     * @brief Initialize a new TupleLiteral node.
+     */
+    public init(elements: Array<Expr>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createTupleLiteralImpl(elements, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<TupleLiteral>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief Array of expressions.
      *
      * This member variable stores an array of expressions of type Expr.
@@ -3767,6 +4275,19 @@ public class TypeConvExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfo
         this.propInfos = propInfo
+    }
+
+    /**
+     * @brief Initialize node with source value and target type.
+     */
+    public init(srcVal: Expr, targetTypeAnnotation: AtomicType, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createTypeConvExprImpl(targetTypeAnnotation, srcVal, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<TypeConvExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -3864,6 +4385,20 @@ public class UnaryExpr <: Expr {
     }
 
     /**
+     * @brief Initialize node with operand and op kind.
+     */
+    public init(opKind: UnaryOpKind, operand: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createUnaryExprImpl(opKind, operand, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<UnaryExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
+        this.opKind_ = opKind
+    }
+
+    /**
      * @brief Type of unary operation (e.g., subtraction or negation).
      *
      * This member variable stores the kind of unary operation specified by the
@@ -3939,6 +4474,20 @@ public class UnsafeExpr <: Expr {
     }
 
     /**
+     * @brief Initialize a new UnsafeExpr node.
+     */
+    public init(block: Block, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createUnsafeExprImpl(block, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<UnsafeExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The block of code containing unsafe operations.
      *
      * This member variable stores the block of code that will be executed in an unsafe context.
@@ -4010,6 +4559,19 @@ public class VArrayExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with augument and type of varray.
+     */
+    public init(argument: Argument, vArrayType: VArrayType, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createVArrayExprImpl(argument, vArrayType, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<VArrayExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -4098,6 +4660,20 @@ public class WhileExpr <: Expr {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new WhileExpr node.
+     */
+    public init(body: Block, condition: DisjunctionCondition, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createWhileExprImpl(body, condition, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<WhileExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**

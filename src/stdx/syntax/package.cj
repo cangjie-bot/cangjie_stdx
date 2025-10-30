@@ -86,6 +86,19 @@ public class ImportAlias <: ImportContent {
     }
 
     /**
+     * @brief Initialize node with prefixes, package name and alias name.
+     */
+    public init(prefixes: Array<String>, identifier: String, alias: String, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createImportAliasImpl(prefixes, identifier, alias, comments: comments), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportAlias>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.aliasName_ = alias
+        this.identifier_ = identifier
+    }
+
+    /**
      * @brief The name of the alias.
      */
     public prop aliasName: String {
@@ -138,6 +151,17 @@ public class ImportAll <: ImportContent {
         importContentPosInfos: ImportContentPosInfos, prefixes_: Array<String>, commentsPropInfo: Array<PropInfo>) {
         super(nodeImpl, startPos, parentNode, importContentPosInfos, prefixes_, commentsPropInfo)
         this.posInfos = posInfos
+    }
+
+    /**
+     * @brief Initialize node with prefixes.
+     */
+    public init(prefixes: Array<String>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createImportAllImpl(prefixes, comments: comments), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportAll>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
     }
 }
 
@@ -210,6 +234,16 @@ public open class ImportContent <: SyntaxTreeNode {
         this.prefixes_ = prefixes_
     }
 
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>), prefixes: Array<String>) {
+        super(params)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportContent>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.prefixes_ = prefixes
+        this.startPos = startPos
+        this.posInfos = redNode.posInfos
+    }
+
     /**
      * @brief The prefixes of the import content.
      */
@@ -266,6 +300,20 @@ public class ImportList <: SyntaxTreeNode {
         this.posInfos = posInfos
         this.propInfos = propInfos
         this.kind_ = kind_
+    }
+
+    /**
+     * @brief Initialize node with imported content, import kind and modifier.
+     */
+    public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createImportListImpl(contents, kind, modifier, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportList>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.kind_ = kind
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
@@ -386,6 +434,18 @@ public class ImportMulti <: ImportContent {
     }
 
     /**
+     * @brief Initialize node with prefixes, package name and sub package import contents.
+     */
+    public init(prefixes: Array<String>, contents: Array<ImportContent>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createImportMultiImpl(prefixes, contents, comments: comments), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportMulti>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.posInfos = redNode.posInfos
+        this.propInfos = redNode.propInfos
+    }
+
+    /**
      * @brief List of import contents.
      */
     public prop contents: Array<ImportContent> {
@@ -447,6 +507,18 @@ public class ImportSingle <: ImportContent {
     }
 
     /**
+     * @brief Initialize node with prefixes, package name and alias name.
+     */
+    public init(prefixes: Array<String>, identifier: String, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createImportSingleImpl(prefixes, identifier, comments: comments), prefixes)
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ImportSingle>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.identifier_ = identifier
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The identifier for the import.
      */
     public prop identifier: String {
@@ -474,6 +546,27 @@ public class Package <: SyntaxTreeNode {
         this.isMacroPkg_ = isMacroPkg_
         this.name_ = name_
         this.srcFileImpls = srcFileImpls
+    }
+
+    /**
+     * @brief Initialize a new Package node.
+     */
+    public init(isMacroPkg: Bool, name: String, srcFile: Array<SourceFile>) {
+        super(CodePositionRange(), Terminal(SyntaxNodeKind.Invalid), None)
+
+        let (isMacro, pkgName) = Parser.checkPackage(ArrayList(srcFile))
+        if (isMacro != isMacroPkg || pkgName != name) {
+            throw Exception("InitException: the input params are illegal for Package Init.")
+        }
+
+        this.isMacroPkg_ = isMacroPkg
+        this.name_ = name
+
+        let fileImpls = ArrayList<(SyntaxNodeImpl, String)>()
+        for (file in srcFile) {
+            fileImpls.add((file.nodeImpl, file.path))
+        }
+        this.srcFileImpls = fileImpls.toArray()
     }
 
     /**
@@ -673,6 +766,22 @@ public class PackageHeader <: SyntaxTreeNode {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize a new PackageHeader node.
+     */
+    public init(accessModifier: Option<Modifier>, isMacroPkg: Bool, packageNameIdentifiers: Array<String>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createPackageHeaderImpl(accessModifier, isMacroPkg, packageNameIdentifiers, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<PackageHeader>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.isMacroPkg_ = isMacroPkg
+        this.packageNameIdentifiers_ = packageNameIdentifiers
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
     }
 
     /**
