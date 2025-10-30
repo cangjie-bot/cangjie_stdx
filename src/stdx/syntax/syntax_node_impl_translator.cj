@@ -57,6 +57,16 @@ class SyntaxNodeImplTranslator {
         }
     }
 
+    private func isForeignModifier(node: SyntaxNodeImpl): Bool {
+        let modi = (node as NonTerminal).getOrThrow()
+        for (child in modi.children) {
+            if (child.kind == SyntaxNodeKind.ForeignToken) {
+                return true
+            }
+        }
+        false
+    }
+
     private func transList<T>(node: SyntaxNodeImpl, startPos: CodePosition, parent: ?SyntaxTreeNode): Array<T> where T <: SyntaxTreeNode {
         var result = ArrayList<T>()
         match (node) {
@@ -66,6 +76,9 @@ class SyntaxNodeImplTranslator {
                     match (child.kind) {
                         case SyntaxNodeKind.NewlineToken | SyntaxNodeKind.SpaceToken => beginPos += child.offset
                         case _ =>
+                            if (child.kind == SyntaxNodeKind.Modifier && isForeignModifier(child)) {
+                                continue
+                            }
                             addList<T>(result, transNode(child, beginPos, parent))
                             beginPos += child.offset
                     }

@@ -16,6 +16,8 @@ import std.collection.ArrayList
  */
 foreign func CJ_ParseAnnotationArguments(tokensBytes: CPointer<UInt8>): CPointer<ParseRes>
 
+foreign func CJ_CheckAddSpace(tokBytes: CPointer<UInt8>, spaceFlag: CPointer<Bool>): Unit
+
 // ======================== PART ONE: Parse/Lex API from CJC static library ========================
 
 /**
