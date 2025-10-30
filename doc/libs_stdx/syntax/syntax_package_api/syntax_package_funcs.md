@@ -56,7 +56,7 @@ public func parseText(programText: String): ParsingResult<SyntaxTreeNode>
 
 参数：
 
-- programText： String - 待解析的字符串文本。
+- programText: String - 待解析的字符串文本。
 
 返回值：
 
@@ -65,3 +65,30 @@ public func parseText(programText: String): ParsingResult<SyntaxTreeNode>
 异常：
 
 - Exception - 当根据输入文本无法正确解析出单个语法树节点时，抛出异常，异常中包含报错提示消息。
+
+## func parseTokens(Tokens, Bool)
+
+```cangjie
+public func parseTokens(tokens: Tokens, refreshPos!: Bool = true): ParsingResult<SyntaxTreeNode>
+```
+
+功能：用于解析一组词法单元，获取一个符合仓颉语法的抽象语法树节点。
+
+> **注意：**
+>
+> - 此函数当前仅支持从文本解析出部分声明和大部分表达式节点，具体支持的节点如下：
+> - 声明节点：`VarDecl`，`TypeAlias`，`StructDecl`，`StaticInit`，`PropDecl`，`MainDecl`，`MacroDecl`，`InterfaceDecl`，`FuncDecl` （类的主构造函数不支持），`EnumDecl`，`ClassDecl`
+> - 表达式节点：除 `OptionalExpr`，`MacroExpandExpr` 和 `StrInterpolationContent` 外的所有表达式节点。
+
+参数：
+
+- tokens: Tokens - 待解析的一组词法单元。
+- refreshPos!: Bool - 是否刷新输入词法单元的位置信息，`true` 表示刷新位置信息，`false` 表示不刷新，保留原始位置信息，默认 `true`。
+
+返回值：
+
+- ParsingResult\<SyntaxTreeNode> - 一个根节点为 [SyntaxTreeNode](syntax_package_classes.md#class-syntaxtreenode) 类型的抽象语法树节点。
+
+异常：
+
+- Exception - 当根据输入词法单元无法正确解析出单个语法树节点或输入词法单元的位置信息有误时，抛出异常，异常中包含报错提示消息。
