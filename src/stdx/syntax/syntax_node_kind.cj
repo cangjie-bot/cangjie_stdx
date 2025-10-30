@@ -14,6 +14,7 @@ import std.deriving.*
 enum SyntaxNodeKind <: ToString {
     /* NonTerminal */
     | File /* SourceFile */
+    | Package
     | FeaturesDirective
     | FeatureId
     | PackageSpec
@@ -26,7 +27,7 @@ enum SyntaxNodeKind <: ToString {
     | ModifierList /* ModifierList: public static */
     | ParameterList /* ParameterList: (x,x,x) */
     | GenericConstraints /*GenericConstraints: where T1 <: I1 & I2, T2 <: I3 & I4 */
-    | GenericConstraint /*GenericConstraints: T1 <: I1 & I2 */
+    | GenericConstraint /*GenericConstraint: T1 <: I1 & I2 */
     | MatchCase
     | MatchCaseBody
     | Pattern
@@ -473,9 +474,9 @@ enum SyntaxNodeKind <: ToString {
             case SynchronizedToken => "synchronized"
             case UpperBoundToken => "<:"
             case MainToken => "main"
-            case IdentToken => ""
-            case PackageIdentifierToken => ""
-            case IntegerLiteralToken => ""
+            case IdentToken => "IdentToken"
+            case PackageIdentifierToken => "PackageIdentifierToken"
+            case IntegerLiteralToken => "IntegerLiteralToken"
             case CharBytePrefixToken => 'b'
             case FloatLiteralToken => ""
             case CommentToken => ""

@@ -26,6 +26,8 @@ public:
 
     // parser expr or decl from text or tokens
     OwnedPtr<AST::Node> ParseExprOrDecl(ScopeKind sk);
+
+    void AttachComment(std::vector<OwnedPtr<AST::Node>>& nodes);
 private:
     std::unique_ptr<class ParserSyntaxImpl> implSyntax;
 };

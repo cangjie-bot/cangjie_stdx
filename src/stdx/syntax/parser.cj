@@ -54,6 +54,16 @@ class Parser {
         (res, diags)
     }
 
+    static func parseTokens(tokens: Tokens, refreshPos: Bool): (?SyntaxTreeNode, Array<Diagnostic>) {
+        let (node, diags) = Parser("").parseFromTokens(tokens, refreshPos)
+        let res: ?SyntaxTreeNode = if (let Some(root) <- node) {
+            root as SyntaxTreeNode
+        } else {
+            None
+        }
+        (res, diags)
+    }
+
     static func parsePackage(dirPath: String): (?Package, Array<Diagnostic>) {
         let fileList = ArrayList<SourceFile>()
         let fileImpls = ArrayList<(SyntaxNodeImpl, String)>()
@@ -93,30 +103,6 @@ class Parser {
         (pkg, diagsList.toArray())
     }
 
-    static func getPackageName(file: SourceFile) {
-        if (let Some(pkgHeader) <- file.pkgHeader) {
-            return String.join(pkgHeader.packageNameIdentifiers, delimiter: ".")
-        }
-        return "default"
-    }
-
-    static func checkPackage(sourceFiles: ArrayList<SourceFile>): (Bool, String) {
-        if (sourceFiles.size == 0) {
-            return (false, "")
-        }
-        var packageName = getPackageName(sourceFiles[0])
-        var isMacro: Bool = sourceFiles[0].isMacroPackage
-        for (f in sourceFiles) {
-            if (packageName != getPackageName(f)) {
-                throw Exception("ParseException: found more than one package declaration for the package.")
-            }
-            if (isMacro != f.isMacroPackage) {
-                throw Exception("ParseException: found different macro package declaration.")
-            }
-        }
-        return (isMacro, packageName)
-    }
-
     private func parse(): (?SyntaxTreeNode, Array<Diagnostic>) {
         let (root, diags) = impl.parseFile()
         (buildSyntaxTree(root), diags)
@@ -127,12 +113,17 @@ class Parser {
         (buildSyntaxTree(root), diags)
     }
 
+    private func parseFromTokens(tokens: Tokens, refreshPos: Bool): (?SyntaxTreeNode, Array<Diagnostic>) {
+        let (root, diags) = impl.parseTokens(tokens, refreshPos)
+        (buildSyntaxTree(root), diags)
+    }
+
     // build syntax tree by syntax impl tree
     private func buildSyntaxTree(node: ?SyntaxNodeImpl): ?SyntaxTreeNode {
         if (let Some(root) <- node) {
             if (filePath.size > 0) { // called from parseFile
                 SyntaxNodeImplTranslator.translateFile(root, filePath)
-            } else { // called from parseText
+            } else { // called from parseText or parseTokens
                 SyntaxNodeImplTranslator.translate(root, CodePosition(1, 1, FileInfos("", "")),
                     Option<SyntaxTreeNode>.None)
             }
@@ -140,4 +131,28 @@ class Parser {
             None
         }
     }
+}
+
+func getPackageName(file: SourceFile) {
+    if (let Some(pkgHeader) <- file.pkgHeader) {
+        return String.join(pkgHeader.packageNameIdentifiers, delimiter: ".")
+    }
+    return "default"
+}
+
+func checkPackage(sourceFiles: ArrayList<SourceFile>): (Bool, String) {
+    if (sourceFiles.size == 0) {
+        return (false, "")
+    }
+    var packageName = getPackageName(sourceFiles[0])
+    var isMacro: Bool = sourceFiles[0].isMacroPackage
+    for (f in sourceFiles) {
+        if (packageName != getPackageName(f)) {
+            throw Exception("ParseException: found more than one package declaration for the package.")
+        }
+        if (isMacro != f.isMacroPackage) {
+            throw Exception("ParseException: found different macro package declaration.")
+        }
+    }
+    return (isMacro, packageName)
 }
