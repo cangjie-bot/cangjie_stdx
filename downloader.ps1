@@ -131,19 +131,45 @@ try {
     Write-Host "Extracting to: $DestDirAbs"
     $FinalPath = Join-Path $DestDirAbs $ExtractedDirName
 
-    if (Test-Path -Path $FinalPath) {
-        Write-Warning "Target directory already exists. Overwriting: $FinalPath"
-        Remove-Item -Recurse -Force -Path $FinalPath
+    # Create a temporary directory for extraction
+    $TempExtractDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Path $TempExtractDir | Out-Null
+
+    try {
+        Expand-Archive -Path $CachedFile -DestinationPath $TempExtractDir -Force
+
+        # Find the single top-level directory in the extracted contents
+        $TopLevelDir = Get-ChildItem -Path $TempExtractDir -Directory | Select-Object -First 1
+        if (-not $TopLevelDir) {
+            throw "Could not find a top-level directory in the zip file."
+        }
+
+        if (Test-Path -Path $FinalPath) {
+            Write-Warning "Target directory already exists. Overwriting: $FinalPath"
+            Remove-Item -Recurse -Force -Path $FinalPath
+        }
+
+        # Move and rename the extracted directory
+        Move-Item -Path $TopLevelDir.FullName -Destination $FinalPath
+
+    } finally {
+        # Clean up the temporary directory
+        if (Test-Path -Path $TempExtractDir) {
+            Remove-Item -Recurse -Force -Path $TempExtractDir
+        }
     }
 
-    # Expand-Archive creates the destination directory
-    Expand-Archive -Path $CachedFile -DestinationPath $FinalPath -Force
+    # 6. Post-extraction for macOS
+    if ($IsMacOS -and $Platform.StartsWith('mac-')) {
+        Write-Host "Removing quarantine attribute for macOS..."
+        # Start-Process does not wait by default, and we need to handle potential errors
+        $process = Start-Process "xattr" -ArgumentList "-d", "-r", "com.apple.quarantine", "`"$FinalPath`"" -PassThru -Wait -NoNewWindow
+    }
 
-    # 6. Success Output
+    # 7. Success Output
     Write-Host "Successfully extracted to: $FinalPath"
 
 } catch {
     Write-Error "Error: $($_.Exception.Message)"
     exit 1
 }
-
