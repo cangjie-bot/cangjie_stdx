@@ -95,3 +95,30 @@ main() {
 ```text
     1  + 1
 ```
+
+## 使用 parseTokens 函数的示例
+
+利用 parseTokens 函数将输入的一组词法单元解析为一个 [ParsingResult](../syntax_package_api/syntax_package_classes.md#class-parsingresultt-where-t--syntaxtreenode)\<[SyntaxTreeNode](../syntax_package_api/syntax_package_classes.md#class-syntaxtreenode)> 对象，代码如下所示：
+
+<!-- verify -->
+```cangjie
+import stdx.syntax.*
+
+main() {
+    let tokens = quote(
+      let a    =    1
+    )
+    let result = parseTokens(tokens) // 解析获得一个语法树节点，默认刷新位置信息，示例中为变量声明
+    println(result.node.toString()) // 打印该语法树节点
+
+    let result_1 = parseTokens(tokens, refreshPos: false) // 不刷新位置信息解析，toString 结果保留原始位置
+    println(result_1.node.toString())
+}
+```
+
+运行结果：
+
+```text
+let a = 1
+let a    =    1
+```

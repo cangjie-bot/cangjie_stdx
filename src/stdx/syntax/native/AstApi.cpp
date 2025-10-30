@@ -19,8 +19,10 @@
 #include "cangjie/Basic/DiagnosticEmitter.h"
 #include "cangjie/Basic/SourceManager.h"
 #include "cangjie/Frontend/CompilerInstance.h"
-#include "cangjie/Macro/MacroCommon.h"
+
 #include "cangjie/Parse/Parser.h"
+#include "cangjie/Macro/MacroCommon.h"
+#include "cangjie/Macro/TokenSerialization.h"
 
 using namespace Cangjie;
 namespace {
@@ -66,6 +68,37 @@ ParseRes* getParseResult(ParseRes* result, DiagnosticEngine& diag, SourceManager
     }
     return result;
 }
+
+std::vector<Token> tokensFormatter(const uint8_t* tokensBytes)
+{
+    std::vector<Token> oldTokens = TokenSerialization::GetTokensFromBytes(tokensBytes);
+    std::vector<Position> escapePosVec = {};
+    MacroFormatter formatter = MacroFormatter(oldTokens, escapePosVec, 1);
+    auto tokenStr = formatter.Produce(false);
+    DiagnosticEngine diag;
+    SourceManager sm;
+    Lexer lex(tokenStr, diag, sm, false, false);
+    std::vector<Token> tokens{};
+    Token token = lex.Next();
+
+    auto pos = token.Begin();
+    auto end = token.End();
+    auto inMacCall = false;
+
+    while (token.kind != TokenKind::END) {
+        auto tk = Token(token.kind, token.Value(), pos, end);
+        tk.isSingleQuote = token.isSingleQuote;
+        tk.delimiterNum = token.delimiterNum;
+        tokens.emplace_back(tk);
+        token = lex.Next();
+        if (!inMacCall) {
+            pos = token.Begin();
+            end = token.End();
+        }
+    }
+    tokens.emplace_back(token.kind, token.Value(), pos, end);
+    return tokens;
+}
 } // namespace
 
 extern "C" {
@@ -105,10 +138,34 @@ ParseRes* CJ_ParseText(const char* text)
     return getParseResult(res, diag, sm, textParsed.get());
 }
 
+ParseRes* CJ_ParseTokens(const uint8_t* tokensBytes, int64_t* tokenCounter, bool refreshPos)
+{
+    Cangjie::ICE::TriggerPointSetter iceSetter(CompileStage::PARSE);
+    DiagnosticEngine diag;
+    SourceManager sm;
+    std::vector<Token> tokens = refreshPos ? tokensFormatter(tokensBytes) : TokenSerialization::GetTokensFromBytes(tokensBytes);
+
+    SetDiagEngine(diag, sm);
+    ParserSyntax parser(tokens, diag, sm, true);
+
+    auto tokensParsed = parser.ParseExprOrDecl(ScopeKind::UNKNOWN_SCOPE);
+    ParseRes* res = createParseResult();
+    if (tokensParsed == nullptr) {
+        return res;
+    }
+    if (tokenCounter != nullptr && static_cast<uint64_t>(parser.GetProcessedTokens()) != tokens.size()) {
+        *tokenCounter = 1;
+    }
+    std::vector<OwnedPtr<AST::Node>> nodes;
+    nodes.emplace_back(std::move(tokensParsed));
+    parser.AttachComment(nodes);
+    return getParseResult(res, diag, sm, nodes[0].get());
+}
+
 ParseRes* CJ_ParseAnnotationArguments(const uint8_t* tokensBytes)
 {
     Cangjie::ICE::TriggerPointSetter iceSetter(CompileStage::PARSE);
-    std::vector<Token> tokens = TokenWriter::GetTokensFromBytes(tokensBytes);
+    std::vector<Token> tokens = TokenSerialization::GetTokensFromBytes(tokensBytes);
     DiagnosticEngine diag;
     SourceManager sm;
     diag.SetSourceManager(&sm);
@@ -132,7 +189,7 @@ ParseRes* CJ_ParseAnnotationArguments(const uint8_t* tokensBytes)
 
 void CJ_CheckAddSpace(const uint8_t* tokBytes, bool* spaceFlag)
 {
-    std::vector<Token> tokens = TokenWriter::GetTokensFromBytes(tokBytes);
+    std::vector<Token> tokens = TokenSerialization::GetTokensFromBytes(tokBytes);
     if ((tokens.size() == 0)) {
         abort();
     }
