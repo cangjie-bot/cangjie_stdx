@@ -19,7 +19,7 @@
 #include "cangjie/Basic/DiagnosticEmitter.h"
 #include "cangjie/Basic/SourceManager.h"
 #include "cangjie/Frontend/CompilerInstance.h"
-#include "cangjie/Macro/MacroCommon.h"
+
 #include "cangjie/Parse/Parser.h"
 #include "cangjie/Macro/MacroCommon.h"
 #include "cangjie/Macro/TokenSerialization.h"
@@ -88,9 +88,7 @@ std::vector<Token> tokensFormatter(const uint8_t* tokensBytes)
     while (token.kind != TokenKind::END) {
         auto tk = Token(token.kind, token.Value(), pos, end);
         tk.isSingleQuote = token.isSingleQuote;
-        if (token.kind == TokenKind::MULTILINE_RAW_STRING) {
-            tk.delimiterNum = token.delimiterNum;
-        }
+        tk.delimiterNum = token.delimiterNum;
         tokens.emplace_back(tk);
         token = lex.Next();
         if (!inMacCall) {
@@ -191,7 +189,7 @@ ParseRes* CJ_ParseAnnotationArguments(const uint8_t* tokensBytes)
 
 void CJ_CheckAddSpace(const uint8_t* tokBytes, bool* spaceFlag)
 {
-    std::vector<Token> tokens = TokenWriter::GetTokensFromBytes(tokBytes);
+    std::vector<Token> tokens = TokenSerialization::GetTokensFromBytes(tokBytes);
     if ((tokens.size() == 0)) {
         abort();
     }

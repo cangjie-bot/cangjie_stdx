@@ -76,7 +76,7 @@ public func parseTokens(tokens: Tokens, refreshPos!: Bool = true): ParsingResult
 
 > **注意：**
 >
-> - 此函数当前仅支持从文本解析出部分声明和大部分表达式节点，具体支持的节点如下：
+> - 此函数当前仅支持从输入的一组词法单元解析出部分声明和大部分表达式节点，具体支持的节点如下：
 > - 声明节点：`VarDecl`，`TypeAlias`，`StructDecl`，`StaticInit`，`PropDecl`，`MainDecl`，`MacroDecl`，`InterfaceDecl`，`FuncDecl` （类的主构造函数不支持），`EnumDecl`，`ClassDecl`
 > - 表达式节点：除 `OptionalExpr`，`MacroExpandExpr` 和 `StrInterpolationContent` 外的所有表达式节点。
 

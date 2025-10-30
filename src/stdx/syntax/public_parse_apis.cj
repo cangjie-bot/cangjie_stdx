@@ -50,6 +50,8 @@ func skipRedundancy(text: String) {
  */
 public func parseText(text: String): ParsingResult<SyntaxTreeNode> {
     let (res, diags) = Parser.parseText(text)
+    // If the content of the parsed node is less than that of the input content, 
+    // there are multiple input nodes.
     if (let Some(result) <- res && skipRedundancy(result.toString()).size < skipRedundancy(text).size) {
         throw Exception("parseText function not support parse more than one node.")
     }
@@ -62,12 +64,16 @@ func checkPos(tokens: Tokens): Bool {
     var curFileId: UInt32 = tokens[0].pos.fileID
     for (token in tokens) {
         let pos = token.pos
+        // For tokens from the same file, they must appear consecutively;
+        //otherwise, their positions are considered invalid.
         if (pos.fileID != curFileId && set.contains(pos.fileID)) {
             return false
         }
         curFileId = pos.fileID
         set.add(curFileId)
-
+        // Under the premise of considering the value of each Token, the 
+        // positions of Tokens must be incremental; that is, the start 
+        // position of a subsequent Token must be greater than the end position of the preceding Token.
         if (cur.line > pos.line || (cur.line == pos.line && cur.column > pos.column)) {
             return false
         }
