@@ -137,6 +137,12 @@ else
     fi
 fi
 
+# Verify file type
+if ! file --mime-type "$CACHED_FILE" | grep -q "application/zip"; then
+    rm -f "$CACHED_FILE"
+    error_exit "Downloaded file is not a zip archive. Please check if the version number is correct."
+fi
+
 # 5. Extraction and Rename Logic
 echo "Extracting to: $DEST_DIR_ABS"
 # Create a temporary directory for extraction to safely get the top-level folder name
