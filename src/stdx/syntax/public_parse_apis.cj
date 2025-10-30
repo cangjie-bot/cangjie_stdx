@@ -8,6 +8,8 @@
 
 package stdx.syntax
 
+import std.collection.{ArrayList, HashSet}
+
 /**
  * @brief Parses a source file located at the specified path and returns the parsing result.
  *
@@ -34,14 +36,8 @@ public func parsePackage(dirPath: String): ParsingResult<Package> {
     ParsingResult<Package>(pkg, diags)
 }
 
-func skipTrailingRedundancy(text: String) {
-    for (i in text.size - 1..=0 : -1) {
-        let cur = text[i..i + 1]
-        if (cur != NEWLINE && cur != " " && cur != ";") {
-            return text[..i + 1]
-        }
-    }
-    return ""
+func skipRedundancy(text: String) {
+    return text.replace(NEWLINE, "").replace(" ", "").replace(";", "")
 }
 
 /**
@@ -54,8 +50,50 @@ func skipTrailingRedundancy(text: String) {
  */
 public func parseText(text: String): ParsingResult<SyntaxTreeNode> {
     let (res, diags) = Parser.parseText(text)
-    if (let Some(result) <- res && skipTrailingRedundancy(result.toString()) != skipTrailingRedundancy(text)) {
+    // If the content of the parsed node is less than that of the input content, 
+    // there are multiple input nodes.
+    if (let Some(result) <- res && skipRedundancy(result.toString()).size < skipRedundancy(text).size) {
         throw Exception("parseText function not support parse more than one node.")
     }
+    ParsingResult<SyntaxTreeNode>(res, diags)
+}
+
+func checkPos(tokens: Tokens): Bool {
+    var cur = Offset()
+    var set = HashSet<UInt32>()
+    var curFileId: UInt32 = tokens[0].pos.fileID
+    for (token in tokens) {
+        let pos = token.pos
+        if (pos.fileID != curFileId && set.contains(pos.fileID)) {
+            return false
+        }
+        curFileId = pos.fileID
+        set.add(curFileId)
+
+        if (cur.line > pos.line || (cur.line == pos.line && cur.column > pos.column)) {
+            return false
+        }
+        cur = Offset(pos.line, pos.column)
+        cur.moveString(token.value)
+    }
+    return true
+}
+
+/**
+ * @brief Parse the input tokens and return the parsing result along with diagnostic information.
+ *
+ * @param tokens The tokens that need to be parsed.
+ * @return A ParsingResult object containing the parsed node or an error.
+ *
+ * @throws Exception if there is an issue parsing the tokens.
+ */
+public func parseTokens(tokens: Tokens, refreshPos!: Bool = true): ParsingResult<SyntaxTreeNode> {
+    if (tokens.size == 0) {
+        throw Exception("the input tokens is empty.")
+    }
+    if (!refreshPos && !checkPos(tokens)) { // check if the position of tokens is valid
+        throw Exception("the position of the input tokens is invalid, you may open the refreshPos option.")
+    }
+    let (res, diags) = Parser.parseTokens(tokens, refreshPos)
     ParsingResult<SyntaxTreeNode>(res, diags)
 }
