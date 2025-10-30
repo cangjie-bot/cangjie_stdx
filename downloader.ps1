@@ -101,11 +101,12 @@ try {
         Write-Host "Using cached file: $CachedFile"
     } else {
         Write-Host "Downloading from: $DownloadUrl"
-        # Using Invoke-WebRequest for better progress and error handling
-        Invoke-WebRequest -Uri $DownloadUrl -OutFile $CachedFile -UseBasicParsing
-        if ($LASTEXITCODE -ne 0) {
+        try {
+            Invoke-WebRequest -Uri $DownloadUrl -OutFile $CachedFile -UseBasicParsing -ErrorAction Stop
+        } catch {
             Remove-Item -Path $CachedFile -ErrorAction SilentlyContinue
-            throw "Download failed."
+            # Re-throw the specific error message from the try block or a generic one
+            throw "Download failed. Error: $($_.Exception.Message)"
         }
     }
 
@@ -137,3 +138,4 @@ try {
     Write-Error "Error: $($_.Exception.Message)"
     exit 1
 }
+
