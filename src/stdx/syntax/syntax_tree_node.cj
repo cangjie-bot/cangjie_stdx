@@ -9,6 +9,7 @@
 package stdx.syntax
 
 import std.collection.ArrayList
+import std.deriving.*
 /**
  * @brief Abstract sealed class representing a node in the syntax tree.
  *
@@ -48,6 +49,19 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
         this.nodeImpl = nodeImpl
         this.parentNode = parentNode
         this.commentsPropInfo = commentsPropInfo
+    }
+
+    // only support for initialize nodes with public Init Function
+    init(nodeImpl: SyntaxNodeImpl, hasComment!: Bool = true) {
+        let startPos = DEFAULT_START_POS
+        this.nodePos = CodePositionRange(startPos, startPos + nodeImpl.offset)
+        this.nodeImpl = nodeImpl
+        this.parentNode = None
+        if (hasComment) {
+            this.commentsPropInfo = [PropInfo()]
+        } else {
+            this.commentsPropInfo = Array<PropInfo>()
+        }
     }
 
     func transTokenList(node: SyntaxNodeImpl): Tokens {
@@ -260,6 +274,22 @@ public class Annotation <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new Annotation node.
+     */
+    public init(arguments: Array<Argument>, identifier: String, opKind: AtOpKind, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createAnnotationImpl(arguments, identifier, opKind, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<Annotation>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.identifier_ = identifier
+        this.opKind_ = opKind
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The arguments of the annotation.
      *
      * This array field contains the arguments of the annotation.
@@ -386,6 +416,23 @@ public class Argument <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new Argument node.
+     */
+    public init(identifier: Option<String>, isInOut: Bool, isNamed: Bool, value: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createArgumentImpl(identifier, isInOut, isNamed, value, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<Argument>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.identifier_ = identifier
+        this.isInOut_ = isInOut
+        this.isNamed_ = isNamed
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The identifier of the argument.
      *
      * This optional field may contain the identifier of the argument as a string.
@@ -489,6 +536,20 @@ public class Block <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new Block node.
+     */
+    public init(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createBlockImpl(nodes, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<Block>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The nodes within the block.
      *
      * This array field contains the child nodes that make up the block.
@@ -581,6 +642,20 @@ public class Body <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new Body node.
+     */
+    public init(memberDecls: Array<Decl>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createBodyImpl(memberDecls, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<Body>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+        this.enumBodyPosInfos = redNode.enumBodyPosInfos
+    }
+
+    /**
      * @brief The array of member declarations in the body.
      *
      * This variable holds an array of member declarations
@@ -627,6 +702,19 @@ public class Comment <: SyntaxTreeNode {
         this.startPos = startPos
         this.kind_ = kind_
         this.content_ = content_
+    }
+
+    /**
+     * @brief Initialize a new Comment node.
+     */
+    public init(kind: CommentKind, content: String) {
+        super(SyntaxNodeImplCreator.createCommentImpl(kind, content), hasComment: false)
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<Comment>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.kind_ = kind
+        this.content_ = content
     }
 
     /**
@@ -748,6 +836,20 @@ public class GenericConstraint <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new GenericConstraint node.
+     */
+    public init(typeArgument: TypeAnnotation, upperBounds: Array<TypeAnnotation>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createGenericConstraintImpl(typeArgument, upperBounds, comments: comments))
+        let startPos = DEFAULT_START_POS
+
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<GenericConstraint>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The type argument of the constraint.
      *
      * This field specifies the type argument of the constraint.
@@ -840,6 +942,20 @@ public class GenericConstraints <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new GenericConstraints node.
+     */
+    public init(constraints: Array<GenericConstraint>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createGenericConstraintsImpl(constraints, comments: comments))
+        let startPos = DEFAULT_START_POS
+
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<GenericConstraints>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief The collection of generic constraints.
      *
      * This array field contains multiple GenericConstraint instances.
@@ -862,6 +978,7 @@ public class GenericConstraints <: SyntaxTreeNode {
 /**
  * @brief Enumeration representing different modifier kinds.
  */
+@Derive[Equatable]
 public enum ModifierKind {
     | Abstract
     | Internal
@@ -892,6 +1009,14 @@ public class Modifier <: SyntaxTreeNode {
         commentsPropInfo: Array<PropInfo>) {
         super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.kind_ = kind_
+    }
+
+    /**
+     * @brief Initialize a new Modifier node.
+     */
+    public init(kind: ModifierKind, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createModifierImpl(kind, comments: comments))
+        this.kind_ = kind
     }
 
     /**
@@ -1040,6 +1165,23 @@ public class SourceFile <: SyntaxTreeNode {
         this.path_ = path_
         this.startPos = startPos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with import list, file name, file path, package header, top level declrations and features directive.
+     */
+    public init(importLists: Array<ImportList>, name: String, path: String, pkgHeader: Option<PackageHeader>,
+        topLevelDecls: Array<Decl>, ftrDirective!: Option<FeaturesDirective> = None, comments!: Array<Comment> = []) {
+        super(
+            SyntaxNodeImplCreator.createSourceFileImpl(importLists, pkgHeader, topLevelDecls, ftrDirective: ftrDirective,
+                comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<SourceFile>(SyntaxNodeImplTranslator.translateFile(curNode, path, parent: None)).getOrThrow()
+        this.name_ = name
+        this.path_ = path
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
     }
 
     /**
