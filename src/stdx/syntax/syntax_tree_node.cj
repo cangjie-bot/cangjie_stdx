@@ -1070,7 +1070,7 @@ public class SourceFile <: SyntaxTreeNode {
         super(SyntaxNodeImplCreator.createSourceFileImpl(importLists, pkgHeader, topLevelDecls, ftrDirective: ftrDirective, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
-        let redNode = cast<SourceFile>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        let redNode = cast<SourceFile>(SyntaxNodeImplTranslator.translateFile(curNode, path)).getOrThrow()
         this.name_ = name
         this.path_ = path
         this.startPos = startPos
