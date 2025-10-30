@@ -15,6 +15,10 @@ sealed abstract class Pattern <: SyntaxTreeNode {
         commentsPropInfo: Array<PropInfo>) {
         super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
+
+    init(nodeImpl: SyntaxNodeImpl, hasComment!: Bool = true) {
+        super(nodeImpl, hasComment: hasComment)
+    }
 }
 
 class ConstPatternPropInfos {
@@ -38,6 +42,18 @@ public class ConstPattern <: Pattern {
         super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
         this.startPos = startPos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with literal constant expr.
+     */
+    public init(litConstExpr: LitConstExpr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createConstPatternImpl(litConstExpr, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ConstPattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.propInfos = redNode.propInfos
+        this.startPos = startPos
     }
 
     /**
@@ -142,6 +158,20 @@ public class EnumPattern <: Pattern {
         this.startPos = startPos
         this.posInfos = posInfos
         this.propInfos = propInfos
+    }
+
+    /**
+     * @brief Initialize node with enum constructor, enum type and sub-patterns.
+     */
+    public init(enumConstructor: SymbolRef, enumType: Option<CompositeType>, subPatterns: Array<Pattern>,
+        comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createEnumPatternImpl(enumConstructor, enumType, subPatterns, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<EnumPattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+        this.startPos = startPos
     }
 
     /**
@@ -263,6 +293,19 @@ public class TuplePattern <: Pattern {
     }
 
     /**
+     * @brief Initialize node with sub-patterns.
+     */
+    public init(subPatterns: Array<Pattern>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createTuplePatternImpl(subPatterns, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<TuplePattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+        this.startPos = startPos
+    }
+
+    /**
      * @brief Sub-patterns for the tuple.
      */
     public prop subPatterns: Array<Pattern> {
@@ -323,6 +366,19 @@ public class TypePattern <: Pattern {
     }
 
     /**
+     * @brief Initialize node with pattern type and sub-pattern.
+     */
+    public init(subPattern: Pattern, patternType: TypeAnnotation, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createTypePatternImpl(subPattern, patternType, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<TypePattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+        this.startPos = startPos
+    }
+
+    /**
      * @brief Type annotation for the pattern.
      */
     public prop patternType: TypeAnnotation {
@@ -357,6 +413,17 @@ public class VarOrEnumPattern <: Pattern {
     }
 
     /**
+     * @brief Initialize node with the identifier.
+     */
+    public init(identifier: String, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createVarOrEnumPatternImpl(identifier, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<VarOrEnumPattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.identifier_ = identifier
+    }
+
+    /**
      * @brief Identifier for the variable or enumeration.
      */
     public prop identifier: String {
@@ -379,6 +446,17 @@ public class VarPattern <: Pattern {
     }
 
     /**
+     * @brief Initialize node with variable name.
+     */
+    public init(name: String, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createVarPatternImpl(name, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<VarPattern>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.name_ = name
+    }
+
+    /**
      * @brief Name of the variable.
      */
     public prop name: String {
@@ -395,5 +473,12 @@ public class WildcardPattern <: Pattern {
     init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
         commentsPropInfo: Array<PropInfo>) {
         super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode, commentsPropInfo)
+    }
+
+    /**
+     * @brief Initialize node.
+     */
+    public init(comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createWildcardPatternImpl(comments: comments))
     }
 }

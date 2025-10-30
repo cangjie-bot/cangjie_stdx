@@ -1295,7 +1295,7 @@ private class FlatbufferNodeTranslator {
         builder.buildNonTerminal(SyntaxNodeKind.Modifier, ret.toArray())
     }
 
-    private func transModifier(modifier: NodeFormat_Modifier, filterConst!: Bool = false): ?SyntaxNodeImpl {
+    private func transModifier(modifier: NodeFormat_Modifier): ?SyntaxNodeImpl {
         addWhitespaceAndMoveCursorToBegin(modifier.GetBase())
         let ret = ArrayList<SyntaxNodeImpl>()
         curChildren = ret
@@ -1306,9 +1306,7 @@ private class FlatbufferNodeTranslator {
         innerComments = innerCmts
 
         let kind = getSyntaxImplKind(modifier.GetKind())
-        if (!filterConst || kind != SyntaxNodeKind.ConstToken) {
-            addChild(ret, builder.buildBasicTerminal(kind))
-        }
+        addChild(ret, builder.buildBasicTerminal(kind))
         moveCursorToEnd(modifier.GetBase())
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
@@ -1334,9 +1332,9 @@ private class FlatbufferNodeTranslator {
     private func transVarDeclModifiers(modifiers: Array<Option<NodeFormat_Modifier>>): ?SyntaxNodeImpl {
         let ret = ArrayList<SyntaxNodeImpl>()
         for (modifier in modifiers) {
-            if (let Some(mod) <- modifier) {
-                // first node add space to parentNode
-                addChild(ret, transModifier(mod, filterConst: true))
+            if (let Some(mod) <- modifier && getSyntaxImplKind(mod.GetKind()) != SyntaxNodeKind.ConstToken) {
+                // first node add space to parentNode())
+                addChild(ret, transModifier(mod))
                 curChildren = ret
             }
         }
