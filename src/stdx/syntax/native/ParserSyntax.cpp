@@ -45,14 +45,19 @@ ParserSyntax::~ParserSyntax()
 {
 }
 
-OwnedPtr<Node> ParserSyntax::ParseExprOrDecl(ScopeKind sk)
+OwnedPtr<AST::Node> ParserSyntax::ParseExprOrDecl(ScopeKind sk)
 {
     if (implSyntax->SeeingMacroCall()) {
         return nullptr;
-    } else if (implSyntax->SeeingDecl()) {
+    } else if (implSyntax->SeeingDecl() || implSyntax->Seeing({TokenKind::BITNOT, TokenKind::INIT}, false)) {
         return ParseDecl(sk);
     } else if (implSyntax->SeeingExpr()) {
         return ParseExpr();
     }
     return nullptr;
+}
+
+void ParserSyntax::AttachComment(std::vector<OwnedPtr<AST::Node>>& nodes)
+{
+    AttachCommentToNodes(nodes);
 }
