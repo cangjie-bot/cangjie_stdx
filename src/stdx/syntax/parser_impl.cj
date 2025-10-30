@@ -320,53 +320,6 @@ private class NodeLoader {
             LibC.free(tokensCounterPtr)
         }
     }
-
-    private unsafe func loadNodeFromTokens(refreshPos: Bool): ?NodeFormat_Node {
-        var tokensPtr = CPointer<UInt8>()
-        var nodePtr = CPointer<UInt8>()
-        var resPtr = CPointer<ParseRes>()
-        var diagPtr = CPointer<UInt8>()
-        let sizeOfInt64 = 8
-        var tokensCounterPtr: CPointer<Int64> = LibC.malloc<Int64>(count: sizeOfInt64)
-        try {
-            tokensPtr = unsafePointerCastFromUint8Array(tokens.toBytes())
-            resPtr = CJ_ParseTokens(tokensPtr, tokensCounterPtr, refreshPos)
-            if (resPtr.isNull()) {
-                throw Exception("the parsing result is empty.")
-                return None
-            }
-            let res = resPtr.read()
-            if (!res.errMsg.isNull()) {
-                let diagNode = res.errMsg
-                diagPtr = diagNode // backup for free
-                getDiags(diagNode)
-            }
-            if (res.node.isNull()) {
-                if (res.errMsg.isNull()) {
-                    throw Exception("unsupported node type in parseTokens function.")
-                }
-                return None
-            }
-            let errMsg = findError(diagInfo)
-            if (errMsg != "") {
-                throw Exception("unsupported node type or parse error in parseTokens function:\n${errMsg}")
-            }
-            let tokenCnt: Int64 = tokensCounterPtr.read()
-            if (tokenCnt == 1) {
-                throw Exception("parseTokens function not support parse more than one node.")
-            }
-            let pnode = res.node
-            nodePtr = pnode // backup for free
-            return getNode(pnode)
-        } finally {
-            // free memory allocated in C.
-            tryFreeCPointer<UInt8>(tokensPtr)
-            tryFreeCPointer<UInt8>(nodePtr)
-            tryFreeCPointer<UInt8>(diagPtr)
-            tryFreeCPointer<ParseRes>(resPtr)
-            tryFreeCPointer<Int64>(tokensCounterPtr)
-        }
-    }
 }
 
 private class FlatbufferNodeTranslator {
