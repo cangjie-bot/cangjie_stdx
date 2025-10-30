@@ -17,7 +17,7 @@ sealed abstract class TypeAnnotation <: SyntaxTreeNode {
         super(nodePos, nodeImpl, parentNode, commentsPropInfo)
     }
 
-    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode)) {
+    init(params: (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>)) {
         super(params)
     }
 }
@@ -128,8 +128,8 @@ public class CompositeType <: TypeAnnotation {
     /**
      * @brief Initialize node with type prefixes, type name and type arguments.
      */
-    public init(name: String, prefixes: Array<String>, typeArguments: Array<TypeAnnotation>) {
-        super(SyntaxNodeImplCreator.createCompositeTypeImpl(name, prefixes, typeArguments))
+    public init(name: String, prefixes: Array<String>, typeArguments: Array<TypeAnnotation>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createCompositeTypeImpl(name, prefixes, typeArguments, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<CompositeType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -308,8 +308,8 @@ public class FuncType <: TypeAnnotation {
     /**
      * @brief Initialize node with parameters and return type.
      */
-    public init(paramTypes: Array<TypeAnnotation>, labels: Array<String>, retType: TypeAnnotation) {
-        super(SyntaxNodeImplCreator.createFuncTypeImpl(paramTypes, labels, retType))
+    public init(paramTypes: Array<TypeAnnotation>, labels: Array<String>, retType: TypeAnnotation, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createFuncTypeImpl(paramTypes, labels, retType, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<FuncType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -426,8 +426,8 @@ public class PrefixType <: TypeAnnotation {
     /**
      * @brief Initialize node with type prefix and type itself.
      */
-    public init(base: TypeAnnotation, prefixOp: PrefixTypeOpKind) {
-        super(SyntaxNodeImplCreator.createPrefixTypeImpl(base, prefixOp))
+    public init(base: TypeAnnotation, prefixOp: PrefixTypeOpKind, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createPrefixTypeImpl(base, prefixOp, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<PrefixType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -503,10 +503,10 @@ public class AtomicType <: TypeAnnotation {
     /**
      * @brief Initialize node with the atomic type.
      */
-    public init(kind: AtomicTypeKind) {
-        super(SyntaxNodeImplCreator.createAtomicTypeImpl(kind))
+    public init(kind: AtomicTypeKind, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createAtomicTypeImpl(kind, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
-        let curNode = (this.nodeImpl as Terminal).getOrThrow()
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<AtomicType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
         this.kind_ = kind
         this.startPos = startPos
@@ -582,8 +582,8 @@ public class ParenType <: TypeAnnotation {
     /**
      * @brief Initialize node with sub-type.
      */
-    public init(subType: TypeAnnotation) {
-        super(SyntaxNodeImplCreator.createParenTypeImpl(subType))
+    public init(subType: TypeAnnotation, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createParenTypeImpl(subType, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<ParenType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -708,8 +708,8 @@ public class TupleType <: TypeAnnotation {
     /**
      * @brief Initialize node with the elements and labels in tuple.
      */
-    public init(labels: Array<String>, elements: Array<TypeAnnotation>) {
-        super(SyntaxNodeImplCreator.createTupleTypeImpl(elements, labels))
+    public init(labels: Array<String>, elements: Array<TypeAnnotation>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createTupleTypeImpl(elements, labels, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<TupleType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -853,12 +853,11 @@ public class VArrayType <: TypeAnnotation {
     /**
      * @brief Initialize node with element type and size of VArray.
      */
-    public init(elementType: TypeAnnotation, size: Int64) {
-        super(SyntaxNodeImplCreator.createVArrayTypeImpl(elementType, size))
+    public init(elementType: TypeAnnotation, size: Int64, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createVArrayTypeImpl(elementType, size, comments: comments))
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<VArrayType>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
-        this.size_ = size
         this.startPos = startPos
         this.posInfos = redNode.posInfos
         this.propInfos = redNode.propInfos

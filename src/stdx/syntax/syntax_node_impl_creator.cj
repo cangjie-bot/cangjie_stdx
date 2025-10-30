@@ -14,7 +14,7 @@ class SyntaxNodeImplCreator {
     private init() {}
 
     // import
-    static func createParameterListImpl(parameters: Array<Parameter>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createParameterListImpl(parameters: Array<Parameter>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -28,48 +28,45 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ParameterList, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createImportListImpl(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createImportListImpl(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         if (let Some(m) <- modifier) {
             parts.add(m.nodeImpl)
+            parts.add(builder.buildSpace(1))
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.ImportToken))
         parts.add(builder.buildSpace(1))
         parts.add(contents.nodeImpl)
-        let nodeImpl = match (kind) {
-            case ImportKind.All => builder.buildNonTerminal(SyntaxNodeKind.ImportAll, parts.toArray())
-            case ImportKind.Alias => builder.buildNonTerminal(SyntaxNodeKind.ImportAlias, parts.toArray())
-            case ImportKind.Multi => builder.buildNonTerminal(SyntaxNodeKind.ImportMulti, parts.toArray())
-            case ImportKind.Single => builder.buildNonTerminal(SyntaxNodeKind.ImportSingle, parts.toArray())
+        match (kind) {
+            case ImportKind.All | ImportKind.Alias | ImportKind.Multi | ImportKind.Single => ()
             case _ => throw Exception("Init ImportList: ImportKind error")
         }
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportSpec, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createImportSingleImpl(prefixes: Array<String>, identifier: String): (CodePositionRange, SyntaxNodeImpl, 
-        ?SyntaxTreeNode) {
+    static func createImportSingleImpl(prefixes: Array<String>, identifier: String, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, 
+        ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         for (i in 0..prefixes.size) {
             parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, prefixes[i]))
-            if (i < prefixes.size - 1) {
-                parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DotToken))
-            }
+            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DotToken))
         }
         parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, identifier))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportSingle, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createImportAliasImpl(prefixes: Array<String>, identifier: String, alias: String): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createImportAliasImpl(prefixes: Array<String>, identifier: String, alias: String, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -84,11 +81,11 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.AsToken))
         parts.add(builder.buildSpace(1))
         parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, alias))
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportSingle, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportAlias, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createImportAllImpl(prefixes: Array<String>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createImportAllImpl(prefixes: Array<String>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -97,12 +94,12 @@ class SyntaxNodeImplCreator {
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DotToken))
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.MulToken))
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportSingle, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportAll, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createImportMultiImpl(prefixes: Array<String>, identifier: String, contents: Array<ImportContent>): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createImportMultiImpl(prefixes: Array<String>, contents: Array<ImportContent>, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -119,13 +116,13 @@ class SyntaxNodeImplCreator {
             }
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportSingle, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ImportMulti, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
     // expr
-    static func createForInExprImpl(body: Block, expr: Expr, pattern: Pattern, patternGuard: Option<Expr>): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createForInExprImpl(body: Block, expr: Expr, pattern: Pattern, patternGuard: Option<Expr>, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         if (pattern.nodeImpl.kind != SyntaxNodeKind.WildcardPattern && pattern.nodeImpl.kind != SyntaxNodeKind.VarBindingPattern && pattern.nodeImpl.kind != SyntaxNodeKind.TuplePattern && pattern.nodeImpl.kind != SyntaxNodeKind.EnumPattern) {
             throw Exception("Init ForInExpr: invalid pattern")
         }
@@ -140,8 +137,8 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.InToken))
         parts.add(builder.buildSpace(1))
         parts.add(expr.nodeImpl)
-        parts.add(builder.buildSpace(1))
         if (let Some(p) <- patternGuard) {
+            parts.add(builder.buildSpace(1))
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.WhereToken))
             parts.add(builder.buildSpace(1))
             parts.add(p.nodeImpl)
@@ -150,10 +147,10 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(body.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ForInExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createReturnExprImpl(retVal: Option<Expr>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createReturnExprImpl(retVal: Option<Expr>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -163,10 +160,10 @@ class SyntaxNodeImplCreator {
             parts.add(v.nodeImpl)
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ReturnExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createVArrayExprImpl(argument: Argument, vArrayType: VArrayType): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createVArrayExprImpl(argument: Argument, vArrayType: VArrayType, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -175,10 +172,10 @@ class SyntaxNodeImplCreator {
         parts.add(argument.nodeImpl)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.VArrayExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createUnaryExprImpl(opKind: UnaryOpKind, operand: Expr): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createUnaryExprImpl(opKind: UnaryOpKind, operand: Expr, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -189,10 +186,10 @@ class SyntaxNodeImplCreator {
         }
         parts.add(operand.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.UnaryExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createQuoteExprImpl(tokensOrRefExpr: Array<QuoteExprContent>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createQuoteExprImpl(tokensOrRefExpr: Array<QuoteExprContent>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -207,10 +204,10 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.QuoteExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createQuoteTokenImpl(content: Tokens): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createQuoteTokenImpl(content: Tokens, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -223,23 +220,21 @@ class SyntaxNodeImplCreator {
             }
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.QuoteTokenExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createQuoteInterpolationExprImpl(expr: Expr): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createQuoteInterpolationExprImpl(expr: Expr, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DollarToken))
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
         parts.add(expr.nodeImpl)
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.QuoteInterpolationExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createTrailingClosureExprImpl(callee: Expr, arguments: Array<Argument>, trailingLambdaExpr: Lambda): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createTrailingClosureExprImpl(callee: Expr, arguments: Array<Argument>, trailingLambdaExpr: Lambda, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.RefExpr) {
             throw Exception("Init TrailingClosureExpr: invalid callee")
         }
@@ -247,23 +242,26 @@ class SyntaxNodeImplCreator {
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         parts.add(callee.nodeImpl)
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
-        for (i in 0..arguments.size) {
-            parts.add(arguments[i].nodeImpl)
-            if (i < arguments.size - 1) {
-                parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
-                parts.add(builder.buildSpace(1))
+        if (!arguments.isEmpty()) {
+            parts.add(builder.buildSpace(1))
+            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
+            for (i in 0..arguments.size) {
+                parts.add(arguments[i].nodeImpl)
+                if (i < arguments.size - 1) {
+                    parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
+                    parts.add(builder.buildSpace(1))
+                }
             }
+            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         }
-        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         parts.add(builder.buildSpace(1))
         parts.add(trailingLambdaExpr.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.TrailingClosureExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createMacroExpandExprImpl(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createMacroExpandExprImpl(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         if (calleeMacro.nodeImpl.kind != SyntaxNodeKind.MemberAccess && calleeMacro.nodeImpl.kind != SyntaxNodeKind.RefExpr) {
             throw Exception("Init MacroExpandExpr: invalid calleeMacro")
         }
@@ -273,13 +271,14 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.AtToken))
         parts.add(calleeMacro.nodeImpl)
         if (macroAttrs.size != 0) {
+            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LSquareToken))
             let attrArray = ArrayList<SyntaxNodeImpl>()
             for (tok in macroAttrs) {
                 attrArray.add(builder.buildTokenTerminal(tok.kind, tok.value))
             }
             parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray.toArray()))
+            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RSquareToken))
         }
-
         match (macroInputs) {
             case MacroExpandInput.WithParens(toks) =>
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
@@ -295,10 +294,10 @@ class SyntaxNodeImplCreator {
             case _ => throw Exception("Init MacroExpandExpr: macroInputs error")
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.MacroExpandExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createBinaryExprImpl(lhs: Expr, opKind: BinaryOpKind, rhs: Expr): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createBinaryExprImpl(lhs: Expr, opKind: BinaryOpKind, rhs: Expr, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -334,12 +333,12 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(rhs.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.BinaryExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
     // RangeExpr: start .. end : step   or   start ..= end : step
-    static func createRangeExprImpl(start: Option<Expr>, kind: RangeKind, end: Option<Expr>, step: Option<Expr>): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createRangeExprImpl(start: Option<Expr>, kind: RangeKind, end: Option<Expr>, step: Option<Expr>, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -362,10 +361,10 @@ class SyntaxNodeImplCreator {
             parts.add(st.nodeImpl)
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.RangeExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createIncOrDecExprImpl(kind: IncOrDecOpKind, operand: Expr): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createIncOrDecExprImpl(kind: IncOrDecOpKind, operand: Expr, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -376,10 +375,10 @@ class SyntaxNodeImplCreator {
             case _ => throw Exception("Init IncOrDecExpr: invalid opKind")
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.IncOrDecExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createParenExprImpl(subExpr: Expr): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createParenExprImpl(subExpr: Expr, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -387,10 +386,10 @@ class SyntaxNodeImplCreator {
         parts.add(subExpr.nodeImpl)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ParenExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createCallExprImpl(callee: Expr, arguments: Array<Argument>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createCallExprImpl(callee: Expr, arguments: Array<Argument>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -405,11 +404,11 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.CallExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createIsExprImpl(srcVal: Expr, targetTypeAnnotation: TypeAnnotation): (CodePositionRange, SyntaxNodeImpl, 
-        ?SyntaxTreeNode) {
+    static func createIsExprImpl(srcVal: Expr, targetTypeAnnotation: TypeAnnotation, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, 
+        ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -419,11 +418,11 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(targetTypeAnnotation.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.IsExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createAsExprImpl(srcVal: Expr, targetTypeAnnotation: TypeAnnotation): (CodePositionRange, SyntaxNodeImpl, 
-        ?SyntaxTreeNode) {
+    static func createAsExprImpl(srcVal: Expr, targetTypeAnnotation: TypeAnnotation, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, 
+        ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -433,11 +432,11 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(targetTypeAnnotation.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.AsExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createTypeConvExprImpl(targetTypeAnnotation: AtomicType, srcVal: Expr): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createTypeConvExprImpl(targetTypeAnnotation: AtomicType, srcVal: Expr, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -446,11 +445,11 @@ class SyntaxNodeImplCreator {
         parts.add(srcVal.nodeImpl)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.TypeConvExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
     static func createMatchCaseImpl(patterns: Array<Pattern>, patternGuardCond: Option<Expr>, caseCond: Option<Expr>,
-        body: Array<SyntaxTreeNode>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+        body: Array<SyntaxTreeNode>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -490,14 +489,11 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildNonTerminal(SyntaxNodeKind.MatchCaseBody, matchCaseBody.toArray()))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.MatchCase, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createCatchPatternImpl(pattern: Pattern, exceptionType: Array<TypeAnnotation>): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
-        if (pattern.nodeImpl.kind != SyntaxNodeKind.WildcardPattern && pattern.nodeImpl.kind != SyntaxNodeKind.ExceptTypePattern) {
-            throw Exception("Init ForInExpr: invalid pattern")
-        }
+    static func createCatchPatternImpl(pattern: Pattern, exceptionType: Array<TypeAnnotation>, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -515,28 +511,28 @@ class SyntaxNodeImplCreator {
             }
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.CatchPattern, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createBreakExprImpl(): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createBreakExprImpl(comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.BreakToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.BreakExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createContinueExprImpl(): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createContinueExprImpl(comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.ContinueToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ContinueExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createCallExprImpl(callee: Expr, args: Array<Expr>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createCallExprImpl(callee: Expr, args: Array<Expr>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         if (callee.nodeImpl.kind != SyntaxNodeKind.MemberAccess && callee.nodeImpl.kind != SyntaxNodeKind.RefExpr) {
             throw Exception("Init CallExpr: invalid callee")
         }
@@ -556,10 +552,10 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.CallExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createDisjunctionConditionImpl(cond: Array<ConjunctionCondition>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createDisjunctionConditionImpl(cond: Array<ConjunctionCondition>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -572,10 +568,10 @@ class SyntaxNodeImplCreator {
             }
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.DisjunctionCondition, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createConjunctionConditionImpl(cond: Array<AtomicCondition>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createConjunctionConditionImpl(cond: Array<AtomicCondition>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -593,10 +589,10 @@ class SyntaxNodeImplCreator {
             }
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ConjunctionCondition, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createParenConditionImpl(cond: DisjunctionCondition): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createParenConditionImpl(cond: DisjunctionCondition, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -604,10 +600,10 @@ class SyntaxNodeImplCreator {
         parts.add(cond.nodeImpl)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ParenCondition, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createLetPatternImpl(expr: Expr, patterns: Array<Pattern>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createLetPatternImpl(expr: Expr, patterns: Array<Pattern>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -626,37 +622,40 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(expr.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.LetPattern, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createStrInterpolationContentImpl(interpolationBlock: Block): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createStrInterpolationContentImpl(interpolationBlock: Block, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DollarToken))
         parts.add(interpolationBlock.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.InterpolationExpr, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createConstPatternImpl(litConstExpr: LitConstExpr): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createConstPatternImpl(litConstExpr: LitConstExpr, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ConstPattern, [litConstExpr.nodeImpl])
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let parts = ArrayList<SyntaxNodeImpl>()
+        parts.add(litConstExpr.nodeImpl)
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ConstPattern, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createVarPatternImpl(name: String): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createVarPatternImpl(name: String, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
-        let identToken = builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, name)
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.VarBindingPattern, [identToken])
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let parts = ArrayList<SyntaxNodeImpl>()
+        parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, name))
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.VarBindingPattern, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
     // EnumPattern: case Year(n) => ...
     static func createEnumPatternImpl(enumConstructor: SymbolRef, enumType: Option<CompositeType>,
-        subPatterns: Array<Pattern>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+        subPatterns: Array<Pattern>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -672,7 +671,7 @@ class SyntaxNodeImplCreator {
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
             for (i in 0..subPatterns.size) {
                 parts.add(subPatterns[i].nodeImpl)
-                if (i < subPatterns.size) {
+                if (i < subPatterns.size - 1) {
                     parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
                     parts.add(builder.buildSpace(1))
                 }
@@ -681,21 +680,21 @@ class SyntaxNodeImplCreator {
         }
 
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.EnumPattern, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    // VarOrEnumPattern: case RED => ... （无参数的 enum 构造器或变量）
-    static func createVarOrEnumPatternImpl(identifier: String): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createVarOrEnumPatternImpl(identifier: String, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
-        let identToken = builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, identifier)
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.VarOrEnumPattern, [identToken])
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let parts = ArrayList<SyntaxNodeImpl>()
+        parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, identifier))
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.VarOrEnumPattern, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
     // TypePattern: case x: T => ...
-    static func createTypePatternImpl(subPattern: Pattern, patternType: TypeAnnotation): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createTypePatternImpl(subPattern: Pattern, patternType: TypeAnnotation, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -704,11 +703,11 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(patternType.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.TypePattern, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
     // TuplePattern: case (a, b) => ...
-    static func createTuplePatternImpl(subPatterns: Array<Pattern>): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createTuplePatternImpl(subPatterns: Array<Pattern>, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -722,21 +721,23 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.TuplePattern, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
     // WildcardPattern: case _ => ...
-    static func createWildcardPatternImpl(): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createWildcardPatternImpl(comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
-        let underscore = builder.buildBasicTerminal(SyntaxNodeKind.WildcardToken)
-        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.WildcardPattern, [underscore])
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        let parts = ArrayList<SyntaxNodeImpl>()
+        parts.add(builder.buildBasicTerminal(SyntaxNodeKind.WildcardToken))
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.WildcardPattern, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createAtomicTypeImpl(kind: AtomicTypeKind): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createAtomicTypeImpl(kind: AtomicTypeKind, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
+        let parts = ArrayList<SyntaxNodeImpl>()
         let tokenKind = match (kind) {
             case AtomicTypeKind.BoolType => SyntaxNodeKind.BooleanToken
             case AtomicTypeKind.Float16Type => SyntaxNodeKind.Float16Token
@@ -758,12 +759,13 @@ class SyntaxNodeImplCreator {
             case AtomicTypeKind.ThisType => SyntaxNodeKind.ThisTypeToken
             case _ => throw Exception("Init AtomicType: invalid AtomicTypeKind")
         }
-        let nodeImpl = builder.buildBasicTerminal(tokenKind)
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        parts.add(builder.buildBasicTerminal(tokenKind))
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.PrimitiveType, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createTupleTypeImpl(elements: Array<TypeAnnotation>, labels: Array<String>): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createTupleTypeImpl(elements: Array<TypeAnnotation>, labels: Array<String>, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         if (elements.size != labels.size && labels.size != 0) {
             throw Exception("Init TupleType: number of elements and labels mismatch")
         }
@@ -785,11 +787,11 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.TupleType, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createFuncTypeImpl(paramTypes: Array<TypeAnnotation>, labels: Array<String>, retType: TypeAnnotation): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createFuncTypeImpl(paramTypes: Array<TypeAnnotation>, labels: Array<String>, retType: TypeAnnotation, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         if (paramTypes.size != labels.size) {
             throw Exception("Init FuncType: number of parameter types and labels mismatch")
         }
@@ -814,11 +816,11 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildSpace(1))
         parts.add(retType.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.FuncType, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createCompositeTypeImpl(name: String, prefixes: Array<String>, typeArguments: Array<TypeAnnotation>): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createCompositeTypeImpl(name: String, prefixes: Array<String>, typeArguments: Array<TypeAnnotation>, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -828,21 +830,23 @@ class SyntaxNodeImplCreator {
         }
         parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, name))
         if (!typeArguments.isEmpty()) {
-            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LtToken))
+            let subParts = ArrayList<SyntaxNodeImpl>()
+            subParts.add(builder.buildBasicTerminal(SyntaxNodeKind.LtToken))
             for (i in 0..typeArguments.size) {
-                parts.add(typeArguments[i].nodeImpl)
+                subParts.add(typeArguments[i].nodeImpl)
                 if (i < typeArguments.size - 1) {
-                    parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
-                    parts.add(builder.buildSpace(1))
+                    subParts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
+                    subParts.add(builder.buildSpace(1))
                 }
             }
-            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.GtToken))
+            subParts.add(builder.buildBasicTerminal(SyntaxNodeKind.GtToken))
+            parts.add(builder.buildNonTerminal(SyntaxNodeKind.TypeArguments, subParts.toArray()))
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.CompositeType, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createVArrayTypeImpl(elementType: TypeAnnotation, size: Int64): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createVArrayTypeImpl(elementType: TypeAnnotation, size: Int64, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -852,13 +856,13 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
         parts.add(builder.buildSpace(1))
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DollarToken))
-        parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IntegerLiteralToken, size.toString()))
+        parts.add(builder.buildValuedTerminal(SyntaxNodeKind.ValuedLiteral, size.toString()))
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.GtToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.VArrayType, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createParenTypeImpl(subType: TypeAnnotation): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createParenTypeImpl(subType: TypeAnnotation, comments!: Array<Comment> = []): (CodePositionRange, SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -866,11 +870,11 @@ class SyntaxNodeImplCreator {
         parts.add(subType.nodeImpl)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.ParenType, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 
-    static func createPrefixTypeImpl(base: TypeAnnotation, prefixOp: PrefixTypeOpKind): (CodePositionRange, 
-        SyntaxNodeImpl, ?SyntaxTreeNode) {
+    static func createPrefixTypeImpl(base: TypeAnnotation, prefixOp: PrefixTypeOpKind, comments!: Array<Comment> = []): (CodePositionRange, 
+        SyntaxNodeImpl, ?SyntaxTreeNode, Array<PropInfo>) {
         let startPos = CodePosition(1, 1, FileInfos("", ""))
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
@@ -880,6 +884,6 @@ class SyntaxNodeImplCreator {
         }
         parts.add(base.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.OptionType, parts.toArray())
-        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None)
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
     }
 }
