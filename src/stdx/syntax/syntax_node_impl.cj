@@ -44,6 +44,8 @@ abstract class SyntaxNodeImpl {
         }
         res
     }
+
+    protected func flatter(): Array<SyntaxNodeImpl>
 }
 
 // NonTerminal: Non-Leaf node
@@ -80,6 +82,19 @@ class NonTerminal <: SyntaxNodeImpl {
         }
         return offset
     }
+
+    protected func flatter(): Array<SyntaxNodeImpl> {
+        match (kind) {
+            case SyntaxNodeKind.RuneLiteral | SyntaxNodeKind.LineStringLiteral | SyntaxNodeKind.MultiLineStringLiteral
+               | SyntaxNodeKind.MultiLineRawStringLiteral => return [this]
+            case _ => ()
+        }
+        let res = ArrayList<SyntaxNodeImpl>()
+        for (child in children) {
+            res.add(all: child.flatter())
+        }
+        return res.toArray()
+    }
 }
 
 // Terminal: Leaf node
@@ -94,6 +109,10 @@ open class Terminal <: SyntaxNodeImpl {
 
     protected open func getOffset(): Offset {
         return Offset(0, Int32(toString().size))
+    }
+
+    protected open func flatter(): Array<SyntaxNodeImpl> {
+        [this]
     }
 }
 

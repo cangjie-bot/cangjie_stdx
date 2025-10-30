@@ -4191,16 +4191,28 @@ public prop srcFile: Array<SourceFile>
 类型：Array\<[SourceFile](#class-sourcefile)>
 
 ### func toString()
- 
+
 ```cangjie
 public func toString(): String
 ```
- 
+
 功能：将包节点作为字符串打印出来，包内的文件按文件名字母序排序，对每个文件依次打印文件名和文件内容。
- 
+
 返回值：
- 
+
 - String - 返回包节点作为字符串打印的结果。
+
+### func toTokens()
+
+```cangjie
+public func toTokens(): Tokens
+```
+
+功能：将包节点转换为一组词法单元，包内的文件按文件名字母序排序，在每个文件对应的词法单元之前加上一个注释类型的 `Token`, 内容为该文件的文件名。
+
+返回值：
+
+- Tokens - 返回包节点转换为一组词法单元的结果。
 
 ## class PackageHeader
 
@@ -5706,7 +5718,7 @@ public func getSynchronizedKeyWordPos(): CodePositionRange
 ## class SyntaxTreeNode
 
 ```cangjie
-sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTreeNode> {
+sealed abstract class SyntaxTreeNode <: ToString & ToTokens & Hashable & Equatable<SyntaxTreeNode> {
     public let comments: Array<Comment>
     public let nodePos: CodePositionRange
     public let parentNode: Option<SyntaxTreeNode>
@@ -5758,20 +5770,36 @@ public let parentNode: Option<SyntaxTreeNode>
 类型：Option\<[SyntaxTreeNode](#class-syntaxtreenode)>
 
 ### func toString()
- 
+
 ```cangjie
 public open func toString(): String
 ```
- 
+
 功能：将语法树节点作为字符串打印出来，保留原本的相对位置信息。
 
 > **注意：**
 >
 > 当前语法树节点的打印不支持行尾空格、分号以及各类注释的打印。
- 
+
 返回值：
- 
+
 - String - 返回语法树节点打印为字符串的结果。
+
+### func toTokens()
+
+```cangjie
+public open func toTokens(): Tokens
+```
+
+功能：将语法树节点转换为一组词法单元，保留原本的相对位置信息。
+
+> **注意：**
+>
+> 空格，分号等无法转换为 `Token` 的内容将被忽略。
+
+返回值：
+
+- Tokens - 返回语法树节点转换为一组词法单元的结果。
 
 ### operator func ==(SyntaxTreeNode)
 
