@@ -99,4 +99,8 @@ public struct CodePositionRange {
     operator func !=(that: CodePositionRange) {
         !(this == that)
     }
+
+    func getBegin(): CodePosition {
+        CodePosition(this.beginLine, this.beginColumn, this.fileInfo)
+    }
 }

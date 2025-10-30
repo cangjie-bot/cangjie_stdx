@@ -21,8 +21,8 @@ main(){
 import stdx.syntax.*
 
 main() {
-    let file = parseFile(a.cj) // 获取一个 SourceFile 类型的语法树
-    println(file.node.toString()) // 打印该语法树， 应与原文件中内容完全一致
+    let file = parseFile(a.cj).node.getOrThrow() // 获取一个 SourceFile 类型的语法树
+    println(file.toString()) // 打印该语法树， 应与原文件中内容完全一致
 }
 ```
 
@@ -56,8 +56,8 @@ func foo() {
 import stdx.syntax.*
 
 main() {
-    let pkg = parsePackage("/user/") // 获取一个 Package 类型的语法树
-    println(pkg.node.toString()) // 打印该语法树，包内的文件按文件名字母序排序，对每个文件依次打印文件名和文件内容
+    let pkg = parsePackage("/user/").node.getOrThrow() // 获取一个 Package 类型的语法树
+    println(pkg.toString()) // 打印该语法树，包内的文件按文件名字母序排序，对每个文件依次打印文件名和文件内容
 }
 ```
 
@@ -85,8 +85,9 @@ func foo() {
 import stdx.syntax.*
 
 main() {
-    let result = parseText("    1  + 1") // 解析获得一个语法树节点，示例中为二元表达式
-    println(result.node.toString()) // 打印该语法树节点，应与输入字符串完全一致
+    let result = parseText("    1  + 1").node.getOrThrow() // 解析获得一个语法树节点，示例中为二元表达式
+    println(result.toString()) // 打印该语法树节点，应与输入字符串完全一致
+    println(result.toTokens().toString()) // Tokens的toString接口保留位置信息
 }
 ```
 
@@ -94,6 +95,7 @@ main() {
 
 ```text
     1  + 1
+1 + 1
 ```
 
 ## 使用 parseTokens 函数的示例
@@ -108,11 +110,11 @@ main() {
     let tokens = quote(
       let a    =    1
     )
-    let result = parseTokens(tokens) // 解析获得一个语法树节点，默认刷新位置信息，示例中为变量声明
-    println(result.node.toString()) // 打印该语法树节点
+    let result = parseTokens(tokens).node.getOrThrow() // 解析获得一个语法树节点，默认刷新位置信息，示例中为变量声明
+    println(result.toString()) // 打印该语法树节点
 
-    let result_1 = parseTokens(tokens, refreshPos: false) // 不刷新位置信息解析，toString 结果保留原始位置
-    println(result_1.node.toString())
+    let result_1 = parseTokens(tokens, refreshPos: false).node.getOrThrow() // 不刷新位置信息解析，toString 结果保留原始位置
+    println(result_1.toString())
 }
 ```
 
