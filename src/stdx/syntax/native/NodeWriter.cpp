@@ -696,7 +696,7 @@ flatbuffers::Offset<NodeFormat::Type> NodeWriter::SerializeType(AstType type)
     if (serializeFunc != serializeTypeMap.end()) {
         return serializeFunc->second(*this, type);
     }
-    Errorln("Type Not Supported in Libast Yet\n");
+    Errorln("Type Not Supported in Syntax Yet\n");
     return flatbuffers::Offset<NodeFormat::Type>();
 }
 
@@ -931,7 +931,7 @@ flatbuffers::Offset<NodeFormat::Decl> NodeWriter::SerializeDecl(AstDecl decl)
     if (serializeFunc != serializeDeclMap.end()) {
         return serializeFunc->second(*this, decl);
     }
-    Errorln("Decl Not Supported in Libast Yet\n");
+    Errorln("Decl Not Supported in Syntax Yet\n");
     return flatbuffers::Offset<NodeFormat::Decl>();
 }
 
