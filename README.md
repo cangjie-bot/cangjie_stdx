@@ -27,6 +27,66 @@ Architecture Diagram:
 For APIs related to stdx, please refer to [API Interface Description](./doc/libs_stdx_en/summary_cjnative.md).
 For relevant guidance, please refer to [Development Guide](https://gitcode.com/Cangjie/cangjie_docs/).
 
+## Quick Start
+
+This repository provides convenient scripts to quickly download and extract binary artifacts for a specific version.
+
+### Linux/macOS
+
+This requires `curl` and `unzip`. Please ensure these tools are installed in your environment.
+
+Execute directly in your command line (note the arguments at the end, modify as needed):
+
+```shell
+bash -c "$(curl -fsSL https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.sh)" -- 1.0.0.1
+```
+
+### Windows
+
+Before running the script, you may need to adjust the PowerShell execution policy (only needs to be done once).
+
+Please open PowerShell as an administrator and run the following command:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Then, run the script in a regular PowerShell window (note the arguments at the end, modify as needed):
+
+```powershell
+irm https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.ps1 -OutFile "$env:TEMP\downloader.ps1"; & "$env:TEMP\downloader.ps1" 1.0.0.1
+```
+
+### Parameters
+
+-   `<version>`: **Required**. Specifies the version to download, e.g., `1.0.0.1`.
+-   `-p <platform-arch>`: **Optional**. Specifies the platform and architecture. If omitted, the script will auto-detect the current system.
+-   `-d <extract-dir>`: **Optional**. Specifies the target path for extraction. If omitted, it defaults to the current directory.
+
+**Usage Examples:**
+
+```shell
+# On Linux/macOS, download the ohos-aarch64 version of v1.0.0.1 and extract it to the ./cangjie_libs directory
+bash -c "$(curl -fsSL https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.sh)" -- 1.0.0.1 -p ohos-aarch64 -d ./cangjie_libs
+```
+
+```powershell
+# On Windows, download the windows-x64 version of v1.0.0.1 and extract it to the C:\cangjie_libs directory
+irm https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.ps1 -OutFile "$env:TEMP\downloader.ps1"; & "$env:TEMP\downloader.ps1" 1.0.0.1 -p windows-x64 -d C:\cangjie_libs
+```
+
+### Supported \<platform-arch>
+
+The following platform and architecture combinations are currently supported:
+
+-   `linux-aarch64`
+-   `linux-x64`
+-   `mac-aarch64`
+-   `mac-x64`
+-   `ohos-aarch64`
+-   `ohos-x64`
+-   `windows-x64`
+
 ## Project Directory
 
 ```text
