@@ -1063,6 +1063,21 @@ public class SourceFile <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize node with import list, file name, file path, package header, top level declrations and features directive.
+     */
+    public init(importLists: Array<ImportList>, name: String, path: String, pkgHeader: Option<PackageHeader>, topLevelDecls: Array<Decl>,
+        ftrDirective!: Option<FeaturesDirective> = None, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createSourceFileImpl(importLists, pkgHeader, topLevelDecls, ftrDirective: ftrDirective, comments: comments))
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<SourceFile>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.name_ = name
+        this.path_ = path
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+    }
+
+    /**
      * @brief The import lists of the source file.
      *
      * This array field contains the import lists of the source file.

@@ -213,9 +213,9 @@ class SyntaxNodeImplCreator {
         let parts = ArrayList<SyntaxNodeImpl>()
         // TODO: is this right ?
         let tokenArray = ArrayList<SyntaxNodeImpl>()
-        for (tok in content) {
-            parts.add(builder.buildTokenTerminal(tok.kind, tok.value))
-            if (tok.kind != TokenKind.NL) {
+        for (i in 0..content.size) {
+            parts.add(builder.buildTokenTerminal(content[i].kind, content[i].value))
+            if (i < content.size - 1 && content[i].kind != TokenKind.NL) {
                 parts.add(builder.buildSpace(1))
             }
         }
@@ -273,8 +273,11 @@ class SyntaxNodeImplCreator {
         if (macroAttrs.size != 0) {
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LSquareToken))
             let attrArray = ArrayList<SyntaxNodeImpl>()
-            for (tok in macroAttrs) {
-                attrArray.add(builder.buildTokenTerminal(tok.kind, tok.value))
+            for (i in 0..macroAttrs.size) {
+                attrArray.add(builder.buildTokenTerminal(macroAttrs[i].kind, macroAttrs[i].value))
+                if (i < macroAttrs.size - 1) {
+                    attrArray.add(builder.buildSpace(1))
+                }
             }
             parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray.toArray()))
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RSquareToken))
@@ -283,8 +286,11 @@ class SyntaxNodeImplCreator {
             case MacroExpandInput.WithParens(toks) =>
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
                 let attrArray = ArrayList<SyntaxNodeImpl>()
-                for (tok in toks) {
-                    attrArray.add(builder.buildTokenTerminal(tok.kind, tok.value))
+                for (i in 0..toks.size) {
+                    attrArray.add(builder.buildTokenTerminal(toks[i].kind, toks[i].value))
+                    if (i < toks.size - 1) {
+                        attrArray.add(builder.buildSpace(1))
+                    }
                 }
                 parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray.toArray()))
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
@@ -885,5 +891,31 @@ class SyntaxNodeImplCreator {
         parts.add(base.nodeImpl)
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.OptionType, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
+    }
+
+    static func createSourceFileImpl(importLists: Array<ImportList>, pkgHeader: Option<PackageHeader>, topLevelDecls: Array<Decl>,
+        ftrDirective!: Option<FeaturesDirective> = None, comments!: Array<Comment> = []):(CodePositionRange, SyntaxNodeImpl,
+        ?SyntaxTreeNode, Array<PropInfo>) {
+        let startPos = CodePosition(1, 1, FileInfos("", ""))
+        let builder = SyntaxNodeBuilder()
+        let parts = ArrayList<SyntaxNodeImpl>()
+        if (let Some(f) <- ftrDirective) {
+            parts.add(f.nodeImpl)
+            parts.add(builder.buildNewline(1))
+        }
+        if (let Some(p) <- pkgHeader) {
+            parts.add(p.nodeImpl)
+            parts.add(builder.buildNewline(1))
+        }
+        for (i in importLists) {
+            parts.add(i.nodeImpl)
+            parts.add(builder.buildNewline(1))
+        }
+        for (d in topLevelDecls) {
+            parts.add(d.nodeImpl)
+            parts.add(builder.buildNewline(1))
+        }
+        let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.File, parts.toArray())
+        (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>()) 
     }
 }
