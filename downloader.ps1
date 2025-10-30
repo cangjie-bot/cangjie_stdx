@@ -109,6 +109,15 @@ try {
         }
     }
 
+    # Verify file is a zip archive
+    try {
+        $zip = [System.IO.Compression.ZipFile]::OpenRead($CachedFile)
+        $zip.Dispose()
+    } catch {
+        Remove-Item -Path $CachedFile -ErrorAction SilentlyContinue
+        throw "Downloaded file is not a zip archive. Please check if the version number is correct."
+    }
+
     # 5. Extraction and Rename Logic
     Write-Host "Extracting to: $DestDirAbs"
     $FinalPath = Join-Path $DestDirAbs $ExtractedDirName
