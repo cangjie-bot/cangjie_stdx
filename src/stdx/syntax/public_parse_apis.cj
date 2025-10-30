@@ -8,6 +8,8 @@
 
 package stdx.syntax
 
+import std.collection.{ArrayList, HashSet}
+
 /**
  * @brief Parses a source file located at the specified path and returns the parsing result.
  *
@@ -48,8 +50,54 @@ func skipRedundancy(text: String) {
  */
 public func parseText(text: String): ParsingResult<SyntaxTreeNode> {
     let (res, diags) = Parser.parseText(text)
+    // If the content of the parsed node is less than that of the input content, 
+    // there are multiple input nodes.
     if (let Some(result) <- res && skipRedundancy(result.toString()).size < skipRedundancy(text).size) {
         throw Exception("parseText function not support parse more than one node.")
     }
+    ParsingResult<SyntaxTreeNode>(res, diags)
+}
+
+func checkPos(tokens: Tokens): Bool {
+    var cur = Offset()
+    var set = HashSet<UInt32>()
+    var curFileId: UInt32 = tokens[0].pos.fileID
+    for (token in tokens) {
+        let pos = token.pos
+        // For tokens from the same file, they must appear consecutively;
+        //otherwise, their positions are considered invalid.
+        if (pos.fileID != curFileId && set.contains(pos.fileID)) {
+            return false
+        }
+        curFileId = pos.fileID
+        set.add(curFileId)
+        // Under the premise of considering the value of each Token, the 
+        // positions of Tokens must be incremental; that is, the start 
+        // position of a subsequent Token must be greater than the end position of the preceding Token.
+        if (cur.line > pos.line || (cur.line == pos.line && cur.column > pos.column)) {
+            return false
+        }
+        cur = Offset(pos.line, pos.column)
+        cur.moveString(token.value)
+    }
+    return true
+}
+
+/**
+ * @brief Parse the input tokens and return the parsing result along with diagnostic information.
+ *
+ * @param tokens The tokens that need to be parsed.
+ * @return A ParsingResult object containing the parsed node or an error.
+ *
+ * @throws Exception if there is an issue parsing the tokens.
+ */
+public func parseTokens(tokens: Tokens, refreshPos!: Bool = true): ParsingResult<SyntaxTreeNode> {
+    if (tokens.size == 0) {
+        throw Exception("the input tokens is empty.")
+    }
+    if (!refreshPos && !checkPos(tokens)) { // check if the position of tokens is valid
+        throw Exception("the position of the input tokens is invalid, you may open the refreshPos option.")
+    }
+    let (res, diags) = Parser.parseTokens(tokens, refreshPos)
     ParsingResult<SyntaxTreeNode>(res, diags)
 }
