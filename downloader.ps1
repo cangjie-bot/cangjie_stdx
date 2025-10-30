@@ -110,13 +110,21 @@ try {
         }
     }
 
-    # Verify file is a zip archive
+    # Verify file is a zip archive by checking magic numbers (PK)
     try {
-        $zip = [System.IO.Compression.ZipFile]::OpenRead($CachedFile)
-        $zip.Dispose()
+        $stream = [System.IO.File]::OpenRead($CachedFile)
+        if ($stream.Length -lt 2) {
+            throw "File is too small to be a zip archive."
+        }
+        $isZip = ($stream.ReadByte() -eq 0x50 -and $stream.ReadByte() -eq 0x4B)
+        $stream.Dispose()
+
+        if (-not $isZip) {
+            throw "File is not a valid zip archive."
+        }
     } catch {
         Remove-Item -Path $CachedFile -ErrorAction SilentlyContinue
-        throw "Downloaded file is not a zip archive. Please check if the version number is correct."
+        throw "Downloaded file is not a zip archive. Please check if the version number is correct. Error: $($_.Exception.Message)"
     }
 
     # 5. Extraction and Rename Logic
