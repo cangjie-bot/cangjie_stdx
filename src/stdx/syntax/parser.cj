@@ -54,6 +54,16 @@ class Parser {
         (res, diags)
     }
 
+    static func parseTokens(tokens: Tokens, refreshPos: Bool): (?SyntaxTreeNode, Array<Diagnostic>) {
+        let (node, diags) = Parser("").parseFromTokens(tokens, refreshPos)
+        let res: ?SyntaxTreeNode = if (let Some(root) <- node) {
+            root as SyntaxTreeNode
+        } else {
+            None
+        }
+        (res, diags)
+    }
+
     static func parsePackage(dirPath: String): (?Package, Array<Diagnostic>) {
         let fileList = ArrayList<SourceFile>()
         let fileImpls = ArrayList<(SyntaxNodeImpl, String)>()
@@ -103,12 +113,17 @@ class Parser {
         (buildSyntaxTree(root), diags)
     }
 
+    private func parseFromTokens(tokens: Tokens, refreshPos: Bool): (?SyntaxTreeNode, Array<Diagnostic>) {
+        let (root, diags) = impl.parseTokens(tokens, refreshPos)
+        (buildSyntaxTree(root), diags)
+    }
+
     // build syntax tree by syntax impl tree
     private func buildSyntaxTree(node: ?SyntaxNodeImpl): ?SyntaxTreeNode {
         if (let Some(root) <- node) {
             if (filePath.size > 0) { // called from parseFile
                 SyntaxNodeImplTranslator.translateFile(root, filePath)
-            } else { // called from parseText
+            } else { // called from parseText or parseTokens
                 SyntaxNodeImplTranslator.translate(root, CodePosition(1, 1, FileInfos("", "")),
                     Option<SyntaxTreeNode>.None)
             }
