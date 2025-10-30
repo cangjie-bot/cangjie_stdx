@@ -213,11 +213,23 @@ class SyntaxNodeImplCreator {
         let parts = ArrayList<SyntaxNodeImpl>()
         // TODO: is this right ?
         let tokenArray = ArrayList<SyntaxNodeImpl>()
-        for (i in 0..content.size) {
-            parts.add(builder.buildTokenTerminal(content[i].kind, content[i].value))
-            if (i < content.size - 1 && content[i].kind != TokenKind.NL) {
-                parts.add(builder.buildSpace(1))
+        var tokBytes: CPointer<UInt8> = unsafePointerCastFromUint8Array((content).toBytes())
+        var spaceFlag: CPointer<Bool> = unsafe { LibC.malloc<Bool>(count: content.size) }
+        if (spaceFlag.isNull()) {
+            unsafe { LibC.free(tokBytes) }
+            throw IllegalMemoryException("malloc failed!")
+        }
+        unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
+        try {
+            for (i in 0..content.size) {
+                parts.add(builder.buildTokenTerminal(content[i].kind, content[i].value))
+                if (unsafe { spaceFlag.read(i) }) {
+                    parts.add(builder.buildSpace(1))
+                }
             }
+        } finally {
+            unsafe { LibC.free(tokBytes) }
+            unsafe { LibC.free(spaceFlag) }
         }
         let nodeImpl = builder.buildNonTerminal(SyntaxNodeKind.QuoteTokenExpr, parts.toArray())
         (CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, None, Array<PropInfo>())
@@ -272,12 +284,24 @@ class SyntaxNodeImplCreator {
         parts.add(calleeMacro.nodeImpl)
         if (macroAttrs.size != 0) {
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LSquareToken))
+            var tokBytes: CPointer<UInt8> = unsafePointerCastFromUint8Array((macroAttrs).toBytes())
+            var spaceFlag: CPointer<Bool> = unsafe { LibC.malloc<Bool>(count: macroAttrs.size) }
+            if (spaceFlag.isNull()) {
+                unsafe { LibC.free(tokBytes) }
+                throw IllegalMemoryException("malloc failed!")
+            }
+            unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
             let attrArray = ArrayList<SyntaxNodeImpl>()
-            for (i in 0..macroAttrs.size) {
-                attrArray.add(builder.buildTokenTerminal(macroAttrs[i].kind, macroAttrs[i].value))
-                if (i < macroAttrs.size - 1) {
-                    attrArray.add(builder.buildSpace(1))
+            try {
+                for (i in 0..macroAttrs.size) {
+                    attrArray.add(builder.buildTokenTerminal(macroAttrs[i].kind, macroAttrs[i].value))
+                    if (unsafe { spaceFlag.read(i) }) {
+                        attrArray.add(builder.buildSpace(1))
+                    }
                 }
+            } finally {
+                unsafe { LibC.free(tokBytes) }
+                unsafe { LibC.free(spaceFlag) }
             }
             parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray.toArray()))
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RSquareToken))
@@ -286,11 +310,23 @@ class SyntaxNodeImplCreator {
             case MacroExpandInput.WithParens(toks) =>
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
                 let attrArray = ArrayList<SyntaxNodeImpl>()
-                for (i in 0..toks.size) {
-                    attrArray.add(builder.buildTokenTerminal(toks[i].kind, toks[i].value))
-                    if (i < toks.size - 1) {
-                        attrArray.add(builder.buildSpace(1))
+                var tokBytes: CPointer<UInt8> = unsafePointerCastFromUint8Array((toks).toBytes())
+                var spaceFlag: CPointer<Bool> = unsafe { LibC.malloc<Bool>(count: toks.size) }
+                if (spaceFlag.isNull()) {
+                    unsafe { LibC.free(tokBytes) }
+                    throw IllegalMemoryException("malloc failed!")
+                }
+                unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
+                try {
+                    for (i in 0..toks.size) {
+                        attrArray.add(builder.buildTokenTerminal(toks[i].kind, toks[i].value))
+                        if (unsafe { spaceFlag.read(i) }) {
+                            attrArray.add(builder.buildSpace(1))
+                        }
                     }
+                } finally {
+                    unsafe { LibC.free(tokBytes) }
+                    unsafe { LibC.free(spaceFlag) }
                 }
                 parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray.toArray()))
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
