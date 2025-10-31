@@ -52,7 +52,11 @@ public class Tar {
         if (!exists(fromDir)) {
             throw TarException("From directory not exists: ${fromDir}.")
         }
-        let fromDirNormalized = canonicalize(fromDir).normalizePath()
+        let fromDirCanonicalized = canonicalize(fromDir)
+        if (isRootPath(fromDirCanonicalized.toString())) {
+            throw TarException("Can not archive root directory: ${fromDir}.")
+        }
+        let fromDirNormalized = fromDirCanonicalized.normalizePath()
         let fromDirNormalizedPath = Path(fromDirNormalized)
         let tarWriter = TarWriter(destStream)
         let prefixLength: Int64

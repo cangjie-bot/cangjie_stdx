@@ -92,12 +92,7 @@ public class GnuTarEntry <: PosixTarEntry {
     }
 
     private static func writeGnuExtensionEntry(target: OutputStream, name: String, isLinkName: Bool) {
-        let entryType = if (isLinkName) {
-            TarEntryType.GnuName
-        } else {
-            TarEntryType.GnuLongLink
-        }
-        throw TarException("Gnu extension entry is not supported.")
+        GnuExtensionTarEntry(name, isLinkName).writeTo(target)
     }
 
     protected override func writeTo(target: OutputStream): Unit {
