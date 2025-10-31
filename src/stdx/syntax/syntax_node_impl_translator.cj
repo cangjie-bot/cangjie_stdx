@@ -25,7 +25,10 @@ class SyntaxNodeImplTranslator {
     }
 
     static func translate(root: SyntaxNodeImpl, startPos: CodePosition, parent: ?SyntaxTreeNode): ?SyntaxTreeNode {
-        SyntaxNodeImplTranslator().transNode(root, startPos, parent)
+        match (root.kind) {
+            case SyntaxNodeKind.File => SyntaxNodeImplTranslator().transFileNode(root, startPos.filePath, parent: parent)
+            case _ =>  SyntaxNodeImplTranslator().transNode(root, startPos, parent)
+        }
     }
 
     static func translateList<T>(root: SyntaxNodeImpl, startPos: CodePosition, parent: ?SyntaxTreeNode): Array<T> where T <: SyntaxTreeNode {
