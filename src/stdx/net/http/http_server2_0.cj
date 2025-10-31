@@ -235,7 +235,7 @@ class HttpServer2 <: ProtocolService {
             case None => return
         }
         if (logger.enabled(LogLevel.DEBUG)) {
-            httpLogDebug(logger, "[HttpServer2#readFrames] received frame: ${frame}")
+            httpLogDebug(logger, "[HttpServer2#readFrames] received frame: ${frame}, stream id: ${frame.streamId}.")
         }
 
         if (frame.payloadLen > localMaxFrameSize) {
@@ -245,6 +245,9 @@ class HttpServer2 <: ProtocolService {
 
         // read and process HEADERS + CONTINUATION, which may be headers/trailers of request
         if (let Some(hf) <- (frame as HeadersFrame)) {
+            if (logger.enabled(LogLevel.TRACE)) {
+                httpLogTrace(logger, "[HttpServer2#readFrames] header frame received.")
+            }
             readAndProcessFields(hf)
             return
         }
@@ -262,6 +265,9 @@ class HttpServer2 <: ProtocolService {
             case None =>
                 if (isPurged) {
                     if (frame is DataFrame) {
+                        if (logger.enabled(LogLevel.TRACE)) {
+                            httpLogTrace(logger, "[HttpServer2#readFrames] Stream ${frame.streamId} is purged. Data frame received.")
+                        }
                         processDataFlow(frame.payloadLen)
                         windowUpdateOnDataConsumed(frame.payloadLen)
                     }
@@ -270,9 +276,15 @@ class HttpServer2 <: ProtocolService {
                 }
             case Some(stream) =>
                 if (frame is DataFrame) {
+                    if (logger.enabled(LogLevel.DEBUG)) {
+                        httpLogDebug(logger, "[HttpServer2#readFrames] Data frame received.")
+                    }
                     processDataFlow(frame.payloadLen)
 
                     if (stream.dataBBQ.isClosed()) {
+                        if (logger.enabled(LogLevel.DEBUG)) {
+                            httpLogDebug(logger, "[HttpServer2#readFrames] Data queue has been closed.")
+                        }
                         windowUpdateOnDataConsumed(frame.payloadLen)
                     }
                 }
@@ -331,6 +343,9 @@ class HttpServer2 <: ProtocolService {
 
         let fieldsList = if (hf.headerEnd) {
             // fast path, only HeadersFrame
+            if (logger.enabled(LogLevel.TRACE)) {
+                httpLogTrace(logger, "[HttpServer2#readAndProcessFields] Got END_HEADERS.")
+            }
             decodeFields(decoder, hf.fieldBlock)
         } else {
             // slow path, HeadersFrame + ContinuationFrames
@@ -407,7 +422,9 @@ class HttpServer2 <: ProtocolService {
         let reqCount = AtomicUInt64(0)
         while (!quit.load()) {
             let stream = requestQueue.receive(timeout: Duration.millisecond * 10) ?? continue
+            let connId = ThreadContext.connId
             spawn {
+                ThreadContext.connId = connId
                 reqCount.fetchAdd(1)
                 try {
                     stream.handle()
@@ -930,6 +947,10 @@ class HttpServer2 <: ProtocolService {
                 case (false, false) => activeClientStreamNum.fetchSub(1)
             }
         }
+
+        if (logger.enabled(LogLevel.TRACE)) {
+            httpLogTrace(logger, "[HttpServer2#purgeStream] activePushRstStreamNum = ${activePushRstStreamNum.load()}, activeClientRstStreamNum = ${activeClientRstStreamNum.load()}.")
+        }
     }
 
     protected func closeGracefully(): Unit {
@@ -990,6 +1011,9 @@ class HttpServer2 <: ProtocolService {
     private func close(h2Error: H2Error, debugMsg: String) {
         httpLogWarn(logger, "[HttpServer2#close] connection closing, ${debugMsg}")
         if (quit.load()) {
+            if (logger.enabled(LogLevel.TRACE)) {
+                httpLogTrace(logger, "[HttpServer2#close] Already quit.")
+            }
             return
         }
         sendGoaway(h2Error, this.lastClientStreamId, debugMsg)
@@ -997,6 +1021,9 @@ class HttpServer2 <: ProtocolService {
     }
 
     private func shutdown(shouldSleep!: Bool = true) {
+        if (logger.enabled(LogLevel.TRACE)) {
+            httpLogTrace(logger, "[HttpServer2#shutdown] Shutdown.")
+        }
         if (quit.load()) {
             return
         }
