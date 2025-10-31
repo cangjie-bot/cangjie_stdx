@@ -749,6 +749,9 @@ public class Server {
             cfg.verifyMode = CertificateVerifyMode.CustomCA(certificates)
         }
         _tlsConfig = cfg
+        if (logger.enabled(LogLevel.DEBUG)) {
+            httpLogDebug(logger, "[Server#updateCA] CA updated successfully")
+        }
     }
 
     /**
@@ -762,6 +765,9 @@ public class Server {
         var cfg = _tlsConfig ?? throw HttpException("The TLS certificate is not configured.")
         cfg.verifyMode = CustomCA(newCa)
         _tlsConfig = cfg
+        if (logger.enabled(LogLevel.DEBUG)) {
+            httpLogDebug(logger, "[Server#updateCA] CA updated successfully")
+        }
     }
 
     func protocolService(socket: StreamingSocket): ProtocolService {
@@ -777,6 +783,12 @@ public class Server {
                 }
                 let conn = getGlobalTlsKit().getTlsServer(socket, cfg, session: tlsServerSession)
                 let result = conn.handshake(timeout: Duration.second * 3)
+
+                // TLS handshake result
+                if (logger.enabled(LogLevel.TRACE)) {
+                    httpLogTrace(logger, "[Server#protocolService] TLS handshake result: TLS version = ${result.version}, cipher suite = ${result.cipherSuite}.")
+                }
+
                 (alpn(result.alpnProtocol), conn)
             case (_, _) => (HTTP1_1, socket)
         }

@@ -13,6 +13,7 @@ import std.io.*
 import std.collection.{ArrayList, HashMap}
 import std.sync.{Monitor, AtomicUInt32, AtomicInt64, AtomicBool}
 import std.convert.Parsable
+import std.time.MonoTime
 import stdx.net.tls.common.TlsConnection
 import stdx.crypto.common.Certificate
 import stdx.log.{Logger, LogLevel}
@@ -267,9 +268,29 @@ class Stream {
         windowMonitor.unlock()
     }
 
+    private func rstErrorDesciption(errorCode: UInt32): (String, String) {
+        match (errorCode) {
+            case 0x1 => ("PROTOCOL_ERROR", "Protocol error detected.")
+            case 0x2 => ("INTERNAL_ERROR", "Implementation fault.")
+            case 0x3 => ("FLOW_CONTROL_ERROR", "Flow-control limits exceeded.")
+            case 0x4 => ("SETTINGS_TIMEOUT", "Settings not acknowledged.")
+            case 0x5 => ("STREAM_CLOSED", "Frame received for closed stream.")
+            case 0x6 => ("FRAME_SIZE_ERROR", "Frame size incorrect.")
+            case 0x7 => ("REFUSED_STREAM", "Stream not processed.")
+            case 0x8 => ("CANCEL", "Stream cancelled.")
+            case 0x9 => ("COMPRESSION_ERROR", "Compression state not updated.")
+            case 0xa => ("CONNECT_ERROR", "TCP connection error for CONNECT method.")
+            case 0xb => ("ENHANCE_YOUR_CALM", "Processing capacity exceeded.")
+            case 0xc => ("INADEQUATE_SECURITY", "Negotiated TLS parameters not acceptable.")
+            case 0xd => ("HTTP_1_1_REQUIRED", "Use HTTP/1.1 for the request.")
+            case _ => ("UNKNOWN_ERROR", "Unknown error.")
+        }
+    }
+
     private func onRSTRead(frame: RstStreamFrame): Unit {
+        let (errorName, errorDescription) = rstErrorDesciption(frame.errorCode)
         httpLogWarn(server.logger,
-            "[Stream#onRSTRead] stream received rst frame, stream id: ${streamId}, errorCode: ${frame.errorCode}")
+            "[Stream#onRSTRead] stream received rst frame, stream id: ${streamId}, errorCode: ${errorName}(${frame.errorCode}): ${errorDescription}")
         if (status == Idle) {
             throw HttpConnectionException(ProtocolError, "Received rst frame on idle stream.")
         }
@@ -358,7 +379,15 @@ class Stream {
         }
 
         try {
+            let handlerStartTime = MonoTime.now()
             handler.handle(ctx)
+            let handlerEndTime = MonoTime.now()
+            if (server.logger.enabled(LogLevel.DEBUG)) {
+                let duration = handlerEndTime - handlerStartTime
+                httpLogDebug(server.logger,
+                    "[Stream#handle] Handler for request ${ctx.request.method} ${ctx.request.url} on stream ${streamId} took ${duration.toMilliseconds()} ms."
+                )
+            }
         } catch (e: Exception) { // exceptions from user code or check/write response failed and user hasn't catch, return 500 response.
             httpLogWarn(server.logger, "[Stream#handle] handle failed, ${e}")
             cleanDataQueue()
@@ -374,7 +403,7 @@ class Stream {
         if (!engine.connect || !ctx.upgraded) {
             engine.writeResponse(ctx) // throw HttpException/IllegalArgumentException, if response invalid
         } else {
-            // if upgraded, user should call close in hand ler, who will send an empty DATA with streamEnd set.
+            // if upgraded, user should call close in handler, who will send an empty DATA with streamEnd set.
             // An extra close is called to ensure the stream is close
             engine.close()
         }
@@ -480,7 +509,7 @@ class Stream {
      */
     func close(h2Error: H2Error, message: String, slow!: Bool = false): Unit {
         if (h2Error.code != NoError.code) {
-            httpLogWarn(server.logger, "[Stream#close] ${message}")
+            httpLogWarn(server.logger, "[Stream#close] stream ${streamId}: ${message}")
         }
 
         // received rst and status has already been set to Closed
@@ -498,11 +527,11 @@ class Stream {
             if (slow) {
                 sleep(Duration.second * 5)
             }
- 
+
             let rstFrame = RstStreamFrame(id, h2Error.code)
             if (!server.responseQueue.send(rstFrame, CONTROL_PRIORITY)) {
                 if (server.logger.enabled(LogLevel.DEBUG)) {
-                    httpLogDebug(server.logger, "[Stream#close] connection closed, write rst failed")
+                    httpLogDebug(server.logger, "[Stream#close] stream ${streamId}: connection closed, write rst failed.")
                 }
             }
         }
