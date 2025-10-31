@@ -56,7 +56,7 @@ public func parseText(programText: String): ParsingResult<SyntaxTreeNode>
 
 参数：
 
-- programText： String - 待解析的字符串文本。
+- programText: String - 待解析的字符串文本。
 
 返回值：
 
