@@ -62,6 +62,7 @@ class HttpClient2 <: HttpClient {
 
     func close(): Unit {
         if (engines.isEmpty() && closingEngines.isEmpty()) {
+            httpLogWarn(logger, "[HttpClient2#close] engines are empty.")
             return
         }
         synchronized(engineLock) {
@@ -174,6 +175,9 @@ class HttpClient2 <: HttpClient {
         }
         // alpnProtocolsList have been checked before HttpClient2 initial, no need to check again
         if (let Some(conn) <- (tmpConn as TlsConnection)) {
+            if (logger.enabled(LogLevel.DEBUG)) {
+                httpLogDebug(logger, "[HttpClient2#createEngine] Reused existing TLS connection.")
+            }
             return HttpClientEngine2(conn, localSettings, logger, readTimeout, writeTimeout)
         }
         let tlsConn: TlsConnection
@@ -190,6 +194,9 @@ class HttpClient2 <: HttpClient {
         } catch (e: Exception) {
             tlsConn.close()
             throw e
+        }
+        if (logger.enabled(LogLevel.DEBUG)) {
+            httpLogDebug(logger, "[HttpClient2#createEngine] TLS handshake result. TLS Version: ${result.version}, cipher suite: ${result.cipherSuite}")
         }
         if (result.alpnProtocol != "h2") {
             tlsConn.close()
@@ -325,7 +332,7 @@ class HttpClientEngine2 {
 
     private func startReceiveLoop() {
         spawn {
-            httpLogDebug(logger, "[HttpClientEngine2#startReceiveLoop] read thread start")
+            httpLogTrace(logger, "[HttpClientEngine2#startReceiveLoop] read thread start")
             do {
                 receiveResponse()
             } while (!quit.load())
@@ -690,6 +697,7 @@ class HttpClientEngine2 {
     }
 
     private func shutdown(): Unit {
+        httpLogTrace(logger, "[HttpClientEngine2#shutdown] Shutdown.")
         quit.store(true)
         // close queue in case queue block at receive
         settingsWaitingQueue.close()
@@ -723,7 +731,9 @@ class HttpClientEngine2 {
         if (streamPurged(id)) {
             return
         }
-        httpLogDebug(logger, "[HttpClientEngine2#purgeStream] purge stream ${id}")
+        if (logger.enabled(LogLevel.DEBUG)) {
+            httpLogDebug(logger, "[HttpClientEngine2#purgeStream] purge stream ${id}.")
+        }
         let stream = synchronized(streamsLock) {
             streams.remove(id)
         }
@@ -787,6 +797,9 @@ class HttpClientEngine2 {
     /***************************** global frame ********************************/
 
     private func sendGoaway(lastStreamId: UInt32, errCode: H2Error, debugMsg!: ?String = None) {
+        if (logger.enabled(LogLevel.TRACE)) {
+            httpLogTrace(logger, "[HttpClientEngine2#sendGoaway] prepare to send goaway frame, lastStreamId=${lastStreamId}, errCode=${errCode.code}.")
+        }
         closing = true
         let goaway: GoawayFrame
         match (debugMsg) {
@@ -821,6 +834,9 @@ class HttpClientEngine2 {
      * can be used by an endpoint to measure latency to their peer.
      */
     private func sendPing(ack!: Bool = false) {
+        if (logger.enabled(LogLevel.TRACE)) {
+            httpLogTrace(logger, "[HttpClientEngine2#sendPing] prepare to send ping frame, ack=${ack}.")
+        }
         let pingFrame = PingFrame(isAck: ack)
         outputQueue.send(pingFrame, CONTROL_PRIORITY)
     }
