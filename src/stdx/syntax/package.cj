@@ -542,7 +542,7 @@ public class Package <: SyntaxTreeNode {
     private let srcFileImpls: Array<(SyntaxNodeImpl, String)>
 
     init(isMacroPkg_: Bool, name_: String, srcFileImpls: Array<(SyntaxNodeImpl, String)>) {
-        super(CodePositionRange(), Terminal(SyntaxNodeKind.Invalid), None)
+        super(CodePositionRange(), NonTerminal(SyntaxNodeKind.Package), None)
         this.isMacroPkg_ = isMacroPkg_
         this.name_ = name_
         this.srcFileImpls = srcFileImpls
@@ -554,7 +554,7 @@ public class Package <: SyntaxTreeNode {
     public init(isMacroPkg: Bool, name: String, srcFile: Array<SourceFile>) {
         super(CodePositionRange(), Terminal(SyntaxNodeKind.Invalid), None)
 
-        let (isMacro, pkgName) = Parser.checkPackage(ArrayList(srcFile))
+        let (isMacro, pkgName) = checkPackage(ArrayList(srcFile))
         if (isMacro != isMacroPkg || pkgName != name) {
             throw Exception("InitException: the input params are illegal for Package Init.")
         }
