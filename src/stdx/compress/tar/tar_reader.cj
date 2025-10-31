@@ -75,21 +75,18 @@ public class TarReader<T> <: Iterable<TarEntry> where T <: InputStream {
     private func generateEntry(header: TarHeader): TarEntry {
         // Apply GNU first for legacy compatibility, then PAX to override per POSIX standard.
         // Industry convention: PAX takes precedence when both exist.
-        let hasGnuData = applyGnuData(header)
+        applyGnuData(header)
         let hasPaxData = applyPaxData(header)
 
         let dataStream = readDataStream(header.size)
         if (hasPaxData) {
             return PaxTarEntry(header, dataStream)
-        } else if (hasGnuData) {
-            return GnuTarEntry(header, dataStream)
-        } else if (header.format == TarEntryFormat.Ustar) {
-            return UstarTarEntry(header, dataStream)
-        } else if (header.format == TarEntryFormat.V7) {
-            return V7TarEntry(header, dataStream)
-        } else {
-            throw TarException("Unreachable code. " +
-                               "PAX and GNU should have been handled earlier and should not generate entry.")
+        }
+        return match (header.format) {
+            case TarEntryFormat.Ustar => UstarTarEntry(header, dataStream)
+            case TarEntryFormat.V7 => V7TarEntry(header, dataStream)
+            case TarEntryFormat.Gnu => GnuTarEntry(header, dataStream)
+            case TarEntryFormat.Pax => PaxTarEntry(header, dataStream)
         }
     }
 

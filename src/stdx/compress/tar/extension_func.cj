@@ -82,3 +82,94 @@ extend Directory {
         }
     }
 }
+
+extend Array<Byte> {
+    func equalsIgnoreCaseAndSlash(that: String): Bool {
+        // size is the same, and not 0
+        var (b1, b2): (Byte, Byte)
+        for (i in 0..this.size) {
+            b1 = this[i]
+            b2 = that[i]
+            if (isSlash(b1)) {
+                if (!isSlash(b2)) {
+                    return false
+                }
+                continue
+            }
+            if (!byteEqualsIgnoreAsciiCase(b1, b2)) {
+                return false
+            }
+        }
+        return true
+    }
+
+    func byteEqualsIgnoreAsciiCase(b1: Byte, b2: Byte): Bool {
+        if (b1 == b2) {
+            return true
+        }
+        // b1 in 'A' ~ 'Z', and the lower case of b1 equals to b2
+        if (b1 >= b'A' && b1 <= b'Z' && (b1 + 32) == b2) {
+            return true
+        }
+        if (b2 >= b'A' && b2 <= b'Z' && (b2 + 32) == b1) {
+            return true
+        }
+        return false
+    }
+}
+
+func isSlash(b: Byte) {
+    return b == b'/' || b == b'\\'
+}
+
+@When[os == "Windows"]
+func countSeparator(path: Array<Byte>, idx!: Int64, cnt!: Int64): Int64 {
+    var n = cnt
+    for (i in idx..path.size where isSlash(path[i])) {
+        n--
+        if (n == 0) {
+            return i + 1
+        }
+    }
+    return path.size
+}
+
+@When[os == "Windows"]
+func getRootLen(path: String): Int64 {
+    let raw = unsafe { path.rawData() }
+    // "c:" || "c:\\"
+    if (raw.size > 1 && raw[1] == b':') {
+        if (raw.size > 2 && isSlash(raw[2])) {
+            return 3
+        }
+        return 2
+    }
+    // "\\\\?\\UNC\\" || "\\\\.\\UNC\\"
+    if (raw.size > 7 && (raw[..8].equalsIgnoreCaseAndSlash("\\\\?\\UNC\\") ||
+        raw[..8].equalsIgnoreCaseAndSlash("\\\\.\\UNC\\"))) {
+        return countSeparator(raw, idx: 8, cnt: 2)
+    }
+    // "\\\\?\\" || "\\\\.\\"
+    if (raw.size > 3 && (raw[..4].equalsIgnoreCaseAndSlash("\\\\?\\") || raw[..4].equalsIgnoreCaseAndSlash("\\\\.\\"))) {
+        return countSeparator(raw, idx: 4, cnt: 1)
+    }
+    if (isSlash(raw[0])) {
+        // "\\\\" UNC path
+        if (raw.size > 1 && isSlash(raw[1])) {
+            return countSeparator(raw, idx: 2, cnt: 2)
+        }
+        // "\\"
+        return 1
+    }
+    return 0
+}
+
+@When[os != "Windows"]
+func isRootPath(path: String) {
+    return path == "/"
+}
+
+@When[os == "Windows"]
+func isRootPath(path: String) {
+    getRootLen(path) == path.size
+}
