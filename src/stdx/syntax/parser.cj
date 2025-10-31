@@ -93,30 +93,6 @@ class Parser {
         (pkg, diagsList.toArray())
     }
 
-    static func getPackageName(file: SourceFile) {
-        if (let Some(pkgHeader) <- file.pkgHeader) {
-            return String.join(pkgHeader.packageNameIdentifiers, delimiter: ".")
-        }
-        return "default"
-    }
-
-    static func checkPackage(sourceFiles: ArrayList<SourceFile>): (Bool, String) {
-        if (sourceFiles.size == 0) {
-            return (false, "")
-        }
-        var packageName = getPackageName(sourceFiles[0])
-        var isMacro: Bool = sourceFiles[0].isMacroPackage
-        for (f in sourceFiles) {
-            if (packageName != getPackageName(f)) {
-                throw Exception("ParseException: found more than one package declaration for the package.")
-            }
-            if (isMacro != f.isMacroPackage) {
-                throw Exception("ParseException: found different macro package declaration.")
-            }
-        }
-        return (isMacro, packageName)
-    }
-
     private func parse(): (?SyntaxTreeNode, Array<Diagnostic>) {
         let (root, diags) = impl.parseFile()
         (buildSyntaxTree(root), diags)
@@ -140,4 +116,28 @@ class Parser {
             None
         }
     }
+}
+
+func getPackageName(file: SourceFile) {
+    if (let Some(pkgHeader) <- file.pkgHeader) {
+        return String.join(pkgHeader.packageNameIdentifiers, delimiter: ".")
+    }
+    return "default"
+}
+
+func checkPackage(sourceFiles: ArrayList<SourceFile>): (Bool, String) {
+    if (sourceFiles.size == 0) {
+        return (false, "")
+    }
+    var packageName = getPackageName(sourceFiles[0])
+    var isMacro: Bool = sourceFiles[0].isMacroPackage
+    for (f in sourceFiles) {
+        if (packageName != getPackageName(f)) {
+            throw Exception("ParseException: found more than one package declaration for the package.")
+        }
+        if (isMacro != f.isMacroPackage) {
+            throw Exception("ParseException: found different macro package declaration.")
+        }
+    }
+    return (isMacro, packageName)
 }
