@@ -19,6 +19,7 @@
 #include "cangjie/Basic/DiagnosticEmitter.h"
 #include "cangjie/Basic/SourceManager.h"
 #include "cangjie/Frontend/CompilerInstance.h"
+#include "cangjie/Macro/MacroCommon.h"
 #include "cangjie/Parse/Parser.h"
 #include "cangjie/Macro/MacroCommon.h"
 #include "cangjie/Macro/TokenSerialization.h"
@@ -186,5 +187,17 @@ ParseRes* CJ_ParseAnnotationArguments(const uint8_t* tokensBytes)
     result->node = nodeWriter.ExportNode(&sm);
     result->eMsg = nullptr;
     return result;
+}
+
+void CJ_CheckAddSpace(const uint8_t* tokBytes, bool* spaceFlag)
+{
+    std::vector<Token> tokens = TokenWriter::GetTokensFromBytes(tokBytes);
+    if ((tokens.size() == 0)) {
+        abort();
+    }
+    for (size_t loop = 0; loop < tokens.size() - 1; loop++) {
+        spaceFlag[loop] = CheckAddSpace(tokens[loop], tokens[loop + 1]);
+    }
+    spaceFlag[tokens.size() - 1] = false;
 }
 }

@@ -36,14 +36,8 @@ public func parsePackage(dirPath: String): ParsingResult<Package> {
     ParsingResult<Package>(pkg, diags)
 }
 
-func skipTrailingRedundancy(text: String) {
-    for (i in text.size - 1..=0 : -1) {
-        let cur = text[i..i + 1]
-        if (cur != NEWLINE && cur != " " && cur != ";") {
-            return text[..i + 1]
-        }
-    }
-    return ""
+func skipRedundancy(text: String) {
+    return text.replace(NEWLINE, "").replace(" ", "").replace(";", "")
 }
 
 /**
@@ -56,7 +50,7 @@ func skipTrailingRedundancy(text: String) {
  */
 public func parseText(text: String): ParsingResult<SyntaxTreeNode> {
     let (res, diags) = Parser.parseText(text)
-    if (let Some(result) <- res && skipTrailingRedundancy(result.toString()) != skipTrailingRedundancy(text)) {
+    if (let Some(result) <- res && skipRedundancy(result.toString()).size < skipRedundancy(text).size) {
         throw Exception("parseText function not support parse more than one node.")
     }
     ParsingResult<SyntaxTreeNode>(res, diags)

@@ -104,3 +104,5 @@ public struct CodePositionRange {
         CodePosition(this.beginLine, this.beginColumn, this.fileInfo)
     }
 }
+
+let DEFAULT_START_POS = CodePosition(1, 1, FileInfos("", ""))
