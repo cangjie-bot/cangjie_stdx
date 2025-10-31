@@ -12,6 +12,7 @@ import std.io.InputStream
 import std.sync.AtomicBool
 import std.net.{StreamingSocket, SocketException}
 import std.convert.Parsable
+import std.time.MonoTime
 import stdx.log.{Logger, LogLevel}
 import stdx.net.tls.common.{TlsConnection, TlsException}
 import stdx.crypto.common.Certificate
@@ -60,7 +61,15 @@ class HttpServer1 <: ProtocolService {
                 httpLogDebug(logger, "[HttpServer1#process] start handle req: ${request.toString()}")
             }
             // user handler
+            let handlerStartTime = MonoTime.now()
             handler.handle(context) // if websocket or chunk, ctx will set flag
+            let handlerEndTime = MonoTime.now()
+            if (logger.enabled(LogLevel.DEBUG)) {
+                let duration = handlerEndTime - handlerStartTime
+                httpLogDebug(logger,
+                    "[HttpServer1#process] Handler for request ${context.request.method} ${context.request.url} took ${duration.toMilliseconds()} ms."
+                )
+            }
         } catch (e: SocketException | ConnectionException | TlsException) {
             // Unable to send 500 response, log only.
             httpLogWarn(logger, "[HttpServer1#process] Exception during process: ${e}")
@@ -475,6 +484,7 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
     }
 
     func parseUrl(_requestTarget: String, method: String): URL {
+        httpLogTrace(logger, "[HttpEngineConn1#parseUrl] parsing request target.")
         // url must be one of these forms: origin-form, absolute-form, authority-form, asterisk-form
         match (method) {
             case "CONNECT" => try {
@@ -645,6 +655,9 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
 
         // 2. write body
         if (chunked) {
+            if (logger.enabled(LogLevel.DEBUG)) {
+                httpLogDebug(logger, "[HttpEngineConn1#writeResponse] chunked = ${chunked}.")
+            }
             checkTrailer(response)
             this.writeBodyByChunk(response.body)
             conn.write("0\r\n" + response.trailers.toString())
@@ -657,6 +670,7 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
      * If the response contains the "transfer-encoding" header, this method is invoked when the body is written.
      */
     func writeBodyByChunk(body: InputStream): Unit {
+        httpLogTrace(logger, "[HttpEngineConn1#writeBodyByChunk] write body by chunked encoding.")
         match (body) {
             case b: HttpRawBody =>
                 let chunkSize = CHUNK_SIZE

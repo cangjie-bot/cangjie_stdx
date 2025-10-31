@@ -587,6 +587,7 @@ class ConnNode <: BodyProviderConn {
      * @throws SocketException or ConnectionException if something wrong happened in socket.
      */
     func sendRequest(request: HttpRequest): HttpResponse {
+        httpLogTrace(logger, "[ConnNode#sendRequest] Client1.1 send request.")
         try {
             sendRequestTimeout(request)
         } catch (e: Exception) {
