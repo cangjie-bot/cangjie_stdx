@@ -470,7 +470,7 @@ public class Package <: SyntaxTreeNode {
     private let srcFileImpls: Array<(SyntaxNodeImpl, String)>
 
     init(isMacroPkg_: Bool, name_: String, srcFileImpls: Array<(SyntaxNodeImpl, String)>) {
-        super(CodePositionRange(), Terminal(SyntaxNodeKind.Invalid), None)
+        super(CodePositionRange(), NonTerminal(SyntaxNodeKind.Package), None)
         this.isMacroPkg_ = isMacroPkg_
         this.name_ = name_
         this.srcFileImpls = srcFileImpls

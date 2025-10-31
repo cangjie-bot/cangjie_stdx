@@ -14,6 +14,7 @@ import std.deriving.*
 enum SyntaxNodeKind <: ToString {
     /* NonTerminal */
     | File /* SourceFile */
+    | Package
     | FeaturesDirective
     | FeatureId
     | PackageSpec

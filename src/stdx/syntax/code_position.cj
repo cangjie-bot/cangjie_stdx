@@ -10,6 +10,14 @@ package stdx.syntax
 
 class FileInfos {
     FileInfos(let name: String, let path: String) {}
+
+    operator func ==(right: FileInfos): Bool {
+        if (this.name == right.name && this.path == right.path) {
+            true
+        } else {
+            false
+        }
+    }
 }
 
 struct CodePosition {
@@ -53,6 +61,14 @@ struct CodePosition {
             CodePosition(this.line, this.column + Int32(right.column), fileInfo)
         }
     }
+    
+    operator func ==(right: CodePosition): Bool {
+        if (this.fileInfo == right.fileInfo && this.line == right.line && this.column == right.column) {
+            true
+        } else {
+            false
+        }
+    }
 }
 
 public struct CodePositionRange {
@@ -72,6 +88,12 @@ public struct CodePositionRange {
     public prop filePath: String {
         get() {
             return fileInfo.path
+        }
+    }
+
+    prop begin: CodePosition {
+        get() {
+            return CodePosition(beginLine, beginColumn, fileInfo)
         }
     }
 
