@@ -10,6 +10,13 @@ package stdx.syntax
 
 import std.collection.ArrayList
 import std.deriving.*
+import std.ast.ToTokens
+
+extend Token {
+    func addPosition(pos: CodePosition) {
+        this.addPosition(0, pos.line, pos.column)
+    }
+}
 /**
  * @brief Abstract sealed class representing a node in the syntax tree.
  *
@@ -41,6 +48,95 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
      */
     public open func toString(): String {
         nodeImpl.preWhiteSpaceString() + nodeImpl.toString()
+    }
+
+    private func NonTerminalToToken(nt: NonTerminal, startPos: CodePosition): Token {
+        var strVal = ""
+        var isSingleQuote = false
+        var delimiterNum: UInt16 = 1
+        var sz = nt.children.size
+        match (nt.children[sz - 1]) {
+            case rt: RepeatedTerminal =>
+                delimiterNum = UInt16(rt.repeat)
+                sz -= 1
+            case _ => ()
+        }
+        // sz is the position of quote
+        if (nt.children[sz - 1].kind.toString() == "'" || nt.children[sz - 1].kind.toString() == "'''") {
+            isSingleQuote = true
+        }
+        // get token kind for literal
+        let tokenKind = match (nt.kind) {
+            case SyntaxNodeKind.RuneLiteral => TokenKind.RUNE_LITERAL
+            case SyntaxNodeKind.LineStringLiteral =>
+                if (isSingleQuote) {
+                    TokenKind.SINGLE_QUOTED_STRING_LITERAL
+                } else {
+                    TokenKind.STRING_LITERAL
+                }
+            case SyntaxNodeKind.MultiLineStringLiteral => TokenKind.MULTILINE_STRING
+            case SyntaxNodeKind.MultiLineRawStringLiteral => TokenKind.MULTILINE_RAW_STRING
+            case _ => TokenKind.ILLEGAL
+        }
+        // get value for string literal
+        for (child in nt.children) {
+            match (child) {
+                case vt: ValuedTerminal => strVal += vt.value
+                case nt: NonTerminal => strVal += nt.toString()
+                case _ => ()
+            }
+        }
+        var token = Token(tokenKind, strVal).addPosition(startPos)
+        token.isSingleQuote = isSingleQuote
+        token.delimiterNum = delimiterNum
+        return token
+    }
+
+    public open func toTokens(): Tokens {
+        let startPos = nodePos.getBegin()
+        let nodeImplFlatter = nodeImpl.flatter()
+        let sz = nodeImplFlatter.size
+        let tks = ArrayList<Token>()
+        var offset = Offset()
+        for (i in 0..sz) {
+            let tk = nodeImplFlatter[i]
+            var token = Token()
+            match (tk) {
+                // string literal special handling
+                case nt: NonTerminal =>
+                    token = NonTerminalToToken(nt, startPos + offset)
+                case _ =>
+                    // special handling for TokenTerminal
+                    let tokenKind = if (let Some(tt) <- (tk as TokenTerminal)) {
+                        tt.tokenKind
+                    } else {
+                        tk.kind.toTokenKind()
+                    }
+                    // skip illegal token like space
+                    if (tokenKind == TokenKind.ILLEGAL) {
+                        offset.moveNode(tk)
+                        continue
+                    }
+                    // convert Terminal to Token
+                    token = match (tk) {
+                        case rt: RepeatedTerminal =>
+                            for (_ in 0..rt.repeat) {
+                                let tk = Token(tokenKind).addPosition(startPos + offset)
+                                tks.add(tk)
+                                offset.moveString(tk.value)
+                            }
+                            continue
+                            Token(TokenKind.ILLEGAL)
+                        case vt: ValuedTerminal => Token(tokenKind, vt.value)
+                        case tt: TokenTerminal => Token(tt.tokenKind, tt.value)
+                        case _ => Token(tokenKind, tk.toString())
+                    }
+                    token = token.addPosition(startPos + offset)
+            }
+            tks.add(token)
+            offset.moveNode(tk)
+        }
+        Tokens(tks)
     }
 
     init(nodePos: CodePositionRange, nodeImpl: SyntaxNodeImpl, parentNode: ?SyntaxTreeNode,
