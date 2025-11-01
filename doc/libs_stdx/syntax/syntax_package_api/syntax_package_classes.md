@@ -417,21 +417,21 @@ public prop rhs: Expr
 ### init(AssignOpKind, Expr, Expr, Array\<Comment>)
 
 ```cangjie
-public init(assignOpKind_: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = [])
+public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [AssignExpr](#class-assignexpr) 对象，表示赋值表达式。
 
 参数：
 
-- assignOpKind_: [AssignOpKind](syntax_package_enums.md#enum-assignopkind) - 赋值操作符类型。
+- assignOpKind: [AssignOpKind](syntax_package_enums.md#enum-assignopkind) - 赋值操作符类型。
 - lhs: [Expr](#class-expr) - 左操作数表达式。
 - rhs: [Expr](#class-expr) - 右操作数表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 异常：
 
-- Exception - 当 `assignOpKind_` 不在 [AssignOpKind](syntax_package_enums.md#enum-assignopkind) 中时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `assignOpKind` 不在 [AssignOpKind](syntax_package_enums.md#enum-assignopkind) 中时，抛出异常，异常中包含报错提示信息。
 
 ### func getAssignOpPos()
 
