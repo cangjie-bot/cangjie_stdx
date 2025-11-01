@@ -27,7 +27,8 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [ArrayLiteral](./syntax_package_api/syntax_package_classes.md#class-arrayliteral) | 表示 `Array` 字面量节点。 |
 | [AsExpr](./syntax_package_api/syntax_package_classes.md#class-asexpr) | 表示一个类型转换表达式。 |
 | [AssignExpr](./syntax_package_api/syntax_package_classes.md#class-assignexpr) | 表示赋值表达式节点。 |
-| [ASTVisitor](./syntax_package_api/syntax_package_classes.md#class-astvisotor) | 语法树的通用访问器基类。 |
+| [ASTRewriter](./syntax_package_api/syntax_package_classes.md#class-astrewriter) | 语法树的通用重写器基类。 |
+| [ASTVisitor](./syntax_package_api/syntax_package_classes.md#class-astvisitor) | 语法树的通用访问器基类。 |
 | [AtomicType](./syntax_package_api/syntax_package_classes.md#class-atomictype) | 表示一个基本类型节点。 |
 | [BinaryExpr](./syntax_package_api/syntax_package_classes.md#class-binaryexpr) | 表示一个二元操作表达式节点。 |
 | [Block](./syntax_package_api/syntax_package_classes.md#class-block) | 表示块节点。 |

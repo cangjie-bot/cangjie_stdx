@@ -1818,7 +1818,8 @@ public class LetPattern <: SyntaxTreeNode {
         get() {
             let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfos.exprPropInfo.index]
             let offset = propInfos.exprPropInfo.offset
-            cast<SymbolRef>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
+            // might be SymbolRef or MemberAccess
+            cast<Expr>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
         }
     }
 

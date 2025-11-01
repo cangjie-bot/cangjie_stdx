@@ -445,6 +445,60 @@ public func getAssignOpPos(): CodePositionRange
 
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回赋值操作符的位置。
 
+## class ASTRewriter
+
+```cangjie
+public open class ASTRewriter {}
+```
+
+功能：语法树的重写器基类，提供对语法树节点的遍历时重写节点内容的能力。
+
+说明：
+
+- 通过 `walk` 方法自顶向下遍历语法树，并在遍历过程中调用 `rewrite` 方法对节点进行重写。
+- 支持对任意语法树节点进行遍历及重写。
+- 重写过程中会保持节点类型一致性，若重写后节点类型发生变化将抛出异常。
+
+### func walk
+
+```cangjie
+public func walk(startPoint: SyntaxTreeNode, detach!: Bool = false): SyntaxTreeNode
+```
+
+功能：对指定的语法树节点进行遍历与重写。
+
+参数：
+- startPoint: [SyntaxTreeNode](#class-syntaxtreenode) - 起始节点，可以是任意语法树节点或整包节点。
+- detach!: Bool - 是否断开与父节点的关联，默认为 `false`。
+
+返回值：
+
+- [SyntaxTreeNode](#class-syntaxtreenode) - 重写后的新语法树节点。
+
+说明：
+
+- 若 `detach` 为 `true`，遍历后产生一颗独立的新树，新树的父节点为空；若 `detach` 为 `false`，会向上刷新父节点中的内容。
+
+### func rewrite
+
+```cangjie
+public open func rewrite(node: SyntaxTreeNode): SyntaxTreeNode
+```
+
+功能：重写单个语法树节点，默认实现为直接返回原节点，子类可重写此方法以实现自定义的节点替换逻辑。
+
+参数：
+
+- node: [SyntaxTreeNode](#class-syntaxtreenode) - 待重写的语法树节点。
+
+返回值：
+
+- [SyntaxTreeNode](#class-syntaxtreenode) - 重写后的语法树节点。
+
+异常：
+
+- Exception - 当重写后的节点类型与原始节点类型不一致时，抛出异常。
+
 ## class ASTVisitor
 
 ```cangjie

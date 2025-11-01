@@ -74,10 +74,13 @@ public open class ASTRewriter {
                     let newNode = walkAndRewrite(n)
                     hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, child)
                     newNodeImpl.add(newNode.nodeImpl)
+                    // VArrayType only has one child: Property 'size' is NonTerminal, not SyntaxTreeNode
+                    if (node.nodeImpl.kind == SyntaxNodeKind.VArrayType) {
+                        break
+                    }
                 }
             }
-            case t: Terminal => throw Exception("SyntaxNodeImpl kind not match, node.nodeImpl.kind: ${t.toString()}")
-            case _ => throw Exception("SyntaxNodeImpl kind not match")
+            case _ => throw Exception("RewriteException: SyntaxNodeImpl kind not match.")
         }
         let rewritedNode = if (hasRewritedChild) {
             let nodeImpl = NonTerminal(node.nodeImpl.kind, newNodeImpl.toArray())
@@ -115,7 +118,8 @@ public open class ASTRewriter {
         let list = (listImpl as NonTerminal).getOrThrow()
         let newNodeImpl = ArrayList<SyntaxNodeImpl>()
         for (child in list.children) {
-            if (child is NonTerminal) {
+            // foreign is NonTerminal in ModifierList, but is not SyntaxTreeNode(Modifier)
+            if (child is NonTerminal && child.toString() != "foreign") {
                 let n = childNodeList.remove(at: 0)
                 let newNode = walkAndRewrite(n)
                 hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, child)
@@ -196,7 +200,7 @@ func getNewPackage(oldPackage: Package, fileImpl: SyntaxNodeImpl, filePath: Stri
 
 // Refresh the parent node, replace the old child nodes in the parent node with new ones, and create a new parent node.
 func getNewParent(oldParent: ?SyntaxTreeNode, impl: SyntaxNodeImpl, targetPos: CodePosition): ?SyntaxTreeNode {
-    if (let Some(pkg) <- (oldParent.getOrThrow() as Package)) {
+    if (let Some(node) <- oldParent && let Some(pkg) <- (node as Package)) {
         return getNewPackage(pkg, impl, targetPos.filePath)
     }
     return if (let Some(node) <- oldParent) {
@@ -635,11 +639,11 @@ class ChildCollector <: ASTVisitor {
                     childNodes.add(retVal)
                 }
             case sourceFile: SourceFile =>
-                for (importList in sourceFile.importLists) {
-                    childNodes.add(importList)
-                }
                 if (let Some(pkgHeader) <- sourceFile.pkgHeader) {
                     childNodes.add(pkgHeader)
+                }
+                for (importList in sourceFile.importLists) {
+                    childNodes.add(importList)
                 }
                 for (decl in sourceFile.topLevelDecls) {
                     childNodes.add(decl)
