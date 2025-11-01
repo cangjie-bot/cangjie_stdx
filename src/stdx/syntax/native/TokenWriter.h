@@ -23,7 +23,6 @@
 using namespace Cangjie;
 
 namespace TokenWriter {
-    std::vector<Token> GetTokensFromBytes(const uint8_t* pBuffer);
 }
 
 #endif /* CANGJIE_TOKEN_SERIALIZATION_H */

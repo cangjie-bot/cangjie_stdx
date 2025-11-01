@@ -589,6 +589,17 @@ public class Package <: SyntaxTreeNode {
         res
     }
 
+    public func toTokens(): Tokens {
+        var tks = Tokens()
+        let srcFile_ = srcFile
+        let size = srcFile_.size
+        for (i in 0..size) {
+            tks += Token(TokenKind.COMMENT, NEWLINE + "// " + srcFile_[i].name + NEWLINE)
+            tks += srcFile_[i].toTokens()
+        }
+        tks
+    }
+
     /**
      * @brief Indicates if the package is a macro package.
      *
