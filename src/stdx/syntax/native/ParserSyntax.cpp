@@ -56,3 +56,8 @@ OwnedPtr<Node> ParserSyntax::ParseExprOrDecl(ScopeKind sk)
     }
     return nullptr;
 }
+
+void ParserSyntax::AttachComment(std::vector<OwnedPtr<AST::Node>>& nodes)
+{
+    AttachCommentToNodes(nodes);
+}
