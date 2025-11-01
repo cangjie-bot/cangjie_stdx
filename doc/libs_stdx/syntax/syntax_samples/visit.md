@@ -7,7 +7,7 @@ ASTVisitor 是 SyntaxTreeNode 访问器的基类。
 使用方式：
 1. 继承 `ASTVisitor` 并重写 `preAction` / `postAction` 或特定 `visit*` 方法；
 2. 调用 `walk(root)` 从任意节点开始遍历；
-3. 通过返回 [PreActionMode](#enum-preactionmode) 或 [PostActionMode](#enum-postactionmode) 控制遍历流程。
+3. 通过返回 [PreActionMode](../syntax_package_api/syntax_package_enums.md#enum-preactionmode) 或 [PostActionMode](../syntax_package_api/syntax_package_enums.md#enum-postactionmode) 控制遍历流程。
 
 假设我们有一段需要分析的代码：
 
