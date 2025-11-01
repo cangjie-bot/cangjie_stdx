@@ -737,11 +737,11 @@ public open class ASTVisitor {
 
     private func visitSourceFile(node: SourceFile) {
         // name and path are String, no need to walk
-        for (importList in node.importLists) {
-            walk(importList)
-        }
         if (let Some(pkgHeader) <- node.pkgHeader) {
             walk(pkgHeader)
+        }
+        for (importList in node.importLists) {
+            walk(importList)
         }
         for (decl in node.topLevelDecls) {
             walk(decl)
