@@ -321,8 +321,8 @@ public class AssignExpr <: Expr {
     /**
      * @brief Initialize a new AssignExpr node.
      */
-    public init(assignOpKind_: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = []) {
-        super(SyntaxNodeImplCreator.createAssignExprImpl(assignOpKind_, lhs, rhs, comments: comments))
+    public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createAssignExprImpl(assignOpKind, lhs, rhs, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<AssignExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
