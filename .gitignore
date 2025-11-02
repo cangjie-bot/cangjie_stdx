@@ -1,6 +1,8 @@
 .idea
 .VSCodeCounter
 .vscode
+.arts
+.cache
 .vs
 .codecheck
 
@@ -8,5 +10,6 @@ build_temp/
 target/
 third_party/
 
+cjpm.lock
 src/stdx/encoding/json/native/*.a
 src/stdx/encoding/json/native/json_api.h
