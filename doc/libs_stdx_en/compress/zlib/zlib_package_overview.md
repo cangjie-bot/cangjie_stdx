@@ -2,8 +2,6 @@
 
 ## Function Description
 
-compress provides compression and decompression functionality.
-
 Compression refers to representing data with fewer bits to enable more efficient storage and transmission. In practical applications, compression is widely used in file compression, web page compression, database backups, etc.
 
 The implementation of compression relies on compression algorithms. Mainstream compression algorithms include deflate, lz77, lzw, etc. These algorithms can remove redundant information from data or replace it with more compact representations, thereby achieving data compression. Currently, the deflate algorithm is used.
@@ -20,7 +18,7 @@ This package provides streaming compression and decompression functionality, mea
 
 > **Note:**
 >
-> File packaging functionality is not yet supported in this package.
+> For file packaging, please use stdx.compress.tar for archiving or use the stdx.compress combination tool TarGzip for archive compression operations.
 
 ## API List
 
