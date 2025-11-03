@@ -204,9 +204,9 @@ public init()
 
 ```cangjie
 public struct TlsServerConfig <: TlsConfig {
-    public var clientIdentityRequired: TlsClientIdentificationMode = Disabled
-    public var keylogCallback: ?(TlsSocket, String) -> Unit = None
-    public var verifyMode: CertificateVerifyMode = CertificateVerifyMode.Default
+    public mut prop clientIdentityRequired: TlsClientIdentificationMode
+    public mut prop keylogCallback: ?(TlsSocket, String) -> Unit
+    public mut prop verifyMode: CertificateVerifyMode
     public init(certChain: Array<X509Certificate>, certKey: PrivateKey)
 }
 ```
