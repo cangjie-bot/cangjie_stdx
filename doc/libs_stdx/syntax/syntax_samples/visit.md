@@ -24,6 +24,8 @@ main(){
 
 下面演示如何继承 `ASTVisitor`，在遍历过程中统计所有 `BinaryExpr` 节点，并在遇到第一个 `CallExpr` 后立即停止遍历：
 
+<!-- compile -->
+
 ```cangjie
 import stdx.syntax.*
 
