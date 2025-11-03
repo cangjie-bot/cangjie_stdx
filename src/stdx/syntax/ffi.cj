@@ -29,6 +29,9 @@ let BUFFER_HEADER_SIZE: Int64 = 4
  * Returns Int32 value from pointer.
  */
 func getInt32FromUnsafePointer(ptr: CPointer<UInt8>): Int32 {
+    if (ptr.isNull()) {
+        throw IllegalArgumentException("the input pointer is null.\n")
+    }
     var buf = Array<UInt8>(BUFFER_HEADER_SIZE, {x: Int64 => unsafe { ptr.read(x) }})
     return getInt32(buf[0..4])
 }
