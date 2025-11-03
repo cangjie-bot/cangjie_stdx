@@ -37,6 +37,7 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [CallExpr](./syntax_package_api/syntax_package_classes.md#class-callexpr) | 表示函数调用节点。 |
 | [CatchPattern](./syntax_package_api/syntax_package_classes.md#class-catchpattern) | 表示一个捕获模式。 |
 | [ClassDecl](./syntax_package_api/syntax_package_classes.md#class-classdecl) | 表示一个类声明节点。 |
+| [Comment](./syntax_package_api/syntax_package_classes.md#class-comment) | 表示一个注释节点。 |
 | [CompositeType](./syntax_package_api/syntax_package_classes.md#class-compositetype) | 表示一个复合类型节点。 |
 | [ConjunctionCondition](./syntax_package_api/syntax_package_classes.md#class-conjunctioncondition) | 表示原子条件的逻辑合取。 |
 | [ConstPattern](./syntax_package_api/syntax_package_classes.md#class-constpattern) | 表示常量模式节点。 |
@@ -138,6 +139,7 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [AtomicTypeKind](./syntax_package_api/syntax_package_enums.md#enum-atomictypekind) | 表示原子类型的种类，包括布尔类型、整数类型、浮点类型、空类型等。|
 | [AtOpKind](./syntax_package_api/syntax_package_enums.md#enum-atopkind) | 表示注解操作符的种类，包括 `@`、`@!` 等。|
 | [BinaryOpKind](./syntax_package_api/syntax_package_enums.md#enum-binaryopkind) | 表示二元操作符的类型，包括 `+`、`-`、`*`、 `/` 等。|
+| [CommentKind](./syntax_package_api/syntax_package_enums.md#enum-commentkind) | 表示注释的类型，包括块注释、文档注释、行注释等。|
 | [DiagnosticInfo](./syntax_package_api/syntax_package_enums.md#enum-diagnosticinfo) | 表示语法树诊断信息的类型，包括 `Warning`, `Error` 等。|
 | [FuncKind](./syntax_package_api/syntax_package_enums.md#enum-funckind) | 表示声明函数的类型，包括外部函数、普通函数、构造器函数等。|
 | [ImportKind](./syntax_package_api/syntax_package_enums.md#enum-importkind) | 表示引用的类型，包括 `Alias`、`All`、`Multi`、`Single` 等 。|
