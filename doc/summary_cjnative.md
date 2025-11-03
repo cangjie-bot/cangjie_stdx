@@ -120,6 +120,7 @@
         - [server](libs_stdx/net/http/http_samples/http_server.md)
         - [webSocket](libs_stdx/net/http/http_samples/webSocket.md)
 - [stdx.net.tls](libs_stdx/net/tls/tls_package_overview.md)
+    - [类型别名](libs_stdx/net/tls/tls_package_api/tls_package_type.md)
     - [类](libs_stdx/net/tls/tls_package_api/tls_package_classes.md)
     - [枚举](libs_stdx/net/tls/tls_package_api/tls_package_enums.md)
     - [结构体](libs_stdx/net/tls/tls_package_api/tls_package_structs.md)
