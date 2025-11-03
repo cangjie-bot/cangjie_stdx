@@ -68,10 +68,10 @@ public func getTlsServerSession(name: String): TlsSession
 
 ```cangjie
 public class KeylessTlsServerConfig <: TlsConfig {
-    public var clientIdentityRequired: TlsClientIdentificationMode = Disabled
-    public var keylogCallback: ?(TlsSocket, String) -> Unit = None
-    public var verifyMode: CertificateVerifyMode = CertificateVerifyMode.Default
-    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+    public mut prop clientIdentityRequired: TlsClientIdentificationMode
+    public mut prop keylogCallback: ?(TlsSocket, String) -> Unit
+    public mut prop verifyMode: CertificateVerifyMode
+    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback!: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
 }
 ```
 
@@ -106,7 +106,7 @@ public mut prop certificate: ?(Array<Certificate>, PrivateKey)
 
 > **注意：**
 >
-> 该属性返回的 `PrivateKey` 是一个无意义的 dummy key，与 `Array\<Certifiace>` 无关。
+> 该属性返回的 `PrivateKey` 是一个无意义的 dummy key，与 `Array<Certifiace>` 无关。
 
 类型：?(Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>, [PrivateKey](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey))
 
@@ -200,7 +200,7 @@ public mut prop verifyMode: CertificateVerifyMode
 ### init(Array\<X509Certificate>, KeylessSignFunc, ?KeylessDecryptFunc)
 
 ```cangjie
-public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback!: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
 ```
 
 功能：构造 [KeylessTlsServerConfig](./tls_package_classes.md#class-keylesstlsserverconfig) 对象。
