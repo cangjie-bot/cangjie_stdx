@@ -240,7 +240,6 @@ static int KeylessImport(void* keyData, int selection, const OSSL_PARAM params[]
         return 1;
     }
     return 0;
-
 }
 
 static void* KeylessNew(void* provctx)
@@ -526,14 +525,14 @@ static const OSSL_PARAM* KeylessGettableParams(void* provctx)
  */
 static const OSSL_PARAM* KeylessImportTypes(int selection)
 {
-    static const OSSL_PARAM import_public_union[] = {OSSL_PARAM_BN(OSSL_PKEY_PARAM_RSA_N, NULL, 0),
-                                                     OSSL_PARAM_BN(OSSL_PKEY_PARAM_RSA_E, NULL, 0),
-                                                     OSSL_PARAM_octet_string(OSSL_PKEY_PARAM_PUB_KEY, NULL, 0),
-                                                     OSSL_PARAM_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME, NULL, 0),
-                                                     OSSL_PARAM_utf8_string("KEYLESS_ID", NULL, 0),
-                                                     OSSL_PARAM_END};
+    static const OSSL_PARAM params[] = {OSSL_PARAM_BN(OSSL_PKEY_PARAM_RSA_N, NULL, 0),
+                                        OSSL_PARAM_BN(OSSL_PKEY_PARAM_RSA_E, NULL, 0),
+                                        OSSL_PARAM_octet_string(OSSL_PKEY_PARAM_PUB_KEY, NULL, 0),
+                                        OSSL_PARAM_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME, NULL, 0),
+                                        OSSL_PARAM_utf8_string("KEYLESS_ID", NULL, 0),
+                                        OSSL_PARAM_END};
     if (selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
-        return import_public_union;
+        return params;
     }
     return NULL;
 }
@@ -550,7 +549,7 @@ static int KeylessExport(void* keyData, int selection, OSSL_CALLBACK* exportCb, 
         return 0;
     }
 
-    OSSL_PARAM params[6];
+    OSSL_PARAM params[6]; /* max 5 params(@see KeylessExportTypes) + end */
     size_t idx = 0;
 
     if (selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
