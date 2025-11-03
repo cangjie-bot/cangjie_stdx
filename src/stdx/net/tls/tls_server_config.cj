@@ -222,7 +222,7 @@ extend TlsContext {
         }
         
         let (cert, _) = cfg.serverCertificate // The server certificate is not supposed to be null
-        setCertificateChainAndCallback(cert, cfg.keylessSignCallback, cfg.keylessDecryptCallback)
+        setCertificateChainAndCallback(cert, cfg._keylessSignFunc, cfg._keylessDecryptFunc)
 
         setDHParam(cfg.dhParameters)
 
@@ -285,8 +285,8 @@ extend TlsContext {
 * Keyless TLS server configuration.
 */
 
-public type KeylessSignCallback = (hashValue: Array<Byte>) -> Array<Byte>
-public type KeylessDecryptCallback = (cipherText: Array<Byte>) -> Array<Byte>
+public type KeylessSignFunc = (hashValue: Array<Byte>) -> Array<Byte>
+public type KeylessDecryptFunc = (cipherText: Array<Byte>) -> Array<Byte>
 
 type CKeylessSignCallback = CFunc<(CString, CString, CPointer<Byte>, Int64, CPointer<Int64>) -> CPointer<Byte>>
 type CKeylessDecryptCallback = CFunc<(CString, CPointer<Byte>, Int64, CPointer<Int64>) -> CPointer<Byte>>
@@ -305,6 +305,9 @@ public class KeylessTlsServerConfig <: TlsConfig {
     private var _supportedCipherSuites: Map<TlsVersion, Array<String>> = HashMap<TlsVersion, Array<String>>()
     /* Whether we require client to send certificate */
     private var _clientIdentityRequired: TlsClientIdentificationMode = Disabled
+
+    internal var _keylessSignFunc: KeylessSignFunc
+    internal var _keylessDecryptFunc: ?KeylessDecryptFunc = None<KeylessDecryptFunc>
 
     /*
      * Callback that is invoked for every handshake providing TLS initial
@@ -428,17 +431,15 @@ public class KeylessTlsServerConfig <: TlsConfig {
         }
     }
 
-    public var keylessSignCallback: KeylessSignCallback
-    public var keylessDecryptCallback: ?KeylessDecryptCallback = None<KeylessDecryptCallback>
 
     private static let dummyPrivateKey = RSAPrivateKey(2048)
-    
-    public init(cert: Array<X509Certificate>, keylessSignCallback: KeylessSignCallback, keylessDecryptCallback!: ?KeylessDecryptCallback = None<KeylessDecryptCallback>) {
-        if (cert.isEmpty()) {
+
+    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback!: ?KeylessDecryptFunc = None<KeylessDecryptFunc>) {
+        if (certChain.isEmpty()) {
             throw IllegalArgumentException("The server certificate cannot be empty.")
         }
-        this.keylessSignCallback = keylessSignCallback
-        this.keylessDecryptCallback = keylessDecryptCallback
-        this._certificate = (cert, KeylessTlsServerConfig.dummyPrivateKey)
+        this._keylessSignFunc = signCallback
+        this._keylessDecryptFunc = decryptCallback
+        this._certificate = (certChain, KeylessTlsServerConfig.dummyPrivateKey)
     }
 }
