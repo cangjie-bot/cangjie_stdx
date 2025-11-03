@@ -72,16 +72,16 @@ public class GnuTarEntry <: PosixTarEntry {
         super(header, stream)
     }
 
-    public init(filePath: String) {
-        this(Path(filePath))
+    public init(path: String) {
+        this(Path(path))
     }
 
-    public init(filePath: Path) {
-        super(filePath)
+    public init(path: Path) {
+        super(path)
 
         _header.format = TarEntryFormat.Gnu
 
-        let fileInfo = FileInfo(filePath)
+        let fileInfo = FileInfo(path)
         _header.aTime = fileInfo.lastAccessTime
         _header.cTime = fileInfo.creationTime
     }
@@ -95,7 +95,7 @@ public class GnuTarEntry <: PosixTarEntry {
         GnuExtensionTarEntry(name, isLinkName).writeTo(target)
     }
 
-    protected override func writeTo(target: OutputStream): Unit {
+    public override func writeTo(target: OutputStream): Unit {
         let buffer = TarHeaderBuffer()
         if (name.size > FieldLocation.NAME.length) {
             writeGnuExtensionEntry(target, name, false)

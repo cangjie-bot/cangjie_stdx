@@ -119,12 +119,12 @@ public class PaxTarEntry <: PosixTarEntry {
         return _header.paxData.get(key)
     }
 
-    public init(filePath: String) {
-        this(Path(filePath))
+    public init(path: String) {
+        this(Path(path))
     }
 
-    public init(filePath: Path) {
-        super(filePath)
+    public init(path: Path) {
+        super(path)
 
         _header.format = TarEntryFormat.Pax
     }
@@ -133,7 +133,7 @@ public class PaxTarEntry <: PosixTarEntry {
         PaxExtensionTarEntry(paxData).writeTo(target)
     }
 
-    protected override func writeTo(target: OutputStream): Unit {
+    public override func writeTo(target: OutputStream): Unit {
         let buffer = TarHeaderBuffer()
         let paxData = HashMap(_header.paxData)
         if (name.size > FieldLocation.NAME.length) {
