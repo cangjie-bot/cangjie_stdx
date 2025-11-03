@@ -62,7 +62,7 @@ spawn {
 
 引用上述银行账户的例子，为了避免线程安全问题，我们可以使用 Actor 模型来设计一个专门处理账户操作的 actor。
 
-首先，我们可以使用 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-macro) 注解将 `Account` 类标记为一个 actor。然后，使用 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-macro) 注解来标记 deposit ， withdraw 和 getBalance 函数：
+首先，我们可以使用 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-宏) 注解将 `Account` 类标记为一个 actor。然后，使用 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-宏) 注解来标记 deposit ， withdraw 和 getBalance 函数：
 
 ```cangjie
 @Actor
@@ -92,7 +92,7 @@ public class Account {
 }
 ```
 
-对于 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-macro) 和 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-macro) 的使用规则跟限制，请参考对应的文档。
+对于 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-宏) 和 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-宏) 的使用规则跟限制，请参考对应的文档。
 
 我们可以通过调用该类的构造函数来创建一个 Account 实例，例如：
 
@@ -296,7 +296,7 @@ func bar() {
 
 用户可以为接收函数指定优先级，从而使高优先级的接收函数有可能在低优先级的接收函数之前执行。
 
-首先，用户需要通过在 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-macro) 宏上加上 `enableReceiverPriority: true` 选项，用于启用 actor 接收函数之间的优先级。例如：
+首先，用户需要通过在 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-宏) 宏上加上 `enableReceiverPriority: true` 选项，用于启用 actor 接收函数之间的优先级。例如：
 
 ```cangjie
 @Actor[enableReceiverPriority: true]

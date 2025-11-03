@@ -8,7 +8,7 @@ public class DoubleResumeException <: Exception {
 }
 ```
 
-功能：当尝试对一个已经 resume（恢复）过的 [Resumption](./effect_package_classes.md#class-resumptionres-ret) 再次进行恢复时，将抛出此异常。Effect Handler 的语义要求每个 [Resumption](./effect_package_classes.md#class-resumptionres-ret) 只能被恢复一次，以防止程序状态不一致或不可预期的行为。
+功能：当尝试对一个已经 resume（恢复）过的 `Resumption` 再次进行恢复时，将抛出此异常。Effect Handler 的语义要求每个 `Resumption` 只能被恢复一次，以防止程序状态不一致或不可预期的行为。
 
 父类型：
 
