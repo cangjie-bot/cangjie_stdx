@@ -7037,6 +7037,7 @@ sealed abstract class SyntaxTreeNode <: ToString & ToTokens & Hashable & Equatab
 父类型：
 
 - ToString
+- ToTokens
 - Hashable
 - Equatable\<[SyntaxTreeNode](#class-syntaxtreenode)>
 
