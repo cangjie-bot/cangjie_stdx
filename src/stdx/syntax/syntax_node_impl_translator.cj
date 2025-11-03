@@ -297,7 +297,7 @@ class SyntaxNodeImplTranslator {
         if (let Some(tkNode) <- tokenNode && let Some(tk) <- (tkNode as TokenTerminal)) {
             content = tk.value
         }
-        if (content.startsWith("/**")) {
+        if (content.startsWith("/**") && content != "/**/") {
             kind = CommentKind.Document
         } else if (content.startsWith("/*")) {
             kind = CommentKind.Block
