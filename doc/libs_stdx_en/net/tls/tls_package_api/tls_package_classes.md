@@ -68,10 +68,10 @@ Return Value:
 
 ```cangjie
 public class KeylessTlsServerConfig <: TlsConfig {
-    public var clientIdentityRequired: TlsClientIdentificationMode = Disabled
-    public var keylogCallback: ?(TlsSocket, String) -> Unit = None
-    public var verifyMode: CertificateVerifyMode = CertificateVerifyMode.Default
-    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+    public mut prop clientIdentityRequired: TlsClientIdentificationMode
+    public mut prop keylogCallback: ?(TlsSocket, String) -> Unit
+    public mut prop verifyMode: CertificateVerifyMode
+    public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback!: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
 }
 ```
 
@@ -105,7 +105,7 @@ Function: Sets or gets the server certificate and corresponding private key file
 
 > **Note:**
 >
-> The `PrivateKey` returned by this property is a meaningless dummy key, unrelated to `Array\<Certificate>`.
+> The `PrivateKey` returned by this property is a meaningless dummy key, unrelated to `Array<Certificate>`.
 
 Type: ?(Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>, [PrivateKey](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey))
 
@@ -198,7 +198,7 @@ Type: [CertificateVerifyMode](../common/tls_common_package_api/tls_common_packag
 ### init(Array\<X509Certificate>, KeylessSignFunc, ?KeylessDecryptFunc)
 
 ```cangjie
-public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
+public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, decryptCallback!: ?KeylessDecryptFunc = None<KeylessDecryptFunc>)
 ```
 
 Function: Constructs a [KeylessTlsServerConfig](./tls_package_classes.md#class-keylesstlsserverconfig) object.

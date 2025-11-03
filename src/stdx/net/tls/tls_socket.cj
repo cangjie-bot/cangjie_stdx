@@ -28,7 +28,7 @@ foreign {
 public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
     private static let idCounter = AtomicInt64(1)
 
-    static var keylessCallback = HashMap<String, (KeylessSignCallback, ?KeylessDecryptCallback)>()
+    static var keylessCallback = HashMap<String, (KeylessSignFunc, ?KeylessDecryptFunc)>()
 
     static let defaultTimeout: Duration = Duration.second * 30
 
@@ -86,7 +86,7 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
             let cp = acquireArrayRawData(data)
             let keyId = CJ_TLS_GetCertId(cp.pointer, data.size)
             releaseArrayRawData(cp)
-            TlsSocket.keylessCallback.add(keyId.toString(), (serverConfig.keylessSignCallback, serverConfig.keylessDecryptCallback))
+            TlsSocket.keylessCallback.add(keyId.toString(), (serverConfig.KeylessSignFunc, serverConfig.KeylessDecryptFunc))
             LibC.free(keyId)
         }
         
