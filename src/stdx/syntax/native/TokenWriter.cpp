@@ -12,7 +12,6 @@
  * This file implements the NodeWriter.
  */
 #include "TokenWriter.h"
-#include <algorithm>
 
 using namespace Cangjie;
 

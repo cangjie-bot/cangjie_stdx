@@ -55,6 +55,9 @@ ParseRes* createParseResult() {
 }
 
 ParseRes* getParseResult(ParseRes* result, DiagnosticEngine& diag, SourceManager& sm, Ptr<AST::Node> nodePtr) {
+    if (result == nullptr) {
+        return nullptr;
+    }
     // Analyzing Errors and Warnings
     if (diag.GetErrorCount() || diag.GetWarningCount()) {
         result->eMsg = getDiagInfos(diag);
@@ -71,6 +74,9 @@ ParseRes* getParseResult(ParseRes* result, DiagnosticEngine& diag, SourceManager
 
 std::vector<Token> tokensFormatter(const uint8_t* tokensBytes)
 {
+    if (tokensBytes == nullptr) {
+        return {};
+    }
     std::vector<Token> oldTokens = TokenSerialization::GetTokensFromBytes(tokensBytes);
     std::vector<Position> escapePosVec = {};
     MacroFormatter formatter = MacroFormatter(oldTokens, escapePosVec, 1);
@@ -104,6 +110,9 @@ std::vector<Token> tokensFormatter(const uint8_t* tokensBytes)
 extern "C" {
 ParseRes* CJ_ParseFile(const char* path)
 {
+    if (path == nullptr) {
+        return nullptr;
+    }
     Cangjie::ICE::TriggerPointSetter iceSetter(CompileStage::PARSE);
     DiagnosticEngine diag;
     SourceManager sm;
@@ -121,6 +130,9 @@ ParseRes* CJ_ParseFile(const char* path)
 
 ParseRes* CJ_ParseText(const char* text)
 {
+    if (text == nullptr) {
+        return nullptr;
+    }
     Cangjie::ICE::TriggerPointSetter iceSetter(CompileStage::PARSE);
     DiagnosticEngine diag;
     SourceManager sm;
@@ -140,6 +152,9 @@ ParseRes* CJ_ParseText(const char* text)
 
 ParseRes* CJ_ParseTokens(const uint8_t* tokensBytes, int64_t* tokenCounter, bool refreshPos)
 {
+    if (tokensBytes == nullptr) {
+        return nullptr;
+    }
     Cangjie::ICE::TriggerPointSetter iceSetter(CompileStage::PARSE);
     DiagnosticEngine diag;
     SourceManager sm;
@@ -164,6 +179,9 @@ ParseRes* CJ_ParseTokens(const uint8_t* tokensBytes, int64_t* tokenCounter, bool
 
 ParseRes* CJ_ParseAnnotationArguments(const uint8_t* tokensBytes)
 {
+    if (tokensBytes == nullptr) {
+        return nullptr;
+    }
     Cangjie::ICE::TriggerPointSetter iceSetter(CompileStage::PARSE);
     std::vector<Token> tokens = TokenSerialization::GetTokensFromBytes(tokensBytes);
     DiagnosticEngine diag;
@@ -189,6 +207,9 @@ ParseRes* CJ_ParseAnnotationArguments(const uint8_t* tokensBytes)
 
 void CJ_CheckAddSpace(const uint8_t* tokBytes, bool* spaceFlag)
 {
+    if (tokBytes == nullptr) {
+        abort();
+    }
     std::vector<Token> tokens = TokenSerialization::GetTokensFromBytes(tokBytes);
     if ((tokens.size() == 0)) {
         abort();

@@ -174,14 +174,6 @@ private class NodeLoader {
         (unsafe { loader.loadNodeFromTokens(refreshPos) }, loader.diagInfo)
     }
 
-    private func tryFreeCString(data: ?CString) {
-        if (let Some(ptr) <- data) {
-            if (!ptr.isNull()) {
-                unsafe { LibC.free(ptr) }
-            }
-        }
-    }
-
     private func getDiags(diagNode: CPointer<UInt8>) {
         let dataSize = Int64(getInt32(Array<UInt8>(HEADER_SIZE, {x: Int64 => unsafe { diagNode.read(x) }})))
         if (dataSize > 0) {
@@ -200,24 +192,24 @@ private class NodeLoader {
     }
 
     private unsafe func loadNodeFromFile(): ?NodeFormat_Node {
-        var pathPtr: ?CString = None
+        var pathPtr: CString = CString(CPointer<UInt8>())
         var nodePtr = CPointer<UInt8>()
         var resPtr = CPointer<ParseRes>()
         var diagPtr = CPointer<UInt8>()
         try {
-            let pathCStr = LibC.mallocCString(filePath)
-            pathPtr = pathCStr // backup for free
-            resPtr = CJ_ParseFile(pathCStr)
-
+            pathPtr = LibC.mallocCString(filePath)
+            if (pathPtr.isNull()) {
+                throw Exception("mallocCString failed for file path.")
+            }
+            resPtr = CJ_ParseFile(pathPtr)
             if (resPtr.isNull()) {
                 throw Exception("the parsing result is empty.")
                 return None
             }
             let res = resPtr.read()
             if (!res.errMsg.isNull()) {
-                let diagNode = res.errMsg
-                diagPtr = diagNode // backup for free
-                getDiags(diagNode)
+                diagPtr = res.errMsg
+                getDiags(diagPtr)
             }
             if (res.node.isNull()) {
                 if (res.errMsg.isNull()) {
@@ -225,12 +217,11 @@ private class NodeLoader {
                 }
                 return None
             }
-            let pnode = res.node
-            nodePtr = pnode // backup for free
-            return getNode(pnode)
+            nodePtr = res.node
+            return getNode(nodePtr)
         } finally {
             // free memory allocated in C.
-            tryFreeCString(pathPtr)
+            LibC.free(pathPtr)
             LibC.free(nodePtr)
             LibC.free(diagPtr)
             LibC.free(resPtr)
@@ -238,23 +229,24 @@ private class NodeLoader {
     }
 
     private unsafe func loadNodeFromText(): ?NodeFormat_Node {
-        var textPtr: ?CString = None
+        var textPtr: CString = CString(CPointer<UInt8>())
         var nodePtr = CPointer<UInt8>()
         var resPtr = CPointer<ParseRes>()
         var diagPtr = CPointer<UInt8>()
         try {
-            let textCStr = LibC.mallocCString(text)
-            textPtr = textCStr // backup for free
-            resPtr = CJ_ParseText(textCStr)
+            textPtr = LibC.mallocCString(text)
+            if (textPtr.isNull()) {
+                throw Exception("mallocCString failed for text.")
+            }
+            resPtr = CJ_ParseText(textPtr)
             if (resPtr.isNull()) {
                 throw Exception("the parsing result is empty.")
                 return None
             }
             let res = resPtr.read()
             if (!res.errMsg.isNull()) {
-                let diagNode = res.errMsg
-                diagPtr = diagNode // backup for free
-                getDiags(diagNode)
+                diagPtr = res.errMsg
+                getDiags(diagPtr)
             }
             if (res.node.isNull()) {
                 if (res.errMsg.isNull()) {
@@ -262,12 +254,11 @@ private class NodeLoader {
                 }
                 return None
             }
-            let pnode = res.node
-            nodePtr = pnode // backup for free
-            return getNode(pnode)
+            nodePtr = res.node
+            return getNode(nodePtr)
         } finally {
             // free memory allocated in C.
-            tryFreeCString(textPtr)
+            LibC.free(textPtr)
             LibC.free(nodePtr)
             LibC.free(diagPtr)
             LibC.free(resPtr)
@@ -283,6 +274,9 @@ private class NodeLoader {
         var tokensCounterPtr: CPointer<Int64> = LibC.malloc<Int64>(count: sizeOfInt64)
         try {
             tokensPtr = unsafePointerCastFromUint8Array(tokens.toBytes())
+            if (tokensPtr.isNull()) {
+                throw Exception("the input tokens is empty.")
+            }
             resPtr = CJ_ParseTokens(tokensPtr, tokensCounterPtr, refreshPos)
             if (resPtr.isNull()) {
                 throw Exception("the parsing result is empty.")
