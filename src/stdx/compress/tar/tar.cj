@@ -61,7 +61,7 @@ public class Tar {
         let tarWriter = TarWriter(destStream)
         let prefixLength: Int64
         if (includeBaseDirectory) {
-            tarWriter.write(fromDirNormalized, fromDirNormalizedPath.fileName)
+            tarWriter.write(path: fromDirNormalized, entryName: fromDirNormalizedPath.fileName)
             prefixLength = fromDirNormalizedPath.parent.toString().size + 1
         } else {
             prefixLength = fromDirNormalized.size + 1
@@ -74,7 +74,7 @@ public class Tar {
             if (targetType == TargetType.Directory) {
                 entryName += "/"
             }
-            tarWriter.write(fileInfo, entryName)
+            tarWriter.write(fileInfo, entryName: entryName)
         }
         tarWriter.finish()
     }

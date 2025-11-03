@@ -77,18 +77,18 @@ public abstract class TarEntry {
         this._stream = stream
     }
 
-    protected init(filePath: String) {
-        this(Path(filePath))
+    protected init(path: String) {
+        this(Path(path))
     }
 
-    protected init(filePath: Path) {
-        if (!exists(filePath)) {
-            throw TarException("Target not exists: ${filePath}.")
+    protected init(path: Path) {
+        if (!exists(path)) {
+            throw TarException("Target not exists: ${path}.")
         }
 
-        let fileInfo = FileInfo(filePath)
+        let fileInfo = FileInfo(path)
 
-        var targetName: String = filePath.normalizePath()
+        var targetName: String = path.normalizePath()
         var targetSize = 0
         var targetLinkName = ""
         let targetEntryType: TarEntryType
@@ -100,26 +100,26 @@ public abstract class TarEntry {
             targetEntryType = TarEntryType.Directory
         } else if (fileInfo.isRegular()) {
             targetSize = fileInfo.size
-            _stream = File(filePath, Read)
+            _stream = File(path, Read)
             targetEntryType = TarEntryType.RegularFile
         } else if (fileInfo.isSymbolicLink()) {
-            targetLinkName = SymbolicLink.readFrom(filePath).toString()
+            targetLinkName = SymbolicLink.readFrom(path).toString()
             _stream = None
             targetEntryType = TarEntryType.Symlink
         } else {
-            throw TarException("Target ${filePath} type is not directory/regular file/symbolic link, not supported.")
+            throw TarException("Target ${path} type is not directory/regular file/symbolic link, not supported.")
         }
 
         _header = TarHeader(
             format: TarEntryFormat.V7,
             name: targetName,
-            mode: Native.getMode(filePath),
+            mode: Native.getMode(path),
             mTime: fileInfo.lastModificationTime,
             entryType: targetEntryType,
             checksum: 0,
             size: targetSize,
-            uid: Native.getUid(filePath),
-            gid: Native.getGid(filePath),
+            uid: Native.getUid(path),
+            gid: Native.getGid(path),
             linkName: targetLinkName
         )
     }
@@ -166,7 +166,7 @@ public abstract class TarEntry {
         }
     }
 
-    protected open func writeTo(target: OutputStream): Unit {
+    public open func writeTo(target: OutputStream): Unit {
         let buffer = TarHeaderBuffer()
         if (name.size > FieldLocation.NAME.length) {
             throw TarException("Name `${name}` size is ${name.size} " +

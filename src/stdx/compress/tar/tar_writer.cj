@@ -33,26 +33,24 @@ public class TarWriter<T> where T <: OutputStream {
         this.entryFormat = format
     }
 
-    public func write(filePath: String, entryName: String): Unit {
-        let path = Path(filePath)
-        let fileInfo = FileInfo(path)
-        this.write(fileInfo, entryName)
+    public func write(path!: String, entryName!: String): Unit {
+        this.write(Path(path), entryName: entryName)
     }
 
-    public func write(filePath: Path, entryName: String): Unit {
+    public func write(path: Path, entryName!: String): Unit {
         let entry = match (this.entryFormat) {
-            case TarEntryFormat.V7 => V7TarEntry(filePath)
-            case TarEntryFormat.Ustar => GnuTarEntry(filePath)
-            case TarEntryFormat.Pax => PaxTarEntry(filePath)
-            case TarEntryFormat.Gnu => GnuTarEntry(filePath)
+            case TarEntryFormat.V7 => V7TarEntry(path)
+            case TarEntryFormat.Ustar => GnuTarEntry(path)
+            case TarEntryFormat.Pax => PaxTarEntry(path)
+            case TarEntryFormat.Gnu => GnuTarEntry(path)
         }
         entry.name = entryName
 
         this.write(entry)
     }
 
-    public func write(fileInfo: FileInfo, entryName: String): Unit {
-        write(fileInfo.path, entryName)
+    public func write(info: FileInfo, entryName!: String): Unit {
+        write(info.path, entryName: entryName)
     }
 
     public func write(entry: TarEntry): Unit {
@@ -100,6 +98,6 @@ extend<T> TarWriter<T> <: Resource where T <: Resource {
     }
 
     public func isClosed(): Bool {
-        return this.finished
+        return this.stream.isClosed()
     }
 }

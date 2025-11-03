@@ -36,17 +36,17 @@ public abstract class PosixTarEntry <: TarEntry {
         super(header, stream)
     }
 
-    protected init(filePath: String) {
-        this(Path(filePath))
+    protected init(path: String) {
+        this(Path(path))
     }
 
-    protected init(filePath: Path) {
-        super(filePath)
+    protected init(path: Path) {
+        super(path)
 
-        _header.uName = Native.getUserName(filePath)
-        _header.gName = Native.getGroupName(filePath)
-        _header.devMajor = Native.getDeviceMajor(filePath)
-        _header.devMinor = Native.getDeviceMinor(filePath)
+        _header.uName = Native.getUserName(path)
+        _header.gName = Native.getGroupName(path)
+        _header.devMajor = Native.getDeviceMajor(path)
+        _header.devMinor = Native.getDeviceMinor(path)
     }
 
     func writePosixFields(buffer: TarHeaderBuffer, magic: String, version: String) {
