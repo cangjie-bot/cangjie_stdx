@@ -20,11 +20,11 @@ public class V7TarEntry <: TarEntry {
         super(header, stream)
     }
 
-    public init(filePath: String) {
-        this(Path(filePath))
+    public init(path: String) {
+        this(Path(path))
     }
 
-    public init(filePath: Path) {
-        super(filePath)
+    public init(path: Path) {
+        super(path)
     }
 }
