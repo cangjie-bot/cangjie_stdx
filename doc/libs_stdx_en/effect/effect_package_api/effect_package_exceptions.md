@@ -8,7 +8,7 @@ public class DoubleResumeException <: Exception {
 }
 ```
 
-**Description:** This exception is thrown when attempting to `resume` a [Resumption](./effect_package_classes.md#class-resumptionres-ret) that has already been resumed. The semantics of Effect Handlers require that each [Resumption](./effect_package_classes.md#class-resumptionres-ret) can be resumed at most once, in order to prevent inconsistent program state or unpredictable behavior.
+**Description:** This exception is thrown when attempting to `resume` a `Resumption` that has already been resumed. The semantics of Effect Handlers require that each `Resumption` can be resumed at most once, in order to prevent inconsistent program state or unpredictable behavior.
 
 **Parent Type:**
 

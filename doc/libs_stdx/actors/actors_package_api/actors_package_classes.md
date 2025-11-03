@@ -61,7 +61,7 @@ public class SequentialDispatcher {
 
 功能：一个 SequentialDispatcher 实例代表了一个仓颉的线程，用户可以向一个 SequentialDispatcher 实例提交闭包，这些闭包会在一个仓颉线程上排队执行。
 
-通常用户不需要直接使用这个类，而是应该使用 [@Actor](../macros/macros_package_api/macros_package_macros.md#actor-macro) 宏。
+通常用户不需要直接使用这个类，而是应该使用 [@Actor](../macros/macros_package_api/macros_package_macros.md#actor-宏) 宏。
 
 ### init(Bool)
 
