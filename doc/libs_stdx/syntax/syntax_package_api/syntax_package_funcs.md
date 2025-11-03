@@ -64,7 +64,7 @@ public func parseText(programText: String): ParsingResult<SyntaxTreeNode>
 
 异常：
 
-- Exception - 当根据输入文本无法正确解析出单个语法树节点时，抛出异常，异常中包含报错提示消息。
+- Exception - 当根据输入文本无法正确解析出单个语法树节点时（包括解析出错和输入包含多个节点等情况），抛出异常，异常中包含报错提示消息。
 
 ## func parseTokens(Tokens, Bool)
 
@@ -91,4 +91,4 @@ public func parseTokens(tokens: Tokens, refreshPos!: Bool = true): ParsingResult
 
 异常：
 
-- Exception - 当根据输入词法单元无法正确解析出单个语法树节点或输入词法单元的位置信息有误时，抛出异常，异常中包含报错提示消息。
+- Exception - 当根据输入词法单元无法正确解析出单个语法树节点（包括解析出错和输入包含多个节点等情况）或输入词法单元的位置信息有误时，抛出异常，异常中包含报错提示消息。
