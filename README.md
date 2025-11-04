@@ -24,7 +24,7 @@ Architecture Diagram:
 
 ## Operating Instructions
 
-For APIs related to stdx, please refer to [API Interface Description](./doc/libs_stdx_en/summary_cjnative.md).
+For APIs related to stdx, please refer to [API Interface Description](./doc/summary_cjnative_EN.md).
 For relevant guidance, please refer to [Development Guide](https://gitcode.com/Cangjie/cangjie_docs/).
 
 ## Quick Start
