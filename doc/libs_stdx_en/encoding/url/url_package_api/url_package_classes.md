@@ -362,6 +362,94 @@ Exceptions:
 
 - [UrlSyntaxException](url_package_exceptions.md#class-urlsyntaxexception) - Thrown when construction requirements are not met.
 
+### static func decode(String): String
+
+```cangjie
+static func decode(url: String): String
+```
+
+Function: Perform decoding on a URL-encoded (that is, percent-encoded) string to restore the encoded string to its original form, without decoding the reserved characters.
+
+> **Warning:**
+>
+> This function decodes all encoded characters. However, some characters are part of the URL syntax, so the following characters will be retained in the output string:
+> 
+> `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
+
+Parameters:
+
+- url: String - The string to be decoded.
+
+Returns: 
+
+- String - The decoded string.
+
+### static func decodeComponent(String): String
+
+```cangjie
+static func decodeComponent(component: String): String
+```
+
+Function: It performs a decoding operation on a URL-encoded (also known as percent-encoded) string, restoring the encoded string to its original form.
+
+Parameters:
+
+- component: String - The string to be decoded.
+  
+Returns: 
+
+- String - The decoded string.
+
+### static func encode(String): String
+
+```cangjie
+static func encode(url: String): String
+```
+
+Function: Perform URL encoding (also referred to as percent-encoding) on regular strings. The purpose of URL encoding is to convert special characters, non-ASCII characters, and other such characters in the string into a format that complies with URL specifications, thereby ensuring these strings can be safely transmitted and used within a URL.
+
+> **Warning:**
+>
+> This function encodes all characters. However, some characters are reserved by URL syntax, so the following characters will not be encoded:
+>
+> `0-9` `A-Z` `a-z`
+>
+> `!` `'` `-` `.` `*` `(` `)` `_` `~`
+> 
+> `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
+
+Parameters:
+
+- url: String - The string to be encoded.
+  
+Returns: 
+
+- String - The encoded string.
+
+### static func encodeComponent(String): String
+
+```cangjie
+static func encode(component: String): String
+```
+
+Function: Perform URL encoding (also known as percent-encoding) on regular strings. The purpose of URL encoding is to convert special characters, non-ASCII characters, and other such characters in the string into a format that complies with URL specifications, thereby ensuring these strings can be safely transmitted and used within a URL.
+
+> **Warning:**
+>
+> This function encodes all characters, including those in URL syntax. However, some characters are reserved by URL syntax, so the following characters will not be encoded:
+>
+> `0-9` `A-Z` `a-z`
+>
+> `!` `'` `-` `.` `*` `(` `)` `_` `~`
+
+Parameters:
+
+- component: String - The string to be encoded.
+  
+Returns: 
+
+- String - The encoded string.
+
 ### static func mergePaths(String, String)
 
 ```cangjie
