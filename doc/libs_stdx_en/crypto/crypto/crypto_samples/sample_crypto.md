@@ -7,12 +7,11 @@ Example:
 <!-- verify -->
 ```cangjie
 import stdx.crypto.crypto.*
-import stdx.encoding.hex.fromHexString
 
 main() {
     var plains = "hello cangjie!"
-    var key = "1234567890123456"
-    var iv = "1234567890123456"
+    var key = "YOUR_KEYYYYYYYYY" // 16 bytes key for SM4
+    var iv = "YOUR_IVVVVVVVVVV" // 16 bytes IV for CBC mode
     var sm4 = SM4(OperationMode.CBC, key.toArray(), iv: iv.toArray())
     var enRe = sm4.encrypt(plains.toArray())
     var dd = sm4.decrypt(enRe)
