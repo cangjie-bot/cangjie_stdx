@@ -972,6 +972,97 @@ public class URL <: ToString {
             result.append(_rawPath)
         }
     }
+
+    public static func encode(url: String): String {
+        return encodeByTuple(url, ENCODE_URL_CHAR)
+    }
+
+    public static func encode(url: URL): String {
+        return encodeByTuple(url.toString(), ENCODE_URL_CHAR)
+    }
+
+    public static func encodeComponent(component: String): String {
+        return encodeByTuple(component, ENCODE_URL_COMPONENT_CHAR)
+    }
+
+    private static func encodeByTuple(str: String, maskTuple: (Int64, Int64)): String {
+        let buf = Array<Byte>(str.size * 3, repeat: b'%')
+        var index = 0
+        var byte: Byte
+        for (i in 0..str.size) {
+            byte = str[i]
+            if (byte > 128 || !isByteInSet(byte, maskTuple)) {
+                buf[index + 1] = HEX_BYTE_ARR[Int64(byte >> 4)]
+                buf[index + 2] = HEX_BYTE_ARR[Int64(byte & 0xF)]
+                index +=3
+            } else {
+                buf[index] = byte
+                index++
+            }
+        }
+        let result = StringBuilder()
+        unsafe { result.appendFromUtf8Unchecked(buf[..index]) }
+        return result.toString()
+    }
+
+    public static func decode(url: String): String {
+        return decodeByTuple(url, false)
+    }
+
+    public static func decode(url: URL): String {
+        return decodeByTuple(url.toString(), false)
+    }
+
+    public static func decodeComponent(component: String): String {
+        return decodeByTuple(component, true)
+    }
+
+    private static func decodeByTuple(str: String, changeComponent: Bool): String {
+        let runes = str.runes()
+        let sb = StringBuilder()
+        var buffer = ArrayList<UInt8>()
+        var escape = false
+        while (true) {
+            let char = match (runes.next()) {
+                case Some(x) => x
+                case None => break
+            }
+            match (char) {
+                case r'%' =>
+                    let c1 = runes.next() ?? r' '
+                    let c2 = runes.next() ?? r' '
+                    if (!c1.isAsciiHex() || !c2.isAsciiHex()) {
+                        throw UrlSyntaxException("Invalid URL format.")
+                    }
+                    if (!escape) {
+                        buffer = ArrayList<UInt8>()
+                    }
+                    escape = true
+                    let byte = hexToDec(c1) << 4 | hexToDec(c2)
+                    if (changeComponent || !isByteInSet(byte, COMPONENT_CHAR)) {
+                        buffer.add(byte)
+                    } else {
+                        appendArray(sb, buffer, escape)
+                        sb.append("%")
+                        sb.append(c1)
+                        sb.append(c2)
+                        escape = false
+                    }
+                case _ =>
+                    appendArray(sb, buffer, escape)
+                    sb.append(char)
+                    escape = false
+            }
+        }
+        appendArray(sb, buffer, escape)
+        return sb.toString()
+    }
+
+    private static func appendArray(sb: StringBuilder, buffer: ArrayList<UInt8>, escape: Bool) {
+        if (escape) {
+            sb.appendFromUtf8(buffer.toArray())
+        }
+    }
 }
 
 /**
