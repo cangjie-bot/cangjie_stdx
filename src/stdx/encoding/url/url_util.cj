@@ -114,6 +114,14 @@ let QUERY = mergeCharSet([PATH, strToCharSet("/?")])
  */
 let FRAGMENT = mergeCharSet([PCHAR, strToCharSet("/?")])
 
+let SPECIAL_CHAR = strToCharSet("!'-.*()_~")
+
+let COMPONENT_CHAR = strToCharSet("#$&+,/:;=?@")
+
+let ENCODE_URL_COMPONENT_CHAR = mergeCharSet([ALPHA, DIGIT, SPECIAL_CHAR])
+
+let ENCODE_URL_CHAR = mergeCharSet([ENCODE_URL_COMPONENT_CHAR, COMPONENT_CHAR])
+
 func strToCharSet(s: String): (Int64, Int64) {
     return (lowAsciiToBitSet(s), highAsciiToBitSet(s))
 }
