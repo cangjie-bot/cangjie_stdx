@@ -24,7 +24,7 @@
 
 ## 使用说明
 
-`stdx` 相关 API 请参见 [API接口说明](./doc/libs_stdx/summary_cjnative.md)。
+`stdx` 相关 API 请参见 [API接口说明](./doc/summary_cjnative.md)。
 相关指导请参见 [开发指南](https://gitcode.com/Cangjie/cangjie_docs/)。
 
 ## 快速获取
