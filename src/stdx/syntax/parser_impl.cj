@@ -2847,14 +2847,27 @@ private class FlatbufferNodeTranslator {
                     let params = paramList.GetParams()
                     if (params.size > 0 && let Some(param) <- params[0] && let Some(vb) <- param.GetBase() && let Some(db) <- vb
                         .GetBase()) {
+                        let paramNodeBase = param.GetNodeBase()
+                        // Setter has no innerComments
+                        let (leadParamListCmts, _, trailParamListCmts) = getCommentGroups(paramNodeBase)
+                        addLeadingComments(paramNodeBase, ret, leadParamListCmts)
                         transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
+                        if (trailParamListCmts.size > 0) {
+                            addChild(ret, transCommentGroupList(trailParamListCmts))
+                            curChildren = ret
+                        }
                     }
                     transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
                 }
             } else if (funcDecl.GetIsGetter() || (identifier == "init" && findStatic(modifiers))) {
                 if (let Some(paramList) <- body.GetParamList()) {
+                    let paramListBase = paramList.GetBase()
+                    // Getter or Init has no leadingComments and trailingComments
+                    let (_, innerParamListCmts, _) = getCommentGroups(paramListBase)
+                    innerComments = innerParamListCmts
                     transBasicTerminal(paramList.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
                     transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
+                    innerComments = innerCmts
                 }
             } else if (let Some(paramList) <- body.GetParamList()) {
                 addChild(ret, transParamList(paramList))
