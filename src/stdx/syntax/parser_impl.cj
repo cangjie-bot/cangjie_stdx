@@ -5302,9 +5302,10 @@ private class FlatbufferNodeTranslator {
 
     private func transComment(comment: NodeFormat_Comment): ?SyntaxNodeImpl {
         let ret = ArrayList<SyntaxNodeImpl>()
-        curChildren = ret
 
         if (let Some(v) <- comment.GetInfo()) {
+            addWhitespaceAndMoveCursor(v.GetPos(), needNewLine: true)
+            curChildren = ret
             transTokenTerminal(v.GetPos(), getTokenKind(v.GetKind()), v.GetValue(), needNewLine: true,
                 delimiterNum: v.GetDelimiterNum(), isSingleQuote: v.GetIsSingleQuote(), hasEscape: v.GetHasEscape())
         }
