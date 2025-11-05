@@ -460,7 +460,6 @@ public init(path: Path)
 ## class UstarTarEntry
 
 ```cangjie
-
 public class UstarTarEntry <: PosixTarEntry {
     public init(path: String)
     public init(path: Path)

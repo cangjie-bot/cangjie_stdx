@@ -221,6 +221,7 @@ public prop opaque: String
 
 示例：
 
+<!-- verify -->
 ```cangjie
 import stdx.encoding.url.*
 
