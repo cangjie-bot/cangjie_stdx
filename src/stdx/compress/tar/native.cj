@@ -131,9 +131,9 @@ class Native {
         if (info.isDirectory()) {
             return 0o777
         }
-        let isReadOnly = info.isReadOnly()
+        let canRead = !info.isReadOnly()
         let canExecute = info.canExecute()
-        match ((isReadOnly, canExecute)) {
+        match ((canRead, canExecute)) {
             case (true, true) => 0o777
             case (true, false) => 0o666
             case (false, true) => 0o555
