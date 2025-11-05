@@ -87,7 +87,7 @@ import stdx.syntax.*
 main() {
     let result = parseText("    1  + 1").node.getOrThrow() // 解析获得一个语法树节点，示例中为二元表达式
     println(result.toString()) // 打印该语法树节点，应与输入字符串完全一致
-    println(result.toTokens().toString()) // Tokens的toString接口保留位置信息
+    println(result.toTokens().toString()) // Tokens 的 toString 接口不保留位置信息
 }
 ```
 

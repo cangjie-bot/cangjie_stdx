@@ -65,7 +65,7 @@ public:
         }
         return (SeeingModifier() && !Seeing({TokenKind::UNSAFE, TokenKind::LCURL})) ||
             SeeingAny({TokenKind::FUNC, TokenKind::LET, TokenKind::VAR, TokenKind::ENUM, TokenKind::TYPE,
-                TokenKind::STRUCT, TokenKind::CLASS, TokenKind::INTERFACE, TokenKind::MAIN, TokenKind::EXTEND}) ||
+                TokenKind::STRUCT, TokenKind::CLASS, TokenKind::INTERFACE, TokenKind::MAIN, TokenKind::EXTEND, TokenKind::PROP}) ||
             (SeeingBuiltinAnnotation() && !SeeingAnnotationLambdaExpr());
     }
     /// Seeing IfAvailable Expr
