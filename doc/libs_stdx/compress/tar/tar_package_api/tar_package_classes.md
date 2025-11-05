@@ -220,7 +220,7 @@ public static func extract<T>(fromStream!: T, destDir!: Path, overwrite!: Bool):
 
 - [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
 
-## abstract class TarEntry
+## class TarEntry
 
 ```cangjie
 public abstract class TarEntry {
@@ -460,7 +460,6 @@ public init(path: Path)
 ## class UstarTarEntry
 
 ```cangjie
-
 public class UstarTarEntry <: PosixTarEntry {
     public init(path: String)
     public init(path: Path)
@@ -688,7 +687,7 @@ public override func writeTo(target: OutputStream): Unit
 
 - [TarException](tar_package_exceptions.md#class-tarexception) - 如果字段超出格式要求或写入失败，则抛出异常。
 
-## abstract class TarEntry
+## TarEntry
 
 ```cangjie
 public abstract class TarEntry {
