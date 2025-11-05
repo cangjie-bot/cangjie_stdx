@@ -49,7 +49,7 @@ OwnedPtr<AST::Node> ParserSyntax::ParseExprOrDecl(ScopeKind sk)
 {
     if (implSyntax->SeeingMacroCall()) {
         return nullptr;
-    } else if (implSyntax->SeeingDecl() || implSyntax->Seeing({TokenKind::BITNOT, TokenKind::INIT}, false)) {
+    } else if (implSyntax->Seeing(TokenKind::AT_EXCL) || implSyntax->SeeingDecl() || implSyntax->Seeing({TokenKind::BITNOT, TokenKind::INIT}, false)) {
         return ParseDecl(sk);
     } else if (implSyntax->SeeingExpr()) {
         return ParseExpr();
