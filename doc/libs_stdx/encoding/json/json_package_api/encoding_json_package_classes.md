@@ -979,6 +979,7 @@ JSON 在解析 String 转换为 [JsonValue](encoding_json_package_classes.md#cla
 
 示例：
 
+<!-- verify -->
 ```cangjie
 import stdx.encoding.json.*
 
@@ -996,7 +997,7 @@ main() {
 }
 ```
 
-运行结果如下：
+运行结果：
 
 ```text
 "\b | \f | \n | \r | \t | A | \\ | \" | /"
