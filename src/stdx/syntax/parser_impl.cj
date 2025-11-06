@@ -360,26 +360,32 @@ private class FlatbufferNodeTranslator {
         return false
     }
 
+    private func addInnerComments(line: Int32, column: Int32, needNewLine!: Bool = true): Unit {
+        for (commentGroup in innerComments) {
+            let tmpGroupList = [commentGroup]
+            if (let Some(cmtStartPos) <- getCommentGroupListBeginPos(tmpGroupList) &&
+                isBetweenCursorAndDest(cursorLine, cursorColumn, line, column, cmtStartPos.line, cmtStartPos.column)) {
+                /*
+                if comments exist, and the comments locate between the Cursor and the Destination position,
+                addWhitespace before the comment, then addComments, addWhitespace before the Destination position at last
+                */
+                addWhitespaceWithoutComment(cmtStartPos.line, cmtStartPos.column, needNewLine: needNewLine)
+                moveCursorColumn(cmtStartPos, 0)
+
+                let tmpChildren = curChildren
+                addChild(curChildren, transCommentGroupList(tmpGroupList))
+                curChildren = tmpChildren
+            }
+        }
+    }
+
     // add whitespace into curNode by [(cursorLine, cursorColumn) -- (line, column)]
     // needNewLine == false indicates that no newline is added.
     private func addWhitespace(line: Int32, column: Int32, needNewLine!: Bool = true): Unit {
-        if (innerComments.size > 0 && let Some(cmtStartPos) <- getCommentGroupListBeginPos(innerComments) &&
-            isBetweenCursorAndDest(cursorLine, cursorColumn, line, column, cmtStartPos.line, cmtStartPos.column)) {
-            /*
-              if comments exist, and the comments locate between the Cursor and the Destination position,
-             addWhitespace before the comment, then addComments, addWhitespace before the Destination position at last
-             */
-            addWhitespaceWithoutComment(cmtStartPos.line, cmtStartPos.column, needNewLine: needNewLine)
-            moveCursorColumn(cmtStartPos, 0)
-
-            let tmpChildren = curChildren
-            addChild(curChildren, transCommentGroupList(innerComments))
-            curChildren = tmpChildren
-
-            addWhitespaceWithoutComment(line, column, needNewLine: needNewLine)
-        } else {
-            addWhitespaceWithoutComment(line, column, needNewLine: needNewLine)
+        if (innerComments.size > 0) {
+            addInnerComments(line, column, needNewLine: needNewLine)
         }
+        addWhitespaceWithoutComment(line, column, needNewLine: needNewLine)
     }
 
     private func addWhitespaceWithoutComment(line: Int32, column: Int32, needNewLine!: Bool = true): Unit {
@@ -394,6 +400,9 @@ private class FlatbufferNodeTranslator {
         }
         if (column - scol > 0) {
             addChild(curChildren, builder.buildSpace(Int64(column - scol)))
+        }
+        if (cursorLine < line || (cursorLine == line && cursorColumn <= column)) {
+            (cursorLine, cursorColumn) = (line, column)
         }
     }
 
@@ -709,6 +718,7 @@ private class FlatbufferNodeTranslator {
             if (!isSamePosition(imports.GetImportPos(), base.GetBegin())) {
                 addChild(ret, transModifier(base.GetBegin(), kind))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         transBasicTerminal(imports.GetImportPos(), SyntaxNodeKind.ImportToken)
@@ -810,6 +820,7 @@ private class FlatbufferNodeTranslator {
                 }
                 transType(type_, startFromBegin: startFromBegin)
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(db.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
@@ -869,6 +880,7 @@ private class FlatbufferNodeTranslator {
                 }
                 transType(type_, startFromBegin: startFromBegin)
                 curChildren = ret
+                innerComments = innerCmts
 
                 transBasicTerminal(db.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
@@ -1295,6 +1307,7 @@ private class FlatbufferNodeTranslator {
                 addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                 addChild(ret, transFuncArg(arg))
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
@@ -2138,6 +2151,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
                 curChildren = ret
+                innerComments = innerCmts
                 if (let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -2151,6 +2165,7 @@ private class FlatbufferNodeTranslator {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
 
@@ -2430,11 +2445,12 @@ private class FlatbufferNodeTranslator {
     }
 
     private func transDeclWithAtExclAnnotation(annos: Array<Option<NodeFormat_Annotation>>,
-        invocation: NodeFormat_MacroInvocation): ?SyntaxNodeImpl {
+        invocation: NodeFormat_MacroInvocation, leadCmts: Array<Option<NodeFormat_CommentGroup>>, trailCmts: Array<Option<NodeFormat_CommentGroup>>): ?SyntaxNodeImpl {
         // BNF: (former annos)? atExcel decl
+        let tmpInnerComments = innerComments
         // transAnnotationList
-
         var formerAnnos = transAnnotations(annos)
+        innerComments = tmpInnerComments
         if (let Some(former) <- formerAnnos && let Some(formerAnno) <- (former as NonTerminal) && let Some(v) <- createCustomAnnotation(
             invocation)) {
             // transAtExcl and add to AnnotationList
@@ -2443,6 +2459,7 @@ private class FlatbufferNodeTranslator {
                 curChildren = ret
             }
             addChild(ret, transAnnotation(v))
+            innerComments = tmpInnerComments
             formerAnnos = builder.buildNonTerminal(SyntaxNodeKind.AnnotationList, ret.toArray())
         }
 
@@ -2471,22 +2488,34 @@ private class FlatbufferNodeTranslator {
                     ret.add(annos, at: 0)
                 }
             }
+            if (leadCmts.size > 0) {
+                // add space and newLine first           
+                ret.add(all: retBefore, at: 0)
+                // add new annoList
+                ret.add(transCommentGroupList(leadCmts).getOrThrow(), at: 0)
+            }
+            moveCursorToEnd(dl.GetBase().getOrThrow().GetBase())
+            if (trailCmts.size > 0) {
+                addChild(ret, transCommentGroupList(trailCmts))
+            }
             return builder.buildNonTerminal(nt.kind, ret.toArray())
         }
         return None
     }
 
     private func transMacroExpandDecl(macroExpandDecl: NodeFormat_MacroExpandDecl, preChildren: Array<SyntaxNodeImpl>): ?SyntaxNodeImpl {
+        let nodeBase = macroExpandDecl.GetBase().getOrThrow().GetBase()
+        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
+        innerComments = innerCmts
+
         // if AtExcl, trans macro  to annotation
         if (let Some(db) <- macroExpandDecl.GetBase() && let Some(invocation) <- macroExpandDecl.GetInvocation() &&
             invocation.GetIsCompileTimeVisible()) {
-            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation)
+            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation, leadCmts, trailCmts)
         }
 
         var ret = ArrayList<SyntaxNodeImpl>()
 
-        let nodeBase = macroExpandDecl.GetBase().getOrThrow().GetBase()
-        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
         addLeadingComments(nodeBase, ret, leadCmts, isDecl: true)
         innerComments = innerCmts
 
@@ -2546,17 +2575,19 @@ private class FlatbufferNodeTranslator {
     }
 
     private func transMacroExpandParam(macroExpandParam: NodeFormat_MacroExpandParam): ?SyntaxNodeImpl {
+        let nodeBase = macroExpandParam.GetBase().getOrThrow().GetNodeBase()
+        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
+        innerComments = innerCmts
+
         // if AtExcl, trans macro  to annotation
         if (let Some(funcParam) <- macroExpandParam.GetBase() && let Some(varDecl) <- funcParam.GetBase() && let Some(db) <- varDecl
             .GetBase() && let Some(invocation) <- macroExpandParam.GetInvocation() &&
             invocation.GetIsCompileTimeVisible()) {
-            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation)
+            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation, leadCmts, trailCmts)
         }
 
         var ret = ArrayList<SyntaxNodeImpl>()
 
-        let nodeBase = macroExpandParam.GetBase().getOrThrow().GetNodeBase()
-        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
         addLeadingComments(nodeBase, ret, leadCmts, isDecl: true)
         innerComments = innerCmts
 
@@ -2948,6 +2979,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(macroExpandParam) <- param.GetMacroParamAsMacroExpandParam()) {
                 addChild(ret, transMacroExpandParam(macroExpandParam))
                 curChildren = ret
+                innerComments = innerCmts
                 if (i < params.size - 1) {
                     addChild(ret, builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
                 }
@@ -2955,12 +2987,14 @@ private class FlatbufferNodeTranslator {
             } else if (isLambda) {
                 addChild(ret, transLambdaParam(param))
                 curChildren = ret
+                innerComments = innerCmts
                 if (isValidPosition(param.GetCommaPos())) {
                     transBasicTerminal(param.GetCommaPos(), SyntaxNodeKind.CommaToken)
                 }
             } else {
                 addChild(ret, transFuncParam(param))
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(param.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
@@ -3094,7 +3128,6 @@ private class FlatbufferNodeTranslator {
             }
         }
         curChildren = ret
-        innerComments = innerCmts
         innerComments = innerCmts
         transBasicTerminal(block.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
         if (trailCmts.size > 0) {
@@ -4361,6 +4394,7 @@ private class FlatbufferNodeTranslator {
                 for (node in getElements<NodeFormat_Node>(body)) {
                     addChild(ret, transRoot(node))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 transBasicTerminal(blockNode.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
             }
@@ -4635,6 +4669,8 @@ private class FlatbufferNodeTranslator {
         }
         if (let Some(expr) <- argument.GetExpr()) {
             transNoTerminalExpr(expr)
+            curChildren = ret
+            innerComments = innerCmts
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
