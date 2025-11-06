@@ -7,97 +7,27 @@
  */
 
 /**
- * @file i_cache_obj_attr.cj
- * @brief Interface for Defining Cache Object Attributes
+ * @file i_link_list.cj
+ * @brief A more Suitable Linked List Interface
  *
  */
 
 package stdx.string_intern
 
-internal import std.time.DateTime
+internal import std.collection.LinkedListNode
 
-/**
- * @brief  Attribute encapsulation of the cache element object, and some cache-related attribute definitions of the cache object stored in the general cache.
- * Each cached object is associated with a cache attribute.
- */
-interface ICacheObjAttr {
-    mut prop createTime: DateTime
-    mut prop policyWeight: Int64
-    mut prop accessTime: ?DateTime
-    mut prop writeTime: ?DateTime
-    mut prop queueType: QueueType
-}
-
-enum QueueType {
-WINDOW | PROBATION | PROTECTED
-
-    public operator func ==(that: QueueType): Bool {
-        match ((this, that)) {
-            case (WINDOW, WINDOW) => true
-            case (PROBATION, PROBATION) => true
-            case (PROTECTED, PROTECTED) => true
-            case _ => false
-        }
-    }
-
-    public operator func !=(that: QueueType): Bool {
-        !(this == that)
-    }
-}
-
-class DefaultCacheObjAttr <: ICacheObjAttr {
-    private var _createTime: DateTime = DateTime.now()
-
-    private var _accessTime: ?DateTime = None
-
-    private var _writeTime: ?DateTime = None
-
-    private var _policyWeight: Int64 = 0
-
-    private var _queueType = WINDOW
-
-    public mut prop createTime: DateTime {
-        get() {
-            return _createTime
-        }
-        set(createTime) {
-            this._createTime = createTime
-        }
-    }
-
-    public mut prop accessTime: ?DateTime {
-        get() {
-            return _accessTime
-        }
-        set(accessTime) {
-            this._accessTime = accessTime
-        }
-    }
-
-    public mut prop writeTime: ?DateTime {
-        get() {
-            return _writeTime
-        }
-        set(writeTime) {
-            this._writeTime = writeTime
-        }
-    }
-
-    public mut prop policyWeight: Int64 {
-        get() {
-            return _policyWeight
-        }
-        set(policyWeight) {
-            this._policyWeight = policyWeight
-        }
-    }
-
-    public mut prop queueType: QueueType {
-        get() {
-            return _queueType
-        }
-        set(queueType) {
-            this._queueType = queueType
-        }
-    }
+interface ILinkList<T> {
+    func clear(): Unit
+    func remove(input: T): Bool
+    func popLast(): Option<T>
+    func popFirst(): Option<T>
+    func firstNode(): Option<LinkedListNode<T>>
+    func lastNode(): Option<LinkedListNode<T>>
+    func prepend(element: T): LinkedListNode<T>
+    func append(element: T): LinkedListNode<T>
+    func appendBefore(element: T, oldkey: Option<T>): LinkedListNode<T>
+    func getNextNode(element: T): Option<LinkedListNode<T>>
+    func makeFirst(element: T): Unit
+    func makeLast(element: T): Unit
+    func getSize(): Int64
 }
