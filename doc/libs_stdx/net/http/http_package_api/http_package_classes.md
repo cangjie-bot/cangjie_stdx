@@ -944,7 +944,7 @@ public init(name: String, value: String, expires!: ?DateTime = None, maxAge!: ?I
 
 - name: String - cookie-name 属性。
 
-    ```cangjie
+    ```text
     name         = token 
     token        = 1*tchar
     tchar        = "!" / "#" / "$" / "%" / "&" / "'" / "*"
@@ -954,7 +954,7 @@ public init(name: String, value: String, expires!: ?DateTime = None, maxAge!: ?I
 
 - value: String - cookie-value 属性。
 
-    ```cangjie
+    ```text
     value        = *cookie-octet / ( DQUOTE *cookie-octet DQUOTE )
     cookie-octet = %x21 / %x23-2B / %x2D-3A / %x3C-5B / %x5D-7E
                 ; US-ASCII characters excluding CTLs,
@@ -965,7 +965,7 @@ public init(name: String, value: String, expires!: ?DateTime = None, maxAge!: ?I
 - expires!: ?DateTime - 设置 [Cookie](http_package_classes.md#class-cookie) 的过期时间，默认为 None，时间必须在 1601 年之后。
 - maxAge!: ?Int64 - [Cookie](http_package_classes.md#class-cookie) 的最大生命周期，默认为 None，如果 [Cookie](http_package_classes.md#class-cookie) 既有 expires 属性，也有 maxAge，则表示该 [Cookie](http_package_classes.md#class-cookie) 只维护到会话结束（维护到 [Client](http_package_classes.md#class-client) 关闭之前，[Client](http_package_classes.md#class-client) 关闭之后设置了过期的 [Cookie](http_package_classes.md#class-cookie) 也不再维护）。
 
-    ```cangjie
+    ```text
     max-age-av     = "Max-Age=" non-zero-digit *DIGIT
     non-zero-digit = %x31-39
                     ; digits 1 through 9
@@ -975,7 +975,7 @@ public init(name: String, value: String, expires!: ?DateTime = None, maxAge!: ?I
 
 - domain!: String - 默认为空字符串，表示该收到该 [Cookie](http_package_classes.md#class-cookie) 的客户端只会发送该 [Cookie](http_package_classes.md#class-cookie) 给原始服务器。如果设置了合法的 domain，则收到该 [Cookie](http_package_classes.md#class-cookie) 的客户端只会发送该 [Cookie](http_package_classes.md#class-cookie) 给所有该 domain 的子域（且满足其他属性条件要求才会发）。
 
-    ```cangjie
+    ```text
     domain          = <subdomain> | " "
     <subdomain>   ::= <label> | <subdomain> "." <label>
     <label>       ::= <letter> [ [ <ldh-str> ] <let-dig> ]
@@ -994,7 +994,7 @@ public init(name: String, value: String, expires!: ?DateTime = None, maxAge!: ?I
 
 - path!: String - 默认为空字符串，客户端会根据 url 计算出默认的 path 属性，见 RFC 6265 5.1.4.。 收到该 [Cookie](http_package_classes.md#class-cookie) 的客户端只会发送该 [Cookie](http_package_classes.md#class-cookie) 给所有该 path 的子目录（且满足其他属性条件要求才会发）。
 
-    ```cangjie
+    ```text
     path            = <any RUNE except CTLs or ";">
     RUNE            = <any [USASCII] character>
     CTLs            = <controls>
