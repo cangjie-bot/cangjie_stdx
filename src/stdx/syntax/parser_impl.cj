@@ -754,6 +754,7 @@ private class FlatbufferNodeTranslator {
             case _ => return None
         }
         addChild(ret, builder.buildBasicTerminal(ty))
+        moveCursorColumn(col: Int32(ty.size))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
             curChildren = ret
@@ -2199,18 +2200,42 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(funcDecl) <- enumConstructor.GetDeclAsFuncDecl() && let Some(body) <- funcDecl.GetFuncBody() && let Some(paramList) <- body
             .GetParamList()) {
+            let bodyBase = body.GetBase()
+            // EnumConstructor body has no innerComments
+            let (leadBodyCmts, _, trailBodyCmts) = getCommentGroups(bodyBase)
+            addLeadingComments(bodyBase, ret, leadBodyCmts)
+
+            let paramBase = paramList.GetBase()
+            // EnumConstructor paramList has no innerComments
+            let (leadParamListCmts, _, trailParamListCmts) = getCommentGroups(paramBase)
+            addLeadingComments(paramBase, ret, leadParamListCmts)
             transBasicTerminal(paramList.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
+
             let params = paramList.GetParams()
             for (param in getElements<NodeFormat_FuncParam>(params)) {
+                let paramNodeBase = param.GetNodeBase()
+                let (leadParamCmts, _, trailParamCmts) = getCommentGroups(paramNodeBase)
+                addLeadingComments(paramNodeBase, ret, leadParamCmts)
                 // type
                 if (let Some(vb) <- param.GetBase() && let Some(ty) <- vb.GetType()) {
                     transType(ty)
                     curChildren = ret
                 }
-
+                if (trailParamCmts.size > 0) {
+                    addChild(ret, transCommentGroupList(trailParamCmts))
+                    curChildren = ret
+                }
                 transBasicTerminal(param.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
             transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
+            if (trailParamListCmts.size > 0) {
+                addChild(ret, transCommentGroupList(trailParamListCmts))
+                curChildren = ret
+            }
+            if (trailBodyCmts.size > 0) {
+                addChild(ret, transCommentGroupList(trailBodyCmts))
+                curChildren = ret
+            }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
