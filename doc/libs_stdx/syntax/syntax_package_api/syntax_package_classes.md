@@ -3,7 +3,9 @@
 ## class Annotation
 
 ```cangjie
-public class Annotation <: SyntaxTreeNode {}
+public class Annotation <: SyntaxTreeNode {
+    public init(arguments: Array<Argument>, identifier: String, opKind: AtOpKind, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示编译器内置的注解节点。
@@ -130,7 +132,9 @@ func getRSquarePos(): Option<CodePositionRange>
 ## class Argument
 
 ```cangjie
-public class Argument <: SyntaxTreeNode {}
+public class Argument <: SyntaxTreeNode {
+    public init(identifier: Option<String>, isInOut: Bool, isNamed: Bool, value: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示函数调用的实参节点。
@@ -240,7 +244,9 @@ public func getInoutKeyWordPos(): Option<CodePositionRange>
 ## class ArrayLiteral
 
 ```cangjie
-public class ArrayLiteral <: Expr {}
+public class ArrayLiteral <: Expr {
+    public init(elements: Array<Expr>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 Array 字面量节点。
@@ -313,7 +319,9 @@ public func getRSquarePos(): CodePositionRange
 ## class AsExpr
 
 ```cangjie
-public class AsExpr <: Expr {}
+public class AsExpr <: Expr {
+    public init(srcVal: Expr, targetTypeAnnotation: TypeAnnotation, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个类型转换表达式。
@@ -373,7 +381,9 @@ public func getAsKeyWordPos(): CodePositionRange
 ## class AssignExpr
 
 ```cangjie
-public class AssignExpr <: Expr {}
+public class AssignExpr <: Expr {
+    public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示赋值表达式节点。
@@ -554,7 +564,9 @@ public open func postAction(node: SyntaxTreeNode): PostActionMode
 ## class AtomicType
 
 ```cangjie
-public class AtomicType <: TypeAnnotation {}
+public class AtomicType <: TypeAnnotation {
+    public init(kind: AtomicTypeKind, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个基本类型节点。
@@ -595,7 +607,9 @@ public init(kind: AtomicTypeKind, comments!: Array<Comment> = [])
 ## class BinaryExpr
 
 ```cangjie
-public class BinaryExpr <: Expr {}
+public class BinaryExpr <: Expr {
+    public init(lhs: Expr, opKind: BinaryOpKind, rhs: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个二元操作表达式节点。
@@ -670,7 +684,9 @@ public func getOperatorPos(): CodePositionRange
 ## class Block
 
 ```cangjie
-public class Block <: SyntaxTreeNode {}
+public class Block <: SyntaxTreeNode {
+    public init(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个块节点。
@@ -734,7 +750,9 @@ func getRCurlPos(): CodePositionRange
 ## class Body
 
 ```cangjie
-public class Body <: SyntaxTreeNode {}
+public class Body <: SyntaxTreeNode {
+    public init(memberDecls: Array<Decl>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `Class` 类型、 `Struct` 类型、 `Interface` 类型以及扩展中由 `{}` 和内部的一组声明节点组成的结构。
@@ -793,7 +811,9 @@ public func getLCurlPos(): CodePositionRange
 ## class BreakExpr
 
 ```cangjie
-public class BreakExpr <: Expr {}
+public class BreakExpr <: Expr {
+    public init(comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示中断表达式。
@@ -819,7 +839,9 @@ public init(comments!: Array<Comment> = [])
 ## class CallExpr
 
 ```cangjie
-public class CallExpr <: Expr {}
+public class CallExpr <: Expr {
+    public init(callee: Expr, arguments: Array<Argument>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示函数调用节点。
@@ -907,7 +929,9 @@ public func getRParenPos(): CodePositionRange
 ## class CatchPattern
 
 ```cangjie
-public class CatchPattern <: SyntaxTreeNode {}
+public class CatchPattern <: SyntaxTreeNode {
+    public init(pattern: Pattern, exceptionType: Array<TypeAnnotation>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个捕获模式。
@@ -980,11 +1004,9 @@ func getColonPos(): Option<CodePositionRange>
 
 ```cangjie
 public class ClassDecl <: Decl {
-    public prop body: Body
-    public prop genericConstraints: Option<GenericConstraints>
-    public prop genericParams: Array<GenericParam>
-    public prop name: String
-    public prop superTyAnnotations: Array<TypeAnnotation>
+    public init(body: Body, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
+        name: String, superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
 }
 ```
 
@@ -1154,7 +1176,9 @@ public func getUpperBoundPos(): Option<CodePositionRange>
 ## class Comment
 
 ```cangjie
-public class Comment <: SyntaxTreeNode {}
+public class Comment <: SyntaxTreeNode {
+    public init(kind: CommentKind, content: String)
+}
 ```
 
 功能：表示一个注释信息节点。例如 `// comment`。
@@ -1199,7 +1223,9 @@ public init(kind: CommentKind, content: String)
 ## class CompositeType
 
 ```cangjie
-public class CompositeType <: TypeAnnotation {}
+public class CompositeType <: TypeAnnotation {
+    public init(name: String, prefixes: Array<String>, typeArguments: Array<TypeAnnotation>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个复合类型节点。例如 `p1.p0.A<Int64>`。
@@ -1304,7 +1330,9 @@ public func getDotsPos(): Array<CodePositionRange>
 ## class ConjunctionCondition
 
 ```cangjie
-public class ConjunctionCondition <: SyntaxTreeNode {}
+public class ConjunctionCondition <: SyntaxTreeNode {
+    public init(cond: Array<AtomicCondition>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示原子条件的逻辑合取。
@@ -1357,7 +1385,9 @@ public func getAndsPos(): Array<CodePositionRange>
 ## class ConstPattern
 
 ```cangjie
-public class ConstPattern <: Pattern {}
+public class ConstPattern <: Pattern {
+    public init(litConstExpr: LitConstExpr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示常量模式节点。
@@ -1394,7 +1424,9 @@ public init(litConstExpr: LitConstExpr, comments!: Array<Comment> = [])
 ## class ContinueExpr
 
 ```cangjie
-public class ContinueExpr <: Expr {}
+public class ContinueExpr <: Expr {
+    public init(comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示继续表达式。
@@ -1483,7 +1515,9 @@ public let diagInfo: DiagnosticInfo
 ## class DisjunctionCondition
 
 ```cangjie
-public class DisjunctionCondition <: SyntaxTreeNode {}
+public class DisjunctionCondition <: SyntaxTreeNode {
+    public init(cond: Array<ConjunctionCondition>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示合取条件的逻辑析取。
@@ -1532,7 +1566,9 @@ public func getOrsPos(): Array<CodePositionRange>
 ## class DoWhileExpr
 
 ```cangjie
-public class DoWhileExpr <: Expr {}
+public class DoWhileExpr <: Expr {
+    public init(body: Block, condition: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `do-while` 表达式。
@@ -1626,7 +1662,10 @@ public func getWhileKeyWordPos(): CodePositionRange
 ## class EnumConstructor
 
 ```cangjie
-public class EnumConstructor <: Decl {}
+public class EnumConstructor <: Decl {
+    public init(name: String, paramTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个枚举构造器。
@@ -1725,7 +1764,11 @@ public func getParamsRParenPos(): Option<CodePositionRange>
 ## class EnumDecl
 
 ```cangjie
-public class EnumDecl <: Decl {}
+public class EnumDecl <: Decl {
+    public init(body: Body, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
+        isNonExhaustive: Bool, name: String, superTyAnnotations: Array<TypeAnnotation>,
+        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个 `Enum` 声明节点。
@@ -1929,7 +1972,10 @@ public func getUpperBoundPos(): Option<CodePositionRange>
 ## class EnumPattern
 
 ```cangjie
-public class EnumPattern <: Pattern {}
+public class EnumPattern <: Pattern {
+    public init(enumConstructor: SymbolRef, enumType: Option<CompositeType>, subPatterns: Array<Pattern>, 
+        comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `enum` 模式节点。
@@ -2049,7 +2095,11 @@ sealed abstract class Expr <: SyntaxTreeNode {}
 ## class ExtendDecl
 
 ```cangjie
-public class ExtendDecl <: Decl {}
+public class ExtendDecl <: Decl {
+    public init(body: Body, extendedTyAnnotation: TypeAnnotation, genericConstraints: Option<GenericConstraints>,
+        genericParams: Array<GenericParam>, superTyAnnotations: Array<TypeAnnotation>,
+        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个扩展声明节点。
@@ -2206,7 +2256,9 @@ public func getUpperBoundPos(): Option<CodePositionRange>
 ## class ForInExpr
 
 ```cangjie
-public class ForInExpr <: Expr {}
+public class ForInExpr <: Expr {
+    public init(body: Block, expr: Expr, pattern: Pattern, patternGuard: Option<Expr>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `for-in` 表达式。
@@ -2340,7 +2392,11 @@ public func getWhereKeyWordPos(): Option<CodePositionRange>
 ## class FuncDecl
 
 ```cangjie
-public class FuncDecl <: Decl {}
+public class FuncDecl <: Decl {
+    public init(body: Option<Block>, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
+        kind: FuncKind, name: String, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>,
+        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个函数声明节点。
@@ -2536,7 +2592,7 @@ func getIdentifierPos(): CodePositionRange
 func getRetTyAnnotationColonPos(): Option<CodePositionRange>
 ```
 
-获取 [FuncDecl](#class-funcdecl) 节点中类型前 `:` 的位置。
+功能：获取 [FuncDecl](#class-funcdecl) 节点中类型前 `:` 的位置。
 
 返回值：
 
@@ -2546,7 +2602,11 @@ func getRetTyAnnotationColonPos(): Option<CodePositionRange>
 ## class FuncParam
 
 ```cangjie
-public class FuncParam <: Parameter {}
+public class FuncParam <: Parameter {
+    public init(defaultValue: Option<Expr>, kind: Option<VarKind>, name: String, typeAnnotation: TypeAnnotation,
+        isNamed!: Bool = false, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
+        comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个函数参数。
@@ -2687,7 +2747,9 @@ func getVarKindKeyWordPos(): Option<CodePositionRange>
 ## class FuncType
 
 ```cangjie
-public class FuncType <: TypeAnnotation {}
+public class FuncType <: TypeAnnotation {
+    public init(paramTypes: Array<TypeAnnotation>, labels: Array<String>, retType: TypeAnnotation, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示函数类型节点。
@@ -2822,7 +2884,9 @@ public func getRParenPos(): CodePositionRange
 ## class GenericConstraint
 
 ```cangjie
-public class GenericConstraint <: SyntaxTreeNode {}
+public class GenericConstraint <: SyntaxTreeNode {
+    public init(typeArgument: TypeAnnotation, upperBounds: Array<TypeAnnotation>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个泛型约束节点。
@@ -2899,7 +2963,9 @@ func getUpperBoundPos(): CodePositionRange
 ## class GenericConstraints
 
 ```cangjie
-public class GenericConstraints <: SyntaxTreeNode {}
+public class GenericConstraints <: SyntaxTreeNode {
+    public init(constraints: Array<GenericConstraint>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一组泛型约束。
@@ -2960,7 +3026,10 @@ func getWhereKeyWordPos(): CodePositionRange
 ## class GenericParam
 
 ```cangjie
-public class GenericParam <: Decl {}
+public class GenericParam <: Decl {
+    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个泛型参数节点。
@@ -3001,7 +3070,9 @@ public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: 
 ## class IfExpr
 
 ```cangjie
-public class IfExpr <: Expr {}
+public class IfExpr <: Expr {
+    public init(condition: DisjunctionCondition, elseBlock: Option<Block>, elseIf: Option<IfExpr>, ifBlock: Block, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示条件表达式。
@@ -3121,7 +3192,9 @@ public func getIfKeyWordPos(): CodePositionRange
 ## class ImportAlias
 
 ```cangjie
-public class ImportAlias <: ImportContent {}
+public class ImportAlias <: ImportContent {
+    public init(prefixes: Array<String>, identifier: String, alias: String, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个别名导入的包导入声明节点的具体项目，如 `import pkg.a.b as p` 中的 `pkg.a.b as p`。
@@ -3204,7 +3277,9 @@ public func getIdentifierPos(): CodePositionRange
 ## class ImportAll
 
 ```cangjie
-public class ImportAll <: ImportContent {}
+public class ImportAll <: ImportContent {
+    public init(prefixes: Array<String>, contents: Array<ImportContent>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个全导入的包导入声明节点的具体项目，如 `import pkg.*` 中的 `pkg.*`。
@@ -3301,7 +3376,9 @@ public func getPrefixesPos(): Array<CodePositionRange>
 ## class ImportList
 
 ```cangjie
-public class ImportList <: SyntaxTreeNode {}
+public class ImportList <: SyntaxTreeNode {
+    public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示包导入节点。
@@ -3376,7 +3453,9 @@ public func getImportKeyWordPos(): CodePositionRange
 ## class ImportMulti
 
 ```cangjie
-public class ImportMulti <: ImportContent {}
+public class ImportMulti <: ImportContent {
+    public init(prefixes: Array<String>, contents: Array<ImportContent>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个多导入的包导入声明节点的具体项目，如 `import pkg.{a.*, b.c, d as p}` 中的 `pkg.{a.*, b.c, d as p}`。
@@ -3394,6 +3473,20 @@ public prop contents: Array<ImportContent>
 功能：表示该包导入节点中的多个导入项的列表，如 `pkg.{a.*, b.c, d as p}` 中的 `[a.*, b.c, d as p]`。
 
 类型：Array\<[ImportContent](#class-importcontent)>
+
+### init(Array\<String>, Array\<ImportContent>, Array\<Comment>)
+
+```cangjie
+public init(prefixes: Array<String>, contents: Array<ImportContent>, comments!: Array<Comment> = [])
+```
+
+功能：构造一个 [ImportMulti](#class-importmulti) 对象，表示多导入项。
+
+参数：
+
+- prefixes: Array\<String> - 导入路径的前缀列表，如 `["pkg"]`。
+- contents: Array\<ImportContent> - 导入内容列表。
+- comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getCommasPos()
 
@@ -3434,7 +3527,9 @@ public func getRCurlPos(): CodePositionRange
 ## class ImportSingle
 
 ```cangjie
-public class ImportSingle <: ImportContent {}
+public class ImportSingle <: ImportContent {
+    public init(prefixes: Array<String>, identifier: String, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个单导入的包导入声明节点的具体项目，如 `import pkg.a` 中的 `pkg.a`。
@@ -3482,7 +3577,9 @@ public func getIdentifierPos(): CodePositionRange
 ## class IncOrDecExpr
 
 ```cangjie
-public class IncOrDecExpr <: Expr {}
+public class IncOrDecExpr <: Expr {
+    public init(kind: IncOrDecOpKind, operand: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示包含自增操作符（`++`）或自减操作符（`--`）的表达式。
@@ -3544,7 +3641,11 @@ public func getOperatorPos(): CodePositionRange
 ## class InterfaceDecl
 
 ```cangjie
-public class InterfaceDecl <: Decl {}
+public class InterfaceDecl <: Decl {
+    public init(body: Body, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
+        name: String, superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示接口声明节点。
@@ -3713,7 +3814,9 @@ public func getUpperBoundPos(): Option<CodePositionRange>
 ## class IsExpr
 
 ```cangjie
-public class IsExpr <: Expr {}
+public class IsExpr <: Expr {
+    public init(srcVal: Expr, targetTypeAnnotation: TypeAnnotation, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个类型检查表达式。
@@ -3773,7 +3876,9 @@ public func getIsKeyWordPos(): CodePositionRange
 ## class Lambda
 
 ```cangjie
-public class Lambda <: Expr {}
+public class Lambda <: Expr {
+    public init(body: Array<SyntaxTreeNode>, params: ParameterList, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `Lambda` 表达式，是一个匿名的函数。
@@ -3857,7 +3962,10 @@ public func getRCurlPos(): CodePositionRange
 ## class LambdaParam
 
 ```cangjie
-public class LambdaParam <: Parameter {}
+public class LambdaParam <: Parameter {
+    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个 `lambda` 参数。
@@ -3933,7 +4041,9 @@ func getTypeAnnotationColonPos(): Option<CodePositionRange>
 ## class LetPattern
 
 ```cangjie
-public class LetPattern <: SyntaxTreeNode {}
+public class LetPattern <: SyntaxTreeNode {
+    public init(expr: Expr, patterns: Array<Pattern>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个 `let` 模式绑定表达式。
@@ -4069,7 +4179,9 @@ public init(kind: LitConstKind, rawValue: String, comments!: Array<Comment> = []
 ## class LitConstRuneExpr
 
 ```cangjie
-public class LitConstRuneExpr <: LitConstExpr {}
+public class LitConstRuneExpr <: LitConstExpr {
+    public init(kind: LitConstKind, rawValue: String, isSingleQuote: Bool, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个字符类型的字面量表达式节点。
@@ -4116,7 +4228,10 @@ public init(kind: LitConstKind, rawValue: String, isSingleQuote: Bool, comments!
 ## class LitConstStrExpr
 
 ```cangjie
-public class LitConstStrExpr <: LitConstExpr {}
+public class LitConstStrExpr <: LitConstExpr {
+    public init(kind: LitConstKind, rawValue: String, delimiterNum: Int64, isSingleQuote: Bool, strKind: LitConstStrKind, strPartExprs: Array<StrLiteralPart>,
+        comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个字符串类型的字面量表达式节点。
@@ -4313,7 +4428,10 @@ public func getRetTyAnnotationColonPos(): Option<CodePositionRange>
 ## class MacroExpandDecl
 
 ```cangjie
-public class MacroExpandDecl <: Decl {}
+public class MacroExpandDecl <: Decl {
+    public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
+        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示宏展开声明。
@@ -4439,7 +4557,9 @@ public func getRSquarePos(): Option<CodePositionRange>
 ## class MacroExpandExpr
 
 ```cangjie
-public class MacroExpandExpr <: Expr {}
+public class MacroExpandExpr <: Expr {
+    public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示宏展开表达式。
@@ -4562,7 +4682,10 @@ public func getRSquarePos(): Option<CodePositionRange>
 ## class MacroExpandParam
 
 ```cangjie
-public class MacroExpandParam <: Parameter {}
+public class MacroExpandParam <: Parameter {
+    public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
+        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示宏展开参数。
@@ -4688,7 +4811,10 @@ public func getRSquarePos(): Option<CodePositionRange>
 ## class MainDecl
 
 ```cangjie
-public class MainDecl <: Decl {}
+public class MainDecl <: Decl {
+    public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>,
+        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个 `main` 函数声明节点。
@@ -4774,7 +4900,9 @@ func getRetTyAnnotationColonPos(): Option<CodePositionRange>
 ## class MatchCase
 
 ```cangjie
-public class MatchCase <: SyntaxTreeNode {}
+public class MatchCase <: SyntaxTreeNode {
+    public init(patterns: Array<Pattern>, patternGuardCond: Option<Expr>, caseCond: Option<Expr>, body: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `match` 表达式中的一个 `case` 节点。
@@ -4896,7 +5024,9 @@ public func getWherePos(): Option<CodePositionRange>
 ## class MatchExpr
 
 ```cangjie
-public class MatchExpr <: Expr {}
+public class MatchExpr <: Expr {
+    public init(matchCases: Array<MatchCase>, selector: Option<Expr>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示模式匹配表达式，用于实现模式匹配。
@@ -5004,7 +5134,9 @@ public func getSelectorRParenPos(): Option<CodePositionRange>
 ## class MemberAccess
 
 ```cangjie
-public class MemberAccess <: Expr {}
+public class MemberAccess <: Expr {
+    public init(base: Expr, field: SymbolRef, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示成员访问表达式。
@@ -5064,7 +5196,9 @@ public func getDotPos(): CodePositionRange
 ## class Modifier
 
 ```cangjie
-public class Modifier <: SyntaxTreeNode {}
+public class Modifier <: SyntaxTreeNode {
+    public init(kind: ModifierKind, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示某个声明的修饰符，通常放在声明处的最前端。
@@ -5105,7 +5239,9 @@ public init(kind: ModifierKind, comments!: Array<Comment> = [])
 ## class OptionalExpr
 
 ```cangjie
-public class OptionalExpr <: Expr {}
+public class OptionalExpr <: Expr {
+    public init(base: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个带有问号操作符的表达式节点。
@@ -5154,7 +5290,9 @@ public func getQuestionPos(): CodePositionRange
 ## class Package
 
 ```cangjie
-public class Package <: SyntaxTreeNode {}
+public class Package <: SyntaxTreeNode {
+    public init(isMacroPkg: Bool, name: String, srcFile: Array<SourceFile>)
+}
 ```
 
 功能：表示包节点。
@@ -5234,7 +5372,9 @@ public func toTokens(): Tokens
 ## class PackageHeader
 
 ```cangjie
-public class PackageHeader <: SyntaxTreeNode {}
+public class PackageHeader <: SyntaxTreeNode {
+    public init(accessModifier: Option<Modifier>, isMacroPkg: Bool, packageNameIdentifiers: Array<String>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示包声明节点。
@@ -5439,7 +5579,9 @@ func getParamsRParenPos(): Option<CodePositionRange>
 ## class ParenCondition
 
 ```cangjie
-public class ParenCondition <: SyntaxTreeNode {}
+public class ParenCondition <: SyntaxTreeNode {
+    public init(cond: DisjunctionCondition, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个括号条件节点，是指使用圆括号括起来的条件。
@@ -5499,7 +5641,9 @@ public func getRParenPos(): CodePositionRange
 ## class ParenExpr
 
 ```cangjie
-public class ParenExpr <: Expr {}
+public class ParenExpr <: Expr {
+    public init(subExpr: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个括号表达式节点，是指使用圆括号括起来的表达式。
@@ -5558,7 +5702,9 @@ public func getRParenPos(): CodePositionRange
 ## class ParenType
 
 ```cangjie
-public class ParenType <: TypeAnnotation {}
+public class ParenType <: TypeAnnotation {
+    public init(subType: TypeAnnotation, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示括号类型节点。
@@ -5662,7 +5808,9 @@ sealed abstract class Pattern <: SyntaxTreeNode {}
 ## class PrefixType
 
 ```cangjie
-public class PrefixType <: TypeAnnotation {}
+public class PrefixType <: TypeAnnotation {
+    public init(base: TypeAnnotation, prefixOp: PrefixTypeOpKind, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示带前缀操作符的前缀类型节点。
@@ -5726,7 +5874,11 @@ public func getOperatorPos(): CodePositionRange
 ## class PropDecl
 
 ```cangjie
-public class PropDecl <: Decl {}
+public class PropDecl <: Decl {
+    public init(isMut: Bool, getter: Option<PropGetterOrSetter>, name: String, setter: Option<PropGetterOrSetter>,
+        tyAnnotation: TypeAnnotation, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
+        comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个属性声明节点。
@@ -5871,7 +6023,10 @@ public func getTyAnnotationColonPos(): CodePositionRange
 ## class PropGetterOrSetter
 
 ```cangjie
-public class PropGetterOrSetter <: Decl {}
+public class PropGetterOrSetter <: Decl {
+    public init(block: Block, identifier: Option<String>, isGetter: Bool, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个属性的 `getter` 或 `setter` 声明。
@@ -5991,7 +6146,9 @@ public func getSetKeyWordPos(): Option<CodePositionRange>
 ## class QuoteExpr
 
 ```cangjie
-public class QuoteExpr <: Expr {}
+public class QuoteExpr <: Expr {
+    public init(tokensOrRefExpr: Array<QuoteExprContent>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `quote` 表达式节点。
@@ -6068,7 +6225,9 @@ public func getRParenPos(): CodePositionRange
 ## class QuoteInterpolationExpr
 
 ```cangjie
-public class QuoteInterpolationExpr <: Expr {}
+public class QuoteInterpolationExpr <: Expr {
+    public init(expr: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 [QuoteExpr](#class-quoteexpr) 中由 `()` 括起的内部引用表达式， 例如 `$(A.a)` 或 `$a`。
@@ -6139,7 +6298,9 @@ public func getRParenPos(): Option<CodePositionRange>
 ## class QuoteToken
 
 ```cangjie
-public class QuoteToken <: SyntaxTreeNode {}
+public class QuoteToken <: SyntaxTreeNode {
+    public init(content: Tokens, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `quote` 表达式节点内任意合法的 `token`。
@@ -6178,7 +6339,9 @@ public init(content: Tokens, comments!: Array<Comment> = [])
 ## class RangeExpr
 
 ```cangjie
-public class RangeExpr <: Expr {}
+public class RangeExpr <: Expr {
+    public init(start: Option<Expr>, kind: RangeKind, end: Option<Expr>, step: Option<Expr>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示包含区间操作符的表达式。
@@ -6276,7 +6439,9 @@ public func getColonPos(): Option<CodePositionRange>
 ## class ReturnExpr
 
 ```cangjie
-public class ReturnExpr <: Expr {}
+public class ReturnExpr <: Expr {
+    public init(retVal: Option<Expr>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `return` 表达式节点。
@@ -6325,7 +6490,10 @@ public func getReturnKeyWordPos(): CodePositionRange
 ## class SourceFile
 
 ```cangjie
-public class SourceFile <: SyntaxTreeNode {}
+public class SourceFile <: SyntaxTreeNode {
+    public init(importLists: Array<ImportList>, name: String, path: String, pkgHeader: Option<PackageHeader>, topLevelDecls: Array<Decl>,
+        ftrDirective!: Option<FeaturesDirective> = None, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示单个仓颉源码文件的语法树节点。
@@ -6389,7 +6557,8 @@ public prop topLevelDecls: Array<Decl>
 ### init(Array\<ImportList>, String, String, Option\<PackageHeader>, Array\<Decl>, Option\<FeaturesDirective>, Array\<Comment>)
 
 ```cangjie
-public init(importLists: Array<ImportList>, name: String, path: String, pkgHeader: Option<PackageHeader>, topLevelDecls: Array<Decl>, ftrDirective!: Option<FeaturesDirective> = None, comments!: Array<Comment> = [])
+public init(importLists: Array<ImportList>, name: String, path: String, pkgHeader: Option<PackageHeader>, topLevelDecls: Array<Decl>,
+    ftrDirective!: Option<FeaturesDirective> = None, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [SourceFile](#class-sourcefile) 对象，表示语法树中的源文件节点。
@@ -6407,7 +6576,9 @@ public init(importLists: Array<ImportList>, name: String, path: String, pkgHeade
 ## class SpawnExpr
 
 ```cangjie
-public class SpawnExpr <: Expr {}
+public class SpawnExpr <: Expr {
+    public init(threadContext: Option<Expr>, trailingLambdaExpr: Lambda, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `Spawn` 表达式。
@@ -6491,7 +6662,10 @@ public func getThreadContextRParenPos(): Option<CodePositionRange>
 ## class StaticInit
 
 ```cangjie
-public class StaticInit <: Decl {}
+public class StaticInit <: Decl {
+    public init(body: Block, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
+        comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个静态初始化器。
@@ -6581,7 +6755,9 @@ public func getStaticKeyWordPos(): CodePositionRange
 ## class StrInterpolationContent
 
 ```cangjie
-public class StrInterpolationContent <: SyntaxTreeNode {}
+public class StrInterpolationContent <: SyntaxTreeNode {
+    public init(interpolationBlock: Block, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示字符串插值内容的节点。
@@ -6630,7 +6806,11 @@ public func getDollarPos(): CodePositionRange
 ## class StructDecl
 
 ```cangjie
-public class StructDecl <: Decl {}
+public class StructDecl <: Decl {
+    public init(body: Body, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
+        name: String, superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个 `Struct` 声明节点。
@@ -6690,6 +6870,27 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 功能：获取当前结构体声明的父类类型标注列表。
 
 类型：Array\<[TypeAnnotation](#class-typeannotation)>
+
+### init(Body, Option\<GenericConstraints>, Array\<GenericParam>, String, Array\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+
+```cangjie
+public init(body: Body, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
+    name: String, superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
+    modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+```
+
+功能：构造一个 [StructDecl](#class-structdecl) 对象，表示结构体声明节点。
+
+参数：
+
+- body: [Body](#class-body) - 结构体，包含各类声明。
+- genericConstraints: Option\<[GenericConstraints](#class-genericconstraints)> - 可选的泛型约束。
+- genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
+- name: String - 结构体名。
+- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类型注解列表。
+- annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
+- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
+- comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getGenericParamsCommasPos()
  
@@ -6778,7 +6979,9 @@ public func getUpperBoundPos(): Option<CodePositionRange>
 ## class SubscriptExpr
 
 ```cangjie
-public class SubscriptExpr <: Expr {}
+public class SubscriptExpr <: Expr {
+    public init(base: Expr, indexs: Array<Expr>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示索引访问表达式。
@@ -6862,7 +7065,9 @@ public func getRSquarePos(): CodePositionRange
 ## class SymbolRef
 
 ```cangjie
-public class SymbolRef <: Expr {}
+public class SymbolRef <: Expr {
+    public init(name: String, typeArguments: Array<TypeAnnotation>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示代码中通过标识符对某个声明、包的引用的表达式节点。
@@ -6956,7 +7161,9 @@ public func getRAnglePos(): Option<CodePositionRange>
 ## class SynchronizedExpr
 
 ```cangjie
-public class SynchronizedExpr <: Expr {}
+public class SynchronizedExpr <: Expr {
+    public init(block: Block, structuredMutex: Expr, comments!: Array<Comment> = [])
+}
 
 ```
 
@@ -6983,6 +7190,20 @@ public prop structuredMutex: Expr
 功能：获取当前 `synchronized` 语句的锁对象表达式。
 
 类型：[Expr](#class-expr)
+
+### init(Block, Expr, Array\<Comment>)
+
+```cangjie
+public init(block: Block, structuredMutex: Expr, comments!: Array<Comment> = [])
+```
+
+功能：构造一个 [SynchronizedExpr](#class-synchronizedexpr) 对象，表示符号引用表达式。
+
+参数：
+
+- block: [Block](#class-block) - 需要同步执行的代码块。
+- structuredMutex: [Expr](#class-expr) - 锁对象表达式。
+- comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getLParenPos()
  
@@ -7138,7 +7359,9 @@ public func hashCode(): Int64
 ## class ThrowExpr
 
 ```cangjie
-public class ThrowExpr <: Expr {}
+public class ThrowExpr <: Expr {
+    public init(throwVal: Expr, comments!: Array<Comment> = [])
+}
 
 ```
 
@@ -7188,7 +7411,9 @@ public func getThrowKeyWordPos(): CodePositionRange
 ## class TrailingClosureExpr
 
 ```cangjie
-public class TrailingClosureExpr <: Expr {}
+public class TrailingClosureExpr <: Expr {
+    public init(callee: Expr, arguments: Array<Argument>, trailingLambdaExpr: Lambda, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示尾随闭包表达式。尾随闭包是一种语法糖，允许将闭包作为函数的最后一个参数时，可以放在函数调用括号之后。
@@ -7285,7 +7510,10 @@ func getRParenPos(): Option<CodePositionRange>
 ## class TryCatch
 
 ```cangjie
-public class TryCatch <: Expr {}
+public class TryCatch <: Expr {
+    public init(catchBlocks: Array<Block>, catchPatterns: Array<CatchPattern>, finallyBlock: Option<Block>, resourceSpec: Array<VarDecl>, 
+        tryBlock: Block, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `try-catch` 表达式节点。
@@ -7462,7 +7690,9 @@ public func getTryKeyWordPos(): CodePositionRange
 ## class TupleLiteral
 
 ```cangjie
-public class TupleLiteral <: Expr {}
+public class TupleLiteral <: Expr {
+    public init(elements: Array<Expr>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `Tuple` 字面量节点。
@@ -7535,7 +7765,9 @@ public func getRParenPos(): CodePositionRange
 ## class TuplePattern
 
 ```cangjie
-public class TuplePattern <: Pattern {}
+public class TuplePattern <: Pattern {
+    public init(subPatterns: Array<Pattern>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `Tuple` 模式节点。
@@ -7611,7 +7843,9 @@ func getRParenPos(): CodePositionRange
 ## class TupleType
 
 ```cangjie
-public class TupleType <: TypeAnnotation {}
+public class TupleType <: TypeAnnotation {
+    public init(labels: Array<String>, elements: Array<TypeAnnotation>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示元组类型节点。
@@ -7724,7 +7958,10 @@ public func getRParenPos(): CodePositionRange
 ## class TypeAlias
 
 ```cangjie
-public class TypeAlias <: Decl {}
+public class TypeAlias <: Decl {
+    public init(aliasName: String, originalTyAnnotation: TypeAnnotation, typeParameters: Array<GenericParam>,
+        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示类型别名节点。
@@ -7834,7 +8071,9 @@ sealed abstract class TypeAnnotation <: SyntaxTreeNode {}
 ## class TypeConvExpr
 
 ```cangjie
-public class TypeConvExpr <: Expr {}
+public class TypeConvExpr <: Expr {
+    public init(srcVal: Expr, targetTypeAnnotation: AtomicType, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个类型转换表达式。
@@ -7906,7 +8145,9 @@ public func getRParenPos(): CodePositionRange
 ## class TypePattern
 
 ```cangjie
-public class TypePattern <: Pattern {}
+public class TypePattern <: Pattern {
+    public init(subPattern: Pattern, patternType: TypeAnnotation, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示类型模式节点。
@@ -7966,7 +8207,9 @@ func getColonPos(): CodePositionRange
 ## class UnaryExpr
 
 ```cangjie
-public class UnaryExpr <: Expr {}
+public class UnaryExpr <: Expr {
+    public init(opKind: UnaryOpKind, operand: Expr, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个一元操作表达式节点。
@@ -8030,7 +8273,9 @@ public func getOperatorPos(): CodePositionRange
 ## class UnsafeExpr
 
 ```cangjie
-public class UnsafeExpr <: Expr {}
+public class UnsafeExpr <: Expr {
+    public init(block: Block, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示一个不安全代码块。
@@ -8079,7 +8324,11 @@ public func getUnsafePos(): CodePositionRange
 ## class VarDecl
 
 ```cangjie
-public class VarDecl <: Decl {}
+public class VarDecl <: Decl {
+    public init(initializer: Option<Expr>, kind: VarKind, name: String, pattern: Pattern,
+        tyAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
+        comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示变量声明节点。
@@ -8216,7 +8465,9 @@ public func getVarKindKeyWordPos(): CodePositionRange
 ## class VarOrEnumPattern
 
 ```cangjie
-public class VarOrEnumPattern <: Pattern {}
+public class VarOrEnumPattern <: Pattern {
+    public init(identifier: String, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示当模式的标识符为 `Enum` 构造器时的节点。
@@ -8253,7 +8504,9 @@ public init(identifier: String, comments!: Array<Comment> = [])
 ## class VarPattern
 
 ```cangjie
-public class VarPattern <: Pattern {}
+public class VarPattern <: Pattern {
+    public init(name: String, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示绑定模式节点。
@@ -8290,7 +8543,9 @@ public init(name: String, comments!: Array<Comment> = [])
 ## class VArrayExpr
 
 ```cangjie
-public class VArrayExpr <: Expr {}
+public class VArrayExpr <: Expr {
+    public init(argument: Argument, vArrayType: VArrayType, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `VArray` 表达式的实例节点。
@@ -8362,7 +8617,9 @@ public func getRParenPos(): CodePositionRange
 ## class VArrayType
 
 ```cangjie
-public class VArrayType <: TypeAnnotation {}
+public class VArrayType <: TypeAnnotation {
+    public init(elementType: TypeAnnotation, size: Int64, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `VArray` 类型节点。
@@ -8470,7 +8727,9 @@ public func getVArrayPos(): CodePositionRange
 ## class WhileExpr
 
 ```cangjie
-public class WhileExpr <: Expr {}
+public class WhileExpr <: Expr {
+    public init(body: Block, condition: DisjunctionCondition, comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示 `while` 表达式。
@@ -8554,7 +8813,9 @@ public func getWhileKeyWordPos(): CodePositionRange
 ## class WildcardPattern
 
 ```cangjie
-public class WildcardPattern <: Pattern {}
+public class WildcardPattern <: Pattern {
+    public init(comments!: Array<Comment> = [])
+}
 ```
 
 功能：表示通配符模式节点。
