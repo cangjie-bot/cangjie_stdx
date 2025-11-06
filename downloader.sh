@@ -56,11 +56,12 @@ usage() {
 }
 
 if [ "$#" -lt 1 ] || [[ "$1" == -* ]]; then
-    usage
+    echo -n "Version: "
+    read -r VERSION
+else
+    VERSION="$1"
+    shift # Remove version from argument list
 fi
-
-VERSION="$1"
-shift # Remove version from argument list
 
 while getopts ":p:d:" opt; do
   case ${opt} in
