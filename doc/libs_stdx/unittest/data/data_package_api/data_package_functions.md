@@ -23,7 +23,7 @@ public func csv<T>(
 - fileName: String - CSV 格式的文件地址，可为相对地址，不限制后缀名。
 - delimiter!: Rune - 一行中作为元素分隔符的符号。默认值为 `,` （逗号）。
 - quoteChar!: Rune - 括住元素的符号。默认值为 `"` （双引号）。
-- escapeChar!: Rune ：转义括住元素的符号。默认值为 `"` （双引号）。
+- escapeChar!: Rune - 转义括住元素的符号。默认值为 `"` （双引号）。
 - commentChar!: Option\<Rune> - 注释符号，跳过一行。必须在一行的最左侧。默认值是 `None` (不存在注释符号)。
 - header!: Option\<Array\<String>> - 提供一种方式覆盖第一行。
     - 当 header 被指定时，文件的第一行将被作为数据行，指定的 header 将被使用。
@@ -35,7 +35,7 @@ public func csv<T>(
 
 返回值：
 
-- [CsvStrategy](data_package_classes.md#class-csvstrategy)\<T> 对象，T 可被序列化，数据值从 CSV 文件中读取。
+- [CsvStrategy](data_package_classes.md#class-csvstrategy)\<T> - 对象，T 可被序列化，数据值从 CSV 文件中读取。
 
 异常：
 
@@ -134,7 +134,7 @@ public func tsv<T>(
 
 功能：该函数可从 tsv 文件中读取类型 T 的数据值，其中 T 必须可被序列化。该函数的返回值是参数化测试的一种参数源。
 
-参数:
+参数：
 
 - fileName: String - TSV 格式的文件地址，可为相对地址，不限制后缀名。
 - quoteChar!: Rune - 括住元素的符号。默认值为 `"` （双引号）。
