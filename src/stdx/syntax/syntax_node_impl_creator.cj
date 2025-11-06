@@ -1733,7 +1733,6 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.Comment, ret.toArray())
     }
 
-    // import
     static func createParameterListImpl(parameters: Array<Parameter>, comments!: Array<Comment> = []) {
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
