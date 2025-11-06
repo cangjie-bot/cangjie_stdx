@@ -60,7 +60,7 @@ function Get-PlatformArch {
             default { throw "Unsupported architecture: $arch" }
         }
     } else { # Windows PowerShell 5.1
-         switch ($arch) {
+        switch ($arch) {
             'AMD64' { $architecture = 'x64' }
             # Add other architectures if needed for older PS versions
             default { throw "Unsupported architecture: $arch" }
