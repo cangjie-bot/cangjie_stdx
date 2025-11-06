@@ -48,6 +48,7 @@
 │       ├── logger              # 提供文本格式和 JSON 格式日志打印功能
 │       ├── net                 # 提供网络通信等能力
 │       ├── serialization       # 提供序列化和反序列化能力
+│       ├── string_intern       # 提供string对象的池化缓存能力
 │       ├── syntax              # 提供语法解析能力
 │       └── unittest            # 提供单元测试扩展能力
 │
