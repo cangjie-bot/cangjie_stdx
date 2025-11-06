@@ -717,7 +717,7 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
             httpLogInfo(logger, "[HttpEngineConn1#checkResponse] The final status code cannot be 100")
         }
 
-        if ((response.request?.close ?? false) && !response.close) {
+        if (!(response.request?.isPersistent ?? true) && response.isPersistent) {
             headers.add("connection", "close")
         }
         checkConnection(headers)
@@ -945,7 +945,7 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
         conn.close()
     }
 
-    func isClosed(): Bool {
+    public func isClosed(): Bool {
         return conn.isClosed()
     }
 }

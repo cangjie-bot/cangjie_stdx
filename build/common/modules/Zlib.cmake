@@ -17,32 +17,59 @@ if (BUILD_TYPE STREQUAL "Debug")
     unset(BUILD_TYPE)
 endif()
 
-execute_process(
-    COMMAND
-        ${CMAKE_COMMAND}
-        -G Ninja
-        -DCANGJIE_TARGET_TOOLCHAIN=${CANGJIE_TARGET_TOOLCHAIN}
-        -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
-        -DCMAKE_SYSROOT=${CANGJIE_TARGET_SYSROOT}
-        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
-        -DCMAKE_INSTALL_LIBDIR=lib
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0.0
-        -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
-        -DCMAKE_SHARED_LINKER_FLAGS=${CMAKE_SHARED_LINKER_FLAGS}
-        -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
-        -DBUILD_SHARED_LIBS=ON
-        -DCMAKE_INSTALL_PREFIX=${ZLIB_INSTALL_DIR}
-        ${CANGJIE_ZLIB_SOURCE_DIR}
-    WORKING_DIRECTORY ${ZLIB_BUILD_DIR}
-    RESULT_VARIABLE config_result
-    OUTPUT_VARIABLE config_stdout
-    ERROR_VARIABLE config_stderr)
+if(IOS)
+    execute_process(
+        COMMAND
+            ${CMAKE_COMMAND}
+            -G Ninja
+            -DCANGJIE_TARGET_TOOLCHAIN=${CANGJIE_TARGET_TOOLCHAIN}
+            -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+            -DCMAKE_SYSROOT=${CANGJIE_TARGET_SYSROOT}
+            -DCMAKE_ANDROID_NDK=${CMAKE_ANDROID_NDK}
+            -DCMAKE_ANDROID_API=${CMAKE_ANDROID_API}
+            -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
+            -DCMAKE_INSTALL_LIBDIR=lib
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+            -DCMAKE_SHARED_LINKER_FLAGS=${CMAKE_SHARED_LINKER_FLAGS}
+            -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+            -DBUILD_SHARED_LIBS=ON
+            -DCMAKE_INSTALL_PREFIX=${ZLIB_INSTALL_DIR}
+            ${CANGJIE_ZLIB_SOURCE_DIR}
+        WORKING_DIRECTORY ${ZLIB_BUILD_DIR}
+        RESULT_VARIABLE config_result
+        OUTPUT_VARIABLE config_stdout
+        ERROR_VARIABLE config_stderr)
+else()
+    execute_process(
+        COMMAND
+            ${CMAKE_COMMAND}
+            -G Ninja
+            -DCANGJIE_TARGET_TOOLCHAIN=${CANGJIE_TARGET_TOOLCHAIN}
+            -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+            -DCMAKE_SYSROOT=${CANGJIE_TARGET_SYSROOT}
+            -DCMAKE_ANDROID_NDK=${CMAKE_ANDROID_NDK}
+            -DCMAKE_ANDROID_API=${CMAKE_ANDROID_API}
+            -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
+            -DCMAKE_INSTALL_LIBDIR=lib
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0.0
+            -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+            -DCMAKE_SHARED_LINKER_FLAGS=${CMAKE_SHARED_LINKER_FLAGS}
+            -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+            -DBUILD_SHARED_LIBS=ON
+            -DCMAKE_INSTALL_PREFIX=${ZLIB_INSTALL_DIR}
+            ${CANGJIE_ZLIB_SOURCE_DIR}
+        WORKING_DIRECTORY ${ZLIB_BUILD_DIR}
+        RESULT_VARIABLE config_result
+        OUTPUT_VARIABLE config_stdout
+        ERROR_VARIABLE config_stderr)
+endif()
+
 if(NOT ${config_result} STREQUAL "0")
     message(STATUS "${config_stdout}")
     message(STATUS "${config_stderr}")
     message(FATAL_ERROR "Configuring zlib Failed!")
 endif()
- 
+
 message(STATUS "Building zlib libraries...")
 execute_process(
     COMMAND ${CMAKE_COMMAND} --build .
@@ -57,7 +84,7 @@ if(NOT ${build_result} STREQUAL "0")
     message(STATUS "${build_stderr}")
     message(FATAL_ERROR "Building zlib Failed!")
 endif()
- 
+
 message(STATUS "Installing zlib headers and libraries to Cangjie library source...")
 execute_process(
     COMMAND ${CMAKE_COMMAND} --install .

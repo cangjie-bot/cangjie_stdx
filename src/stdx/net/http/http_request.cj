@@ -581,12 +581,12 @@ public class HttpRequest <: ToString {
      * For server to determine whether to close the connection after processing the request.
      * For client to determine whether to close the connection after receiving response to the request.
      */
-    public prop close: Bool {
+    public prop isPersistent: Bool {
         get() {
-            if (let Some(hv) <- (_headers?.getInternal("connection") ?? return false)) {
-                return hv.splitAnyMatch(SYMBOL_COMMA, "close")
+            if (let Some(hv) <- (_headers?.getInternal("connection") ?? return true)) {
+                return !hv.splitAnyMatch(SYMBOL_COMMA, "close")
             }
-            return false
+            return true
         }
     }
 

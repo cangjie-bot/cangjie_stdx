@@ -3,7 +3,7 @@
 ## let FUZZ_VERSION
 
 ```cangjie
-public let FUZZ_VERSION: String = "1.0.0"
+public let FUZZ_VERSION = "1.0.0"
 ```
 
 Function: Fuzz version.  
