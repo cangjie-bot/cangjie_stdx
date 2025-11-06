@@ -754,6 +754,7 @@ private class FlatbufferNodeTranslator {
             case _ => return None
         }
         addChild(ret, builder.buildBasicTerminal(ty))
+        moveCursorColumn(col: Int32(ty.size))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
             curChildren = ret
