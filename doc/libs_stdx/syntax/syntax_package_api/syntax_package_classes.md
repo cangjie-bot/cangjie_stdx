@@ -5521,7 +5521,9 @@ sealed abstract class Parameter <: Decl {}
 ## class ParameterList
 
 ```cangjie
-public class ParameterList <: SyntaxTreeNode {}
+public class ParameterList <: SyntaxTreeNode {
+    public init(parameters: Array<Parameter>, comments!: Array<Comment> = [])
+}
 ```
 
 功能：参数列表节点。
@@ -5539,6 +5541,19 @@ public prop params: Array<Parameter>
 功能：获取全部参数。
  
 类型：Array\<[Parameter](#class-parameter)>
+
+### init(Array\<Parameter>, Array\<Comment>)
+
+```cangjie
+public init(parameters: Array<Parameter>, comments!: Array<Comment> = [])
+```
+
+功能：构造一个 [ParameterList](#class-parameterlist) 对象，表示参数列表。
+
+参数：
+
+- parameters: Array\<[Parameter](#class-parameter)> - 参数列表。
+- comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getParamsCommasPos()
 

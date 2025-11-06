@@ -1198,6 +1198,19 @@ public class ParameterList <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize node with parameters.
+     */
+    public init(parameters: Array<Parameter>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createParameterListImpl(parameters, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let redNode = cast<ParameterList>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.propInfos = redNode.propInfos
+        this.posInfos = redNode.posInfos
+    }
+
+    /**
      * @brief Get the params in the parameter list.
      */
     public prop params: Array<Parameter> {
