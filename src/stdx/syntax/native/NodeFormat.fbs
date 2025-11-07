@@ -742,8 +742,6 @@ table MainDecl {
 
 table MacroDecl {
   base: DeclBase;
-  leftParenPos: Position;
-  rightParenPos: Position;
   func_body: FuncBody;
 }
 
