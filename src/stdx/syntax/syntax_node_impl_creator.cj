@@ -60,28 +60,6 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.AnnotationList, ret.toArray())
     }
 
-    // static func createModifierListWithForeign(modifiers: Array<Modifier>) {
-    //     let builder = SyntaxNodeBuilder()
-    //     let ret = ArrayList<SyntaxNodeImpl>()
-
-    //     let modifierRet = ArrayList<SyntaxNodeImpl>()
-    //     modifierRet.add(builder.buildBasicTerminal(SyntaxNodeKind.ForeignToken))
-    //     ret.add(builder.buildNonTerminal(SyntaxNodeKind.Modifier, modifierRet.toArray()))
-
-    //     if (modifiers.size > 0) {
-    //         ret.add(builder.buildSpace(1))
-    //     }
-
-    //     for (i in 0..modifiers.size) {
-    //         ret.add(modifiers[i].nodeImpl)
-    //         if (i < modifiers.size - 1) {
-    //             ret.add(builder.buildSpace(1))
-    //         }
-    //     }
-
-    //     builder.buildNonTerminal(SyntaxNodeKind.ModifierList, ret.toArray())
-    // }
-
     static func createModifierList(modifiers: Array<Modifier>, hasForeign!: Bool = false) {
         let builder = SyntaxNodeBuilder()
         let ret = ArrayList<SyntaxNodeImpl>()
