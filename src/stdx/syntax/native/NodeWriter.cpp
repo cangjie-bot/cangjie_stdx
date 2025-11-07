@@ -781,10 +781,8 @@ flatbuffers::Offset<NodeFormat::MacroDecl> NodeWriter::SerializeMacroDecl(const 
     }
     // Serialize MacroDecl.
     auto fbDeclBase = SerializeDeclBase(macroDecl);
-    auto leftParenPos = FlatPosCreateHelper(macroDecl->leftParenPos);
-    auto rightParenPos = FlatPosCreateHelper(macroDecl->rightParenPos);
     auto fbFuncBody = SerializeFuncBody(macroDecl->funcBody.get());
-    return NodeFormat::CreateMacroDecl(builder, fbDeclBase, &leftParenPos, &rightParenPos, fbFuncBody);
+    return NodeFormat::CreateMacroDecl(builder, fbDeclBase, fbFuncBody);
 }
 
 flatbuffers::Offset<NodeFormat::Decl> NodeWriter::SerializeMacroDecl(const Decl* decl)
