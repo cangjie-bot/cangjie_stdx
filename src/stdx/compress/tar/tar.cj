@@ -8,7 +8,7 @@
 
 package stdx.compress.tar
 
-import std.fs.{Path, File, Directory, SymbolicLink, HardLink, OpenMode, exists, canonicalize}
+import std.fs.{Path, File, FileInfo, Directory, SymbolicLink, HardLink, OpenMode, remove, exists, canonicalize}
 import std.io.{InputStream, OutputStream, copy}
 
 public class Tar {
@@ -51,6 +51,9 @@ public class Tar {
     protected static func archive<T>(fromDir!: Path, filter!: (Path) -> Bool, destStream!: T, includeBaseDirectory!: Bool): Unit where T <: OutputStream {
         if (!exists(fromDir)) {
             throw TarException("From directory not exists: ${fromDir}.")
+        }
+        if (!FileInfo(fromDir).isDirectory()) {
+            throw TarException("From directory is not a directory: ${fromDir}.")
         }
         let fromDirCanonicalized = canonicalize(fromDir)
         if (isRootPath(fromDirCanonicalized.toString())) {
@@ -105,8 +108,13 @@ public class Tar {
         for (entry in tarReader) {
             let entryPath = destAbsoluteDir.join(entry.name)
 
-            if (exists(entryPath) && !overwrite) {
-                throw TarException("File ${entryPath} already exists and overwrite is false.")
+            if (exists(entryPath)) {
+                if (!overwrite) {
+                    throw TarException("File ${entryPath} already exists and overwrite is false.")
+                }
+                if (!FileInfo(entryPath).isDirectory()) {
+                    remove(entryPath)
+                }
             }
 
             match (entry.entryType) {
