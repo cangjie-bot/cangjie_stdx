@@ -236,11 +236,11 @@ public open class ASTVisitor {
         for (param in node.genericParams) {
             walk(param)
         }
-        if (let Some(constraints) <- node.genericConstraints) {
-            walk(constraints)
-        }
         for (superTy in node.superTyAnnotations) {
             walk(superTy)
+        }
+        if (let Some(constraints) <- node.genericConstraints) {
+            walk(constraints)
         }
         walk(node.body)
     }
@@ -303,11 +303,11 @@ public open class ASTVisitor {
         for (param in node.genericParams) {
             walk(param)
         }
-        if (let Some(constraints) <- node.genericConstraints) {
-            walk(constraints)
-        }
         for (superTy in node.superTyAnnotations) {
             walk(superTy)
+        }
+        if (let Some(constraints) <- node.genericConstraints) {
+            walk(constraints)
         }
         walk(node.body)
     }
@@ -332,11 +332,11 @@ public open class ASTVisitor {
         for (param in node.genericParams) {
             walk(param)
         }
-        if (let Some(constraints) <- node.genericConstraints) {
-            walk(constraints)
-        }
         for (superTy in node.superTyAnnotations) {
             walk(superTy)
+        }
+        if (let Some(constraints) <- node.genericConstraints) {
+            walk(constraints)
         }
         walk(node.extendedTyAnnotation)
         walk(node.body)
@@ -469,11 +469,11 @@ public open class ASTVisitor {
         for (param in node.genericParams) {
             walk(param)
         }
-        if (let Some(constraints) <- node.genericConstraints) {
-            walk(constraints)
-        }
         for (superTy in node.superTyAnnotations) {
             walk(superTy)
+        }
+        if (let Some(constraints) <- node.genericConstraints) {
+            walk(constraints)
         }
         walk(node.body)
     }
@@ -779,11 +779,11 @@ public open class ASTVisitor {
         for (param in node.genericParams) {
             walk(param)
         }
-        if (let Some(constraints) <- node.genericConstraints) {
-            walk(constraints)
-        }
         for (superTy in node.superTyAnnotations) {
             walk(superTy)
+        }
+        if (let Some(constraints) <- node.genericConstraints) {
+            walk(constraints)
         }
         walk(node.body)
     }
@@ -856,8 +856,8 @@ public open class ASTVisitor {
     }
 
     private func visitTypeConvExpr(node: TypeConvExpr) {
-        walk(node.srcVal)
         walk(node.targetTypeAnnotation)
+        walk(node.srcVal)
     }
 
     private func visitTypePattern(node: TypePattern) {
