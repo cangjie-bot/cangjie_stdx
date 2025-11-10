@@ -60,10 +60,6 @@ public init(arguments: Array<Argument>, identifier: String, opKind: AtOpKind, co
 - opKind: [AtOpKind](syntax_package_enums.md#enum-atopkind) - 注解操作符类型，如 `@` 或 `@!`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当输入的 `opKind` 不在 [AtOpKind](syntax_package_enums.md#enum-atopkind) 中时，抛出异常，异常中包含报错提示信息。
-
 ### func getAtOpPos()
  
 ```cangjie
@@ -439,10 +435,6 @@ public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<C
 - rhs: [Expr](#class-expr) - 右操作数表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `assignOpKind` 不在 [AssignOpKind](syntax_package_enums.md#enum-assignopkind) 中时，抛出异常，异常中包含报错提示信息。
-
 ### func getAssignOpPos()
 
 ```cangjie
@@ -600,10 +592,6 @@ public init(kind: AtomicTypeKind, comments!: Array<Comment> = [])
 - kind: [AtomicTypeKind](syntax_package_enums.md#enum-atomictypekind) - 原子类型种类。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `kind` 不在 [AtomicTypeKind](syntax_package_enums.md#enum-atomictypekind) 中时，抛出异常，异常中包含报错提示信息。
-
 ## class BinaryExpr
 
 ```cangjie
@@ -665,10 +653,6 @@ public init(lhs: Expr, opKind: BinaryOpKind, rhs: Expr, comments!: Array<Comment
 - rhs: [Expr](#class-expr) - 右操作数表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `opKind` 不在 [BinaryOpKind](syntax_package_enums.md#enum-binaryopkind) 中时，抛出异常，异常中包含报错提示信息。
-
 ### func getOperatorPos()
 
 ```cangjie
@@ -720,7 +704,7 @@ public init(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
 
 异常：
 
-- Exception - 当 `nodes` 中的节点不是块类型或表达式类型时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `nodes` 中的节点不是表达式类型、函数声明或变量声明时，抛出异常，异常中包含报错提示信息。
 
 ### func getLCurlPos()
 
@@ -1084,7 +1068,7 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - genericConstraints: Option\<[GenericConstraints](#class-genericconstraints)> - 可选的泛型约束。
 - genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
 - name: String - 类名。
-- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类型注解列表。
+- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类类型标注列表。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
@@ -1276,7 +1260,7 @@ public init(name: String, prefixes: Array<String>, typeArguments: Array<TypeAnno
 
 - name: String - 复合类型的主名称，例如 `A`。
 - prefixes: Array\<String> - 复合类型的前缀路径，例如 `["p1", "p0"]`。
-- typeArguments: Array\<[TypeAnnotation](#class-typeannotation)> - 泛型参数列表，例如 `[Int64]`。
+- typeArguments: Array\<[TypeAnnotation](#class-typeannotation)> - 类型参数列表，例如 `[Int64]`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getLAnglePos()
@@ -1365,10 +1349,6 @@ public init(cond: Array<AtomicCondition>, comments!: Array<Comment> = [])
 
 - cond: Array\<[AtomicCondition](syntax_package_enums.md#enum-atomiccondition)> - 原子条件列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
-
-异常：
-
-- Exception - 当 `cond` 中的条件类型不在 [AtomicCondition](syntax_package_enums.md#enum-atomiccondition) 中时，抛出异常，异常中包含报错提示信息。
 
 ### func getAndsPos()
  
@@ -1856,7 +1836,7 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
 - isNonExhaustive: Bool - 是否为非穷举枚举。
 - name: String - 枚举名。
-- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类型注解列表。
+- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类类型标注列表。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
@@ -2176,7 +2156,7 @@ public init(body: Body, extendedTyAnnotation: TypeAnnotation, genericConstraints
 - extendedTyAnnotation: [TypeAnnotation](#class-typeannotation) - 被扩展的类型注解。
 - genericConstraints: Option\<[GenericConstraints](#class-genericconstraints)> - 可选的泛型约束。
 - genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
-- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类型注解列表。
+- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类类型标注列表。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
@@ -2680,7 +2660,7 @@ public init(defaultValue: Option<Expr>, kind: Option<VarKind>, name: String, typ
 
 异常：
 
-- Exception - 当 `kind` 不代表 `var` 或 `let`时，或没有传入参数名却为命名参数时抛出异常，异常中包含报错提示信息。
+- Exception - 当 `kind` 不代表 `var` 或 `let` 时，或没有传入参数名却为命名参数时抛出异常，异常中包含报错提示信息。
 
 ### func getAssignPos()
 
@@ -3027,8 +3007,7 @@ func getWhereKeyWordPos(): CodePositionRange
 
 ```cangjie
 public class GenericParam <: Decl {
-    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
-        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    public init(name: String, comments!: Array<Comment> = [])
 }
 ```
 
@@ -3050,11 +3029,10 @@ public prop name: String
 
 类型：String
 
-### init(String, Option\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(String, Array\<Comment>)
 
 ```cangjie
-public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
-    modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+public init(name: String, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [GenericParam](#class-genericparam) 对象，表示泛型参数节点。
@@ -3062,9 +3040,6 @@ public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: 
 参数：
 
 - name: String - 泛型参数名。
-- typeAnnotation: Option\<[TypeAnnotation](#class-typeannotation)> - 可选的类型注解。
-- annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ## class IfExpr
@@ -3434,10 +3409,6 @@ public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier
 - modifier: Option\<[Modifier](#class-modifier)> - 修饰符，可选。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `kind` 在 [ImportKind](syntax_package_enums.md#enum-importkind) 中时，抛出异常，异常中包含报错提示信息。
-
 ### func getImportKeyWordPos()
  
 ```cangjie
@@ -3622,10 +3593,6 @@ public init(kind: IncOrDecOpKind, operand: Expr, comments!: Array<Comment> = [])
 - operand: [Expr](#class-expr) - 被操作的表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `kind` 不在 [IncOrDecOpKind](syntax_package_enums.md#enum-incordecopkind) 中时，抛出异常，异常中包含报错提示信息。
-
 ### func getOperatorPos()
 
 ```cangjie
@@ -3722,7 +3689,7 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - genericConstraints: Option\<[GenericConstraints](#class-genericconstraints)> - 可选的泛型约束。
 - genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
 - name: String - 接口名。
-- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类型注解列表。
+- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类类型标注列表。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
@@ -4174,7 +4141,11 @@ public init(kind: LitConstKind, rawValue: String, comments!: Array<Comment> = []
 
 异常：
 
-- Exception - 当 `kind` 不在 [LitConstKind](syntax_package_enums.md#enum-litconstkind) 中时，或 `rawValue` 无法用于构建对应类型字面量时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `kind` 为 [RuneLiteral](syntax_package_enums.md#runeliteral) 或 [StringLiteral](syntax_package_enums.md#stringliteral)时，或 `rawValue` 无法用于构建对应类型字面量时，抛出异常，异常中包含报错提示信息。
+
+> **注意：**
+>
+> 不支持构造字符类型和字符串类型的字面量表达式节点，字符类型的字面量表达式节点通过 [LitConstRuneExpr](#class-litconstruneexpr) 构造，字符串类型的字面量表达式节点通过 [LitConstStrExpr](#class-litconststrexpr) 构造。
 
 ## class LitConstRuneExpr
 
@@ -4302,7 +4273,7 @@ public init(kind: LitConstKind, rawValue: String, delimiterNum: Int64, isSingleQ
 
 异常：
 
-- Exception - 当 `kind` 不是字符串字面量类型或 `strKind` 不在 [LitConstStrKind](syntax_package_enums.md#enum-litconststrkind) 中时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `kind` 不是字符串字面量类型时，抛出异常，异常中包含报错提示信息。
 
 ### func hasInterpolation()
  
@@ -5232,10 +5203,6 @@ public init(kind: ModifierKind, comments!: Array<Comment> = [])
 - kind: [ModifierKind](syntax_package_enums.md#enum-modifierkind) - 修饰符类型。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `kind` 不在 [ModifierKind](syntax_package_enums.md#enum-modifierkind) 中时，抛出异常，异常中包含报错提示信息。
-
 ## class OptionalExpr
 
 ```cangjie
@@ -5870,10 +5837,6 @@ public init(base: TypeAnnotation, prefixOp: PrefixTypeOpKind, comments!: Array<C
 - prefixOp: [PrefixTypeOpKind](syntax_package_enums.md#enum-prefixtypeopkind) - 前缀操作符类型。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `prefixOp` 不在 [PrefixTypeOpKind](syntax_package_enums.md#enum-prefixtypeopkind) 中时，抛出异常，异常中包含报错提示信息。
-
 ### func getOperatorPos()
 
 ```cangjie
@@ -6197,10 +6160,6 @@ public init(tokensOrRefExpr: Array<QuoteExprContent>, comments!: Array<Comment> 
 - tokensOrRefExpr: Array\<[QuoteExprContent](syntax_package_enums.md#enum-quoteexprcontent)> - 引用内容列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
-异常：
-
-- Exception - 当 `tokensOrRefExpr` 中的项不在 [QuoteExprContent](syntax_package_enums.md#enum-quoteexprcontent) 中时，抛出异常，异常中包含报错提示信息。
-
 ### func getLParenPos()
 
 ```cangjie
@@ -6422,10 +6381,6 @@ public init(start: Option<Expr>, kind: RangeKind, end: Option<Expr>, step: Optio
 - end: Option\<[Expr](#class-expr)> - 区间结束表达式。
 - step: Option\<[Expr](#class-expr)> - 可选的步长表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
-
-异常：
-
-- Exception - 当 `kind` 不在 [RangeKind](syntax_package_enums.md#enum-rangekind) 中时，抛出异常，异常中包含报错提示信息。
 
 ### func getRangeOpPos()
 
@@ -6902,7 +6857,7 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - genericConstraints: Option\<[GenericConstraints](#class-genericconstraints)> - 可选的泛型约束。
 - genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
 - name: String - 结构体名。
-- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类型注解列表。
+- superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类类型标注列表。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
@@ -8268,10 +8223,6 @@ public init(opKind: UnaryOpKind, operand: Expr, comments!: Array<Comment> = [])
 - opKind: [UnaryOpKind](syntax_package_enums.md#enum-unaryopkind) - 一元操作符类型。
 - operand: [Expr](#class-expr) - 被操作的表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
-
-异常：
-
-- Exception - 当 `opKind` 不在 [UnaryOpKind](syntax_package_enums.md#enum-unaryopkind) 中时，抛出异常，异常中包含报错提示信息。
 
 ### func getOperatorPos()
 
