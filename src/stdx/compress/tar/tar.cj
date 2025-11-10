@@ -52,6 +52,9 @@ public class Tar {
         if (!exists(fromDir)) {
             throw TarException("From directory not exists: ${fromDir}.")
         }
+        if (FileInfo(fromDir).isDirectory()) {
+            throw TarException("From directory is not a directory: ${fromDir}.")
+        }
         let fromDirCanonicalized = canonicalize(fromDir)
         if (isRootPath(fromDirCanonicalized.toString())) {
             throw TarException("Can not archive root directory: ${fromDir}.")
@@ -105,8 +108,13 @@ public class Tar {
         for (entry in tarReader) {
             let entryPath = destAbsoluteDir.join(entry.name)
 
-            if (exists(entryPath) && !overwrite) {
-                throw TarException("File ${entryPath} already exists and overwrite is false.")
+            if (exists(entryPath)) {
+                if (!overwrite) {
+                    throw TarException("File ${entryPath} already exists and overwrite is false.")
+                }
+                if (!FileInfo(entryPath).isDirectory()) {
+                    remove(entryPath)
+                }
             }
 
             match (entry.entryType) {

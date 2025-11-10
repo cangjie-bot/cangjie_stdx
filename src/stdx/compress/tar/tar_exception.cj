@@ -12,4 +12,8 @@ public class TarException <: Exception {
     public init(message: String) { 
         super(message)
     }
+
+    protected override func getClassName(): String {
+        return "TarException"
+    }
 }
