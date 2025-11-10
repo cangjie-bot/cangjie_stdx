@@ -142,7 +142,7 @@ class SyntaxNodeImplCreator {
 
     static func createBlockImpl(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
         for (node in nodes) {
-            if (node.nodeImpl.kind != SyntaxNodeKind.Block && !node.nodeImpl.kind.isExpr()) {
+            if (node.nodeImpl.kind != SyntaxNodeKind.VarDecl && node.nodeImpl.kind != SyntaxNodeKind.FuncDecl && !node.nodeImpl.kind.isExpr()) {
                 throw Exception("InitException: invalid nodes for Block Init")
             }
         }
@@ -156,9 +156,8 @@ class SyntaxNodeImplCreator {
         for (i in 0..nodes.size) {
             ret.add(builder.buildSpace(4))
             ret.add(nodes[i].nodeImpl)
-            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.NewlineToken))
+            ret.add(builder.buildNewline(1))
         }
-        ret.add(builder.buildNewline(1))
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
 
         builder.buildNonTerminal(SyntaxNodeKind.Block, ret.toArray())
@@ -174,9 +173,8 @@ class SyntaxNodeImplCreator {
         for (i in 0..memberDecls.size) {
             ret.add(builder.buildSpace(4))
             ret.add(memberDecls[i].nodeImpl)
-            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.NewlineToken))
+            ret.add(builder.buildNewline(1))
         }
-        ret.add(builder.buildNewline(1))
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
 
         builder.buildNonTerminal(SyntaxNodeKind.Body, ret.toArray())
