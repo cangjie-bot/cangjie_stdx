@@ -977,10 +977,6 @@ public class URL <: ToString {
         return encodeByTuple(url, ENCODE_URL_CHAR)
     }
 
-    public static func encode(url: URL): String {
-        return encodeByTuple(url.toString(), ENCODE_URL_CHAR)
-    }
-
     public static func encodeComponent(component: String): String {
         return encodeByTuple(component, ENCODE_URL_COMPONENT_CHAR)
     }
@@ -1007,10 +1003,6 @@ public class URL <: ToString {
 
     public static func decode(url: String): String {
         return decodeByTuple(url, false)
-    }
-
-    public static func decode(url: URL): String {
-        return decodeByTuple(url.toString(), false)
     }
 
     public static func decodeComponent(component: String): String {
