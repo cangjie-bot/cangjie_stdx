@@ -1623,11 +1623,8 @@ public class GenericParam <: Decl {
     /**
      * @brief Initialize a new GenericParam node.
      */
-    public init(name: String, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
-        comments!: Array<Comment> = []) {
-        super(
-            SyntaxNodeImplCreator.createGenericParamImpl(name, annotations: annotations, modifiers: modifiers,
-                comments: comments))
+    public init(name: String, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createGenericParamImpl(name, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<GenericParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
