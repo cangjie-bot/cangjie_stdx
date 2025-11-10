@@ -808,10 +808,10 @@ public open class ASTVisitor {
     }
 
     private func visitTryCatch(node: TryCatch) {
-        walk(node.tryBlock)
         for (varDecl in node.resourceSpec) {
             walk(varDecl)
         }
+        walk(node.tryBlock)
         for (pattern in node.catchPatterns) {
             walk(pattern)
         }

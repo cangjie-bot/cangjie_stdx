@@ -693,10 +693,10 @@ class ChildCollector <: ASTVisitor {
                 }
                 childNodes.add(trailingClosureExpr.trailingLambdaExpr)
             case tryCatch: TryCatch =>
-                childNodes.add(tryCatch.tryBlock)
                 for (varDecl in tryCatch.resourceSpec) {
                     childNodes.add(varDecl)
                 }
+                childNodes.add(tryCatch.tryBlock)
                 for (pattern in tryCatch.catchPatterns) {
                     childNodes.add(pattern)
                 }
