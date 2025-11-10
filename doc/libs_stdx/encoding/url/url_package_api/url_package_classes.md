@@ -395,28 +395,6 @@ println(URL.decode("%E4%BD%A0%23")) // output: 你%23
 
 - String - 解码后的字符串。
 
-### static func decode(URL): String
-
-```cangjie
-static func decode(url: URL): String
-```
-
-功能：对 `URL` 进行解码操作。
-
-> **注意：**
->
-> 该函数解码所有被编码的字符，但部分字符是 URL 语法的一部分，所以以下字符将保留在输出字符串中：
-> 
-> `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
-
-参数：
-
-- url: [URL](./url_package_classes.md#class-url) - 待解码的 `URL` 对象。
-
-返回值： 
-
-- String - 解码后的字符串。
-
 ### static func decodeComponent(String): String
 
 ```cangjie
@@ -470,32 +448,6 @@ println(URL.encode("你#!")) // output: %E4%BD%A0#!
 参数：
 
 - url: String - 待编码的字符串。
-  
-返回值： 
-
-- String - 编码后的字符串。
-
-### static func encode(URL): String
-
-```cangjie
-static func encode(url: URL): String
-```
-
-功能：对 `URL` 进行编码操作。
-
-> **注意：**
->
-> 该函数编码所有字符，但部分字符被 `URL` 语法所保留，所以以下字符将不会被编码：
->
-> `0-9` `A-Z` `a-z`
->
-> `!` `'` `-` `.` `*` `(` `)` `_` `~`
-> 
-> `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
-
-参数：
-
-- url: [URL](./url_package_classes.md#class-url) - 待编码的 `URL`。
 
 返回值：
 
