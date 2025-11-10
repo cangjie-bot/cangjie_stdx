@@ -384,28 +384,6 @@ Returns:
 
 - String - The decoded string.
 
-### static func decode(URL): String
-
-```cangjie
-static func decode(url: URL): String
-```
-
-Function: Perform decoding operation on the URL.
-
-> **Warning:**
->
-> This function decodes all encoded characters. However, some characters are part of the URL syntax, so the following characters will be retained in the output string:
-> 
-> `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
-
-Parameters:
-
-- url: [URL](./url_package_classes.md#class-url) - The URL object to be decoded.
-
-Returns: 
-
-- String - The decoded string.
-
 ### static func decodeComponent(String): String
 
 ```cangjie
@@ -443,32 +421,6 @@ Function: Perform URL encoding (also referred to as percent-encoding) on regular
 Parameters:
 
 - url: String - The string to be encoded.
-  
-Returns: 
-
-- String - The encoded string.
-
-### static func encode(URL): String
-
-```cangjie
-static func encode(url: URL): String
-```
-
-Function: Perform encoding operation on the URL.
-
-> **Warning:**
->
-> This function encodes all characters. However, some characters are reserved by URL syntax, so the following characters will not be encoded:
->
-> `0-9` `A-Z` `a-z`
->
-> `!` `'` `-` `.` `*` `(` `)` `_` `~`
-> 
-> `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
-
-Parameters:
-
-- url: [URL](./url_package_classes.md#class-url) - The URL to be encoded.
 
 Returns: 
 
