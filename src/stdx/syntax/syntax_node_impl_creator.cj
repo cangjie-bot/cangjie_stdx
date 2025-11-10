@@ -10,6 +10,9 @@ package stdx.syntax
 
 import std.collection.{ArrayList, ArrayStack}
 
+// Expr/Decl on each line is indented with four spaces after format
+let FORMAT_INDENTATION = 4
+
 class SyntaxNodeImplCreator {
     private init() {
     }
@@ -154,7 +157,7 @@ class SyntaxNodeImplCreator {
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
         ret.add(builder.buildNewline(1))
         for (i in 0..nodes.size) {
-            ret.add(builder.buildSpace(4))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
             ret.add(nodes[i].nodeImpl)
             ret.add(builder.buildNewline(1))
         }
@@ -171,7 +174,7 @@ class SyntaxNodeImplCreator {
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
         ret.add(builder.buildNewline(1))
         for (i in 0..memberDecls.size) {
-            ret.add(builder.buildSpace(4))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
             ret.add(memberDecls[i].nodeImpl)
             ret.add(builder.buildNewline(1))
         }
@@ -519,10 +522,46 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.InterfaceDecl, ret.toArray())
     }
 
-    static func createEnumDeclImpl(body: Body, genericConstraints: Option<GenericConstraints>,
+    static func createEnumBody(body: Body, constructors: Array<EnumConstructor>, isNonExhaustive: Bool) {
+        let builder = SyntaxNodeBuilder()
+        let ret = ArrayList<SyntaxNodeImpl>()
+
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
+        for (constructor in constructors) {
+            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.BitOrToken))
+            ret.add(builder.buildSpace(1))
+            ret.add(constructor.nodeImpl)
+        }
+        if (isNonExhaustive) {
+            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.BitOrToken))
+            ret.add(builder.buildSpace(1))
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.EllipsisToken))
+        }
+        for (decl in body.memberDecls) {
+            if (decl.nodeImpl.kind != SyntaxNodeKind.FuncDecl && decl.nodeImpl.kind != SyntaxNodeKind.PropDecl && decl.nodeImpl.kind != SyntaxNodeKind.MacroExpandDecl) {
+                throw Exception("InitException: invalid Decl for EnumDecl Init")
+            }
+            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
+            ret.add(decl.nodeImpl)
+        }
+        ret.add(builder.buildNewline(1))
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
+
+        builder.buildNonTerminal(SyntaxNodeKind.Body, ret.toArray())
+    }
+
+    static func createEnumDeclImpl(body: Body, constructors: Array<EnumConstructor>, genericConstraints: Option<GenericConstraints>,
         genericParams: Array<GenericParam>, isNonExhaustive: Bool, name: String,
         superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
         modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        if (constructors.size == 0) {
+            throw Exception("InitException: constructors cannot be empty for EnumDecl Init")
+        }
         let builder = SyntaxNodeBuilder()
         let ret = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(ret, comments)
@@ -566,7 +605,8 @@ class SyntaxNodeImplCreator {
         }
 
         ret.add(builder.buildSpace(1))
-        ret.add(body.nodeImpl)
+        ret.add( createEnumBody(body, constructors, isNonExhaustive))
+        
 
         builder.buildNonTerminal(SyntaxNodeKind.EnumDecl, ret.toArray())
     }
@@ -600,12 +640,12 @@ class SyntaxNodeImplCreator {
         ret.add(builder.buildNewline(1))
 
         if (let Some(get) <- getter) {
-            ret.add(builder.buildSpace(4))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
             ret.add(get.nodeImpl)
         }
         ret.add(builder.buildNewline(1))
         if (let Some(set) <- setter) {
-            ret.add(builder.buildSpace(4))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
             ret.add(set.nodeImpl)
         }
         ret.add(builder.buildNewline(1))
@@ -1428,7 +1468,7 @@ class SyntaxNodeImplCreator {
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
         for (i in 0..matchCases.size) {
             ret.add(builder.buildNewline(1))
-            ret.add(builder.buildSpace(4))
+            ret.add(builder.buildSpace(FORMAT_INDENTATION))
             ret.add(matchCases[i].nodeImpl)
         }
         ret.add(builder.buildNewline(1))
