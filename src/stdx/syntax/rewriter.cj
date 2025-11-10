@@ -8,7 +8,7 @@ public open class ASTRewriter {
             case pkg: Package => walkAndRewritePackage(pkg)
             case _ => walkAndRewrite(startPoint)
         }
-        if (newNode == startPoint || startPoint is Package) {
+        if ((!detach && newNode == startPoint) || startPoint is Package) {
             return newNode
         }
         // refresh parent node
@@ -727,8 +727,8 @@ class ChildCollector <: ASTVisitor {
                 }
                 childNodes.add(typeAlias.originalTyAnnotation)
             case typeConvExpr: TypeConvExpr =>
-                childNodes.add(typeConvExpr.srcVal)
                 childNodes.add(typeConvExpr.targetTypeAnnotation)
+                childNodes.add(typeConvExpr.srcVal)
             case typePattern: TypePattern =>
                 childNodes.add(typePattern.patternType)
                 childNodes.add(typePattern.subPattern)
