@@ -630,11 +630,11 @@ public class EnumDecl <: Decl {
     /**
      * @brief Initialize a new EnumDecl node.
      */
-    public init(body: Body, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
+    public init(body: Body, constructors: Array<EnumConstructor>, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
         isNonExhaustive: Bool, name: String, superTyAnnotations: Array<TypeAnnotation>,
         annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
         super(
-            SyntaxNodeImplCreator.createEnumDeclImpl(body, genericConstraints, genericParams, isNonExhaustive, name,
+            SyntaxNodeImplCreator.createEnumDeclImpl(body, constructors, genericConstraints, genericParams, isNonExhaustive, name,
                 superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()

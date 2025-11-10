@@ -1839,11 +1839,11 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 
 类型：Array\<[TypeAnnotation](#class-typeannotation)>
 
-### init(Body, Option\<GenericConstraints>, Array\<GenericParam>, Bool, String, Array\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Body, Array\<EnumConstructor>, Option\<GenericConstraints>, Array\<GenericParam>, Bool, String, Array\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
 
 ```cangjie
-public init(body: Body, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
-    isNonExhaustive: Bool, name: String, superTyAnnotations: Array<TypeAnnotation>,
+public init(body: Body, constructors: Array<EnumConstructor>, genericConstraints: Option<GenericConstraints>,
+    genericParams: Array<GenericParam>, isNonExhaustive: Bool, name: String, superTyAnnotations: Array<TypeAnnotation>,
     annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
 ```
 
@@ -1851,7 +1851,8 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 
 参数：
 
-- body: [Body](#class-body) - 枚举体，包含成员声明。
+- body: [Body](#class-body) - 枚举体，包含除枚举构造器外其他成员声明。
+- constructors: Array\<[EnumConstructor](#class-enumconstructor)> - 枚举构造器列表。
 - genericConstraints: Option\<[GenericConstraints](#class-genericconstraints)> - 可选的泛型约束。
 - genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
 - isNonExhaustive: Bool - 是否为非穷举枚举。
@@ -1860,6 +1861,10 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `constructors` 为空，或输入的 `body` 中的节点不是函数声明、属性声明及宏展开声明时，抛出异常，异常中包含报错提示信息。
 
 ### func getCaseSeparatorsPos()
  
