@@ -1013,21 +1013,10 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.FuncParam, ret.toArray())
     }
 
-    static func createGenericParamImpl(name: String, annotations!: Array<Annotation> = [],
-        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+    static func createGenericParamImpl(name: String, comments!: Array<Comment> = []) {
         let builder = SyntaxNodeBuilder()
         let ret = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(ret, comments)
-
-        if (annotations.size != 0) {
-            ret.add(createAnnotationList(annotations))
-            ret.add(builder.buildNewline(1))
-        }
-
-        if (modifiers.size != 0) {
-            ret.add(createModifierList(modifiers))
-            ret.add(builder.buildSpace(1))
-        }
 
         ret.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, name))
 

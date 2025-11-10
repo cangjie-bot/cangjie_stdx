@@ -193,7 +193,7 @@ public enum AtomicTypeKind {
     | UInt32Type
     | UInt64Type
     | UInt8Type
-    | UIntnativeType
+    | UIntNativeType
     | UnitType
     | ...
 }
