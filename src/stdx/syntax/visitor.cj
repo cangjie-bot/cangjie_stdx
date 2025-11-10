@@ -332,13 +332,13 @@ public open class ASTVisitor {
         for (param in node.genericParams) {
             walk(param)
         }
+        walk(node.extendedTyAnnotation)
         for (superTy in node.superTyAnnotations) {
             walk(superTy)
         }
         if (let Some(constraints) <- node.genericConstraints) {
             walk(constraints)
         }
-        walk(node.extendedTyAnnotation)
         walk(node.body)
     }
 
@@ -861,8 +861,8 @@ public open class ASTVisitor {
     }
 
     private func visitTypePattern(node: TypePattern) {
-        walk(node.patternType)
         walk(node.subPattern)
+        walk(node.patternType)
     }
 
     private func visitUnaryExpr(node: UnaryExpr) {
