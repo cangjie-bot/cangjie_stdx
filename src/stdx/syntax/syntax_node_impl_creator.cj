@@ -519,7 +519,45 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.InterfaceDecl, ret.toArray())
     }
 
-    static func createEnumDeclImpl(body: Body, genericConstraints: Option<GenericConstraints>,
+    static func createEnumBody(body: Body, constructors: Array<EnumConstructor>, isNonExhaustive: Bool) {
+        let builder = SyntaxNodeBuilder()
+        let ret = ArrayList<SyntaxNodeImpl>()
+
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
+        for (constructor in constructors) {
+            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(4))
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.BitOrToken))
+            ret.add(builder.buildSpace(1))
+            ret.add(constructor.nodeImpl)
+        }
+        if (constructors.size > 0 && isNonExhaustive) {
+            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(4))
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.BitOrToken))
+            ret.add(builder.buildSpace(1))
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.EllipsisToken))
+        }
+        if (constructors.size == 0 && isNonExhaustive) {
+            throw Exception("InitException: EnumDecl cannot be nonExhaustive with no constructors")
+        }
+        for (decl in body.memberDecls) {
+            if (decl.nodeImpl.kind != SyntaxNodeKind.FuncDecl && decl.nodeImpl.kind != SyntaxNodeKind.PropDecl && decl.nodeImpl.kind != SyntaxNodeKind.MacroExpandDecl) {
+                throw Exception("InitException: invalid Decl for EnumDecl Init")
+            }
+            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(4))
+            ret.add(decl.nodeImpl)
+        }
+        if (constructors.size > 0 || body.memberDecls.size > 0) {
+            ret.add(builder.buildNewline(1))
+        }
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
+
+        builder.buildNonTerminal(SyntaxNodeKind.Body, ret.toArray())
+    }
+
+    static func createEnumDeclImpl(body: Body, constructors: Array<EnumConstructor>, genericConstraints: Option<GenericConstraints>,
         genericParams: Array<GenericParam>, isNonExhaustive: Bool, name: String,
         superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
         modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
@@ -566,7 +604,8 @@ class SyntaxNodeImplCreator {
         }
 
         ret.add(builder.buildSpace(1))
-        ret.add(body.nodeImpl)
+        ret.add( createEnumBody(body, constructors, isNonExhaustive))
+        
 
         builder.buildNonTerminal(SyntaxNodeKind.EnumDecl, ret.toArray())
     }
