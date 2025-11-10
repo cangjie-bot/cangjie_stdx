@@ -8,6 +8,8 @@ public open class ASTRewriter {
             case pkg: Package => walkAndRewritePackage(pkg)
             case _ => walkAndRewrite(startPoint)
         }
+        // If the node has not been rewritten, there is no need to refresh the node's parent node.
+        // The package node has no parent node and does not need to be refreshed.
         if ((!detach && newNode == startPoint) || startPoint is Package) {
             return newNode
         }
@@ -66,7 +68,7 @@ public open class ASTRewriter {
                     // intermediate node in SyntaxNodeImpl
                     if (child.kind == SyntaxNodeKind.CommentGroupList || child.kind == SyntaxNodeKind.AnnotationList ||
                         child.kind == SyntaxNodeKind.ModifierList || child.kind == SyntaxNodeKind.TypeArguments ||
-                        child.kind == SyntaxNodeKind.TokenList) {
+                        child.kind == SyntaxNodeKind.MatchCaseBody || child.kind == SyntaxNodeKind.TokenList) {
                         hasRewritedChild = walkAndRewriteSpecialNode(child, newNodeImpl, collectChildNodeList, comments)
                         continue
                     }
@@ -103,7 +105,8 @@ public open class ASTRewriter {
                 var newCommentGroupListImpl = NonTerminal(impl.kind, Array<SyntaxNodeImpl>())
                 (hasRewritedChild, newCommentGroupListImpl) = walkAndRewriteComment(impl, comments)
                 newNodeImpl.add(newCommentGroupListImpl)
-            case SyntaxNodeKind.AnnotationList | SyntaxNodeKind.ModifierList | SyntaxNodeKind.TypeArguments =>
+            case SyntaxNodeKind.AnnotationList | SyntaxNodeKind.ModifierList | SyntaxNodeKind.TypeArguments
+                | SyntaxNodeKind.MatchCaseBody =>
                 var newListImpl = NonTerminal(impl.kind, Array<SyntaxNodeImpl>())
                 (hasRewritedChild, newListImpl) = walkAndRewriteNonTerminalList(impl, collectChildNodeList)
                 newNodeImpl.add(newListImpl)
@@ -368,13 +371,13 @@ class ChildCollector <: ASTVisitor {
                 for (param in extendDecl.genericParams) {
                     childNodes.add(param)
                 }
+                childNodes.add(extendDecl.extendedTyAnnotation)
                 for (superTy in extendDecl.superTyAnnotations) {
                     childNodes.add(superTy)
                 }
                 if (let Some(constraints) <- extendDecl.genericConstraints) {
                     childNodes.add(constraints)
                 }
-                childNodes.add(extendDecl.extendedTyAnnotation)
                 childNodes.add(extendDecl.body)
             case forInExpr: ForInExpr =>
                 childNodes.add(forInExpr.pattern)
@@ -730,8 +733,8 @@ class ChildCollector <: ASTVisitor {
                 childNodes.add(typeConvExpr.targetTypeAnnotation)
                 childNodes.add(typeConvExpr.srcVal)
             case typePattern: TypePattern =>
-                childNodes.add(typePattern.patternType)
                 childNodes.add(typePattern.subPattern)
+                childNodes.add(typePattern.patternType)
             case unaryExpr: UnaryExpr => childNodes.add(unaryExpr.operand)
             case unsafeExpr: UnsafeExpr => childNodes.add(unsafeExpr.block)
             case varrayExpr: VArrayExpr =>
