@@ -514,8 +514,8 @@ public class Argument <: SyntaxTreeNode {
     /**
      * @brief Initialize a new Argument node.
      */
-    public init(identifier: Option<String>, isInOut: Bool, isNamed: Bool, value: Expr, comments!: Array<Comment> = []) {
-        super(SyntaxNodeImplCreator.createArgumentImpl(identifier, isInOut, isNamed, value, comments: comments))
+    public init(identifier: Option<String>, isInOut: Bool, value: Expr, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createArgumentImpl(identifier, isInOut, value, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<Argument>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -523,7 +523,7 @@ public class Argument <: SyntaxTreeNode {
         this.startPos = startPos
         this.identifier_ = identifier
         this.isInOut_ = isInOut
-        this.isNamed_ = isNamed
+        this.isNamed_ = redNode.isNamed
         this.propInfos = redNode.propInfos
         this.posInfos = redNode.posInfos
     }
@@ -803,13 +803,13 @@ public class Comment <: SyntaxTreeNode {
     /**
      * @brief Initialize a new Comment node.
      */
-    public init(kind: CommentKind, content: String) {
-        super(SyntaxNodeImplCreator.createCommentImpl(kind, content), hasComment: false)
+    public init(content: String) {
+        super(SyntaxNodeImplCreator.createCommentImpl(content), hasComment: false)
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<Comment>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
         this.startPos = startPos
-        this.kind_ = kind
+        this.kind_ = redNode.kind
         this.content_ = content
     }
 
@@ -1200,8 +1200,8 @@ public class ParameterList <: SyntaxTreeNode {
     /**
      * @brief Initialize node with parameters.
      */
-    public init(parameters: Array<Parameter>, comments!: Array<Comment> = []) {
-        super(SyntaxNodeImplCreator.createParameterListImpl(parameters, comments: comments))
+    public init(parameters: Array<Parameter>, hasParen!: Bool = true, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createParameterListImpl(parameters, hasParen: hasParen, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<ParameterList>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
