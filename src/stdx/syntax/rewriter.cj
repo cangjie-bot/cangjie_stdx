@@ -148,13 +148,13 @@ public open class ASTRewriter {
                 case nt: NonTerminal =>
                     let newCommentGruop = ArrayList<SyntaxNodeImpl>()
                     for (comment in nt.children) {
-                        if (child is NonTerminal) {
+                        if (comment is NonTerminal) {
                             let n = comments.remove(at: 0)
                             let newNode = walkAndRewrite(n)
-                            hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, child)
+                            hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, comment)
                             newCommentGruop.add(newNode.nodeImpl)
                         } else {
-                            newCommentGruop.add(child)
+                            newCommentGruop.add(comment)
                         }
                     }
                     newNodeImpl.add(NonTerminal(SyntaxNodeKind.CommentGroup, newCommentGruop.toArray()))
@@ -700,11 +700,10 @@ class ChildCollector <: ASTVisitor {
                     childNodes.add(varDecl)
                 }
                 childNodes.add(tryCatch.tryBlock)
-                for (pattern in tryCatch.catchPatterns) {
-                    childNodes.add(pattern)
-                }
-                for (block in tryCatch.catchBlocks) {
-                    childNodes.add(block)
+                // The number of catchPatterns and catchBlocks must be equal for a valid TryCatch Node.
+                for (i in 0..tryCatch.catchPatterns.size) {
+                    childNodes.add(tryCatch.catchPatterns[i])
+                    childNodes.add(tryCatch.catchBlocks[i])
                 }
                 if (let Some(finallyBlock) <- tryCatch.finallyBlock) {
                     childNodes.add(finallyBlock)
