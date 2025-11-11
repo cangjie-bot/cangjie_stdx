@@ -11,6 +11,8 @@ ASTVisitor 是 SyntaxTreeNode 访问器的基类。
 
 假设我们有一段需要分析的代码：
 
+<!-- compile -->
+
 ```cangjie
 package a
 
