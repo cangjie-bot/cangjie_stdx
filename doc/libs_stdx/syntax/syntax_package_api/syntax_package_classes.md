@@ -3310,20 +3310,6 @@ public prop prefixes: Array<String>
 
 类型：Array\<String>
 
-### init(Array\<String>, Array\<ImportContent>, Array\<Comment>)
-
-```cangjie
-public init(prefixes: Array<String>, contents: Array<ImportContent>, comments!: Array<Comment> = [])
-```
-
-功能：构造一个 [ImportMulti](#class-importmulti) 对象，表示多导入语句。
-
-参数：
-
-- prefixes: Array\<String> - 导入路径的前缀列表，如 `["pkg"]`。
-- contents: Array\<[ImportContent](#class-importcontent)> - 子导入内容列表，如 `[A, B]`。
-- comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
-
 ### func getDotsPos()
  
 ```cangjie
@@ -4265,7 +4251,7 @@ public init(kind: LitConstKind, rawValue: String, delimiterNum: Int64, isSingleQ
 
 - kind: [LitConstKind](syntax_package_enums.md#enum-litconstkind) - 字面量类型。
 - rawValue: String - 字面量的原始字符串值。
-- delimiterNum: Int64 - 分隔符数量（引号重复次数）。
+- delimiterNum: Int64 - 分隔符数量。
 - isSingleQuote: Bool - 是否使用单引号包裹。
 - strKind: [LitConstStrKind](syntax_package_enums.md#enum-litconststrkind) - 字符串字面量种类。
 - strPartExprs: Array\<[StrLiteralPart](syntax_package_enums.md#enum-strliteralpart)> - 字符串片段列表，可包含插值。
@@ -4273,7 +4259,7 @@ public init(kind: LitConstKind, rawValue: String, delimiterNum: Int64, isSingleQ
 
 异常：
 
-- Exception - 当 `kind` 不是字符串字面量类型时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `strKind` 为 [MultiLineRawString](syntax_package_enums.md#multilinerawstring) 且 `delimiterNum` 为 `0` 时，抛出异常，异常中包含报错提示信息。
 
 ### func hasInterpolation()
  
@@ -6540,7 +6526,7 @@ public init(importLists: Array<ImportList>, name: String, path: String, pkgHeade
 - path: String - 源文件路径。
 - pkgHeader: Option\<[PackageHeader](#class-packageheader)> - 包声明头，可选。
 - topLevelDecls: Array\<[Decl](#class-decl)> - 顶层声明列表。
-- ftrDirective!: Option\<FeaturesDirective> - 特性指令，可选，默认为 `None`。
+- ftrDirective!: Option\<FeaturesDirective> - 特性指令，暂不支持，默认为 `None`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ## class SpawnExpr
@@ -8622,7 +8608,7 @@ public prop size: Int64
 public init(elementType: TypeAnnotation, size: Int64, comments!: Array<Comment> = [])
 ```
 
-功能：构造一个 [VArrayType](#class-varraytype) 对象，表示定长数组类型，如 `VArray<Int64, 5>`。
+功能：构造一个 [VArrayType](#class-varraytype) 对象，表示定长数组类型，如 `VArray<Int64, $5>`。
 
 参数：
 
