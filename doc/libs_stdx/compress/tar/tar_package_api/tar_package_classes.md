@@ -163,7 +163,7 @@ public static func extract(fromTar!: String, destDir!: String, overwrite!: Bool)
 ### static func extract(Path, Path, Bool)
 
 ```cangjie
-public static func extract(from!: Path, destDir!: Path, overwrite!: Bool): Unit
+public static func extract(fromTar!: Path, destDir!: Path, overwrite!: Bool): Unit
 ```
 
 功能：将 .tar 文件提取至指定目录。
