@@ -305,13 +305,13 @@ public class ImportList <: SyntaxTreeNode {
     /**
      * @brief Initialize node with imported content, import kind and modifier.
      */
-    public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>, comments!: Array<Comment> = []) {
-        super(SyntaxNodeImplCreator.createImportListImpl(contents, kind, modifier, comments: comments))
+    public init(contents: ImportContent, modifier: Option<Modifier>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createImportListImpl(contents, modifier, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<ImportList>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
         this.startPos = startPos
-        this.kind_ = kind
+        this.kind_ = redNode.kind
         this.propInfos = redNode.propInfos
         this.posInfos = redNode.posInfos
     }

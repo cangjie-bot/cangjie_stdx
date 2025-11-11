@@ -129,7 +129,7 @@ func getRSquarePos(): Option<CodePositionRange>
 
 ```cangjie
 public class Argument <: SyntaxTreeNode {
-    public init(identifier: Option<String>, isInOut: Bool, isNamed: Bool, value: Expr, comments!: Array<Comment> = [])
+    public init(identifier: Option<String>, isInOut: Bool, value: Expr, comments!: Array<Comment> = [])
 }
 ```
 
@@ -181,10 +181,10 @@ public prop value: Expr
 
 类型：[Expr](#class-expr)
 
-### init(Option\<String>, Bool, Bool, Expr, Array\<Comment>)
+### init(Option\<String>, Bool, Expr, Array\<Comment>)
 
 ```cangjie
-public init(identifier: Option<String>, isInOut: Bool, isNamed: Bool, value: Expr, comments!: Array<Comment> = [])
+public init(identifier: Option<String>, isInOut: Bool, value: Expr, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [Argument](#class-argument) 对象，表示语法树中的参数节点。
@@ -193,7 +193,6 @@ public init(identifier: Option<String>, isInOut: Bool, isNamed: Bool, value: Exp
 
 - identifier: Option\<String> - 参数的可选标识符名称。
 - isInOut: Bool - 是否为 `inout` 参数。
-- isNamed: Bool - 是否为命名参数。
 - value: [Expr](#class-expr) - 参数的值表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
@@ -960,6 +959,10 @@ public init(pattern: Pattern, exceptionType: Array<TypeAnnotation>, comments!: A
 - exceptionType: Array\<[TypeAnnotation](#class-typeannotation)> - 可捕获的异常类型列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `pattern` 不为 [WildcardPattern](#class-wildcardpattern) 或 [VarPattern](#class-varpattern)，或当 `pattern` 为 [VarPattern](#class-varpattern) 但 `exceptionType` 为空时，抛出异常，异常中包含报错提示信息。
+
 ### func getBitOrsPos()
 
 ```cangjie
@@ -1073,6 +1076,10 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `body` 中有除静态初始化器、函数声明、变量声明、宏展开声明和属性声明外的声明或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
+
 ### func getClassKeyWordPos()
  
 ```cangjie
@@ -1161,7 +1168,7 @@ public func getUpperBoundPos(): Option<CodePositionRange>
 
 ```cangjie
 public class Comment <: SyntaxTreeNode {
-    public init(kind: CommentKind, content: String)
+    public init(content: String)
 }
 ```
 
@@ -1191,17 +1198,16 @@ public prop kind: CommentKind
 
 类型：[CommentKind](syntax_package_enums.md#enum-commentkind)
 
-### init(CommentKind, String)
+### init(String)
 
 ```cangjie
-public init(kind: CommentKind, content: String)
+public init(content: String)
 ```
 
 功能：构造一个 [Comment](#class-comment) 对象，表示语法树中的注释节点。
 
 参数：
 
-- kind: [CommentKind](syntax_package_enums.md#enum-commentkind) - 注释类型，如行注释、块注释或文档注释。
 - content: String - 注释内容。
 
 ## class CompositeType
@@ -1349,6 +1355,10 @@ public init(cond: Array<AtomicCondition>, comments!: Array<Comment> = [])
 
 - cond: Array\<[AtomicCondition](syntax_package_enums.md#enum-atomiccondition)> - 原子条件列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `cond` 为空时，抛出异常，异常中包含报错提示信息。
 
 ### func getAndsPos()
  
@@ -1531,6 +1541,10 @@ public init(cond: Array<ConjunctionCondition>, comments!: Array<Comment> = [])
 - cond: Array\<[ConjunctionCondition](#class-conjunctioncondition)> - 合取条件列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `cond` 为空时，抛出异常，异常中包含报错提示信息。
+
 ### func getOrsPos()
  
 ```cangjie
@@ -1644,7 +1658,7 @@ public func getWhileKeyWordPos(): CodePositionRange
 ```cangjie
 public class EnumConstructor <: Decl {
     public init(name: String, paramTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
-        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+        comments!: Array<Comment> = [])
 }
 ```
 
@@ -1676,11 +1690,11 @@ public prop paramTyAnnotations: Array<TypeAnnotation>
 
 类型：Array\<[TypeAnnotation](#class-typeannotation)>
 
-### init(String, Array\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(String, Array\<TypeAnnotation>, Array\<Annotation>, Array\<Comment>)
 
 ```cangjie
 public init(name: String, paramTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
-    modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [EnumConstructor](#class-enumconstructor) 对象，表示枚举构造器节点。
@@ -1690,7 +1704,6 @@ public init(name: String, paramTyAnnotations: Array<TypeAnnotation>, annotations
 - name: String - 构造器名称。
 - paramTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 参数类型注解列表。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getIdentifierPos()
@@ -1844,7 +1857,7 @@ public init(body: Body, constructors: Array<EnumConstructor>, genericConstraints
 
 异常：
 
-- Exception - 当输入的 `constructors` 为空，或输入的 `body` 中的节点不是函数声明、属性声明及宏展开声明时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `constructors` 为空，或输入的 `body` 中的节点不是函数声明、属性声明及宏展开声明，或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
 
 ### func getCaseSeparatorsPos()
  
@@ -2083,7 +2096,7 @@ sealed abstract class Expr <: SyntaxTreeNode {}
 public class ExtendDecl <: Decl {
     public init(body: Body, extendedTyAnnotation: TypeAnnotation, genericConstraints: Option<GenericConstraints>,
         genericParams: Array<GenericParam>, superTyAnnotations: Array<TypeAnnotation>,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+        annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 }
 ```
 
@@ -2145,12 +2158,12 @@ public prop superTyAnnotations: Array<TypeAnnotation>
 
 类型：Array\<[TypeAnnotation](#class-typeannotation)>
 
-### init(Body, TypeAnnotation, Option\<GenericConstraints>, Array\<GenericParam>, Array\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Body, TypeAnnotation, Option\<GenericConstraints>, Array\<GenericParam>, Array\<TypeAnnotation>, Array\<Annotation>, Array\<Comment>)
 
 ```cangjie
 public init(body: Body, extendedTyAnnotation: TypeAnnotation, genericConstraints: Option<GenericConstraints>,
     genericParams: Array<GenericParam>, superTyAnnotations: Array<TypeAnnotation>,
-    annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [ExtendDecl](#class-extenddecl) 对象，表示扩展声明节点。
@@ -2163,8 +2176,11 @@ public init(body: Body, extendedTyAnnotation: TypeAnnotation, genericConstraints
 - genericParams: Array\<[GenericParam](#class-genericparam)> - 泛型参数列表。
 - superTyAnnotations: Array\<[TypeAnnotation](#class-typeannotation)> - 父类类型标注列表。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `body` 中有除函数声明、宏展开声明和属性声明外的声明或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
 
 ### func getExtendKeyWordPos()
  
@@ -2665,7 +2681,7 @@ public init(defaultValue: Option<Expr>, kind: Option<VarKind>, name: String, typ
 
 异常：
 
-- Exception - 当 `kind` 不代表 `var` 或 `let` 时，或没有传入参数名却为命名参数时抛出异常，异常中包含报错提示信息。
+- Exception - 当 `kind` 不代表 `var` 或 `let`，或 `kind` 为空但 `modifiers` 不为空，或没有传入参数名却为命名参数时，抛出异常，异常中包含报错提示信息。
 
 ### func getAssignPos()
 
@@ -2984,6 +3000,10 @@ public init(constraints: Array<GenericConstraint>, comments!: Array<Comment> = [
 - constraints: Array\<[GenericConstraint](#class-genericconstraint)> - 泛型约束列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `constraints` 为空时，抛出异常，异常中包含报错提示信息。
+
 ### func getCommasPos()
 
 ```cangjie
@@ -3120,6 +3140,10 @@ public init(condition: DisjunctionCondition, elseBlock: Option<Block>, elseIf: O
 - elseIf: Option\<[IfExpr](#class-ifexpr)> - 可选的 `else if` 分支。
 - ifBlock: [Block](#class-block) - `if` 分支代码块。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入中存在多个 `elseBlock` 时，抛出异常，异常中包含报错提示信息。
 
 ### func getCondLParenPos()
  
@@ -3343,7 +3367,7 @@ public func getPrefixesPos(): Array<CodePositionRange>
 
 ```cangjie
 public class ImportList <: SyntaxTreeNode {
-    public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>, comments!: Array<Comment> = [])
+    public init(contents: ImportContent, modifier: Option<Modifier>, comments!: Array<Comment> = [])
 }
 ```
 
@@ -3385,10 +3409,10 @@ public prop modifier: Option<Modifier>
 
 类型：Option\<[Modifier](#class-modifier)>
 
-### init(ImportContent, ImportKind, Option\<Modifier>, Array\<Comment>)
+### init(ImportContent, Option\<Modifier>, Array\<Comment>)
 
 ```cangjie
-public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier>, comments!: Array<Comment> = [])
+public init(contents: ImportContent, modifier: Option<Modifier>, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [ImportList](#class-importlist) 对象，表示一条导入语句，如 `import pkg.A`。
@@ -3396,9 +3420,12 @@ public init(contents: ImportContent, kind: ImportKind, modifier: Option<Modifier
 参数：
 
 - contents: [ImportContent](#class-importcontent) - 导入内容。
-- kind: [ImportKind](syntax_package_enums.md#enum-importkind) - 导入类型。
 - modifier: Option\<[Modifier](#class-modifier)> - 修饰符，可选。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 `modifier` 不为 [Public](syntax_package_enums.md#public)、[Protected](syntax_package_enums.md#protected)、[Private](syntax_package_enums.md#private) 或 [Internal](syntax_package_enums.md#internal) 时，抛出异常，异常中包含报错提示信息。
 
 ### func getImportKeyWordPos()
  
@@ -3449,6 +3476,10 @@ public init(prefixes: Array<String>, contents: Array<ImportContent>, comments!: 
 - prefixes: Array\<String> - 导入路径的前缀列表，如 `["pkg"]`。
 - contents: Array\<ImportContent> - 导入内容列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `contents` 为空时，抛出异常，异常中包含报错提示信息。
 
 ### func getCommasPos()
 
@@ -3684,6 +3715,10 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `body` 中有除函数声明和宏展开声明外的声明或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
 
 ### func getGenericParamsCommasPos()
  
@@ -3921,8 +3956,7 @@ public func getRCurlPos(): CodePositionRange
 
 ```cangjie
 public class LambdaParam <: Parameter {
-    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
-        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 }
 ```
 
@@ -3954,11 +3988,10 @@ public prop typeAnnotation: Option<TypeAnnotation>
 
 类型：Option\<[TypeAnnotation](#class-typeannotation)>
 
-### init(String, Option\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(String, Option\<TypeAnnotation>, Array<Annotation>, Array\<Comment>)
 
 ```cangjie
-public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
-    modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [LambdaParam](#class-lambdaparam) 对象，表示 lambda 参数节点。
@@ -3968,7 +4001,6 @@ public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: 
 - name: String - 参数名。
 - typeAnnotation: Option\<[TypeAnnotation](#class-typeannotation)> - 可选的类型注解。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getIdentifierPos()
@@ -4045,6 +4077,10 @@ public init(expr: Expr, patterns: Array<Pattern>, comments!: Array<Comment> = []
 - expr: [Expr](#class-expr) - 被绑定的表达式。
 - patterns: Array\<[Pattern](#class-pattern)> - 用于解构的模式列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `patterns` 为空时，抛出异常，异常中包含报错提示信息。
 
 ### func getBackArrowPos()
  
@@ -4392,7 +4428,7 @@ public func getRetTyAnnotationColonPos(): Option<CodePositionRange>
 ```cangjie
 public class MacroExpandDecl <: Decl {
     public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+        annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 }
 ```
 
@@ -4434,11 +4470,11 @@ public prop macroInputs: MacroExpandInput
 
 类型：[MacroExpandInput](syntax_package_enums.md#enum-macroexpandinput)
 
-### init(Expr, Tokens, MacroExpandInput, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Expr, Tokens, MacroExpandInput, Array\<Annotation>, Array\<Comment>)
 
 ```cangjie
 public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
-    annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [MacroExpandDecl](#class-macroexpanddecl) 对象，表示宏展开声明节点。
@@ -4449,7 +4485,6 @@ public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput
 - macroAttrs: Tokens - 宏的属性标记序列，会被格式化。
 - macroInputs: [MacroExpandInput](syntax_package_enums.md#enum-macroexpandinput) - 宏输入，会被格式化。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 异常：
@@ -4646,7 +4681,7 @@ public func getRSquarePos(): Option<CodePositionRange>
 ```cangjie
 public class MacroExpandParam <: Parameter {
     public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+        annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 }
 ```
 
@@ -4688,11 +4723,11 @@ public prop macroInputs: MacroExpandInput
 
 类型：[MacroExpandInput](syntax_package_enums.md#enum-macroexpandinput)
 
-### init(Expr, Tokens, MacroExpandInput, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Expr, Tokens, MacroExpandInput, Array\<Annotation>, Array\<Comment>)
 
 ```cangjie
 public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
-    annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    annotations!: Array<Annotation> = [], comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [MacroExpandParam](#class-macroexpandparam) 对象，表示宏展开参数节点，用于函数参数中嵌入宏调用。
@@ -4703,7 +4738,6 @@ public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput
 - macroAttrs: Tokens - 宏的属性标记序列。
 - macroInputs: [MacroExpandInput](syntax_package_enums.md#enum-macroexpandinput) - 宏输入，可以是带括号的 Tokens 或不带括号的 Decl。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 异常：
@@ -4774,8 +4808,7 @@ public func getRSquarePos(): Option<CodePositionRange>
 
 ```cangjie
 public class MainDecl <: Decl {
-    public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>, comments!: Array<Comment> = [])
 }
 ```
 
@@ -4817,11 +4850,10 @@ public prop retTyAnnotation: Option<TypeAnnotation>
 
 类型：Option\<[TypeAnnotation](#class-typeannotation)>
 
-### init(Block, ParameterList, Option\<TypeAnnotation>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Block, ParameterList, Option\<TypeAnnotation>, Array\<Comment>)
 
 ```cangjie
-public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>,
-    annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [MainDecl](#class-maindecl) 对象，表示主函数声明节点。
@@ -4831,8 +4863,6 @@ public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnno
 - body: [Block](#class-block) - 主函数体。
 - params: [ParameterList](#class-parameterlist) - 参数列表。
 - retTyAnnotation: Option\<[TypeAnnotation](#class-typeannotation)> - 可选的返回类型注解。
-- annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getMainKeyWordPos()
@@ -5388,7 +5418,7 @@ public init(accessModifier: Option<Modifier>, isMacroPkg: Bool, packageNameIdent
 
 异常：
 
-- Exception - 当修饰符不是 `public`、`internal` 或 `protected` 时，抛出异常，异常中包含报错提示信息。
+- Exception - 当修饰符不是 `public`、`internal` 或 `protected`，或 `packageNameIdentifiers` 为空时，抛出异常，异常中包含报错提示信息。
 
 ### func getDotsPos()
 
@@ -5480,7 +5510,7 @@ sealed abstract class Parameter <: Decl {}
 
 ```cangjie
 public class ParameterList <: SyntaxTreeNode {
-    public init(parameters: Array<Parameter>, comments!: Array<Comment> = [])
+    public init(parameters: Array<Parameter>, hasParen!: Bool = true, comments!: Array<Comment> = [])
 }
 ```
 
@@ -5500,10 +5530,10 @@ public prop params: Array<Parameter>
  
 类型：Array\<[Parameter](#class-parameter)>
 
-### init(Array\<Parameter>, Array\<Comment>)
+### init(Array\<Parameter>, Bool, Array\<Comment>)
 
 ```cangjie
-public init(parameters: Array<Parameter>, comments!: Array<Comment> = [])
+public init(parameters: Array<Parameter>, hasParen!: Bool = true, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [ParameterList](#class-parameterlist) 对象，表示参数列表。
@@ -5511,6 +5541,7 @@ public init(parameters: Array<Parameter>, comments!: Array<Comment> = [])
 参数：
 
 - parameters: Array\<[Parameter](#class-parameter)> - 参数列表。
+- hasParen: Bool - 是否带有括号，默认为 `true`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getParamsCommasPos()
@@ -5844,7 +5875,7 @@ public func getOperatorPos(): CodePositionRange
 
 ```cangjie
 public class PropDecl <: Decl {
-    public init(isMut: Bool, getter: Option<PropGetterOrSetter>, name: String, setter: Option<PropGetterOrSetter>,
+    public init(getter: Option<PropGetterOrSetter>, name: String, setter: Option<PropGetterOrSetter>,
         tyAnnotation: TypeAnnotation, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
         comments!: Array<Comment> = [])
 }
@@ -5908,10 +5939,10 @@ public prop isMut: Bool
 
 类型：Bool
 
-### init(Bool, Option\<PropGetterOrSetter>, String, Option\<PropGetterOrSetter>, TypeAnnotation, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Option\<PropGetterOrSetter>, String, Option\<PropGetterOrSetter>, TypeAnnotation, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
 
 ```cangjie
-public init(isMut: Bool, getter: Option<PropGetterOrSetter>, name: String, setter: Option<PropGetterOrSetter>,
+public init(getter: Option<PropGetterOrSetter>, name: String, setter: Option<PropGetterOrSetter>,
     tyAnnotation: TypeAnnotation, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
     comments!: Array<Comment> = [])
 ```
@@ -5920,7 +5951,6 @@ public init(isMut: Bool, getter: Option<PropGetterOrSetter>, name: String, sette
 
 参数：
 
-- isMut: Bool - 是否为可变属性。
 - getter: Option\<[PropGetterOrSetter](#class-propgetterorsetter)> - 可选的 getter。
 - name: String - 属性名。
 - setter: Option\<[PropGetterOrSetter](#class-propgetterorsetter)> - 可选的 setter。
@@ -5928,6 +5958,10 @@ public init(isMut: Bool, getter: Option<PropGetterOrSetter>, name: String, sette
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 `setter` 存在但 `getter` 不存在时，抛出异常，异常中包含报错提示信息。
 
 ### func getIdentifierPos()
  
@@ -5994,7 +6028,7 @@ public func getTyAnnotationColonPos(): CodePositionRange
 ```cangjie
 public class PropGetterOrSetter <: Decl {
     public init(block: Block, identifier: Option<String>, isGetter: Bool, annotations!: Array<Annotation> = [],
-        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+        comments!: Array<Comment> = [])
 }
 ```
 
@@ -6034,11 +6068,11 @@ public prop isGetter: Bool
 
 类型：Bool
 
-### init(Block, Option\<String>, Bool, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Block, Option\<String>, Bool, Array\<Annotation>, Array\<Comment>)
 
 ```cangjie
 public init(block: Block, identifier: Option<String>, isGetter: Bool, annotations!: Array<Annotation> = [],
-    modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [PropGetterOrSetter](#class-propgetterorsetter) 对象，表示属性 getter 或 setter 节点。
@@ -6049,8 +6083,11 @@ public init(block: Block, identifier: Option<String>, isGetter: Bool, annotation
 - identifier: Option\<String> - 可选的标识符。
 - isGetter: Bool - 是否为 getter。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 `isGetter` 为 `true` 但 `annotations` 不为空或 `identifier` 不为空，或 `isGetter` 为 `false` 但 `identifier` 为空时，抛出异常，异常中包含报错提示信息。
 
 ### func getGetKeyWordPos()
  
@@ -6191,7 +6228,7 @@ public func getRParenPos(): CodePositionRange
 
 ```cangjie
 public class QuoteInterpolationExpr <: Expr {
-    public init(expr: Expr, comments!: Array<Comment> = [])
+    public init(expr: Expr, hasParen!: Bool = false, comments!: Array<Comment> = [])
 }
 ```
 
@@ -6211,10 +6248,10 @@ public prop expr: Expr
 
 类型：[Expr](#class-expr)
 
-### init(Expr, Array\<Comment>)
+### init(Expr, Bool, Array\<Comment>)
 
 ```cangjie
-public init(expr: Expr, comments!: Array<Comment> = [])
+public init(expr: Expr, hasParen!: Bool = false, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [QuoteInterpolationExpr](#class-quoteinterpolationexpr) 对象，表示 `quote` 中的插值表达式。
@@ -6222,6 +6259,7 @@ public init(expr: Expr, comments!: Array<Comment> = [])
 参数：
 
 - expr: [Expr](#class-expr) - 被插值的表达式。
+- hasParen: Bool - 是否带有括号，默认为 `false`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getDollarPos()
@@ -6624,8 +6662,7 @@ public func getThreadContextRParenPos(): Option<CodePositionRange>
 
 ```cangjie
 public class StaticInit <: Decl {
-    public init(body: Block, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
-        comments!: Array<Comment> = [])
+    public init(body: Block, comments!: Array<Comment> = [])
 }
 ```
 
@@ -6645,11 +6682,10 @@ public prop body: Block
 
 类型：[Block](#class-block)
 
-### init(Block, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(Block, Array\<Comment>)
 
 ```cangjie
-public init(body: Block, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
-    comments!: Array<Comment> = [])
+public init(body: Block, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [StaticInit](#class-staticinit) 对象，表示静态初始化器节点。
@@ -6657,13 +6693,7 @@ public init(body: Block, annotations!: Array<Annotation> = [], modifiers!: Array
 参数：
 
 - body: [Block](#class-block) - 静态初始化代码块。
-- annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
-- modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
-
-异常：
-
-- Exception - 当 `modifiers` 不符合 [StaticInit](#class-staticinit) 要求时，抛出异常，异常中包含报错提示信息。
 
 ### func getInitKeyWordPos()
  
@@ -6853,6 +6883,10 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `body` 中有除静态初始化器、函数声明、变量声明、宏展开声明和属性声明外的声明或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
+
 ### func getGenericParamsCommasPos()
  
 ```cangjie
@@ -6986,6 +7020,10 @@ public init(base: Expr, indexs: Array<Expr>, comments!: Array<Comment> = [])
 - base: [Expr](#class-expr) - 被索引的基础表达式。
 - indexs: Array\<[Expr](#class-expr)> - 索引表达式列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 `indexs` 为空时，抛出异常，异常中包含报错提示信息。
 
 ### func getCommasPos()
 
@@ -7552,6 +7590,10 @@ public init(catchBlocks: Array<Block>, catchPatterns: Array<CatchPattern>, final
 - tryBlock: [Block](#class-block) - `try` 代码块。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `catchPatterns`、`resourceSpec` 和 `finallyBlock` 同时为空时，抛出异常，异常中包含报错提示信息。
+
 ### func getCatchKeyWordsPos()
 
 ```cangjie
@@ -7763,6 +7805,10 @@ public init(subPatterns: Array<Pattern>, comments!: Array<Comment> = [])
 - subPatterns: Array\<[Pattern](#class-pattern)> - 子模式列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `subPatterns` 为空时，抛出异常，异常中包含报错提示信息。
+
 ### func getCommasPos()
 
 ```cangjie
@@ -7921,7 +7967,7 @@ public func getRParenPos(): CodePositionRange
 ```cangjie
 public class TypeAlias <: Decl {
     public init(aliasName: String, originalTyAnnotation: TypeAnnotation, typeParameters: Array<GenericParam>,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
 }
 ```
 
@@ -7963,11 +8009,11 @@ public prop typeParameters: Array<GenericParam>
 
 类型：Array\<[GenericParam](#class-genericparam)>
 
-### init(String, TypeAnnotation, Array\<GenericParam>, Array\<Annotation>, Array\<Modifier>, Array\<Comment>)
+### init(String, TypeAnnotation, Array\<GenericParam>, Array\<Modifier>, Array\<Comment>)
 
 ```cangjie
 public init(aliasName: String, originalTyAnnotation: TypeAnnotation, typeParameters: Array<GenericParam>,
-    annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
+    modifiers!: Array<Modifier> = [], comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [TypeAlias](#class-typealias) 对象，表示类型别名声明节点。
@@ -7977,7 +8023,6 @@ public init(aliasName: String, originalTyAnnotation: TypeAnnotation, typeParamet
 - aliasName: String - 别名名称。
 - originalTyAnnotation: [TypeAnnotation](#class-typeannotation) - 原始类型注解。
 - typeParameters: Array\<[GenericParam](#class-genericparam)> - 类型参数列表。
-- annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
@@ -8152,6 +8197,10 @@ public init(subPattern: Pattern, patternType: TypeAnnotation, comments!: Array<C
 - subPattern: [Pattern](#class-pattern) - 被判断值的模式节点。
 - patternType: [TypeAnnotation](#class-typeannotation) - 类型。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `subPattern` 不为 [WildcardPattern](#class-wildcardpattern) 或 [VarPattern](#class-varpattern)时，抛出异常，异常中包含报错提示信息。
 
 ### func getColonPos()
 

@@ -113,10 +113,10 @@ public class MacroExpandDecl <: Decl {
      * @brief Initialize a new MacroExpandDecl node.
      */
     public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        annotations!: Array<Annotation> = [], comments!: Array<Comment> = []) {
         super(
             SyntaxNodeImplCreator.createMacroExpandDeclImpl(calleeMacro, macroAttrs, macroInputs,
-                annotations: annotations, modifiers: modifiers, comments: comments))
+                annotations: annotations, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<MacroExpandDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -436,10 +436,10 @@ public class MacroExpandParam <: Parameter {
      * @brief Initialize a new MacroExpandParam node.
      */
     public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        annotations!: Array<Annotation> = [], comments!: Array<Comment> = []) {
         super(
             SyntaxNodeImplCreator.createMacroExpandParamImpl(calleeMacro, macroAttrs, macroInputs,
-                annotations: annotations, modifiers: modifiers, comments: comments))
+                annotations: annotations, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<MacroExpandParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -568,8 +568,8 @@ public class QuoteInterpolationExpr <: Expr {
     /**
      * @brief Initialize node with quoted expr.
      */
-    public init(expr: Expr, comments!: Array<Comment> = []) {
-        super(SyntaxNodeImplCreator.createQuoteInterpolationExprImpl(expr, comments: comments))
+    public init(expr: Expr, hasParen!: Bool = false, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createQuoteInterpolationExprImpl(expr, hasParen: hasParen, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<QuoteInterpolationExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None))
