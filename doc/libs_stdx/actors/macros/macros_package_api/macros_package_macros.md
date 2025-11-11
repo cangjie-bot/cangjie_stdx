@@ -29,6 +29,34 @@ public macro Actor(options: Tokens, input: Tokens): Tokens
 
 所有选项只能出现一次，否则在宏展开期间将抛出错误。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter <: ToString {
+    private var cnt: Int64 = 0
+
+    public func toString(): String {
+        "This is a counter."
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    println(counter)
+}
+```
+
+运行结果：
+
+```text
+This is a counter.
+```
+
 ## @Receiver 宏
 
 ```cangjie
@@ -62,3 +90,43 @@ public macro Receiver(options: Tokens, input: Tokens): Tokens
 目前可用的选项只有 priority: value - 指定接收函数的默认优先级级别。提供的值必须是介于 1 到 10 之间的整数字面量；否则，在宏展开期间将抛出错误。此选项仅在外层 [@Actor](./macros_package_macros.md#actor-宏) 宏具有 `enableReceiverPriority: true` 选项时才可用。
 
 所有选项只能出现一次，否则在宏展开期间将抛出错误。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter <: ToString {
+    private var cnt: Int64 = 0
+
+    @Receiver
+    public func inc(): Unit {
+        cnt++
+    }
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+
+    public func toString(): String {
+        "This is a counter: cnt = ${getCnt().get()}."
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    counter.inc()
+    counter.inc()
+    println(counter)
+}
+```
+
+运行结果：
+
+```text
+This is a counter: cnt = 2.
+```

@@ -29,6 +29,34 @@ Currently, the only available option is `enableReceiverPriority: value` — this
 
 Each option can only appear once; otherwise, an error will be thrown during macro expansion.
 
+Example:
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter <: ToString {
+    private var cnt: Int64 = 0
+
+    public func toString(): String {
+        "This is a counter."
+    }
+}
+
+main() {
+    let counter = Counter()
+    println(counter)
+}
+```
+
+Execution result：
+
+```text
+This is a counter.
+```
+
 ## @Receiver macro
 
 ```cangjie
@@ -62,3 +90,43 @@ Options: The `Receiver` macro accepts a list of options in the form of `opt1: va
 The currently available option is only `priority: value` - specifies the default priority level for the receiving function. The provided value must be an integer literal between 1 and 10; otherwise, an error will be thrown during macro expansion. This option is only available when the outer [@Actor](./macros_package_macros.md#actor-macro) macro has the `enableReceiverPriority: true` option.
 
 Each option can only appear once, otherwise, an error will be thrown during macro expansion.
+
+Example:
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter <: ToString {
+    private var cnt: Int64 = 0
+
+    @Receiver
+    public func inc(): Unit {
+        cnt++
+    }
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+
+    public func toString(): String {
+        "This is a counter: cnt = ${getCnt().get()}."
+    }
+}
+
+main() {
+    let counter = Counter()
+    counter.inc()
+    counter.inc()
+    println(counter)
+}
+```
+
+Execution result:
+
+```text
+This is a counter: cnt = 2.
+```
