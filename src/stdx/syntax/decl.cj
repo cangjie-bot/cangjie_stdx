@@ -879,10 +879,10 @@ public class ExtendDecl <: Decl {
      */
     public init(body: Body, extendedTyAnnotation: TypeAnnotation, genericConstraints: Option<GenericConstraints>,
         genericParams: Array<GenericParam>, superTyAnnotations: Array<TypeAnnotation>,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        annotations!: Array<Annotation> = [], comments!: Array<Comment> = []) {
         super(
             SyntaxNodeImplCreator.createExtendDeclImpl(body, extendedTyAnnotation, genericConstraints, genericParams,
-                superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+                superTyAnnotations, annotations: annotations, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<ExtendDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -1368,11 +1368,9 @@ public open class LambdaParam <: Parameter {
     /**
      * @brief Initialize a new LambdaParam node.
      */
-    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
-        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+    public init(name: String, typeAnnotation: Option<TypeAnnotation>, comments!: Array<Comment> = []) {
         super(
-            SyntaxNodeImplCreator.createLambdaParamImpl(name, typeAnnotation, annotations: annotations,
-                modifiers: modifiers, comments: comments))
+            SyntaxNodeImplCreator.createLambdaParamImpl(name, typeAnnotation, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<LambdaParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -2108,10 +2106,9 @@ public class MainDecl <: Decl {
      * @brief Initialize a new MainDecl node.
      */
     public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
         super(
-            SyntaxNodeImplCreator.createMainDeclImpl(body, params, retTyAnnotation, annotations: annotations,
-                modifiers: modifiers, comments: comments))
+            SyntaxNodeImplCreator.createMainDeclImpl(body, params, retTyAnnotation, modifiers: modifiers, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<MainDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -2482,11 +2479,10 @@ public class PropGetterOrSetter <: Decl {
     /**
      * @brief Initialize a new PropGetterOrSetter node.
      */
-    public init(block: Block, identifier: Option<String>, isGetter: Bool, annotations!: Array<Annotation> = [],
-        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+    public init(block: Block, identifier: Option<String>, isGetter: Bool, annotations!: Array<Annotation> = [], comments!: Array<Comment> = []) {
         super(
             SyntaxNodeImplCreator.createPropGetterOrSetterImpl(block, identifier, isGetter, annotations: annotations,
-                modifiers: modifiers, comments: comments))
+                comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<PropGetterOrSetter>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -2621,10 +2617,10 @@ public class StaticInit <: Decl {
     /**
      * @brief Initialize a new StaticInit node.
      */
-    public init(body: Block, annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [],
+    public init(body: Block, modifiers!: Array<Modifier> = [],
         comments!: Array<Comment> = []) {
         super(
-            SyntaxNodeImplCreator.createStaticInitImpl(body, annotations: annotations, modifiers: modifiers,
+            SyntaxNodeImplCreator.createStaticInitImpl(body, modifiers: modifiers,
                 comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()

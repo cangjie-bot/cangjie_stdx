@@ -1075,6 +1075,7 @@ public class GenericConstraints <: SyntaxTreeNode {
  * @brief Enumeration representing different modifier kinds.
  */
 @Derive[Equatable]
+@Derive[Hashable]
 public enum ModifierKind {
     | Abstract
     | Internal
