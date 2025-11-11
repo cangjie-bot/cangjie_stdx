@@ -163,7 +163,7 @@ Exceptions:
 ### static func extract(Path, Path, Bool)
 
 ```cangjie
-public static func extract(from!: Path, destDir!: Path, overwrite!: Bool): Unit
+public static func extract(fromTar!: Path, destDir!: Path, overwrite!: Bool): Unit
 ```
 
 Function: Extract a .tar file to the specified directory.
