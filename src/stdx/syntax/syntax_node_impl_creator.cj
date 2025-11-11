@@ -1791,9 +1791,7 @@ class SyntaxNodeImplCreator {
         addCommentToNode(parts, comments)
         for (i in 0..prefixes.size) {
             parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, prefixes[i]))
-            if (i < prefixes.size - 1) {
-                parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DotToken))
-            }
+            parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DotToken))
         }
         parts.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, identifier))
         parts.add(builder.buildSpace(1))
