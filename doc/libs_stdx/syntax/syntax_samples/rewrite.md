@@ -13,6 +13,8 @@ ASTRewriter 是 SyntaxTreeNode 重写器的基类。
 
 假设我们有一段需要修改的代码，现在需要为所有函数自动生成空的注释模板，方便后续补全文档：
 
+<!-- compile -->
+
 ```cangjie
 package a
 
