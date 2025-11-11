@@ -22,6 +22,37 @@ public func get(): T
 
 - T - 对应的闭包的计算结果。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter {
+    private var cnt: Int64 = 42
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    let fut: ActorFuture<Int64> = counter.getCnt()
+    let res: Int64 = fut.get()
+    println(res)
+}
+```
+
+运行结果：
+
+```text
+42
+```
+
 ### func get(Duration)
 
 ```cangjie
@@ -38,6 +69,37 @@ public func get(timeout: Duration): Option<T>
 
 - Option\<T> - 如果结果在指定超时时间内未准备好，则返回 None，否则返回结果值。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter {
+    private var cnt: Int64 = 42
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    let fut: ActorFuture<Int64> = counter.getCnt()
+    let res: Option<Int64> = fut.get(Duration.second)
+    println(res)
+}
+```
+
+运行结果：
+
+```text
+Some(42)
+```
+
 ### func tryGet()
 
 ```cangjie
@@ -49,6 +111,38 @@ public func tryGet(): Option<T>
 返回值：
 
 - Option\<T> - 如果结果尚未准备好，则返回 None，否则返回结果值。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter {
+    private var cnt: Int64 = 42
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    let fut: ActorFuture<Int64> = counter.getCnt()
+    fut.get()
+    let res: Option<Int64> = fut.tryGet()
+    println(res)
+}
+```
+
+运行结果：
+
+```text
+Some(42)
+```
 
 
 ## class SequentialDispatcher
@@ -97,3 +191,43 @@ public func post<T>(task: () -> T, priority!: Int64 = 5): ActorFuture<T>
 异常：
 
 - IllegalArgumentException - 如果优先级参数 priority 小于 1 或大于 10，则会抛出此异常。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+
+main() {
+  let seqDispatcher = SequentialDispatcher()
+  let fut: ActorFuture<Int64> = seqDispatcher.post<Int64>({ => 40 + 2 })
+  let res: Int64 = fut.get()
+  println(res)
+}
+```
+
+运行结果：
+
+```text
+42
+```
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+
+main() {
+  let seqDispatcher = SequentialDispatcher(enableReceiverPriority: true)
+  let fut: ActorFuture<Int64> = seqDispatcher.post<Int64>({ => 40 + 2 }, priority: 5)
+  let res: Int64 = fut.get()
+  println(res)
+}
+```
+
+运行结果：
+
+```text
+42
+```

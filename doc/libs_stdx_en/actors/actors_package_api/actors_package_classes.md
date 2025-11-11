@@ -22,6 +22,37 @@ Return Value:
 
 - T - The computed result of the corresponding closure.
 
+Example:
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter {
+    private var cnt: Int64 = 42
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    let fut: ActorFuture<Int64> = counter.getCnt()
+    let res: Int64 = fut.get()
+    println(res)
+}
+```
+
+Execution result:
+
+```text
+42
+```
+
 ### func get(Duration)
 
 ```cangjie
@@ -38,6 +69,37 @@ Return Value:
 
 - Option\<T> - Returns `None` if the result is not ready within the specified timeout, otherwise returns the result value.
 
+Example:
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter {
+    private var cnt: Int64 = 42
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    let fut: ActorFuture<Int64> = counter.getCnt()
+    let res: Option<Int64> = fut.get(Duration.second)
+    println(res)
+}
+```
+
+Execution result:
+
+```text
+Some(42)
+```
+
 ### func tryGet()
 
 ```cangjie
@@ -50,6 +112,37 @@ Return Value:
 
 - Option\<T> - If the result is not yet ready, it returns `None`; otherwise, it returns the result value.
 
+Example:
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+import stdx.actors.macros.*
+
+@Actor
+public class Counter {
+    private var cnt: Int64 = 42
+
+    @Receiver
+    public func getCnt(): Int64 {
+        cnt
+    }
+}
+
+main() {
+    let counter: Counter = Counter()
+    let fut: ActorFuture<Int64> = counter.getCnt()
+    fut.get()
+    let res: Option<Int64> = fut.tryGet()
+    println(res)
+}
+```
+
+Execution result:
+
+```text
+Some(42)
+```
 
 ## class SequentialDispatcher
 
@@ -97,3 +190,43 @@ Return Value:
 Exceptions:
 
 - IllegalArgumentException - This exception will be thrown if the priority parameter is less than 1 or greater than 10.
+
+Example:
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+
+main() {
+  let seqDispatcher = SequentialDispatcher()
+  let fut: ActorFuture<Int64> = seqDispatcher.post<Int64>({ => 40 + 2 })
+  let res: Int64 = fut.get()
+  println(res)
+}
+```
+
+Execution result:
+
+```text
+42
+```
+
+Example:
+
+<!-- verify -->
+```cangjie
+import stdx.actors.*
+
+main() {
+  let seqDispatcher = SequentialDispatcher(enableReceiverPriority: true)
+  let fut: ActorFuture<Int64> = seqDispatcher.post<Int64>({ => 40 + 2 }, priority: 5)
+  let res: Int64 = fut.get()
+  println(res)
+}
+```
+
+Execution result:
+
+```text
+42
+```
