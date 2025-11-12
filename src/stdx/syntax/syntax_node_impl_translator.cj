@@ -2585,13 +2585,13 @@ class SyntaxNodeImplTranslator {
         var dotPos = CodePosition()
         let lp = LocalParser(node.children)
 
-        let predictExpr = {
-            kind: SyntaxNodeKind => kind.isExpr()
+        let predictNode = {
+            kind: SyntaxNodeKind => kind.isExpr() || kind.isTypeAnnotation()
         }
-        if (lp.look(predictExpr)) {
-            let exprNode = lp.consume()
+        if (lp.look(predictNode)) {
+            let baseNode = lp.consume()
             basePropInfo = PropInfo(lp.cur - 1, lp.offset)
-            lp.offset.move(exprNode?.offset)
+            lp.offset.move(baseNode?.offset)
         }
         if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.DotToken)) {
             dotPos = startPos + lp.offset

@@ -1335,7 +1335,10 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.RefExpr, ret.toArray())
     }
 
-    static func createMemberAccessImpl(base: Expr, field: SymbolRef, comments!: Array<Comment> = []) {
+    static func createMemberAccessImpl(base: SyntaxTreeNode, field: SymbolRef, comments!: Array<Comment> = []) {
+        if (!base.nodeImpl.kind.isTypeAnnotation() && !base.nodeImpl.kind.isExpr()) {
+            throw Exception("InitException: invalid base for MemberAccess Init")
+        }
         let builder = SyntaxNodeBuilder()
         let ret = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(ret, comments)

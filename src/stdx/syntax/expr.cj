@@ -2509,7 +2509,7 @@ public class MemberAccess <: Expr {
     /**
      * @brief Initialize a new MemberAccess node.
      */
-    public init(base: Expr, field: SymbolRef, comments!: Array<Comment> = []) {
+    public init(base: SyntaxTreeNode, field: SymbolRef, comments!: Array<Comment> = []) {
         super(SyntaxNodeImplCreator.createMemberAccessImpl(base, field, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
@@ -2523,11 +2523,11 @@ public class MemberAccess <: Expr {
     /**
      * @brief The base expression.
      */
-    public prop base: Expr {
+    public prop base: SyntaxTreeNode {
         get() {
             let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfos.basePropInfo.index]
             let offset = propInfos.basePropInfo.offset
-            cast<Expr>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
+            cast<SyntaxTreeNode>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
         }
     }
 
