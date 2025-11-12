@@ -5097,7 +5097,7 @@ public func getSelectorRParenPos(): Option<CodePositionRange>
 
 ```cangjie
 public class MemberAccess <: Expr {
-    public init(base: Expr, field: SymbolRef, comments!: Array<Comment> = [])
+    public init(base: SyntaxTreeNode, field: SymbolRef, comments!: Array<Comment> = [])
 }
 ```
 
@@ -5112,12 +5112,12 @@ public class MemberAccess <: Expr {
 ### prop base
 
 ```cangjie
-public prop base: Expr
+public prop base: SyntaxTreeNode
 ```
 
-功能：获取当前成员访问表达式的基表达式，即被访问的对象或结构体。
+功能：获取当前成员访问表达式的基节点，即被访问的对象或结构体。
 
-类型：[Expr](#class-expr)
+类型：[SyntaxTreeNode](#class-syntaxtreenode)
 
 ### prop field
 
@@ -5129,19 +5129,23 @@ public prop field: SymbolRef
 
 类型：[SymbolRef](#class-symbolref)
 
-### init(Expr, SymbolRef, Array\<Comment>)
+### init(SyntaxTreeNode, SymbolRef, Array\<Comment>)
 
 ```cangjie
-public init(base: Expr, field: SymbolRef, comments!: Array<Comment> = [])
+public init(base: SyntaxTreeNode, field: SymbolRef, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [MemberAccess](#class-memberaccess) 对象，表示成员访问表达式。
 
 参数：
 
-- base: [Expr](#class-expr) - 被访问的对象表达式。
+- base: [SyntaxTreeNode](#class-syntaxtreenode) - 被访问的对象表达式或类型标注。
 - field: [SymbolRef](#class-symbolref) - 成员字段引用。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 `base` 节点不是表达式或类型标注时，抛出异常，异常中包含报错提示信息。
 
 ### func getDotPos()
 

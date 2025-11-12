@@ -734,16 +734,8 @@ private class FlatbufferNodeTranslator {
         builder.buildNonTerminal(SyntaxNodeKind.ImportSpec, ret.toArray())
     }
 
-    private func transPrimitiveType(primitiveType: NodeFormat_PrimitiveType): ?SyntaxNodeImpl {
-        let ret = ArrayList<SyntaxNodeImpl>()
-        curChildren = ret
-
-        let nodeBase = primitiveType.GetBase().getOrThrow().GetBase()
-        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
-        addLeadingComments(nodeBase, ret, leadCmts)
-        innerComments = innerCmts
-
-        let ty = match (primitiveType.GetKind()) {
+    private func getPrimitiveTypeKind(num: UInt16): SyntaxNodeKind {
+        match (num) {
             case 1 /*UNIT*/ => SyntaxNodeKind.UnitToken
             case 2 /*INT8*/ => SyntaxNodeKind.Int8Token
             case 3 /*INT16*/ => SyntaxNodeKind.Int16Token
@@ -761,8 +753,41 @@ private class FlatbufferNodeTranslator {
             case 17 /*RUNE*/ => SyntaxNodeKind.RuneToken
             case 18 /*NOTHING*/ => SyntaxNodeKind.NothingToken
             case 19 /*BOOLEAN*/ => SyntaxNodeKind.BooleanToken
-            case _ => return None
+            case _ => return SyntaxNodeKind.Invalid
         }
+    }
+
+    private func transPrimitiveTypeExpr(primitiveType: NodeFormat_PrimitiveTypeExpr): ?SyntaxNodeImpl {
+        let ret = ArrayList<SyntaxNodeImpl>()
+        curChildren = ret
+
+        let nodeBase = primitiveType.GetBase()
+        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
+        addLeadingComments(nodeBase, ret, leadCmts)
+        innerComments = innerCmts
+
+        let ty = getPrimitiveTypeKind(primitiveType.GetKind())
+        addChild(ret, builder.buildBasicTerminal(ty))
+        moveCursorColumn(col: Int32(ty.size))
+        if (trailCmts.size > 0) {
+            addChild(ret, transCommentGroupList(trailCmts))
+            curChildren = ret
+            innerComments = innerCmts
+        }
+        innerComments = Array<Option<NodeFormat_CommentGroup>>()
+        builder.buildNonTerminal(SyntaxNodeKind.PrimitiveType, ret.toArray())
+    }
+
+    private func transPrimitiveType(primitiveType: NodeFormat_PrimitiveType): ?SyntaxNodeImpl {
+        let ret = ArrayList<SyntaxNodeImpl>()
+        curChildren = ret
+
+        let nodeBase = primitiveType.GetBase().getOrThrow().GetBase()
+        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
+        addLeadingComments(nodeBase, ret, leadCmts)
+        innerComments = innerCmts
+
+        let ty = getPrimitiveTypeKind(primitiveType.GetKind())
         addChild(ret, builder.buildBasicTerminal(ty))
         moveCursorColumn(col: Int32(ty.size))
         if (trailCmts.size > 0) {
@@ -3238,6 +3263,8 @@ private class FlatbufferNodeTranslator {
                 NodeFormat_TrailingClosureExpr(table.bytes, off), preChildren)
             case NodeFormat_AnyExpr.AnyExpr_MACRO_EXPAND_EXPR => transMacroExpandExpr(
                 NodeFormat_MacroExpandExpr(table.bytes, off), preChildren)
+            case NodeFormat_AnyExpr.AnyExpr_PRIMITIVE_TYPE_EXPR => transPrimitiveTypeExpr(
+                NodeFormat_PrimitiveTypeExpr(table.bytes, off))
             case _ => throw Exception("ParseException: The current version does not support this node.")
         }
     }
