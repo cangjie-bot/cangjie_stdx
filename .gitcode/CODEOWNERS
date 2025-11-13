@@ -1,10 +1,8 @@
-# stdx
-/ @ChaosJohn
-
-/.gitcode/ @xuanjz
+*.md @luojianing
 OAT.xml @xuanjz
 
-*.md @luojianing
+/ @ChaosJohn
+/.gitcode/ @xuanjz
 
 /src/stdx/compress/ @jiyaun_99
 /src/stdx/encoding/ @jiyaun_99
