@@ -5,7 +5,7 @@
  *
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
-
+#define OPENSSL_SUPPRESS_DEPRECATED
 #include <securec.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <openssl/rand.h>
+#include <openssl/x509v3.h>
+#include <openssl/hmac.h>
 #ifdef _WIN32
 #include <windows.h>
 #define OPENSSLPATH "libcrypto-3-x64.dll"
@@ -105,23 +108,27 @@ __attribute__((destructor)) void CloseSymbolTable(void)
 }
 
 /**============= Api =============*/
-
-#define CHECKFUNCTION(dynMsg, index, name, errCode)                                                                    \
-    if (func##index == NULL) {                                                                                         \
-        (dynMsg)->found = false;                                                                                       \
-        (dynMsg)->funcName = name;                                                                                     \
-        return errCode;                                                                                                \
+#if TARGET_OS_IOS
+#define FINDFUNCTIONI(dynMsg, index, name, errCode) SSLFunc##index func##index = (SSLFunc##index)(name);
+#define FINDFUNCTION(dynMsg, name, errCode) SSLFunc func = (SSLFunc)(name);
+#define CHECKFUNCTION(dynMsg, index, name, errCode) ((void)0);
+#else
+#define CHECKFUNCTION(dynMsg, index, name, errCode)                                                                                                                                \
+    if (func##index == NULL) {                                                                                                                                                     \
+        (dynMsg)->found = false;                                                                                                                                                   \
+        (dynMsg)->funcName = name;                                                                                                                                                 \
+        return errCode;                                                                                                                                                            \
     }
 
-#define FINDFUNCTIONI(dynMsg, index, name, errCode)                                                                    \
-    static SSLFunc##index func##index = NULL;                                                                          \
-    if (func##index == NULL) {                                                                                         \
-        func##index = (SSLFunc##index)(FindFunction(#name));                                                           \
-    }                                                                                                                  \
+#define FINDFUNCTIONI(dynMsg, index, name, errCode)                                                                                                                                \
+    static SSLFunc##index func##index = NULL;                                                                                                                                      \
+    if (func##index == NULL) {                                                                                                                                                     \
+        func##index = (SSLFunc##index)(FindFunction(#name));                                                                                                                       \
+    }                                                                                                                                                                              \
     CHECKFUNCTION(dynMsg, index, #name, errCode)
 
 #define FINDFUNCTION(dynMsg, name, errCode) FINDFUNCTIONI(dynMsg, , name, errCode)
-
+#endif
 char* DYN_OPENSSL_strdup(const char* str, DynMsg* dynMsg)
 {
     typedef char* (*SSLFunc)(const char* str, const char* file, int line);
@@ -269,86 +276,84 @@ BIO* DYN_BIO_new_mem(DynMsg* dynMsg)
     return func1(func2());
 }
 
-#define DEFINEFUNCTION0(name, errCode, type0)                                                                          \
-    type0 DYN_##name(DynMsg* dynMsg)                                                                                   \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(void);                                                                                \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func();                                                                                                 \
+#define DEFINEFUNCTION0(name, errCode, type0)                                                                                                                                      \
+    type0 DYN_##name(DynMsg* dynMsg)                                                                                                                                               \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(void);                                                                                                                                            \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func();                                                                                                                                                             \
     }
 
-#define DEFINEFUNCTION1(name, errCode, type0, type1)                                                                   \
-    type0 DYN_##name(type1 arg1, DynMsg* dynMsg)                                                                       \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1);                                                                               \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1);                                                                                             \
+#define DEFINEFUNCTION1(name, errCode, type0, type1)                                                                                                                               \
+    type0 DYN_##name(type1 arg1, DynMsg* dynMsg)                                                                                                                                   \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1);                                                                                                                                           \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1);                                                                                                                                                         \
     }
 
-#define DEFINEFUNCTION2(name, errCode, type0, type1, type2)                                                            \
-    type0 DYN_##name(type1 arg1, type2 arg2, DynMsg* dynMsg)                                                           \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2);                                                                        \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2);                                                                                       \
+#define DEFINEFUNCTION2(name, errCode, type0, type1, type2)                                                                                                                        \
+    type0 DYN_##name(type1 arg1, type2 arg2, DynMsg* dynMsg)                                                                                                                       \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2);                                                                                                                                    \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2);                                                                                                                                                   \
     }
-#define DEFINEFUNCTIONCB2(name, errCode, type0, type1, type2)                                                          \
-    type0 DYN_##name(type1, type2, DynMsg* dynMsg)                                                                     \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2);                                                                        \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2);                                                                                       \
+#define DEFINEFUNCTIONCB2(name, errCode, type0, type1, type2)                                                                                                                      \
+    type0 DYN_##name(type1, type2, DynMsg* dynMsg)                                                                                                                                 \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2);                                                                                                                                    \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2);                                                                                                                                                   \
     }
-#define DEFINEFUNCTION3(name, errCode, type0, type1, type2, type3)                                                     \
-    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, DynMsg* dynMsg)                                               \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2, type3);                                                                 \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2, arg3);                                                                                 \
+#define DEFINEFUNCTION3(name, errCode, type0, type1, type2, type3)                                                                                                                 \
+    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, DynMsg* dynMsg)                                                                                                           \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2, type3);                                                                                                                             \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2, arg3);                                                                                                                                             \
     }
-#define DEFINEFUNCTIONCB3(name, errCode, type0, type1, type2, type3)                                                   \
-    type0 DYN_##name(type1, type2, type3, DynMsg* dynMsg)                                                              \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2, type3);                                                                 \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2, arg3);                                                                                 \
+#define DEFINEFUNCTIONCB3(name, errCode, type0, type1, type2, type3)                                                                                                               \
+    type0 DYN_##name(type1, type2, type3, DynMsg* dynMsg)                                                                                                                          \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2, type3);                                                                                                                             \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2, arg3);                                                                                                                                             \
     }
-#define DEFINEFUNCTION4(name, errCode, type0, type1, type2, type3, type4)                                              \
-    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, DynMsg* dynMsg)                                   \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2, type3, type4);                                                          \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2, arg3, arg4);                                                                           \
+#define DEFINEFUNCTION4(name, errCode, type0, type1, type2, type3, type4)                                                                                                          \
+    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, DynMsg* dynMsg)                                                                                               \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2, type3, type4);                                                                                                                      \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2, arg3, arg4);                                                                                                                                       \
     }
-#define DEFINEFUNCTION5(name, errCode, type0, type1, type2, type3, type4, type5)                                       \
-    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, DynMsg* dynMsg)                       \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5);                                                   \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2, arg3, arg4, arg5);                                                                     \
+#define DEFINEFUNCTION5(name, errCode, type0, type1, type2, type3, type4, type5)                                                                                                   \
+    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, DynMsg* dynMsg)                                                                                   \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5);                                                                                                               \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2, arg3, arg4, arg5);                                                                                                                                 \
     }
-#define DEFINEFUNCTION6(name, errCode, type0, type1, type2, type3, type4, type5, type6)                                \
-    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, type6 arg6, DynMsg* dynMsg)           \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5, type6);                                            \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2, arg3, arg4, arg5, arg6);                                                               \
+#define DEFINEFUNCTION6(name, errCode, type0, type1, type2, type3, type4, type5, type6)                                                                                            \
+    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, type6 arg6, DynMsg* dynMsg)                                                                       \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5, type6);                                                                                                        \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2, arg3, arg4, arg5, arg6);                                                                                                                           \
     }
-#define DEFINEFUNCTION7(name, errCode, type0, type1, type2, type3, type4, type5, type6, type7)                         \
-    type0 DYN_##name(                                                                                                  \
-        type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, type6 arg6, type7 arg7, DynMsg* dynMsg)            \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5, type6, type7);                                     \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2, arg3, arg4, arg5, arg6, arg7);                                                         \
+#define DEFINEFUNCTION7(name, errCode, type0, type1, type2, type3, type4, type5, type6, type7)                                                                                     \
+    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, type6 arg6, type7 arg7, DynMsg* dynMsg)                                                           \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5, type6, type7);                                                                                                 \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2, arg3, arg4, arg5, arg6, arg7);                                                                                                                     \
     }
-#define DEFINEFUNCTION8(name, errCode, type0, type1, type2, type3, type4, type5, type6, type7, type8)                  \
-    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, type6 arg6, type7 arg7, type8 arg8,   \
-        DynMsg* dynMsg)                                                                                                \
-    {                                                                                                                  \
-        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5, type6, type7, type8);                              \
-        FINDFUNCTION(dynMsg, name, errCode)                                                                            \
-        return func(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);                                                   \
+#define DEFINEFUNCTION8(name, errCode, type0, type1, type2, type3, type4, type5, type6, type7, type8)                                                                              \
+    type0 DYN_##name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5, type6 arg6, type7 arg7, type8 arg8, DynMsg* dynMsg)                                               \
+    {                                                                                                                                                                              \
+        typedef type0 (*SSLFunc)(type1, type2, type3, type4, type5, type6, type7, type8);                                                                                          \
+        FINDFUNCTION(dynMsg, name, errCode)                                                                                                                                        \
+        return func(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);                                                                                                               \
     }
 #include "defineFunction.inc"
 #undef DEFINEFUNCTION0
@@ -374,8 +379,7 @@ bool LoadDynFuncForAlpnCallback(DynMsg* dynMsg)
     typedef int (*SSLFunc2)(int, long, void*, CRYPTO_EX_new*, CRYPTO_EX_dup*, CRYPTO_EX_free*);
     FINDFUNCTIONI(dynMsg, 2, CRYPTO_get_ex_new_index, false)
 
-    typedef int (*SSLFunc3)(
-        unsigned char**, unsigned char*, const unsigned char*, unsigned int, const unsigned char*, unsigned int);
+    typedef int (*SSLFunc3)(unsigned char**, unsigned char*, const unsigned char*, unsigned int, const unsigned char*, unsigned int);
     FINDFUNCTIONI(dynMsg, 3, SSL_select_next_proto, false)
 
     return true;
@@ -467,6 +471,6 @@ void DynPopFree(void* extlist, char* funcName, DynMsg* dynMsg)
     typedef void (*SSLFunc0)(void*);
     SSLFunc0 func0 = NULL;
     func0 = (SSLFunc0)(FindFunction(funcName));
-    CHECKFUNCTION(dynMsg, 0, funcName,)
+    CHECKFUNCTION(dynMsg, 0, funcName, )
     DYN_OPENSSL_sk_pop_free(extlist, func0, dynMsg);
 }
