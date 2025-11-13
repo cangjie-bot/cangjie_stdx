@@ -8,7 +8,10 @@
 
 #ifndef DEFINEFUNCTION
 #define DEFINEFUNCTION
-
+#define OPENSSL_SUPPRESS_DEPRECATED
+#include <openssl/rand.h>
+#include <openssl/x509v3.h>
+#include <openssl/hmac.h>
 DEFINEFUNCTION0(EVP_sm4_cbc, NULL, EVP_CIPHER*)
 DEFINEFUNCTION0(EVP_sm4_ecb, NULL, EVP_CIPHER*)
 DEFINEFUNCTION0(EVP_sm4_cfb, NULL, EVP_CIPHER*)
