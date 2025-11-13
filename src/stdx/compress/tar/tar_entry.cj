@@ -114,7 +114,7 @@ public abstract class TarEntry {
             format: TarEntryFormat.V7,
             name: targetName,
             mode: Native.getMode(path),
-            mTime: fileInfo.lastModificationTime,
+            mTime: Native.getModificationTime(path),
             entryType: targetEntryType,
             checksum: 0,
             size: targetSize,

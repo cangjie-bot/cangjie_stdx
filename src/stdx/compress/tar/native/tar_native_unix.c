@@ -102,6 +102,39 @@ int32_t CJ_TAR_GetDeviceMinor(const char *path) {
     return (int32_t)minor(st.st_rdev);
 }
 
+int64_t CJ_TAR_GetModificationTime(const char *path) {
+    if (!path) {
+        return -1;
+    }
+    struct stat st;
+    if (lstat(path, &st) != 0) {
+        return -1;
+    }
+    return (int64_t)st.st_mtime;
+}
+
+int64_t CJ_TAR_GetAccessTime(const char *path) {
+    if (!path) {
+        return -1;
+    }
+    struct stat st;
+    if (lstat(path, &st) != 0) {
+        return -1;
+    }
+    return (int64_t)st.st_atime;
+}
+
+int64_t CJ_TAR_GetChangeTime(const char *path) {
+    if (!path) {
+        return -1;
+    }
+    struct stat st;
+    if (lstat(path, &st) != 0) {
+        return -1;
+    }
+    return (int64_t)st.st_ctime;
+}
+
 int CJ_TAR_SetMode(const char *path, int32_t mode) {
     if (!path) {
         return -1;
