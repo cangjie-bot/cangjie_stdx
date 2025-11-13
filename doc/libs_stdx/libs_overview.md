@@ -14,8 +14,6 @@ stdx 含若干包，提供了丰富的扩展功能：
 
 | 包名                                                                           | 功能                                                                                                                                                                                  |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [actors](./actors/actors_package_overview.md)                                  | actors 包提供 actor 编程模型的基础能力。                                                                                                                                              |
-| [actors.macros](./actors/macros/macros_package_overview.md)                    | actors.macros 包提供把 class 变成 active object 的能力。                                                                                                                              |
 | [aspectCJ](./aspectCJ/aspectCJ_package_overview.md)                            | aspectCJ 包提供 Cangjie 中面向切面编程（Aspect Oriented Programming, AOP）相关的能力。                                                                                                |
 | [compress.zlib](./compress/zlib/zlib_package_overview.md)                      | compress 包提供压缩解压功能。                                                                                                                                                         |
 | [crypto.common](./crypto/common/crypto_common_package_overview.md)             | crypto.common 包提供了加解密相关接口。                                                                                                                                                |
@@ -24,7 +22,6 @@ stdx 含若干包，提供了丰富的扩展功能：
 | [crypto.keys](./crypto/keys/keys_package_overview.md)                          | keys 包提供非对称加密和签名算法。                                                                                                                                                     |
 | [crypto.kit](./crypto/kit/crypto_kit_package_overview.md)                      | crypto.kit 包提供了一套 [CryptoKit](../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-cryptokit) 的默认实现，提供随机数生成器及解码 DER、PEM 的能力。 |
 | [crypto.x509](./crypto/x509/x509_package_overview.md)                          | x509 包提供处理数字证书功能。                                                                                                                                                         |
-| [effect](./effect/effect_package_overview.md)                                  | `stdx.effect` 包是 Cangjie 中用于使用 Effect Handler 的用户级 API。这是一项实验性功能，需要配合支持该机制的 Cangjie 编译器使用。                                                      |
 | [encoding.base64](./encoding/base64/base64_package_overview.md)                | base 包提供字符串的 Base64 编码及解码。                                                                                                                                               |
 | [encoding.hex](./encoding/hex/hex_package_overview.md)                         | hex 包提供字符串的 Hex 编码及解码。                                                                                                                                                   |
 | [encoding.json](./encoding/json/json_package_overview.md)                      | json 包用于对 json 数据的处理，实现 String, JsonValue, DataModel 之间的相互转换。                                                                                                     |
@@ -55,8 +52,6 @@ static/stdx 是静态产物，包含静态文件、cjo、bc 文件。
 
 | 导入库名                                  | 依赖包                                                                                                                                                                                                                         |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| import stdx.actors.*                      | stdx.actors                                                                                                                                                                                                                    |
-| import stdx.actors.macros.*               | stdx.actors.macros                                                                                                                                                                                                             |
 | import stdx.aspectCJ.*                    | stdx.aspectCJ                                                                                                                                                                                                                  |
 | import stdx.compress.zlip.*               | stdx.compress.zlib                                                                                                                                                                                                             |
 | import stdx.crypto.common.*               | stdx.crypto.common、stdx.encoding.base64                                                                                                                                                                                       |
@@ -65,7 +60,6 @@ static/stdx 是静态产物，包含静态文件、cjo、bc 文件。
 | import stdx.crypto.keys.*                 | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
 | import stdx.crypto.kit.*                  | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
 | import stdx.crypto.x509.*                 | stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                          |                                                                                                                                                                                                                 |
-| import stdx.effect.*                      | stdx.effect                                                                                                                                                                                                                    |
 | import stdx.encoding.hex.*                | stdx.encoding.hex                                                                                                                                                                                                              |
 | import stdx.encoding.base64.*             | stdx.encoding.base64                                                                                                                                                                                                           |
 | import stdx.encoding.json.*               | stdx.encoding.json、stdx.serialization.serialization                                                                                                                                                                           |
@@ -89,15 +83,12 @@ static/stdx 是静态产物，包含静态文件、cjo、bc 文件。
 cjc 的介绍和编译请查看 cangjie 用户手册
 
 ```cangjie
-import stdx.actors.*
-import stdx.actors.macros.*
 import stdx.aspectCJ.*
 import stdx.compress.zlib.*
 import stdx.crypto.crypto.*
 import stdx.crypto.digest.*
 import stdx.crypto.keys.*
 import stdx.crypto.x509.*
-import stdx.effect.*
 import stdx.encoding.hex.*
 import stdx.encoding.base64.*
 import stdx.encoding.json.*
@@ -117,13 +108,13 @@ main() {
 Linux 和 mac 的编译命令：
 
 ```shell
-$ cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -ldl --import-path $CANGJIE_STDX_PATH -o main.out
+$ cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.aspectCJ -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -ldl --import-path $CANGJIE_STDX_PATH -o main.out
 ```
 
 windows 编译命令：
 
 ```shell
-$ cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -lcrypt32 --import-path $CANGJIE_STDX_PATH -o main.out
+$ cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.aspectCJ -lstdx.encoding.json -lstdx.serialization.serialization -lstdx.net.http -lstdx.net.tls -lstdx.net.tls.common -lstdx.logger -lstdx.log -lstdx.encoding.url -lstdx.encoding.json.stream -lstdx.crypto.kit -lstdx.crypto.keys -lstdx.crypto.x509 -lstdx.encoding.hex -lstdx.crypto.crypto -lstdx.crypto.digest -lstdx.crypto.common -lstdx.encoding.base64 -lstdx.compress.zlib -lstdx.compress -lcrypt32 --import-path $CANGJIE_STDX_PATH -o main.out
 ```
 
 CANGJIE_STDX_PATH 是设置的 stdx 路径。
