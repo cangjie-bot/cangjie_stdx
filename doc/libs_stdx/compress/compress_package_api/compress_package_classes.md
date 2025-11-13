@@ -18,11 +18,11 @@ public static func archive(fromDir!: String, destFile!: String, includeBaseDirec
 
 参数：
 
-- fromDir: String - 待压缩的目录路径。
+- fromDir!: String - 待压缩的目录路径。
 
-- destFile: String - 生成的 .tar.gz 文件路径。
+- destFile!: String - 生成的 .tar.gz 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
+- includeBaseDirectory!: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
 
 异常：
 
@@ -40,11 +40,11 @@ public static func archive(fromDir!: Path, destFile!: Path, includeBaseDirectory
 
 参数：
 
-- fromDir: Path - 待压缩的目录路径。
+- fromDir!: Path - 待压缩的目录路径。
 
-- destFile: Path - 生成的 .tar.gz 文件路径。
+- destFile!: Path - 生成的 .tar.gz 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
+- includeBaseDirectory!: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
 
 异常：
 
@@ -66,11 +66,11 @@ public static func archive<T>(fromDir!: String, destStream!: T, includeBaseDirec
 
 参数：
 
-- fromDir: String - 待压缩的目录路径。
+- fromDir!: String - 待压缩的目录路径。
 
-- destStream: OutputStream - 压缩后数据的输出流。
+- destStream!: OutputStream - 压缩后数据的输出流。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -92,11 +92,11 @@ public static func archive<T>(fromDir!: Path, destStream!: T, includeBaseDirecto
 
 参数：
 
-- fromDir: Path - 待压缩的目录路径。
+- fromDir!: Path - 待压缩的目录路径。
 
-- destStream: OutputStream - 压缩后数据的输出流。
+- destStream!: OutputStream - 压缩后数据的输出流。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -114,13 +114,13 @@ public static func archive(fromDir!: String, filter!: (String) -> Bool, destFile
 
 参数：
 
-- fromDir: String - 待压缩目录。
+- fromDir!: String - 待压缩目录。
 
-- filter: (String) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
+- filter!: (String) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
 
-- destFile: String - 输出的 .tar.gz 文件路径。
+- destFile!: String - 输出的 .tar.gz 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -138,13 +138,13 @@ public static func archive(fromDir!: Path, filter!: (Path) -> Bool, destFile!: P
 
 参数：
 
-- fromDir: Path - 待压缩目录。
+- fromDir!: Path - 待压缩目录。
 
-- filter: (Path) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
+- filter!: (Path) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
 
-- destFile: Path - 输出的 .tar.gz 文件路径。
+- destFile!: Path - 输出的 .tar.gz 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -162,11 +162,11 @@ public static func extract(fromTarGzip!: String, destDir!: String, overwrite!: B
 
 参数：
 
-- fromTarGzip: String - 待解压的 .tar.gz 文件路径。
+- fromTarGzip!: String - 待解压的 .tar.gz 文件路径。
 
-- destDir: String - 解压目标目录。
+- destDir!: String - 解压目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 
@@ -184,11 +184,11 @@ public static func extract(fromTarGzip!: Path, destDir!: Path, overwrite!: Bool)
 
 参数：
 
-- fromTarGzip: Path - 待解压的 .tar.gz 文件路径。
+- fromTarGzip!: Path - 待解压的 .tar.gz 文件路径。
 
-- destDir: Path - 解压目标目录。
+- destDir!: Path - 解压目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 
@@ -206,11 +206,11 @@ public static func extract<T>(fromStream!: T, destDir!: String, overwrite!: Bool
 
 参数：
 
-- fromStream: T - 待解压的 .tar.gz 数据输入流。
+- fromStream!: T - 待解压的 .tar.gz 数据输入流。
 
-- destDir: String - 解压目标目录。
+- destDir!: String - 解压目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 
@@ -228,11 +228,11 @@ public static func extract<T>(fromStream!: T, destDir!: Path, overwrite!: Bool):
 
 参数：
 
-- fromStream: T - 待解压的 .tar.gz 数据输入流。
+- fromStream!: T - 待解压的 .tar.gz 数据输入流。
 
-- destDir: Path - 解压目标目录。
+- destDir!: Path - 解压目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 

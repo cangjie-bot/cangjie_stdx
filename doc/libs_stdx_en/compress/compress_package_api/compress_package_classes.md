@@ -18,11 +18,11 @@ Function: Compress the specified directory into a .tar.gz file. Internally, the 
 
 Parameters:
 
-- fromDir: String - The path of the directory to be compressed.
+- fromDir!: String - The path of the directory to be compressed.
 
-- destFile: String - The path of the generated .tar.gz file.
+- destFile!: String - The path of the generated .tar.gz file.
 
-- includeBaseDirectory: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
+- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
 
 Exceptions:
 
@@ -40,11 +40,11 @@ Function: Compress the specified directory into a .tar.gz file. Internally, the 
 
 Parameters:
 
-- fromDir: Path - The path of the directory to be compressed.
+- fromDir!: Path - The path of the directory to be compressed.
 
-- destFile: Path - The path of the generated .tar.gz file.
+- destFile!: Path - The path of the generated .tar.gz file.
 
-- includeBaseDirectory: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
+- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
 
 Exceptions:
 
@@ -66,11 +66,11 @@ Function: Compress a directory into .tar.gz data and write it to the specified o
 
 Parameters:
 
-- fromDir: String - The path of the directory to be compressed.
+- fromDir!: String - The path of the directory to be compressed.
 
-- destStream: OutputStream - The output stream for compressed data.
+- destStream!: OutputStream - The output stream for compressed data.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -92,11 +92,11 @@ Function: Compress a directory into .tar.gz data and write it to the specified o
 
 Parameters:
 
-- fromDir: Path - The path of the directory to be compressed.
+- fromDir!: Path - The path of the directory to be compressed.
 
-- destStream: OutputStream - The output stream for compressed data.
+- destStream!: OutputStream - The output stream for compressed data.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -114,13 +114,13 @@ Function: Selectively compress the specified directory into a .tar.gz file with 
 
 Parameters:
 
-- fromDir: String - The directory to be compressed.
+- fromDir!: String - The directory to be compressed.
 
-- filter: (String) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
+- filter!: (String) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
 
-- destFile: String - The path of the output .tar.gz file.
+- destFile!: String - The path of the output .tar.gz file.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -138,13 +138,13 @@ Function: Selectively compress the specified directory into a .tar.gz file with 
 
 Parameters:
 
-- fromDir: Path - The directory to be compressed.
+- fromDir!: Path - The directory to be compressed.
 
-- filter: (Path) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
+- filter!: (Path) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
 
-- destFile: Path - The path of the output .tar.gz file.
+- destFile!: Path - The path of the output .tar.gz file.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -162,11 +162,11 @@ Function: Extract a .tar.gz file to the specified directory. Internally, it firs
 
 Parameters:
 
-- fromTarGzip: String - The path of the .tar.gz file to be extracted.
+- fromTarGzip!: String - The path of the .tar.gz file to be extracted.
 
-- destDir: String - The target directory for extraction.
+- destDir!: String - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 
@@ -184,11 +184,11 @@ Function: Extract a .tar.gz file to the specified directory. Internally, it firs
 
 Parameters:
 
-- fromTarGzip: Path - The path of the .tar.gz file to be extracted.
+- fromTarGzip!: Path - The path of the .tar.gz file to be extracted.
 
-- destDir: Path - The target directory for extraction.
+- destDir!: Path - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 
@@ -206,11 +206,11 @@ Function: Read .tar.gz data from an input stream and extract it to the specified
 
 Parameters:
 
-- fromStream: T - The input stream of .tar.gz data to be extracted.
+- fromStream!: T - The input stream of .tar.gz data to be extracted.
 
-- destDir: String - The target directory for extraction.
+- destDir!: String - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 
@@ -228,11 +228,11 @@ Function: Read .tar.gz data from an input stream and extract it to the specified
 
 Parameters:
 
-- fromStream: T - The input stream of .tar.gz data to be extracted.
+- fromStream!: T - The input stream of .tar.gz data to be extracted.
 
-- destDir: Path - The target directory for extraction.
+- destDir!: Path - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 

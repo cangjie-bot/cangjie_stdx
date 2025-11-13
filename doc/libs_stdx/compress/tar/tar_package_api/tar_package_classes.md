@@ -18,11 +18,11 @@ public static func archive(fromDir!: String, destFile!: String, includeBaseDirec
 
 参数：
 
-- fromDir: String - 待归档的目录路径。
+- fromDir!: String - 待归档的目录路径。
 
-- destFile: String - 生成的 .tar 文件路径。
+- destFile!: String - 生成的 .tar 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
+- includeBaseDirectory!: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
 
 异常：
 
@@ -38,11 +38,11 @@ public static func archive(fromDir!: Path, destFile!: Path, includeBaseDirectory
 
 参数：
 
-- fromDir: Path - 待归档的目录路径。
+- fromDir!: Path - 待归档的目录路径。
 
-- destFile: Path - 生成的 .tar 文件路径。
+- destFile!: Path - 生成的 .tar 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
+- includeBaseDirectory!: Bool - 是否包含目录本身作为顶级目录。若为 true，归档包内包含该目录；若为 false，仅包含其内容。
 
 异常：
 
@@ -62,11 +62,11 @@ public static func archive<T>(fromDir!: String, destStream!: T, includeBaseDirec
 
 参数：
 
-- fromDir: String - 待归档的目录路径。
+- fromDir!: String - 待归档的目录路径。
 
-- destStream: OutputStream - 归档后数据的输出流。
+- destStream!: OutputStream - 归档后数据的输出流。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -86,11 +86,11 @@ public static func archive<T>(fromDir!: Path, destStream!: T, includeBaseDirecto
 
 参数：
 
-- fromDir: Path - 待归档的目录路径。
+- fromDir!: Path - 待归档的目录路径。
 
-- destStream: OutputStream - 归档后数据的输出流。
+- destStream!: OutputStream - 归档后数据的输出流。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -106,13 +106,13 @@ public static func archive(fromDir!: String, filter!: (String) -> Bool, destFile
 
 参数：
 
-- fromDir: String - 待归档目录。
+- fromDir!: String - 待归档目录。
 
-- filter: (String) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
+- filter!: (String) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
 
-- destFile: String - 输出的 .tar 文件路径。
+- destFile!: String - 输出的 .tar 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -128,13 +128,13 @@ public static func archive(fromDir!: Path, filter!: (Path) -> Bool, destFile!: P
 
 参数：
 
-- fromDir: Path - 待归档目录。
+- fromDir!: Path - 待归档目录。
 
-- filter: (Path) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
+- filter!: (Path) -> Bool - 过滤函数，会传入遍历到的目录、文件和软链接路径，返回 true 表示保留，否则丢弃。
 
-- destFile: Path - 输出的 .tar 文件路径。
+- destFile!: Path - 输出的 .tar 文件路径。
 
-- includeBaseDirectory: Bool - 是否包含根目录。
+- includeBaseDirectory!: Bool - 是否包含根目录。
 
 异常：
 
@@ -150,11 +150,11 @@ public static func extract(fromTar!: String, destDir!: String, overwrite!: Bool)
 
 参数：
 
-- fromTar: String - 待提取的 .tar 文件路径。
+- fromTar!: String - 待提取的 .tar 文件路径。
 
-- destDir: String - 提取目标目录。
+- destDir!: String - 提取目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 
@@ -170,11 +170,11 @@ public static func extract(fromTar!: Path, destDir!: Path, overwrite!: Bool): Un
 
 参数：
 
-- fromTar: Path - 待提取的 .tar 文件路径。
+- fromTar!: Path - 待提取的 .tar 文件路径。
 
-- destDir: Path - 提取目标目录。
+- destDir!: Path - 提取目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 
@@ -190,11 +190,11 @@ public static func extract<T>(fromStream!: T, destDir!: String, overwrite!: Bool
 
 参数：
 
-- fromStream: T - 待提取的 .tar 数据输入流。
+- fromStream!: T - 待提取的 .tar 数据输入流。
 
-- destDir: String - 提取目标目录。
+- destDir!: String - 提取目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 
@@ -210,11 +210,11 @@ public static func extract<T>(fromStream!: T, destDir!: Path, overwrite!: Bool):
 
 参数：
 
-- fromStream: T - 待提取的 .tar 数据输入流。
+- fromStream!: T - 待提取的 .tar 数据输入流。
 
-- destDir: Path - 提取目标目录。
+- destDir!: Path - 提取目标目录。
 
-- overwrite: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
+- overwrite!: Bool - 若为 true，允许覆盖已存在文件、目录；否则遇到重名文件、目录将抛出异常。
 
 异常：
 
@@ -233,11 +233,19 @@ public abstract class TarEntry {
 
 ### prop stream: ?InputStream
 
+```cangjie
+public prop stream: ?InputStream
+```
+
 功能：获取当前条目的输入流。如果实例由 [TarReader](tar_package_classes.md#class-tarreader) 创建，则本属性返回流中为条目的数据，若条目没有数据则返回 None。如果实例由构造函数创建，则本属性返回的是创建的文件流，传入 [TarWriter](tar_package_classes.md#class-tarwriter) 时会调用该属性用于写入条目数据。
 
 类型：Option\<InputStream>
 
 ### prop name: String
+
+```cangjie
+public mut prop name: String
+```
 
 功能：获取当前条目的文件名。
 
@@ -245,11 +253,19 @@ public abstract class TarEntry {
 
 ### prop mode: Int32
 
+```cangjie
+public mut prop mode: Int32
+```
+
 功能：获取当前条目的权限模式。
 
 类型：Int32
 
 ### prop uid: Int32
+
+```cangjie
+public mut prop uid: Int32
+```
 
 功能：获取当前条目的用户 ID。
 
@@ -257,11 +273,19 @@ public abstract class TarEntry {
 
 ### prop gid: Int32
 
+```cangjie
+public mut prop gid: Int32
+```
+
 功能：获取当前条目的组 ID。
 
 类型：Int32
 
 ### prop size: Int64
+
+```cangjie
+public prop size: Int64
+```
 
 功能：获取当前条目的大小。
 
@@ -269,11 +293,19 @@ public abstract class TarEntry {
 
 ### prop modificationTime: DateTime
 
+```cangjie
+public prop modificationTime: DateTime
+```
+
 功能：获取当前条目的最后修改时间。
 
 类型：DateTime
 
 ### prop entryType: TarEntryType
+
+```cangjie
+public prop entryType: TarEntryType
+```
 
 功能：获取当前条目的条目类型。
 
@@ -399,11 +431,19 @@ public abstract class PosixTarEntry <: TarEntry {
 
 ### prop userName: String
 
+```cangjie
+public prop userName: String
+```
+
 功能：获取当前条目的用户名。
 
 类型：String
 
 ### prop groupName: String
+
+```cangjie
+public prop groupName: String
+```
 
 功能：获取当前条目的组名。
 
@@ -411,11 +451,19 @@ public abstract class PosixTarEntry <: TarEntry {
 
 ### prop deviceMajor: Int32
 
+```cangjie
+public prop deviceMajor: Int32
+```
+
 功能：获取当前条目的设备主编号。
 
 类型：Int32
 
 ### prop deviceMinor: Int32
+
+```cangjie
+public prop deviceMinor: Int32
+```
 
 功能：获取当前条目的设备次编号。
 
@@ -541,11 +589,19 @@ public class GnuTarEntry <: PosixTarEntry {
 
 ### prop accessTime: DateTime
 
+```cangjie
+public prop accessTime: DateTime
+```
+
 功能：获取当前条目的访问时间。
 
 类型：DateTime
 
 ### prop changeTime: DateTime
+
+```cangjie
+public prop changeTime: DateTime
+```
 
 功能：获取当前条目的修改时间。
 
@@ -607,7 +663,6 @@ public override func writeTo(target: OutputStream): Unit
 
 ```cangjie
 public class PaxTarEntry <: PosixTarEntry {
-    public func getPaxData(key: String): ?String
     public init(path: String)
     public init(path: Path)
 }
@@ -675,117 +730,6 @@ public func getPaxData(key: String): ?String
 
 ```cangjie
 public override func writeTo(target: OutputStream): Unit
-```
-
-功能：将当前条目写入到指定的输出流中。
-
-参数：
-
-- target: OutputStream - 指定输出流。
-
-异常：
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果字段超出格式要求或写入失败，则抛出异常。
-
-## class TarEntry
-
-```cangjie
-public abstract class TarEntry {
-    protected init(path: String)
-    protected init(path: Path)
-}
-```
-
-功能：表示一个 tar 文件中的条目，用于和 [TarReader](tar_package_classes.md#class-tarreader) 和 [TarWriter](tar_package_classes.md#class-tarwriter) 进行交互。可从 [TarReader](tar_package_classes.md#class-tarreader) 中获取 [TarEntry](tar_package_classes.md#class-tarentry) 实例，表示 tar 归档文件中的一个条目。也可通过 [TarWriter](tar_package_classes.md#class-tarwriter) 将其写入到 tar 归档文件中。
-
-### prop stream: ?InputStream
-
-功能：获取当前条目的输入流。如果实例由 [TarReader](tar_package_classes.md#class-tarreader) 创建，则本属性返回流中为条目的数据，若条目没有数据则返回 None。如果实例由构造函数创建，则本属性返回的是创建的文件流，传入 [TarWriter](tar_package_classes.md#class-tarwriter) 时会调用该属性用于写入条目数据。
-
-类型：Option\<InputStream>
-
-### prop name: String
-
-功能：获取当前条目的文件名。
-
-类型：String
-
-### prop mode: Int32
-
-功能：获取当前条目的权限模式。
-
-类型：Int32
-
-### prop uid: Int32
-
-功能：获取当前条目的用户 ID。
-
-类型：Int32
-
-### prop gid: Int32
-
-功能：获取当前条目的组 ID。
-
-类型：Int32
-
-### prop size: Int64
-
-功能：获取当前条目的大小。
-
-类型：Int64
-
-### prop modificationTime: DateTime
-
-功能：获取当前条目的最后修改时间。
-
-类型：DateTime
-
-### prop entryType: TarEntryType
-
-功能：获取当前条目的条目类型。
-
-类型：[TarEntryType](tar_package_enums.md#enum-tarentrytype)
-
-### init(String)
-
-```cangjie
-protected init(path: String)
-```
-
-功能：从文件、目录、软链接构造一个 tar 文件条目。
-
-参数：
-
-- path: String - 文件、目录、软链接的路径。
-
-异常：
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 path 参数指定的目标不存在或不是文件、目录、软链接，则抛出异常。
-
-- FSException - 如果读取目标信息或创建目标文件流失败，则抛出异常。
-
-### init(Path)
-
-```cangjie
-protected init(path: Path)
-```
-
-功能：从文件、目录、软链接构造一个 tar 文件条目。
-
-参数：
-
-- path: Path - 文件、目录、软链接的路径。
-
-异常：
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 path 参数指定的目标不存在或不是文件、目录、软链接，则抛出异常。
-
-- FSException - 如果读取目标信息或创建目标文件流失败，则抛出异常。
-
-### func writeTo(OutputStream)
-
-```cangjie
-public open func writeTo(target: OutputStream): Unit
 ```
 
 功能：将当前条目写入到指定的输出流中。
@@ -872,22 +816,18 @@ public func isClosed(): Bool
 
 ```cangjie
 public class TarWriter<T> where T <: OutputStream {
-    public prop format: TarEntryFormat
     public init(stream: T)
     public init(stream: T, format: TarEntryFormat)
-    public func write(path!: String, entryName!: String): Unit
-    public func write(path: Path, entryName!: String): Unit
-    public func write(info: FileInfo, entryName!: String): Unit
-    public func write(entry: TarEntry): Unit
-    public func write(it: Iterable<TarEntry>): Unit
-    public func flush(): Uni
-    public func finish(): Unit
 }
 ```
 
 功能：将条目写入到流中，并完成 tar 文件的写入。
 
 ### prop format: TarEntryFormat
+
+```cangjie
+public prop format: TarEntryFormat
+```
 
 功能：获取当前 tar 文件的条目格式。
 
