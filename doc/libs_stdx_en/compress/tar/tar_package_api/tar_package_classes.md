@@ -18,11 +18,11 @@ Function: Archive the specified directory as a .tar file.
 
 Parameters:
 
-- fromDir: String - The path of the directory to be archived.
+- fromDir!: String - The path of the directory to be archived.
 
-- destFile: String - The path of the generated .tar file.
+- destFile!: String - The path of the generated .tar file.
 
-- includeBaseDirectory: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
+- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
 
 Exceptions:
 
@@ -38,11 +38,11 @@ Function: Archive the specified directory as a .tar file.
 
 Parameters:
 
-- fromDir: Path - The path of the directory to be archived.
+- fromDir!: Path - The path of the directory to be archived.
 
-- destFile: Path - The path of the generated .tar file.
+- destFile!: Path - The path of the generated .tar file.
 
-- includeBaseDirectory: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
+- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
 
 Exceptions:
 
@@ -62,11 +62,11 @@ Function: Archive a directory as .tar data and write it to the specified output 
 
 Parameters:
 
-- fromDir: String - The path of the directory to be archived.
+- fromDir!: String - The path of the directory to be archived.
 
-- destStream: OutputStream - The output stream for archived data.
+- destStream!: T - The output stream for archived data.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -86,11 +86,11 @@ Function: Archive a directory as .tar data and write it to the specified output 
 
 Parameters:
 
-- fromDir: Path - The path of the directory to be archived.
+- fromDir!: Path - The path of the directory to be archived.
 
-- destStream: OutputStream - The output stream for archived data.
+- destStream!: T - The output stream for archived data.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -106,13 +106,13 @@ Function: Selectively archive the specified directory as a .tar file with a filt
 
 Parameters:
 
-- fromDir: String - The directory to be archived.
+- fromDir!: String - The directory to be archived.
 
-- filter: (String) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
+- filter!: (String) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
 
-- destFile: String - The path of the output .tar file.
+- destFile!: String - The path of the output .tar file.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -128,13 +128,13 @@ Function: Selectively archive the specified directory as a .tar file with a filt
 
 Parameters:
 
-- fromDir: Path - The directory to be archived.
+- fromDir!: Path - The directory to be archived.
 
-- filter: (Path) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
+- filter!: (Path) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
 
-- destFile: Path - The path of the output .tar file.
+- destFile!: Path - The path of the output .tar file.
 
-- includeBaseDirectory: Bool - Whether to include the base directory.
+- includeBaseDirectory!: Bool - Whether to include the base directory.
 
 Exceptions:
 
@@ -150,11 +150,11 @@ Function: Extract a .tar file to the specified directory.
 
 Parameters:
 
-- fromTar: String - The path of the .tar file to be extracted.
+- fromTar!: String - The path of the .tar file to be extracted.
 
-- destDir: String - The target directory for extraction.
+- destDir!: String - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 
@@ -170,11 +170,11 @@ Function: Extract a .tar file to the specified directory.
 
 Parameters:
 
-- fromTar: Path - The path of the .tar file to be extracted.
+- fromTar!: Path - The path of the .tar file to be extracted.
 
-- destDir: Path - The target directory for extraction.
+- destDir!: Path - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 
@@ -190,11 +190,11 @@ Function: Read .tar data from an input stream and extract it to the specified di
 
 Parameters:
 
-- fromStream: T - The input stream of .tar data to be extracted.
+- fromStream!: T - The input stream of .tar data to be extracted.
 
-- destDir: String - The target directory for extraction.
+- destDir!: String - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 
@@ -210,11 +210,11 @@ Function: Read .tar data from an input stream and extract it to the specified di
 
 Parameters:
 
-- fromStream: T - The input stream of .tar data to be extracted.
+- fromStream!: T - The input stream of .tar data to be extracted.
 
-- destDir: Path - The target directory for extraction.
+- destDir!: Path - The target directory for extraction.
 
-- overwrite: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
 
 Exceptions:
 
@@ -233,11 +233,19 @@ Function: Represents an entry in a tar file, used to interact with [TarReader](t
 
 ### prop stream: ?InputStream
 
+```cangjie
+public prop stream: ?InputStream
+```
+
 Function: Gets the input stream of the current entry. If the instance is created by [TarReader](tar_package_classes.md#class-tarreader), this property returns the data stream for the entry, or None if the entry has no data. If the instance is created by the constructor, this property returns the created file stream, which will be called when passed to [TarWriter](tar_package_classes.md#class-tarwriter) to write entry data.
 
 Type: Option\<InputStream>
 
 ### prop name: String
+
+```cangjie
+public mut prop name: String
+```
 
 Function: Gets the file name of the current entry.
 
@@ -245,11 +253,19 @@ Type: String
 
 ### prop mode: Int32
 
+```cangjie
+public mut prop mode: Int32
+```
+
 Function: Gets the permission mode of the current entry.
 
 Type: Int32
 
 ### prop uid: Int32
+
+```cangjie
+public mut prop uid: Int32
+```
 
 Function: Gets the user ID of the current entry.
 
@@ -257,11 +273,19 @@ Type: Int32
 
 ### prop gid: Int32
 
+```cangjie
+public mut prop gid: Int32
+```
+
 Function: Gets the group ID of the current entry.
 
 Type: Int32
 
 ### prop size: Int64
+
+```cangjie
+public prop size: Int64
+```
 
 Function: Gets the size of the current entry.
 
@@ -269,11 +293,19 @@ Type: Int64
 
 ### prop modificationTime: DateTime
 
+```cangjie
+public prop modificationTime: DateTime
+```
+
 Function: Gets the last modification time of the current entry.
 
 Type: DateTime
 
 ### prop entryType: TarEntryType
+
+```cangjie
+public prop entryType: TarEntryType
+```
 
 Function: Gets the entry type of the current entry.
 
@@ -399,11 +431,19 @@ Parent type:
 
 ### prop userName: String
 
+```cangjie
+public prop userName: String
+```
+
 Function: Gets the user name of the current entry.
 
 Type: String
 
 ### prop groupName: String
+
+```cangjie
+public prop groupName: String
+```
 
 Function: Gets the group name of the current entry.
 
@@ -411,11 +451,19 @@ Type: String
 
 ### prop deviceMajor: Int32
 
+```cangjie
+public prop deviceMajor: Int32
+```
+
 Function: Gets the device major number of the current entry.
 
 Type: Int32
 
 ### prop deviceMinor: Int32
+
+```cangjie
+public prop deviceMinor: Int32
+```
 
 Function: Gets the device minor number of the current entry.
 
@@ -542,11 +590,19 @@ Parent type:
 
 ### prop accessTime: DateTime
 
+```cangjie
+public prop accessTime: DateTime
+```
+
 Function: Gets the access time of the current entry.
 
 Type: DateTime
 
 ### prop changeTime: DateTime
+
+```cangjie
+public prop changeTime: DateTime
+```
 
 Function: Gets the change time of the current entry.
 
@@ -608,7 +664,6 @@ Exceptions:
 
 ```cangjie
 public class PaxTarEntry <: PosixTarEntry {
-    public func getPaxData(key: String): ?String
     public init(path: String)
     public init(path: Path)
 }
@@ -676,117 +731,6 @@ Return value:
 
 ```cangjie
 public override func writeTo(target: OutputStream): Unit
-```
-
-Function: Write the current entry to the specified output stream.
-
-Parameters:
-
-- target: OutputStream - The specified output stream.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if a field exceeds format requirements or writing fails.
-
-## abstract class TarEntry
-
-```cangjie
-public abstract class TarEntry {
-    protected init(path: String)
-    protected init(path: Path)
-}
-```
-
-Function: Represents an entry in a tar file, used to interact with [TarReader](tar_package_classes.md#class-tarreader) and [TarWriter](tar_package_classes.md#class-tarwriter). A [TarEntry](tar_package_classes.md#class-tarentry) instance can be obtained from [TarReader](tar_package_classes.md#class-tarreader), representing an entry in the tar archive file. It can also be written to a tar archive file via [TarWriter](tar_package_classes.md#class-tarwriter).
-
-### prop stream: ?InputStream
-
-Function: Gets the input stream of the current entry. If the instance is created by [TarReader](tar_package_classes.md#class-tarreader), this property returns the data stream for the entry, or None if the entry has no data. If the instance is created by the constructor, this property returns the created file stream, which will be called when passed to [TarWriter](tar_package_classes.md#class-tarwriter) to write entry data.
-
-Type: Option\<InputStream>
-
-### prop name: String
-
-Function: Gets the file name of the current entry.
-
-Type: String
-
-### prop mode: Int32
-
-Function: Gets the permission mode of the current entry.
-
-Type: Int32
-
-### prop uid: Int32
-
-Function: Gets the user ID of the current entry.
-
-Type: Int32
-
-### prop gid: Int32
-
-Function: Gets the group ID of the current entry.
-
-Type: Int32
-
-### prop size: Int64
-
-Function: Gets the size of the current entry.
-
-Type: Int64
-
-### prop modificationTime: DateTime
-
-Function: Gets the last modification time of the current entry.
-
-Type: DateTime
-
-### prop entryType: TarEntryType
-
-Function: Gets the entry type of the current entry.
-
-Type: [TarEntryType](tar_package_enums.md#enum-tarentrytype)
-
-### init(String)
-
-```cangjie
-protected init(path: String)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### init(Path)
-
-```cangjie
-protected init(path: Path)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: Path - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### func writeTo(OutputStream)
-
-```cangjie
-public open func writeTo(target: OutputStream): Unit
 ```
 
 Function: Write the current entry to the specified output stream.
@@ -873,22 +817,18 @@ Return value:
 
 ```cangjie
 public class TarWriter<T> where T <: OutputStream {
-    public prop format: TarEntryFormat
     public init(stream: T)
     public init(stream: T, format: TarEntryFormat)
-    public func write(path!: String, entryName!: String): Unit
-    public func write(path: Path, entryName!: String): Unit
-    public func write(info: FileInfo, entryName!: String): Unit
-    public func write(entry: TarEntry): Unit
-    public func write(it: Iterable<TarEntry>): Unit
-    public func flush(): Uni
-    public func finish(): Unit
 }
 ```
 
 Function: Write entries to a stream and complete the writing of the tar file.
 
 ### prop format: TarEntryFormat
+
+```cangjie
+public prop format: TarEntryFormat
+```
 
 Function: Gets the entry format of the current tar file.
 
@@ -920,19 +860,19 @@ Parameters:
 
 - format: [TarEntryFormat](tar_package_enums.md#enum-tarentryformat) - The entry format of the tar file.
 
-### func write(path!: String, entryName!: String)
+### func write(String, String)
 
 ```cangjie
-public func write(path: String, entryName: String): Unit
+public func write(path!: String, entryName!: String): Unit
 ```
 
 Function: Write the specified file, directory, or symbolic link to the internal stream.
 
 Parameters:
 
-- path: String - The path of the specified file, directory, or symbolic link.
+- path!: String - The path of the specified file, directory, or symbolic link.
 
-- entryName: String - The entry name in the tar file.
+- entryName!: String - The entry name in the tar file.
 
 Exceptions:
 
@@ -940,10 +880,10 @@ Exceptions:
 
 - FSException - Thrown if creating file stream fails.
 
-### func write(path: Path, entryName!: String)
+### func write(Path, String)
 
 ```cangjie
-public func write(path: Path, entryName: String): Unit
+public func write(path: Path, entryName!: String): Unit
 ```
 
 Function: Write the specified file, directory, or symbolic link to the internal stream.
@@ -952,7 +892,7 @@ Parameters:
 
 - path: Path - The path of the specified file, directory, or symbolic link.
 
-- entryName: String - The entry name in the tar file.
+- entryName!: String - The entry name in the tar file.
 
 Exceptions:
 
@@ -960,10 +900,10 @@ Exceptions:
 
 - FSException - Thrown if creating file stream fails.
 
-### func write(info: FileInfo, entryName!: String)
+### func write(FileInfo, String)
 
 ```cangjie
-public func write(info: FileInfo, entryName: String): Unit
+public func write(info: FileInfo, entryName!: String): Unit
 ```
 
 Function: Write the specified file, directory, or symbolic link to the internal stream.
@@ -972,7 +912,7 @@ Parameters:
 
 - info: FileInfo - The information of the file, directory, or symbolic link to be written.
 
-- entryName: String - The entry name in the tar file.
+- entryName!: String - The entry name in the tar file.
 
 Exceptions:
 
@@ -980,7 +920,7 @@ Exceptions:
 
 - FSException - Thrown if creating file stream fails.
 
-### func write(entry: TarEntry)
+### func write(TarEntry)
 
 ```cangjie
 public func write(entry: TarEntry): Unit
@@ -996,7 +936,7 @@ Exceptions:
 
 - [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended, or if writing the entry fails.
 
-### func write(it: Iterable<TarEntry>)
+### func write(Iterable\<TarEntry>)
 
 ```cangjie
 public func write(it: Iterable<TarEntry>): Unit
@@ -1006,7 +946,7 @@ Function: Write the specified list of tar file entries to the internal stream.
 
 Parameters:
 
-- it: Iterable<[TarEntry](tar_package_classes.md#class-tarentry)> - The list of tar file entries to be written.
+- it: Iterable\<[TarEntry](tar_package_classes.md#class-tarentry)> - The list of tar file entries to be written.
 
 Exceptions:
 
