@@ -106,21 +106,9 @@ __attribute__((destructor)) void CloseSymbolTable(void)
 
 /**============= Api =============*/
 
-#define CHECKFUNCTION(dynMsg, index, name, errCode)                                                                    \
-    if (func##index == NULL) {                                                                                         \
-        (dynMsg)->found = false;                                                                                       \
-        (dynMsg)->funcName = name;                                                                                     \
-        return errCode;                                                                                                \
-    }
-
-#define FINDFUNCTIONI(dynMsg, index, name, errCode)                                                                    \
-    static SSLFunc##index func##index = NULL;                                                                          \
-    if (func##index == NULL) {                                                                                         \
-        func##index = (SSLFunc##index)(FindFunction(#name));                                                           \
-    }                                                                                                                  \
-    CHECKFUNCTION(dynMsg, index, #name, errCode)
-
-#define FINDFUNCTION(dynMsg, name, errCode) FINDFUNCTIONI(dynMsg, , name, errCode)
+#define FINDFUNCTIONI(dynMsg, index, name, errCode) SSLFunc##index func##index = (SSLFunc##index)(name);
+#define FINDFUNCTION(dynMsg, name, errCode) SSLFunc func = (SSLFunc)(name);
+#define CHECKFUNCTION(dynMsg, index, name, errCode) ((void)0)
 
 char* DYN_OPENSSL_strdup(const char* str, DynMsg* dynMsg)
 {
