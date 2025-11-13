@@ -2191,7 +2191,12 @@ private class FlatbufferNodeTranslator {
         let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
         addLeadingComments(nodeBase, ret, leadCmts, isDecl: true)
         innerComments = innerCmts
-
+        let astKind: String = nodeBase.getOrThrow().GetAstKind()
+        if (astKind == "macro_expand_decl") {
+            let table = enumConstructor.table
+            let off: UInt32 = UInt32(table.offset(enumConstructor.DECL)) + table.pos 
+            return transMacroExpandDecl(NodeFormat_MacroExpandDecl(table.bytes, off), Array<SyntaxNodeImpl>(), isEnumConstructor: true)
+        }
         if (let Some(db) <- enumConstructor.GetBase()) {
             // annotation
             let annos = db.GetAnnotations()
@@ -2445,7 +2450,8 @@ private class FlatbufferNodeTranslator {
     }
 
     private func transDeclWithAtExclAnnotation(annos: Array<Option<NodeFormat_Annotation>>,
-        invocation: NodeFormat_MacroInvocation, leadCmts: Array<Option<NodeFormat_CommentGroup>>, trailCmts: Array<Option<NodeFormat_CommentGroup>>): ?SyntaxNodeImpl {
+        invocation: NodeFormat_MacroInvocation, leadCmts: Array<Option<NodeFormat_CommentGroup>>, trailCmts: Array<Option<NodeFormat_CommentGroup>>,
+        isEnumConstructor!: Bool = false): ?SyntaxNodeImpl {
         // BNF: (former annos)? atExcel decl
         let tmpInnerComments = innerComments
         // transAnnotationList
@@ -2468,8 +2474,16 @@ private class FlatbufferNodeTranslator {
         curChildren = retBefore
         // transDecl
         // merge formerAnnos and atExcel and into decl
-        if (let Some(dl) <- invocation.GetDecl() && let Some(decl) <- transDecl(dl) && let Some(nt) <- (decl as NonTerminal) &&
-            nt.children.size != 0) {
+        let declNodeImpl: ?SyntaxNodeImpl = if (let Some(dl) <- invocation.GetDecl()){
+            if (isEnumConstructor) {
+                transEnumConstructor(dl)
+            } else {
+                transDecl(dl)
+            }
+        } else {
+            None
+        }
+         if (let Some(dl) <- declNodeImpl && let Some(nt) <- (dl as NonTerminal) && nt.children.size != 0) {
             var ret = ArrayList<SyntaxNodeImpl>(nt.children)
             if (let Some(annos) <- formerAnnos && let Some(formers) <- (annos as NonTerminal)) {
                 if (ret[0].kind == SyntaxNodeKind.AnnotationList && let Some(annoList) <- (ret[0] as NonTerminal)) {
@@ -2494,7 +2508,7 @@ private class FlatbufferNodeTranslator {
                 // add new annoList
                 ret.add(transCommentGroupList(leadCmts).getOrThrow(), at: 0)
             }
-            moveCursorToEnd(dl.GetBase().getOrThrow().GetBase())
+            moveCursorToEnd(invocation.GetDecl().getOrThrow().GetBase().getOrThrow().GetBase())
             if (trailCmts.size > 0) {
                 addChild(ret, transCommentGroupList(trailCmts))
             }
@@ -2503,7 +2517,8 @@ private class FlatbufferNodeTranslator {
         return None
     }
 
-    private func transMacroExpandDecl(macroExpandDecl: NodeFormat_MacroExpandDecl, preChildren: Array<SyntaxNodeImpl>): ?SyntaxNodeImpl {
+    private func transMacroExpandDecl(macroExpandDecl: NodeFormat_MacroExpandDecl, preChildren: Array<SyntaxNodeImpl>,
+        isEnumConstructor!: Bool = false): ?SyntaxNodeImpl {
         let nodeBase = macroExpandDecl.GetBase().getOrThrow().GetBase()
         let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
         innerComments = innerCmts
@@ -2511,7 +2526,7 @@ private class FlatbufferNodeTranslator {
         // if AtExcl, trans macro  to annotation
         if (let Some(db) <- macroExpandDecl.GetBase() && let Some(invocation) <- macroExpandDecl.GetInvocation() &&
             invocation.GetIsCompileTimeVisible()) {
-            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation, leadCmts, trailCmts)
+            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation, leadCmts, trailCmts, isEnumConstructor: isEnumConstructor)
         }
 
         var ret = ArrayList<SyntaxNodeImpl>()
@@ -2560,7 +2575,11 @@ private class FlatbufferNodeTranslator {
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else {
                 if (let Some(dl) <- invocation.GetDecl()) {
-                    addChild(ret, transDecl(dl))
+                    if (isEnumConstructor) {
+                        addChild(ret, transEnumConstructor(dl))
+                    } else {
+                        addChild(ret, transDecl(dl))
+                    }
                     curChildren = ret
                 }
             }
