@@ -18,8 +18,6 @@ Architecture Diagram:
 - net: Provides network communication and secure transmission functions.
 - serialization: Provides the capability of serialization and deserialization.
 - unittest: Provides the capability to supply test data in serialized input formats when writing unit test code for Cangjie projects.
-- actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
-- effect: Provides a powerful non-local control operation.
 
 ## Operating Instructions
 
@@ -35,11 +33,9 @@ For relevant guidance, please refer to [Development Guide](https://gitcode.com/C
 ├─ figures                      # architecture pictures
 ├─ src                          # Directory of STDX package codes                     
 │   └─ stdx
-│       ├── actors              # Provides Actors
-│       ├── aspectCJ            # Provides AOP
+∂∂│       ├── aspectCJ            # Provides AOP
 │       ├── compress            # Provides compression and decompression
 │       ├── crypto              # Provide security related capabilities
-|       ├── effect              # Provides user-level APIs for handling the Effect Handler feature. This is an experimental feature and requires the use of a Cangjie compiler that supports this mechanism.
 │       ├── dynamicLoader       # Openssl dynamic loading module
 │       ├── encoding            # Provide JSON and string encoding related capabilities
 │       ├── fuzz                # Provides the Cangjie fuzz engine based on coverage feedback
