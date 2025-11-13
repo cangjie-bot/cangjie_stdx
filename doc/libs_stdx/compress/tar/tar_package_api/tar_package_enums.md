@@ -32,77 +32,153 @@ public enum TarEntryType {
 
 ### V7RegularFile
 
+```cangjie
+V7RegularFile
+```
+
 功能：构造一个 V7 格式的普通文件类型枚举实例，对应早期 Unix V7 格式（typeflag `\0`）。
 
 ### RegularFile
+
+```cangjie
+RegularFile
+```
 
 功能：构造一个标准普通文件类型枚举实例，对应 POSIX/USTAR 格式中的普通文件（typeflag `'0'`）。
 
 ### ContiguousFile
 
+```cangjie
+ContiguousFile
+```
+
 功能：构造一个连续文件类型枚举实例，用于表示数据在存储介质上连续排列的文件（typeflag `'7'`）。
 
 ### HardLink
+
+```cangjie
+HardLink
+```
 
 功能：构造一个硬链接类型枚举实例，对应 typeflag `'1'`。
 
 ### Symlink
 
+```cangjie
+Symlink
+```
+
 功能：构造一个符号链接类型枚举实例，对应 typeflag `'2'`。
 
 ### CharDevice
+
+```cangjie
+CharDevice
+```
 
 功能：构造一个字符设备文件类型枚举实例，对应 typeflag `'3'`。
 
 ### BlockDevice
 
+```cangjie
+BlockDevice
+```
+
 功能：构造一个块设备文件类型枚举实例，对应 typeflag `'4'`。
 
 ### Directory
+
+```cangjie
+Directory
+```
 
 功能：构造一个目录类型枚举实例，对应 typeflag `'5'`。
 
 ### Fifo
 
+```cangjie
+Fifo
+```
+
 功能：构造一个命名管道（FIFO）类型枚举实例，对应 typeflag `'6'`。
 
 ### ExtendedHeader
+
+```cangjie
+ExtendedHeader
+```
 
 功能：构造一个 PAX 扩展头类型枚举实例，对应 typeflag `'x'`，用于存储附加元数据。
 
 ### GlobalExtendedHeader
 
+```cangjie
+GlobalExtendedHeader
+```
+
 功能：构造一个 PAX 全局扩展头类型枚举实例，对应 typeflag `'g'`，适用于作用于整个归档的全局元信息。
 
 ### GnuLongName
+
+```cangjie
+GnuLongName
+```
 
 功能：构造一个 GNU 长文件名扩展类型枚举实例，对应 typeflag `'L'`。
 
 ### GnuLongLink
 
+```cangjie
+GnuLongLink
+```
+
 功能：构造一个 GNU 长链接名扩展类型枚举实例，对应 typeflag `'K'`。
 
 ### GnuSparse
+
+```cangjie
+GnuSparse
+```
 
 功能：构造一个 GNU 稀疏文件类型枚举实例，对应 typeflag `'S'`。
 
 ### GnuDumpDir
 
+```cangjie
+GnuDumpDir
+```
+
 功能：构造一个 GNU Dump 目录类型枚举实例，对应 typeflag `'D'`。
 
 ### GnuMultiVolume
+
+```cangjie
+GnuMultiVolume
+```
 
 功能：构造一个 GNU 多卷归档条目类型枚举实例，对应 typeflag `'M'`。
 
 ### GnuName
 
+```cangjie
+GnuName
+```
+
 功能：构造一个 GNU 文件名表条目类型枚举实例，对应 typeflag `'N'`。
 
 ### GnuVolumeHeader
 
+```cangjie
+GnuVolumeHeader
+```
+
 功能：构造一个 GNU 卷头条目类型枚举实例，对应 typeflag `'V'`。
 
 ### Unknown(UInt8)
+
+```cangjie
+Unknown(UInt8)
+```
 
 功能：构造一个未知类型条目枚举实例，用于保留无法识别或自定义的 `typeflag` 字节值。
 
@@ -193,17 +269,33 @@ public enum TarEntryFormat {
 
 ### V7
 
+```cangjie
+V7
+```
+
 功能：构造一个 V7 格式枚举实例，表示最初的 UNIX 第七版 tar 格式（1979）。
 
 ### Ustar
+
+```cangjie
+Ustar
+```
 
 功能：构造一个 USTAR 格式枚举实例，表示 POSIX.1-1988 定义的标准格式。
 
 ### Pax
 
+```cangjie
+Pax
+```
+
 功能：构造一个 PAX 格式枚举实例，表示 POSIX.1-2001 扩展格式，兼容 USTAR，并可通过扩展头记录额外元数据。
 
 ### Gnu
+
+```cangjie
+Gnu
+```
 
 功能：构造一个 GNU 扩展格式枚举实例。
 
