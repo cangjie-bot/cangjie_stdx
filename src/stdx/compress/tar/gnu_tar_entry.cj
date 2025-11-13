@@ -8,7 +8,7 @@
 
 package stdx.compress.tar
 
-import std.fs.{Path, FileInfo}
+import std.fs.Path
 import std.io.{InputStream, OutputStream}
 import std.core.Option
 import std.time.DateTime
@@ -81,9 +81,8 @@ public class GnuTarEntry <: PosixTarEntry {
 
         _header.format = TarEntryFormat.Gnu
 
-        let fileInfo = FileInfo(path)
-        _header.aTime = fileInfo.lastAccessTime
-        _header.cTime = fileInfo.creationTime
+        _header.aTime = Native.getAccessTime(path)
+        _header.cTime = Native.getCreationTime(path)
     }
 
     func writeGnuFields(buffer: TarHeaderBuffer) {

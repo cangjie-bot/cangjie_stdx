@@ -44,6 +44,17 @@ private func callNativeGetFunc(nativeFunc: CFunc<(CString) -> Int32>, path: Path
     throw TarException("Unreachable code.")
 }
 
+private func callNativeGetTimeFunc(nativeFunc: CFunc<(CString) -> Int64>, path: Path, propertyName: String): DateTime {
+    try (s = AutoCString(path)) {
+        let time = unsafe { nativeFunc(s.str) }
+        if (time == -1) {
+            throw TarException("Failed to get ${propertyName} of ${path}.")
+        }
+        return DateTime.ofEpoch(second: time, nanosecond: 0)
+    }
+    throw TarException("Unreachable code.")
+}
+
 private func callNativeGetFunc(nativeFunc: CFunc<(CString) -> CString>, path: Path): String {
     try (s = AutoCString(path)) {
         let result = unsafe { nativeFunc(s.str) }
@@ -74,36 +85,39 @@ private func callNativeSetFunc(nativeFunc: CFunc<(CString, CString) -> Int32>, p
 }
 
 @When[os != "Windows"]
-foreign func CJ_TAR_GetMode(path: CString): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_GetUid(path: CString): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_GetGid(path: CString): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_GetUserName(path: CString): CString
-@When[os != "Windows"]
-foreign func CJ_TAR_GetGroupName(path: CString): CString
-@When[os != "Windows"]
-foreign func CJ_TAR_GetDeviceMajor(path: CString): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_GetDeviceMinor(path: CString): Int32
+foreign {
+    func CJ_TAR_GetMode(path: CString): Int32
 
-@When[os != "Windows"]
-foreign func CJ_TAR_SetMode(path: CString, mode: Int32): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_SetUid(path: CString, uid: Int32): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_SetGid(path: CString, gid: Int32): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_SetUserName(path: CString, userName: CString): Int32
-@When[os != "Windows"]
-foreign func CJ_TAR_SetGroupName(path: CString, groupName: CString): Int32
+    func CJ_TAR_GetUid(path: CString): Int32
+    func CJ_TAR_GetGid(path: CString): Int32
 
-foreign func CJ_TAR_SetModificationTime(path: CString, timestamp: Int64): Int32
-foreign func CJ_TAR_SetAccessTime(path: CString, timestamp: Int64): Int32
+    func CJ_TAR_GetUserName(path: CString): CString
+    func CJ_TAR_GetGroupName(path: CString): CString
+
+    func CJ_TAR_GetDeviceMajor(path: CString): Int32
+    func CJ_TAR_GetDeviceMinor(path: CString): Int32
+
+    func CJ_TAR_GetModificationTime(path: CString): Int64
+    func CJ_TAR_GetAccessTime(path: CString): Int64
+    func CJ_TAR_GetChangeTime(path: CString): Int64
+
+    func CJ_TAR_SetMode(path: CString, mode: Int32): Int32
+    func CJ_TAR_SetUid(path: CString, uid: Int32): Int32
+    func CJ_TAR_SetGid(path: CString, gid: Int32): Int32
+
+    func CJ_TAR_SetUserName(path: CString, userName: CString): Int32
+    func CJ_TAR_SetGroupName(path: CString, groupName: CString): Int32
+}
 
 @When[os == "Windows"]
-foreign func CJ_TAR_SetChangeTime(path: CString, timestamp: Int64): Int32
+foreign {
+    func CJ_TAR_SetChangeTime(path: CString, timestamp: Int64): Int32
+}
+
+foreign {
+    func CJ_TAR_SetModificationTime(path: CString, timestamp: Int64): Int32
+    func CJ_TAR_SetAccessTime(path: CString, timestamp: Int64): Int32
+}
 
 class Native {
     private init() { } // static class
@@ -119,10 +133,18 @@ class Native {
     static func getUserName(path: Path): String { callNativeGetFunc(CJ_TAR_GetUserName, path) }
     @When[os != "Windows"]
     static func getGroupName(path: Path): String { callNativeGetFunc(CJ_TAR_GetGroupName, path) }
+
     @When[os != "Windows"]
     static func getDeviceMajor(path: Path): Int32 { callNativeGetFunc(CJ_TAR_GetDeviceMajor, path) }
     @When[os != "Windows"]
     static func getDeviceMinor(path: Path): Int32 { callNativeGetFunc(CJ_TAR_GetDeviceMinor, path) }
+
+    @When[os != "Windows"]
+    static func getModificationTime(path: Path): DateTime { callNativeGetTimeFunc(CJ_TAR_GetModificationTime, "modification time") }
+    @When[os != "Windows"]
+    static func getAccessTime(path: Path): DateTime { callNativeGetTimeFunc(CJ_TAR_GetAccessTime, "access time") }
+    @When[os != "Windows"]
+    static func getChangeTime(path: Path): DateTime { callNativeGetTimeFunc(CJ_TAR_GetChangeTime, "change time") }
 
     @When[os == "Windows"]
     static func getMode(path: Path): Int32 {
@@ -149,10 +171,21 @@ class Native {
     static func getUserName(path: Path): String { "" }
     @When[os == "Windows"]
     static func getGroupName(path: Path): String { "" }
+
     @When[os == "Windows"]
     static func getDeviceMajor(path: Path): Int32 { 0 }
     @When[os == "Windows"]
     static func getDeviceMinor(path: Path): Int32 { 0 }
+
+    @When[os == "Windows"]
+    static func getModificationTime(path: Path): DateTime { FileInfo(path).lastModificationTime }
+    @When[os == "Windows"]
+    static func getAccessTime(path: Path): DateTime { FileInfo(path).lastAccessTime }
+    @When[os == "Windows"]
+    static func getChangeTime(path: Path): DateTime {
+        // Windows doesn't support change time, use modification time instead
+        FileInfo(path).lastModificationTime
+    }
 
     @When[os != "Windows"]
     static func setMode(path: Path, mode: Int32): Unit { callNativeSetFunc(CJ_TAR_SetMode, path, mode) }
