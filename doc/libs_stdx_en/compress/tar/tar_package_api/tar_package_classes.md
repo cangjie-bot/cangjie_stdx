@@ -233,11 +233,19 @@ Function: Represents an entry in a tar file, used to interact with [TarReader](t
 
 ### prop stream: ?InputStream
 
+```cangjie
+public prop stream: ?InputStream
+```
+
 Function: Gets the input stream of the current entry. If the instance is created by [TarReader](tar_package_classes.md#class-tarreader), this property returns the data stream for the entry, or None if the entry has no data. If the instance is created by the constructor, this property returns the created file stream, which will be called when passed to [TarWriter](tar_package_classes.md#class-tarwriter) to write entry data.
 
 Type: Option\<InputStream>
 
 ### prop name: String
+
+```cangjie
+public mut prop name: String
+```
 
 Function: Gets the file name of the current entry.
 
@@ -245,11 +253,19 @@ Type: String
 
 ### prop mode: Int32
 
+```cangjie
+public mut prop mode: Int32
+```
+
 Function: Gets the permission mode of the current entry.
 
 Type: Int32
 
 ### prop uid: Int32
+
+```cangjie
+public mut prop uid: Int32
+```
 
 Function: Gets the user ID of the current entry.
 
@@ -257,11 +273,19 @@ Type: Int32
 
 ### prop gid: Int32
 
+```cangjie
+public mut prop gid: Int32
+```
+
 Function: Gets the group ID of the current entry.
 
 Type: Int32
 
 ### prop size: Int64
+
+```cangjie
+public prop size: Int64
+```
 
 Function: Gets the size of the current entry.
 
@@ -269,11 +293,19 @@ Type: Int64
 
 ### prop modificationTime: DateTime
 
+```cangjie
+public prop modificationTime: DateTime
+```
+
 Function: Gets the last modification time of the current entry.
 
 Type: DateTime
 
 ### prop entryType: TarEntryType
+
+```cangjie
+public prop entryType: TarEntryType
+```
 
 Function: Gets the entry type of the current entry.
 
@@ -399,11 +431,19 @@ Parent type:
 
 ### prop userName: String
 
+```cangjie
+public prop userName: String
+```
+
 Function: Gets the user name of the current entry.
 
 Type: String
 
 ### prop groupName: String
+
+```cangjie
+public prop groupName: String
+```
 
 Function: Gets the group name of the current entry.
 
@@ -411,11 +451,19 @@ Type: String
 
 ### prop deviceMajor: Int32
 
+```cangjie
+public prop deviceMajor: Int32
+```
+
 Function: Gets the device major number of the current entry.
 
 Type: Int32
 
 ### prop deviceMinor: Int32
+
+```cangjie
+public prop deviceMinor: Int32
+```
 
 Function: Gets the device minor number of the current entry.
 
@@ -542,11 +590,19 @@ Parent type:
 
 ### prop accessTime: DateTime
 
+```cangjie
+public prop accessTime: DateTime
+```
+
 Function: Gets the access time of the current entry.
 
 Type: DateTime
 
 ### prop changeTime: DateTime
+
+```cangjie
+public prop changeTime: DateTime
+```
 
 Function: Gets the change time of the current entry.
 
@@ -608,7 +664,6 @@ Exceptions:
 
 ```cangjie
 public class PaxTarEntry <: PosixTarEntry {
-    public func getPaxData(key: String): ?String
     public init(path: String)
     public init(path: Path)
 }
@@ -676,117 +731,6 @@ Return value:
 
 ```cangjie
 public override func writeTo(target: OutputStream): Unit
-```
-
-Function: Write the current entry to the specified output stream.
-
-Parameters:
-
-- target: OutputStream - The specified output stream.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if a field exceeds format requirements or writing fails.
-
-## abstract class TarEntry
-
-```cangjie
-public abstract class TarEntry {
-    protected init(path: String)
-    protected init(path: Path)
-}
-```
-
-Function: Represents an entry in a tar file, used to interact with [TarReader](tar_package_classes.md#class-tarreader) and [TarWriter](tar_package_classes.md#class-tarwriter). A [TarEntry](tar_package_classes.md#class-tarentry) instance can be obtained from [TarReader](tar_package_classes.md#class-tarreader), representing an entry in the tar archive file. It can also be written to a tar archive file via [TarWriter](tar_package_classes.md#class-tarwriter).
-
-### prop stream: ?InputStream
-
-Function: Gets the input stream of the current entry. If the instance is created by [TarReader](tar_package_classes.md#class-tarreader), this property returns the data stream for the entry, or None if the entry has no data. If the instance is created by the constructor, this property returns the created file stream, which will be called when passed to [TarWriter](tar_package_classes.md#class-tarwriter) to write entry data.
-
-Type: Option\<InputStream>
-
-### prop name: String
-
-Function: Gets the file name of the current entry.
-
-Type: String
-
-### prop mode: Int32
-
-Function: Gets the permission mode of the current entry.
-
-Type: Int32
-
-### prop uid: Int32
-
-Function: Gets the user ID of the current entry.
-
-Type: Int32
-
-### prop gid: Int32
-
-Function: Gets the group ID of the current entry.
-
-Type: Int32
-
-### prop size: Int64
-
-Function: Gets the size of the current entry.
-
-Type: Int64
-
-### prop modificationTime: DateTime
-
-Function: Gets the last modification time of the current entry.
-
-Type: DateTime
-
-### prop entryType: TarEntryType
-
-Function: Gets the entry type of the current entry.
-
-Type: [TarEntryType](tar_package_enums.md#enum-tarentrytype)
-
-### init(String)
-
-```cangjie
-protected init(path: String)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### init(Path)
-
-```cangjie
-protected init(path: Path)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: Path - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### func writeTo(OutputStream)
-
-```cangjie
-public open func writeTo(target: OutputStream): Unit
 ```
 
 Function: Write the current entry to the specified output stream.
@@ -873,22 +817,18 @@ Return value:
 
 ```cangjie
 public class TarWriter<T> where T <: OutputStream {
-    public prop format: TarEntryFormat
     public init(stream: T)
     public init(stream: T, format: TarEntryFormat)
-    public func write(path!: String, entryName!: String): Unit
-    public func write(path: Path, entryName!: String): Unit
-    public func write(info: FileInfo, entryName!: String): Unit
-    public func write(entry: TarEntry): Unit
-    public func write(it: Iterable<TarEntry>): Unit
-    public func flush(): Uni
-    public func finish(): Unit
 }
 ```
 
 Function: Write entries to a stream and complete the writing of the tar file.
 
 ### prop format: TarEntryFormat
+
+```cangjie
+public prop format: TarEntryFormat
+```
 
 Function: Gets the entry format of the current tar file.
 
