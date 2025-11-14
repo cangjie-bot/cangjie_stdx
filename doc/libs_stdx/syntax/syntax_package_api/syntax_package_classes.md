@@ -60,6 +60,10 @@ public init(arguments: Array<Argument>, identifier: String, opKind: AtOpKind, co
 - opKind: [AtOpKind](syntax_package_enums.md#enum-atopkind) - 注解操作符类型，如 `@` 或 `@!`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `identifier` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ### func getAtOpPos()
  
 ```cangjie
@@ -198,7 +202,7 @@ public init(identifier: Option<String>, isInOut: Bool, value: Expr, comments!: A
 
 异常：
 
-- Exception - 当 `identifier` 不为 None 且 `isNamed` 为 `false` 时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `identifier` 不为 `None` 且不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getColonPos()
 
@@ -1078,7 +1082,7 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 
 异常：
 
-- Exception - 当输入的 `body` 中有除静态初始化器、函数声明、变量声明、宏展开声明和属性声明外的声明或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `body` 中有除静态初始化器、函数声明、变量声明、宏展开声明和属性声明外的声明或当泛型约束与泛型参数不对应，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getClassKeyWordPos()
  
@@ -1268,6 +1272,10 @@ public init(name: String, prefixes: Array<String>, typeArguments: Array<TypeAnno
 - prefixes: Array\<String> - 复合类型的前缀路径，例如 `["p1", "p0"]`。
 - typeArguments: Array\<[TypeAnnotation](#class-typeannotation)> - 类型参数列表，例如 `[Int64]`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getLAnglePos()
 
@@ -1706,6 +1714,10 @@ public init(name: String, paramTyAnnotations: Array<TypeAnnotation>, annotations
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ### func getIdentifierPos()
  
 ```cangjie
@@ -1857,7 +1869,7 @@ public init(body: Body, constructors: Array<EnumConstructor>, genericConstraints
 
 异常：
 
-- Exception - 当输入的 `constructors` 为空，或输入的 `body` 中的节点不是函数声明、属性声明及宏展开声明，或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `constructors` 为空，或输入的 `body` 中的节点不是函数声明、属性声明及宏展开声明，或当泛型约束与泛型参数不对应，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getCaseSeparatorsPos()
  
@@ -2503,7 +2515,7 @@ public init(body: Option<Block>, genericConstraints: Option<GenericConstraints>,
 
 异常：
 
-- Exception - 当函数种类和修饰符不对应时，抛出异常，异常中包含报错提示信息。
+- Exception - 当函数种类和修饰符不对应，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getFuncKindKeyWordPos()
 
@@ -2681,7 +2693,7 @@ public init(defaultValue: Option<Expr>, kind: Option<VarKind>, name: String, typ
 
 异常：
 
-- Exception - 当 `kind` 不代表 `var` 或 `let`，或 `kind` 为空但 `modifiers` 不为空，或没有传入参数名却为命名参数时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `kind` 不代表 `var` 或 `let`，或 `kind` 为空但 `modifiers` 不为空，或没有传入参数名却为命名参数，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getAssignPos()
 
@@ -3067,6 +3079,10 @@ public init(name: String, comments!: Array<Comment> = [])
 - name: String - 泛型参数名。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ## class IfExpr
 
 ```cangjie
@@ -3241,6 +3257,10 @@ public init(prefixes: Array<String>, identifier: String, alias: String, comments
 - identifier: String - 被导入的标识符名称，如 `A`。
 - alias: String - 别名名称，如 `B`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `identifier` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getAliasNamePos()
  
@@ -3555,6 +3575,10 @@ public init(prefixes: Array<String>, identifier: String, comments!: Array<Commen
 - identifier: String - 被导入的标识符名称，如 `A`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `identifier` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ### func getIdentifierPos()
  
 ```cangjie
@@ -3718,7 +3742,7 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 
 异常：
 
-- Exception - 当输入的 `body` 中有除函数声明和宏展开声明外的声明或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `body` 中有除函数声明和宏展开声明外的声明，或泛型约束与泛型参数不对应，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getGenericParamsCommasPos()
  
@@ -4002,6 +4026,10 @@ public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: 
 - typeAnnotation: Option\<[TypeAnnotation](#class-typeannotation)> - 可选的类型注解。
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getIdentifierPos()
 
@@ -4386,6 +4414,10 @@ public init(body: Block, name: String, params: ParameterList, retTyAnnotation: O
 - annotations!: Array\<[Annotation](#class-annotation)> - 附加的注解列表，默认为空数组。
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getIdentifierPos()
  
@@ -5337,6 +5369,10 @@ public init(isMacroPkg: Bool, name: String, srcFile: Array<SourceFile>)
 - name: String - 包名。
 - srcFile: Array\<[SourceFile](#class-sourcefile)> - 源文件列表。
 
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ### func toString()
 
 ```cangjie
@@ -5965,7 +6001,7 @@ public init(getter: Option<PropGetterOrSetter>, name: String, setter: Option<Pro
 
 异常：
 
-- Exception - 当 `setter` 存在但 `getter` 不存在时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `setter` 存在但 `getter` 不存在，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getIdentifierPos()
  
@@ -6091,7 +6127,7 @@ public init(block: Block, identifier: Option<String>, isGetter: Bool, annotation
 
 异常：
 
-- Exception - 当 `isGetter` 为 `true` 但 `annotations` 不为空或 `identifier` 不为空，或 `isGetter` 为 `false` 但 `identifier` 为空时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `isGetter` 为 `true` 但 `annotations` 不为空或 `identifier` 不为空，或 `isGetter` 为 `false` 但 `identifier` 为空或不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getGetKeyWordPos()
  
@@ -6576,6 +6612,10 @@ public init(importLists: Array<ImportList>, name: String, path: String, pkgHeade
 - ftrDirective!: Option\<FeaturesDirective> - 特性指令，暂不支持，默认为 `None`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ## class SpawnExpr
 
 ```cangjie
@@ -6889,7 +6929,7 @@ public init(body: Body, genericConstraints: Option<GenericConstraints>, genericP
 
 异常：
 
-- Exception - 当输入的 `body` 中有除静态初始化器、函数声明、变量声明、宏展开声明和属性声明外的声明或当泛型约束与泛型参数不对应时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `body` 中有除静态初始化器、函数声明、变量声明、宏展开声明和属性声明外的声明，或泛型约束与泛型参数不对应，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getGenericParamsCommasPos()
  
@@ -7112,6 +7152,10 @@ public init(name: String, typeArguments: Array<TypeAnnotation>, comments!: Array
 - name: String - 符号名称。
 - typeArguments: Array\<[TypeAnnotation](#class-typeannotation)> - 实例化类型。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getCommasPos()
 
@@ -8030,6 +8074,10 @@ public init(aliasName: String, originalTyAnnotation: TypeAnnotation, typeParamet
 - modifiers!: Array\<[Modifier](#class-modifier)> - 修饰符列表，默认为空数组。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `aliasName` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ### func getAssignPos()
 
 ```cangjie
@@ -8422,7 +8470,7 @@ public init(initializer: Option<Expr>, kind: VarKind, name: String, pattern: Pat
 
 异常：
 
-- Exception - 当 `pattern` 不是通配符模式、变量绑定模式、元组模式或枚举模式，或 `modifiers` 包含 `const`，或 `kind` 不代表 `var`、`let` 或 `const` 时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `pattern` 不是通配符模式、变量绑定模式、元组模式或枚举模式，或 `modifiers` 包含 `const`，或 `kind` 不代表 `var`、`let` 或 `const`，或输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ### func getAssignPos()
 
@@ -8511,6 +8559,10 @@ public init(identifier: String, comments!: Array<Comment> = [])
 - identifier: String - 标识符名称。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `identifier` 不合法时，抛出异常，异常中包含报错提示信息。
+
 ## class VarPattern
 
 ```cangjie
@@ -8549,6 +8601,10 @@ public init(name: String, comments!: Array<Comment> = [])
 
 - name: String - 变量名。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当输入的 `name` 不合法时，抛出异常，异常中包含报错提示信息。
 
 ## class VArrayExpr
 
@@ -8599,6 +8655,10 @@ public init(argument: Argument, vArrayType: VArrayType, comments!: Array<Comment
 - argument: [Argument](#class-argument) - 构造参数。
 - vArrayType: [VArrayType](#class-varraytype) - 定长数组类型。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 `size` 小于 `0` 时，抛出异常，异常中包含报错提示信息。
 
 ### func getLParenPos()
 
@@ -8673,6 +8733,10 @@ public init(elementType: TypeAnnotation, size: Int64, comments!: Array<Comment> 
 - elementType: [TypeAnnotation](#class-typeannotation) - 元素类型。
 - size: Int64 - 数组长度。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 `size` 小于等于 `0` 时，抛出异常，异常中包含报错提示信息。
 
 ### func getCommaPos()
 
