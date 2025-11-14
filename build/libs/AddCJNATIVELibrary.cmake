@@ -401,34 +401,6 @@ set_target_properties(stdx.crypto.crypto PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.crypto.crypto DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
 make_cangjie_lib(
-    actors IS_SHARED
-    DEPENDS cangjie${BACKEND_TYPE}Actors
-    CANGJIE_STD_LIB_LINK std-core std-collection.concurrent std-sync std-time
-    OBJECTS ${output_cj_object_dir}/stdx/actors.o)
-
-add_library(stdx.actors STATIC ${output_cj_object_dir}/stdx/actors.o)
-set_target_properties(stdx.actors PROPERTIES LINKER_LANGUAGE C)
-install(TARGETS stdx.actors DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
-
-make_cangjie_lib(
-    actors.macros IS_SHARED IS_MACRO
-    DEPENDS cangjie${BACKEND_TYPE}ActorsMacros
-    CANGJIE_STD_LIB_LINK std-core std-ast std-collection std-convert
-    OBJECTS ${output_cj_object_dir}/stdx/actors.macros.o)
-
-
-if(NOT CANGJIE_BUILD_WITHOUT_EFFECT_HANDLERS)
-make_cangjie_lib(
-    effect IS_SHARED
-    DEPENDS cangjie${BACKEND_TYPE}Effect
-    CANGJIE_STD_LIB_LINK std-core std-collection std-sync
-    OBJECTS ${output_cj_object_dir}/stdx/effect.o)
-
-add_library(stdx.effect STATIC ${output_cj_object_dir}/stdx/effect.o)
-set_target_properties(stdx.effect PROPERTIES LINKER_LANGUAGE C)
-install(TARGETS stdx.effect DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
-endif()
-make_cangjie_lib(
     crypto.common IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}CryptoCommon
     CANGJIE_STDX_LIB_DEPENDS
@@ -875,19 +847,6 @@ add_cangjie_library(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/net/http
     DEPENDS ${NET_HTTP_DEPENDENCIES})
 
-if(NOT CANGJIE_BUILD_WITHOUT_EFFECT_HANDLERS)
-add_cangjie_library(
-    cangjie${BACKEND_TYPE}Effect
-    IS_STDXLIB
-    IS_PACKAGE
-    IS_CJNATIVE_BACKEND
-    PACKAGE_NAME "effect"
-    MODULE_NAME "stdx"
-    SOURCES ${EFFECT_SRCS}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/effect
-    DEPENDS ${EFFECT_DEPENDENCIES})
-endif()
-
 add_cangjie_library(
     cangjie${BACKEND_TYPE}Hex
     NO_SUB_PKG
@@ -898,24 +857,3 @@ add_cangjie_library(
     MODULE_NAME "stdx"
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/encoding/hex
     DEPENDS ${ENCODING_HEX_DEPENDENCIES})
-
-add_cangjie_library(
-    cangjie${BACKEND_TYPE}Actors
-    IS_STDXLIB
-    IS_PACKAGE
-    IS_CJNATIVE_BACKEND
-    PACKAGE_NAME "actors"
-    MODULE_NAME "stdx"
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors
-    DEPENDS ${ACTORS_DEPENDENCIES})
-
-add_cangjie_library(
-    cangjie${BACKEND_TYPE}ActorsMacros
-    NO_SUB_PKG
-    IS_STDXLIB
-    IS_PACKAGE
-    IS_CJNATIVE_BACKEND
-    PACKAGE_NAME "actors.macros"
-    MODULE_NAME "stdx"
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
-    DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
