@@ -23,6 +23,7 @@
 #include "cangjie/Parse/Parser.h"
 #include "cangjie/Macro/MacroCommon.h"
 #include "cangjie/Macro/TokenSerialization.h"
+#include "cangjie/Utils/FileUtil.h"
 
 using namespace Cangjie;
 namespace {
@@ -221,5 +222,10 @@ void CJ_CheckAddSpace(const uint8_t* tokBytes, bool* spaceFlag)
         spaceFlag[loop] = CheckAddSpace(tokens[loop], tokens[loop + 1]);
     }
     spaceFlag[tokens.size() - 1] = false;
+}
+
+bool CJ_CheckIdentifier(const char* str, bool useContextualKeyWords) {
+    if (!str) return false;
+    return FileUtil::IsIdentifier(std::string(str), useContextualKeyWords);
 }
 }
