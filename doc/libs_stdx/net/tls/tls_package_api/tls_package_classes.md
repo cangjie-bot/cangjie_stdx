@@ -209,7 +209,7 @@ public init(certChain: Array<X509Certificate>, signCallback: KeylessSignFunc, de
 
 - certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - 证书对象。
 - signCallback: [KeylessSignFunc](./tls_package_type.md#type-keylesssignfunc) - 签名回调函数。
-- decryptCallback: ?[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc) - 解密回调函数，默认为 None\<[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc)>。
+- decryptCallback!: ?[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc) - 解密回调函数，默认为 None\<[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc)>。
 
 异常：
 

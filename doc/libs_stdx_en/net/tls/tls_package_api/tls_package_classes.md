@@ -207,7 +207,7 @@ Parameters:
 
 - certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - Certificate object.
 - signCallback: [KeylessSignFunc](./tls_package_type.md#type-keylesssignfunc) - Signing callback function.
-- decryptCallback: ?[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc) - Decryption callback function. Defaults to None\<[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc)>.
+- decryptCallback!: ?[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc) - Decryption callback function. Defaults to None\<[KeylessDecryptFunc](./tls_package_type.md#type-keylessdecryptfunc)>.
 
 Exceptions:
 
