@@ -93,7 +93,6 @@ def generate_cmake_defs(args):
         "-DCANGJIE_TARGET_TOOLCHAIN=" + (args.target_toolchain if args.target_toolchain else ""),
         "-DCANGJIE_INCLUDE=" + (";".join(args.include) if args.include else ""),
         "-DCANGJIE_TARGET_SYSROOT=" + (args.target_sysroot if args.target_sysroot else ""),
-        "-DCANGJIE_BUILD_WITHOUT_EFFECT_HANDLERS=" + bool_to_opt(args.without_effect_handlers),
         "-DCANGJIE_BUILD_ARGS=" + (";".join(args.build_args) if args.build_args else "")]
     return result
 
@@ -360,9 +359,6 @@ def main():
     parser_build.add_argument(
         "--build-args", dest="build_args", type=str, action='append', default=[],
         help="other arguments directly passed to cjc"
-    )
-    parser_build.add_argument(
-        "--without-effect-handlers", dest="without_effect_handlers", action="store_true", help="build a version without effect handlers"
     )
     parser_build.set_defaults(func=build)
 
