@@ -1,578 +1,5 @@
 # Classes
 
-## class Tar
-
-```cangjie
-public class Tar {}
-```
-
-Function: Archive and extract directories or streams.
-
-### static func archive(String, String, Bool)
-
-```cangjie
-public static func archive(fromDir!: String, destFile!: String, includeBaseDirectory!: Bool): Unit
-```
-
-Function: Archive the specified directory as a .tar file.
-
-Parameters:
-
-- fromDir!: String - The path of the directory to be archived.
-
-- destFile!: String - The path of the generated .tar file.
-
-- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
-
-### static func archive(Path, Path, Bool)
-
-```cangjie
-public static func archive(fromDir!: Path, destFile!: Path, includeBaseDirectory!: Bool): Unit
-```
-
-Function: Archive the specified directory as a .tar file.
-
-Parameters:
-
-- fromDir!: Path - The path of the directory to be archived.
-
-- destFile!: Path - The path of the generated .tar file.
-
-- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
-
-### static func archive\<T>(String, T, Bool) where T <: OutputStream
-
-```cangjie
-public static func archive<T>(fromDir!: String, destStream!: T, includeBaseDirectory!: Bool): Unit where T <: OutputStream
-```
-
-Function: Archive a directory as .tar data and write it to the specified output stream.
-
-> **Note:**
->
-> The function does not handle the release of destStream resources; the caller must manage the lifecycle of this output stream.
-
-Parameters:
-
-- fromDir!: String - The path of the directory to be archived.
-
-- destStream!: T - The output stream for archived data.
-
-- includeBaseDirectory!: Bool - Whether to include the base directory.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
-
-### static func archive\<T>(Path, T, Bool) where T <: OutputStream
-
-```cangjie
-public static func archive<T>(fromDir!: Path, destStream!: T, includeBaseDirectory!: Bool): Unit where T <: OutputStream
-```
-
-Function: Archive a directory as .tar data and write it to the specified output stream.
-
-> **Note:**
->
-> The function does not handle the release of destStream resources; the caller must manage the lifecycle of this output stream.
-
-Parameters:
-
-- fromDir!: Path - The path of the directory to be archived.
-
-- destStream!: T - The output stream for archived data.
-
-- includeBaseDirectory!: Bool - Whether to include the base directory.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
-
-### static func archive(String, (String) -> Bool, String, Bool)
-
-```cangjie
-public static func archive(fromDir!: String, filter!: (String) -> Bool, destFile!: String, includeBaseDirectory!: Bool): Unit
-```
-
-Function: Selectively archive the specified directory as a .tar file with a filter function.
-
-Parameters:
-
-- fromDir!: String - The directory to be archived.
-
-- filter!: (String) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
-
-- destFile!: String - The path of the output .tar file.
-
-- includeBaseDirectory!: Bool - Whether to include the base directory.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
-
-### static func archive(Path, (Path) -> Bool, Path, Bool)
-
-```cangjie
-public static func archive(fromDir!: Path, filter!: (Path) -> Bool, destFile!: Path, includeBaseDirectory!: Bool): Unit
-```
-
-Function: Selectively archive the specified directory as a .tar file with a filter function.
-
-Parameters:
-
-- fromDir!: Path - The directory to be archived.
-
-- filter!: (Path) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
-
-- destFile!: Path - The path of the output .tar file.
-
-- includeBaseDirectory!: Bool - Whether to include the base directory.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
-
-### static func extract(String, String, Bool)
-
-```cangjie
-public static func extract(fromTar!: String, destDir!: String, overwrite!: Bool): Unit
-```
-
-Function: Extract a .tar file to the specified directory.
-
-Parameters:
-
-- fromTar!: String - The path of the .tar file to be extracted.
-
-- destDir!: String - The target directory for extraction.
-
-- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
-
-### static func extract(Path, Path, Bool)
-
-```cangjie
-public static func extract(fromTar!: Path, destDir!: Path, overwrite!: Bool): Unit
-```
-
-Function: Extract a .tar file to the specified directory.
-
-Parameters:
-
-- fromTar!: Path - The path of the .tar file to be extracted.
-
-- destDir!: Path - The target directory for extraction.
-
-- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
-
-### static func extract\<T>(T, String, Bool) where T <: InputStream
-
-```cangjie
-public static func extract<T>(fromStream!: T, destDir!: String, overwrite!: Bool): Unit where T <: InputStream
-```
-
-Function: Read .tar data from an input stream and extract it to the specified directory.
-
-Parameters:
-
-- fromStream!: T - The input stream of .tar data to be extracted.
-
-- destDir!: String - The target directory for extraction.
-
-- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
-
-### static func extract\<T>(T, Path, Bool) where T <: InputStream
-
-```cangjie
-public static func extract<T>(fromStream!: T, destDir!: Path, overwrite!: Bool): Unit where T <: InputStream
-```
-
-Function: Read .tar data from an input stream and extract it to the specified directory.
-
-Parameters:
-
-- fromStream!: T - The input stream of .tar data to be extracted.
-
-- destDir!: Path - The target directory for extraction.
-
-- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
-
-## abstract class TarEntry
-
-```cangjie
-public abstract class TarEntry {
-    protected init(path: String)
-    protected init(path: Path)
-}
-```
-
-Function: Represents an entry in a tar file, used to interact with [TarReader](tar_package_classes.md#class-tarreader) and [TarWriter](tar_package_classes.md#class-tarwriter). A [TarEntry](tar_package_classes.md#class-tarentry) instance can be obtained from [TarReader](tar_package_classes.md#class-tarreader), representing an entry in the tar archive file. It can also be written to a tar archive file via [TarWriter](tar_package_classes.md#class-tarwriter).
-
-### prop stream
-
-```cangjie
-public prop stream: ?InputStream
-```
-
-Function: Gets the input stream of the current entry. If the instance is created by [TarReader](tar_package_classes.md#class-tarreader), this property returns the data stream for the entry, or None if the entry has no data. If the instance is created by the constructor, this property returns the created file stream, which will be called when passed to [TarWriter](tar_package_classes.md#class-tarwriter) to write entry data.
-
-Type: Option\<InputStream>
-
-### prop name
-
-```cangjie
-public mut prop name: String
-```
-
-Function: Gets the file name of the current entry.
-
-Type: String
-
-### prop mode
-
-```cangjie
-public mut prop mode: Int32
-```
-
-Function: Gets the permission mode of the current entry.
-
-Type: Int32
-
-### prop uid
-
-```cangjie
-public mut prop uid: Int32
-```
-
-Function: Gets the user ID of the current entry.
-
-Type: Int32
-
-### prop gid
-
-```cangjie
-public mut prop gid: Int32
-```
-
-Function: Gets the group ID of the current entry.
-
-Type: Int32
-
-### prop size
-
-```cangjie
-public prop size: Int64
-```
-
-Function: Gets the size of the current entry.
-
-Type: Int64
-
-### prop modificationTime
-
-```cangjie
-public prop modificationTime: DateTime
-```
-
-Function: Gets the last modification time of the current entry.
-
-Type: DateTime
-
-### prop entryType
-
-```cangjie
-public prop entryType: TarEntryType
-```
-
-Function: Gets the entry type of the current entry.
-
-Type: [TarEntryType](tar_package_enums.md#enum-tarentrytype)
-
-### init(String)
-
-```cangjie
-protected init(path: String)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### init(Path)
-
-```cangjie
-protected init(path: Path)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: Path - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### func writeTo(OutputStream)
-
-```cangjie
-public open func writeTo(target: OutputStream): Unit
-```
-
-Function: Write the current entry to the specified output stream.
-
-Parameters:
-
-- target: OutputStream - The specified output stream.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if a field exceeds format requirements or writing fails.
-
-## class V7TarEntry
-
-```cangjie
-public class V7TarEntry <: TarEntry {
-    public init(filePath: String)
-    public init(filePath: Path)
-}
-```
-
-Function: Represents a V7 tar file entry.
-
-Parent type:
-
-- [TarEntry](#class-tarentry)
-
-### init(String)
-
-```cangjie
-public init(filePath: String)
-```
-
-Function: Construct a V7 tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- filePath: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the filePath parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### init(Path)
-
-```cangjie
-public init(filePath: Path)
-```
-
-Function: Construct a V7 tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- filePath: Path - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the filePath parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-## class PosixTarEntry
-
-```cangjie
-public abstract class PosixTarEntry <: TarEntry {
-    protected init(path: String)
-    protected init(path: Path)
-}
-```
-
-Function: Represents a tar file entry containing common fields shared by Ustar, Gnu, and Pax formats.
-
-Parent type:
-
-- [TarEntry](#class-tarentry)
-
-### prop userName
-
-```cangjie
-public prop userName: String
-```
-
-Function: Gets the user name of the current entry.
-
-Type: String
-
-### prop groupName
-
-```cangjie
-public prop groupName: String
-```
-
-Function: Gets the group name of the current entry.
-
-Type: String
-
-### prop deviceMajor
-
-```cangjie
-public prop deviceMajor: Int32
-```
-
-Function: Gets the device major number of the current entry.
-
-Type: Int32
-
-### prop deviceMinor
-
-```cangjie
-public prop deviceMinor: Int32
-```
-
-Function: Gets the device minor number of the current entry.
-
-Type: Int32
-
-### init(String)
-
-```cangjie
-public init(path: String)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### init(Path)
-
-```cangjie
-public init(path: Path)
-```
-
-Function: Construct a tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: Path - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-## class UstarTarEntry
-
-```cangjie
-
-public class UstarTarEntry <: PosixTarEntry {
-    public init(path: String)
-    public init(path: Path)
-}
-```
-
-Function: Represents a Ustar tar file entry.
-
-Parent type:
-
-- [PosixTarEntry](#class-posixtarentry)
-
-### init(String)
-
-```cangjie
-public init(path: String)
-```
-
-Function: Construct a Ustar tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### init(Path)
-
-```cangjie
-public init(path: Path)
-```
-
-Function: Construct a Ustar tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: Path - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
-### func writeTo(OutputStream)
-
-```cangjie
-public override func writeTo(target: OutputStream): Unit
-```
-
-Function: Write the current entry to the specified output stream.
-
-Parameters:
-
-- target: OutputStream - The specified output stream.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if a field exceeds format requirements or writing fails.
-
 ## class GnuTarEntry
 
 ```cangjie
@@ -608,24 +35,6 @@ Function: Gets the change time of the current entry.
 
 Type: DateTime
 
-### init(String)
-
-```cangjie
-public init(path: String)
-```
-
-Function: Construct a Gnu tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
 ### init(Path)
 
 ```cangjie
@@ -637,6 +46,24 @@ Function: Construct a Gnu tar file entry from a file, directory, or symbolic lin
 Parameters:
 
 - path: Path - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### init(String)
+
+```cangjie
+public init(path: String)
+```
+
+Function: Construct a Gnu tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: String - The path of the file, directory, or symbolic link.
 
 Exceptions:
 
@@ -675,24 +102,6 @@ Parent type:
 
 - [PosixTarEntry](#class-posixtarentry)
 
-### init(String)
-
-```cangjie
-public init(path: String)
-```
-
-Function: Construct a Pax tar file entry from a file, directory, or symbolic link.
-
-Parameters:
-
-- path: String - The path of the file, directory, or symbolic link.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
-
-- FSException - Thrown if reading target information or creating target file stream fails.
-
 ### init(Path)
 
 ```cangjie
@@ -704,6 +113,24 @@ Function: Construct a Pax tar file entry from a file, directory, or symbolic lin
 Parameters:
 
 - path: Path - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### init(String)
+
+```cangjie
+public init(path: String)
+```
+
+Function: Construct a Pax tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: String - The path of the file, directory, or symbolic link.
 
 Exceptions:
 
@@ -731,6 +158,460 @@ Return value:
 
 ```cangjie
 public override func writeTo(target: OutputStream): Unit
+```
+
+Function: Write the current entry to the specified output stream.
+
+Parameters:
+
+- target: OutputStream - The specified output stream.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if a field exceeds format requirements or writing fails.
+
+## class PosixTarEntry
+
+```cangjie
+public abstract class PosixTarEntry <: TarEntry {
+    protected init(path: String)
+    protected init(path: Path)
+}
+```
+
+Function: Represents a tar file entry containing common fields shared by Ustar, Gnu, and Pax formats.
+
+Parent type:
+
+- [TarEntry](#class-tarentry)
+
+### prop deviceMajor
+
+```cangjie
+public prop deviceMajor: Int32
+```
+
+Function: Gets the device major number of the current entry.
+
+Type: Int32
+
+### prop deviceMinor
+
+```cangjie
+public prop deviceMinor: Int32
+```
+
+Function: Gets the device minor number of the current entry.
+
+Type: Int32
+
+### prop groupName
+
+```cangjie
+public prop groupName: String
+```
+
+Function: Gets the group name of the current entry.
+
+Type: String
+
+### prop userName
+
+```cangjie
+public prop userName: String
+```
+
+Function: Gets the user name of the current entry.
+
+Type: String
+
+### init(Path)
+
+```cangjie
+public init(path: Path)
+```
+
+Function: Construct a tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: Path - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### init(String)
+
+```cangjie
+public init(path: String)
+```
+
+Function: Construct a tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: String - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+## class Tar
+
+```cangjie
+public class Tar {}
+```
+
+Function: Archive and extract directories or streams.
+
+### static func archive(Path, (Path) -> Bool, Path, Bool)
+
+```cangjie
+public static func archive(fromDir!: Path, filter!: (Path) -> Bool, destFile!: Path, includeBaseDirectory!: Bool): Unit
+```
+
+Function: Selectively archive the specified directory as a .tar file with a filter function.
+
+Parameters:
+
+- fromDir!: Path - The directory to be archived.
+
+- filter!: (Path) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
+
+- destFile!: Path - The path of the output .tar file.
+
+- includeBaseDirectory!: Bool - Whether to include the base directory.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+
+### static func archive(Path, Path, Bool)
+
+```cangjie
+public static func archive(fromDir!: Path, destFile!: Path, includeBaseDirectory!: Bool): Unit
+```
+
+Function: Archive the specified directory as a .tar file.
+
+Parameters:
+
+- fromDir!: Path - The path of the directory to be archived.
+
+- destFile!: Path - The path of the generated .tar file.
+
+- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+
+### static func archive(String, (String) -> Bool, String, Bool)
+
+```cangjie
+public static func archive(fromDir!: String, filter!: (String) -> Bool, destFile!: String, includeBaseDirectory!: Bool): Unit
+```
+
+Function: Selectively archive the specified directory as a .tar file with a filter function.
+
+Parameters:
+
+- fromDir!: String - The directory to be archived.
+
+- filter!: (String) -> Bool - A filter function that receives paths of directories, files, and symbolic links encountered during traversal. Returns true to keep the item, otherwise discards it.
+
+- destFile!: String - The path of the output .tar file.
+
+- includeBaseDirectory!: Bool - Whether to include the base directory.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+
+### static func archive(String, String, Bool)
+
+```cangjie
+public static func archive(fromDir!: String, destFile!: String, includeBaseDirectory!: Bool): Unit
+```
+
+Function: Archive the specified directory as a .tar file.
+
+Parameters:
+
+- fromDir!: String - The path of the directory to be archived.
+
+- destFile!: String - The path of the generated .tar file.
+
+- includeBaseDirectory!: Bool - Whether to include the directory itself as the top-level directory. If true, the archive contains the directory; if false, only its contents are included.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+
+### static func archive\<T>(Path, T, Bool) where T <: OutputStream
+
+```cangjie
+public static func archive<T>(fromDir!: Path, destStream!: T, includeBaseDirectory!: Bool): Unit where T <: OutputStream
+```
+
+Function: Archive a directory as .tar data and write it to the specified output stream.
+
+> **Note:**
+>
+> The function does not handle the release of destStream resources; the caller must manage the lifecycle of this output stream.
+
+Parameters:
+
+- fromDir!: Path - The path of the directory to be archived.
+
+- destStream!: T - The output stream for archived data.
+
+- includeBaseDirectory!: Bool - Whether to include the base directory.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+
+### static func archive\<T>(String, T, Bool) where T <: OutputStream
+
+```cangjie
+public static func archive<T>(fromDir!: String, destStream!: T, includeBaseDirectory!: Bool): Unit where T <: OutputStream
+```
+
+Function: Archive a directory as .tar data and write it to the specified output stream.
+
+> **Note:**
+>
+> The function does not handle the release of destStream resources; the caller must manage the lifecycle of this output stream.
+
+Parameters:
+
+- fromDir!: String - The path of the directory to be archived.
+
+- destStream!: T - The output stream for archived data.
+
+- includeBaseDirectory!: Bool - Whether to include the base directory.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+
+### static func extract(Path, Path, Bool)
+
+```cangjie
+public static func extract(fromTar!: Path, destDir!: Path, overwrite!: Bool): Unit
+```
+
+Function: Extract a .tar file to the specified directory.
+
+Parameters:
+
+- fromTar!: Path - The path of the .tar file to be extracted.
+
+- destDir!: Path - The target directory for extraction.
+
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+
+### static func extract(String, String, Bool)
+
+```cangjie
+public static func extract(fromTar!: String, destDir!: String, overwrite!: Bool): Unit
+```
+
+Function: Extract a .tar file to the specified directory.
+
+Parameters:
+
+- fromTar!: String - The path of the .tar file to be extracted.
+
+- destDir!: String - The target directory for extraction.
+
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+
+### static func extract\<T>(T, Path, Bool) where T <: InputStream
+
+```cangjie
+public static func extract<T>(fromStream!: T, destDir!: Path, overwrite!: Bool): Unit where T <: InputStream
+```
+
+Function: Read .tar data from an input stream and extract it to the specified directory.
+
+Parameters:
+
+- fromStream!: T - The input stream of .tar data to be extracted.
+
+- destDir!: Path - The target directory for extraction.
+
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+
+### static func extract\<T>(T, String, Bool) where T <: InputStream
+
+```cangjie
+public static func extract<T>(fromStream!: T, destDir!: String, overwrite!: Bool): Unit where T <: InputStream
+```
+
+Function: Read .tar data from an input stream and extract it to the specified directory.
+
+Parameters:
+
+- fromStream!: T - The input stream of .tar data to be extracted.
+
+- destDir!: String - The target directory for extraction.
+
+- overwrite!: Bool - If true, allows overwriting existing files and directories; otherwise, an exception is thrown when encountering files or directories with duplicate names.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+
+## class TarEntry
+
+```cangjie
+public abstract class TarEntry {
+    protected init(path: String)
+    protected init(path: Path)
+}
+```
+
+Function: Represents an entry in a tar file, used to interact with [TarReader](tar_package_classes.md#class-tarreader) and [TarWriter](tar_package_classes.md#class-tarwriter). A [TarEntry](tar_package_classes.md#class-tarentry) instance can be obtained from [TarReader](tar_package_classes.md#class-tarreader), representing an entry in the tar archive file. It can also be written to a tar archive file via [TarWriter](tar_package_classes.md#class-tarwriter).
+
+### prop entryType
+
+```cangjie
+public prop entryType: TarEntryType
+```
+
+Function: Gets the entry type of the current entry.
+
+Type: [TarEntryType](tar_package_enums.md#enum-tarentrytype)
+
+### prop gid
+
+```cangjie
+public mut prop gid: Int32
+```
+
+Function: Gets the group ID of the current entry.
+
+Type: Int32
+
+### prop mode
+
+```cangjie
+public mut prop mode: Int32
+```
+
+Function: Gets the permission mode of the current entry.
+
+Type: Int32
+
+### prop modificationTime
+
+```cangjie
+public prop modificationTime: DateTime
+```
+
+Function: Gets the last modification time of the current entry.
+
+Type: DateTime
+
+### prop name
+
+```cangjie
+public mut prop name: String
+```
+
+Function: Gets the file name of the current entry.
+
+Type: String
+
+### prop size
+
+```cangjie
+public prop size: Int64
+```
+
+Function: Gets the size of the current entry.
+
+Type: Int64
+
+### prop stream
+
+```cangjie
+public prop stream: ?InputStream
+```
+
+Function: Gets the input stream of the current entry. If the instance is created by [TarReader](tar_package_classes.md#class-tarreader), this property returns the data stream for the entry, or None if the entry has no data. If the instance is created by the constructor, this property returns the created file stream, which will be called when passed to [TarWriter](tar_package_classes.md#class-tarwriter) to write entry data.
+
+Type: Option\<InputStream>
+
+### prop uid
+
+```cangjie
+public mut prop uid: Int32
+```
+
+Function: Gets the user ID of the current entry.
+
+Type: Int32
+
+### init(Path)
+
+```cangjie
+protected init(path: Path)
+```
+
+Function: Construct a tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: Path - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### init(String)
+
+```cangjie
+protected init(path: String)
+```
+
+Function: Construct a tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: String - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### func writeTo(OutputStream)
+
+```cangjie
+public open func writeTo(target: OutputStream): Unit
 ```
 
 Function: Write the current entry to the specified output stream.
@@ -860,17 +741,41 @@ Parameters:
 
 - format: [TarEntryFormat](tar_package_enums.md#enum-tarentryformat) - The entry format of the tar file.
 
-### func write(String, String)
+### func finish()
 
 ```cangjie
-public func write(path!: String, entryName!: String): Unit
+public func finish(): Unit
+```
+
+Function: Write the tar end marker, which is 1024 null bytes, and finish writing in tar format.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended, or if writing fails.
+
+### func flush()
+
+```cangjie
+public func flush(): Unit
+```
+
+Function: Flush the internal stream.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended.
+
+### func write(FileInfo, String)
+
+```cangjie
+public func write(info: FileInfo, entryName!: String): Unit
 ```
 
 Function: Write the specified file, directory, or symbolic link to the internal stream.
 
 Parameters:
 
-- path!: String - The path of the specified file, directory, or symbolic link.
+- info: FileInfo - The information of the file, directory, or symbolic link to be written.
 
 - entryName!: String - The entry name in the tar file.
 
@@ -879,6 +784,22 @@ Exceptions:
 - [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended, or if creating or writing the entry fails.
 
 - FSException - Thrown if creating file stream fails.
+
+### func write(Iterable\<TarEntry>)
+
+```cangjie
+public func write(it: Iterable<TarEntry>): Unit
+```
+
+Function: Write the specified list of tar file entries to the internal stream.
+
+Parameters:
+
+- it: Iterable\<[TarEntry](tar_package_classes.md#class-tarentry)> - The list of tar file entries to be written.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended, or if writing entries fails.
 
 ### func write(Path, String)
 
@@ -900,17 +821,17 @@ Exceptions:
 
 - FSException - Thrown if creating file stream fails.
 
-### func write(FileInfo, String)
+### func write(String, String)
 
 ```cangjie
-public func write(info: FileInfo, entryName!: String): Unit
+public func write(path!: String, entryName!: String): Unit
 ```
 
 Function: Write the specified file, directory, or symbolic link to the internal stream.
 
 Parameters:
 
-- info: FileInfo - The information of the file, directory, or symbolic link to be written.
+- path!: String - The path of the specified file, directory, or symbolic link.
 
 - entryName!: String - The entry name in the tar file.
 
@@ -935,46 +856,6 @@ Parameters:
 Exceptions:
 
 - [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended, or if writing the entry fails.
-
-### func write(Iterable\<TarEntry>)
-
-```cangjie
-public func write(it: Iterable<TarEntry>): Unit
-```
-
-Function: Write the specified list of tar file entries to the internal stream.
-
-Parameters:
-
-- it: Iterable\<[TarEntry](tar_package_classes.md#class-tarentry)> - The list of tar file entries to be written.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended, or if writing entries fails.
-
-### func flush()
-
-```cangjie
-public func flush(): Unit
-```
-
-Function: Flush the internal stream.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended.
-
-### func finish()
-
-```cangjie
-public func finish(): Unit
-```
-
-Function: Write the tar end marker, which is 1024 null bytes, and finish writing in tar format.
-
-Exceptions:
-
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if writing has ended, or if writing fails.
 
 ### extend\<T> TarWriter\<T> <: Resource where T <: Resource
 
@@ -1011,3 +892,123 @@ Function: Determine whether the internal stream is closed.
 Return value:
 
 - Bool - Returns true if the internal stream has been closed, otherwise returns false.
+
+## class UstarTarEntry
+
+```cangjie
+
+public class UstarTarEntry <: PosixTarEntry {
+    public init(path: String)
+    public init(path: Path)
+}
+```
+
+Function: Represents a Ustar tar file entry.
+
+Parent type:
+
+- [PosixTarEntry](#class-posixtarentry)
+
+### init(Path)
+
+```cangjie
+public init(path: Path)
+```
+
+Function: Construct a Ustar tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: Path - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### init(String)
+
+```cangjie
+public init(path: String)
+```
+
+Function: Construct a Ustar tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- path: String - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the path parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### func writeTo(OutputStream)
+
+```cangjie
+public override func writeTo(target: OutputStream): Unit
+```
+
+Function: Write the current entry to the specified output stream.
+
+Parameters:
+
+- target: OutputStream - The specified output stream.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if a field exceeds format requirements or writing fails.
+
+## class V7TarEntry
+
+```cangjie
+public class V7TarEntry <: TarEntry {
+    public init(filePath: String)
+    public init(filePath: Path)
+}
+```
+
+Function: Represents a V7 tar file entry.
+
+Parent type:
+
+- [TarEntry](#class-tarentry)
+
+### init(Path)
+
+```cangjie
+public init(filePath: Path)
+```
+
+Function: Construct a V7 tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- filePath: Path - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the filePath parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
+### init(String)
+
+```cangjie
+public init(filePath: String)
+```
+
+Function: Construct a V7 tar file entry from a file, directory, or symbolic link.
+
+Parameters:
+
+- filePath: String - The path of the file, directory, or symbolic link.
+
+Exceptions:
+
+- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if the target specified by the filePath parameter does not exist or is not a file, directory, or symbolic link.
+
+- FSException - Thrown if reading target information or creating target file stream fails.
+
