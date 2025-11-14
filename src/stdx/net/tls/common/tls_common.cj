@@ -17,7 +17,6 @@ import stdx.crypto.common.{Certificate, PrivateKey}
 public enum TlsVersion {
     V1_2 | V1_3 | TLCP | ...
 }
-
 /**
  * Certificate verification mode. A TLS client, once connected, received a server certificate and
  * should verify it to ensure that the connection has been established to the right peer.

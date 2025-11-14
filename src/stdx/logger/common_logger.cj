@@ -7,7 +7,6 @@
  */
 
 package stdx.logger
-
 import std.collection.ArrayList
 import std.io.OutputStream
 import std.sync.AtomicBool
