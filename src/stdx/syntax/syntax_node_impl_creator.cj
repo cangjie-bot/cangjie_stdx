@@ -2630,6 +2630,9 @@ class SyntaxNodeImplCreator {
     }
 
     static func createVArrayTypeImpl(elementType: TypeAnnotation, size: Int64, comments!: Array<Comment> = []) {
+        if (size < 0) {
+            throw Exception("InitException: Invalid input 'size' for 'VArrayType' init.")
+        }
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(parts, comments)

@@ -8600,6 +8600,10 @@ public init(argument: Argument, vArrayType: VArrayType, comments!: Array<Comment
 - vArrayType: [VArrayType](#class-varraytype) - 定长数组类型。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当 `size` 小于 `0` 时，抛出异常，异常中包含报错提示信息。
+
 ### func getLParenPos()
 
 ```cangjie
