@@ -9,7 +9,6 @@
 package stdx.net.tls
 
 import stdx.crypto.digest.*
-import stdx.net.tls.common.TlsException
 
 /**
  * Signature algorithm to be used to verify authenticity.

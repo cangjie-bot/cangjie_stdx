@@ -15,7 +15,7 @@ import std.io.*
 import std.sync.*
 import std.convert.Parsable
 import stdx.log.*
-import stdx.net.tls.common.*
+import stdx.net.tls.*
 import stdx.encoding.url.URL
 
 // limit the quantity of 1xx responses
@@ -201,7 +201,7 @@ func checkRequest(request: HttpRequest) {
 class HttpEngine1 {
     // configuration
     let connector: Connector
-    let tlsConfig: ?TlsConfig
+    let tlsConfig: ?TlsClientConfig
     // max number of connections to the same server
     let poolSize: Int64
     let logger: Logger
@@ -380,13 +380,13 @@ class HttpEngine1 {
             throw HttpException("Failed to resolve address ${addrport.addr}.")
         }
         var conn = connector(IPSocketAddress(ips[0], addrport.port))
-        if (let Some(tlsConn) <- (conn as TlsConnection)) {
+        if (let Some(tlsConn) <- (conn as TlsSocket)) {
             return tlsConn
         }
         if (isTls) {
-            let tlsConn = getGlobalTlsKit().getTlsClient(conn, tlsConfig.getOrThrow(), session: None)
+            let tlsConn = TlsSocket.client(conn, clientConfig: tlsConfig.getOrThrow())
             try {
-                tlsConn.handshake(timeout: None)
+                tlsConn.handshake()
             } catch (e: Exception) {
                 httpLogWarn(logger, "[HttpEngine1#connect] TLS handshake error, the connection is closed.")
                 tlsConn.close()

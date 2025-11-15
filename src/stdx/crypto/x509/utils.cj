@@ -14,9 +14,19 @@ import std.core.StringBuilder
 import std.time.DateTime
 import std.collection.*
 import stdx.encoding.hex.toHexString
-import stdx.crypto.common.*
 
 const NULL_BYTE = "\0"
+
+func copy(source!: CPointer<Byte>, destination!: Array<Byte>, count!: UIntNative) {
+    unsafe {
+        let acq = acquireArrayRawData(destination)
+        let result = memcpy_s(acq.pointer, UIntNative(destination.size), source, count)
+        releaseArrayRawData(acq)
+        if (result != 0) {
+            throw X509Exception("Failed to copy ${count} bytes.")
+        }
+    }
+}
 
 extend<T> CPointer<T> {
     func ifNotNull<R>(block: (CPointer<T>) -> R): ?R {
@@ -25,6 +35,155 @@ extend<T> CPointer<T> {
         } else {
             block(this)
         }
+    }
+}
+
+unsafe func toArray(ptr: CPointer<Byte>, size: UIntNative): Array<Byte> {
+    if (ptr.isNull() && size != 0) {
+        throw NoneValueException("Native pointer is NULL.")
+    }
+
+    let result = Array<Byte>(Int64(size), repeat: 0)
+    if (size != 0) {
+        copy(source: ptr, destination: result, count: size)
+    }
+    return result
+}
+
+ // TODO: recover me
+func malloc<T>(count!: Int64, initial!: ?T): NativePointerResource<T> where T <: CType {
+    NativePointerResource<T>(count, initial)
+}
+
+// TODO: delete me
+func malloc<T>(count!: Int64): NativePointerResource<T> where T <: CType {
+    NativePointerResource<T>(count, Option<T>.None)
+}
+
+// TODO: delete me
+func malloc<T>(initial!: ?T): NativePointerResource<T> where T <: CType {
+    NativePointerResource<T>(1, initial)
+}
+
+// delete me
+func malloc<T>(): NativePointerResource<T> where T <: CType {
+    NativePointerResource<T>(1, Option<T>.None)
+}
+
+func mallocCopyOf<T>(source: ?Array<T>): NativePointerResource<T> where T <: CType {
+    match (source) {
+        case Some(source) => mallocCopyOf(source)
+        case None => NativePointerResource<T>()
+    }
+}
+
+func mallocCopyOf<T>(source: Array<T>): NativePointerResource<T> where T <: CType {
+    let result = NativePointerResource<T>(source.size, None)
+    for (index in 0..source.size) {
+        unsafe {
+            result.pointer.write(index, source[index])
+        }
+    }
+    return result
+}
+
+unsafe func mallocCString(str: ?String): CStringResource {
+    match (str) {
+        case Some(str) => LibC.mallocCString(str).asResource()
+        case None => CString(CPointer()).asResource()
+    }
+}
+
+class NativePointerResource<T> <: Resource where T <: CType {
+    private var nativePointer: CPointer<T>
+
+    prop pointer: CPointer<T> {
+        get() {
+            nativePointer
+        }
+    }
+
+    mut prop value: T {
+        get() {
+            unsafe { nativePointer.read() }
+        }
+        set(newValue) {
+            unsafe { nativePointer.write(newValue) }
+        }
+    }
+
+    init() {
+        nativePointer = CPointer()
+    }
+
+    init(count: Int64, sample: ?T) {
+        unsafe {
+            if (count <= 0) {
+                throw IllegalArgumentException("Count should be positive: ${count}.")
+            }
+            nativePointer = LibC.malloc(count: count)
+            if (nativePointer.isNull()) {
+                throw X509Exception("Failed to allocate memory.")
+            }
+            if (let Some(s) <- sample) {
+                for (index in 0..count) {
+                    nativePointer.write(index, s)
+                }
+            }
+        }
+    }
+
+    public override func isClosed(): Bool {
+        nativePointer.isNull()
+    }
+    public override func close(): Unit {
+        if (isClosed()) {
+            return
+        }
+        unsafe {
+            LibC.free(nativePointer)
+            nativePointer = CPointer()
+        }
+    }
+}
+
+class ArrayBuilder<T> {
+    private var items: Array<?T>
+    private var tSize = 0
+
+    init(capacity: Int64) {
+        items = Array<?T>(capacity, repeat: None)
+    }
+
+    init() {
+        this(10)
+    }
+
+    func append(item: T): Unit {
+        if (tSize == items.size) {
+            grow()
+        }
+
+        items[tSize] = Some(item)
+        tSize++
+    }
+
+    func toArray(): Array<T> {
+        Array<T>(tSize) {
+            index => items[index].getOrThrow()
+        }
+    }
+
+    func isEmpty() {
+        tSize == 0
+    }
+
+    private func grow(): Unit {
+        const ALPHA = 3
+        const BETA = 2
+        let newArray = Array<?T>((items.size * ALPHA / BETA) + 1, repeat: None)
+        items.copyTo(newArray, 0, 0, items.size)
+        items = newArray
     }
 }
 

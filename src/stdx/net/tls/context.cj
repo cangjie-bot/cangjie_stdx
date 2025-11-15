@@ -10,7 +10,6 @@ package stdx.net.tls
 
 import std.io.IOStream
 import std.sync.*
-import stdx.net.tls.common.TlsException
 
 // let ssLInit :AtomicBool = AtomicBool(false)
 class TlsContext <: Resource {

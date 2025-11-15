@@ -9,7 +9,6 @@
 package stdx.crypto.digest
 
 import std.crypto.digest.Digest
-import stdx.crypto.common.CryptoException
 
 public class SM3 <: Digest {
     private var sm3Ctx = CPointer<Unit>()

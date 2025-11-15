@@ -246,8 +246,6 @@ make_cangjie_lib(
         encoding.hex
         crypto.x509
         crypto.digest
-        crypto.common
-        net.tls.common
     CANGJIE_STD_LIB_LINK
         std-core
         std-math
@@ -282,22 +280,6 @@ install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libstdx.net.tls.a
         DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
 make_cangjie_lib(
-    net.tls.common IS_SHARED
-    DEPENDS cangjie${BACKEND_TYPE}TlsCommon
-    CANGJIE_STDX_LIB_DEPENDS
-        crypto.common
-    CANGJIE_STD_LIB_LINK
-        std-core
-        std-collection
-        std-net
-        std-io
-    OBJECTS ${output_cj_object_dir}/stdx/net.tls.common.o)
-
-add_library(stdx.net.tls.common STATIC ${output_cj_object_dir}/stdx/net.tls.common.o)
-set_target_properties(stdx.net.tls.common PROPERTIES LINKER_LANGUAGE C)
-install(TARGETS stdx.net.tls.common DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
-
-make_cangjie_lib(
     net.http IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}Http cangjie-dynamicLoader-opensslFFI-shared
     CANGJIE_STDX_LIB_DEPENDS
@@ -305,8 +287,11 @@ make_cangjie_lib(
         encoding.url
         log
         logger
-        net.tls.common
-        crypto.common
+        net.tls
+        crypto.crypto
+        crypto.x509
+        crypto.digest
+        encoding.json.stream
     CANGJIE_STD_LIB_LINK
         std-core
         std-sync
@@ -348,7 +333,6 @@ make_cangjie_lib(
     crypto.digest IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}Digest
         cangjie-dynamicLoader-opensslFFI-shared
-    CANGJIE_STDX_LIB_DEPENDS crypto.common
     CANGJIE_STD_LIB_LINK
         std-core
         std-crypto.digest
@@ -367,7 +351,7 @@ make_cangjie_lib(
     DEPENDS cangjie${BACKEND_TYPE}Keys
         stdx.crypto.keysFFI-shared
         cangjie-dynamicLoader-opensslFFI-shared
-    CANGJIE_STDX_LIB_DEPENDS crypto.digest crypto.common encoding.hex
+    CANGJIE_STDX_LIB_DEPENDS crypto.x509 crypto.digest
     CANGJIE_STD_LIB_LINK
         std-core
         std-io
@@ -390,7 +374,7 @@ install(TARGETS stdx.crypto.keys DESTINATION ${output_triple_name}_${CJNATIVE_BA
 make_cangjie_lib(
     crypto.crypto IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}Crypto cangjie-dynamicLoader-opensslFFI-shared
-    CANGJIE_STDX_LIB_DEPENDS crypto.digest crypto.common
+    CANGJIE_STDX_LIB_DEPENDS crypto.digest
     CANGJIE_STD_LIB_LINK  std-core std-math std-sync std-crypto.cipher std-io
     OBJECTS ${output_cj_object_dir}/stdx/crypto.crypto.o
     FLAGS ${openssl_flags} $<$<BOOL:${MINGW}>:-lws2_32>
@@ -428,36 +412,6 @@ add_library(stdx.effect STATIC ${output_cj_object_dir}/stdx/effect.o)
 set_target_properties(stdx.effect PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.effect DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 endif()
-make_cangjie_lib(
-    crypto.common IS_SHARED
-    DEPENDS cangjie${BACKEND_TYPE}CryptoCommon
-    CANGJIE_STDX_LIB_DEPENDS
-        encoding.base64
-    CANGJIE_STD_LIB_LINK
-        std-core
-        std-io
-    OBJECTS ${output_cj_object_dir}/stdx/crypto.common.o)
-
-add_library(stdx.crypto.common STATIC ${output_cj_object_dir}/stdx/crypto.common.o)
-set_target_properties(stdx.crypto.common PROPERTIES LINKER_LANGUAGE C)
-install(TARGETS stdx.crypto.common DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}/static/stdx)
-
-make_cangjie_lib(
-    crypto.kit IS_SHARED
-    DEPENDS cangjie${BACKEND_TYPE}CryptoKit
-    CANGJIE_STDX_LIB_DEPENDS
-        crypto.common
-        crypto.keys
-        crypto.crypto
-        crypto.x509
-    CANGJIE_STD_LIB_LINK
-        std-core
-        std-net
-    OBJECTS ${output_cj_object_dir}/stdx/crypto.kit.o)
-
-add_library(stdx.crypto.kit STATIC ${output_cj_object_dir}/stdx/crypto.kit.o)
-set_target_properties(stdx.crypto.kit PROPERTIES LINKER_LANGUAGE C)
-install(TARGETS stdx.crypto.kit DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}/static/stdx)
 
 # Testmacro has no need to cross-compile because it is always used on host platforms.
 # Macros should NOT use sanitizers
@@ -478,8 +432,6 @@ make_cangjie_lib(
         encoding.hex
         encoding.base64
         crypto.crypto
-        crypto.common
-        crypto.keys
     CANGJIE_STD_LIB_LINK
         std-core
         std-convert
@@ -756,28 +708,6 @@ add_cangjie_library(
     DEPENDS ${CRYPTO_DEPENDENCIES})
 
 add_cangjie_library(
-    cangjie${BACKEND_TYPE}CryptoCommon
-    NO_SUB_PKG
-    IS_STDXLIB
-    IS_PACKAGE
-    IS_CJNATIVE_BACKEND
-    PACKAGE_NAME "crypto.common"
-    MODULE_NAME "stdx"
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/crypto/common
-    DEPENDS ${CRYPTO_COMMON_DEPENDENCIES})
-
-add_cangjie_library(
-    cangjie${BACKEND_TYPE}CryptoKit
-    NO_SUB_PKG
-    IS_STDXLIB
-    IS_PACKAGE
-    IS_CJNATIVE_BACKEND
-    PACKAGE_NAME "crypto.kit"
-    MODULE_NAME "stdx"
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/crypto/kit
-    DEPENDS ${CRYPTO_KIT_DEPENDENCIES})
-
-add_cangjie_library(
     cangjie${BACKEND_TYPE}ZLIB
     NO_SUB_PKG
     IS_STDXLIB
@@ -854,17 +784,6 @@ add_cangjie_library(
     MODULE_NAME "stdx"
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/net/tls
     DEPENDS ${NET_TLS_DEPENDENCIES})
-
-add_cangjie_library(
-    cangjie${BACKEND_TYPE}TlsCommon
-    NO_SUB_PKG
-    IS_STDXLIB
-    IS_PACKAGE
-    IS_CJNATIVE_BACKEND
-    PACKAGE_NAME "net.tls.common"
-    MODULE_NAME "stdx"
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/net/tls/common
-    DEPENDS ${NET_TLS_COMMON_DEPENDENCIES})
 
 add_cangjie_library(
     cangjie${BACKEND_TYPE}Http IS_STDXLIB IS_CJNATIVE_BACKEND

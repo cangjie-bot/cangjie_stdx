@@ -6,7 +6,7 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.crypto.common
+package stdx.crypto.x509
 
 /**
  * Represents a single entry of PEM file format.
@@ -65,8 +65,8 @@ public struct PemEntry <: ToString {
     public static let LABEL_SM2_PRIVATE_KEY: String = "SM2 PRIVATE KEY"
     public static let LABEL_PUBLIC_KEY: String = "PUBLIC KEY"
     public static let LABEL_EC_PARAMETERS: String = "EC PARAMETERS"
-    protected static let LABEL_DSA_PRIVATE_KEY: String = "DSA PRIVATE KEY"
-    protected static let LABEL_TRUSTED_CERTIFICATE: String = "TRUSTED CERTIFICATE"
+    static let LABEL_DSA_PRIVATE_KEY: String = "DSA PRIVATE KEY"
+    static let LABEL_TRUSTED_CERTIFICATE: String = "TRUSTED CERTIFICATE"
     public static let LABEL_DH_PARAMETERS: String = "DH PARAMETERS"
 }
 

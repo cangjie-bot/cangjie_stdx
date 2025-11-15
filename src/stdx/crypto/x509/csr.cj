@@ -8,8 +8,6 @@
 
 package stdx.crypto.x509
 
-import stdx.crypto.common.*
-
 const GEN_EMAIL: Int64 = 1
 const GEN_DNS: Int64 = 2
 const GEN_IPADD: Int64 = 7

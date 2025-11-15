@@ -11,8 +11,8 @@ package stdx.net.http
 import std.sync.{Timer, Mutex, AtomicUInt32, AtomicBool, AtomicUInt8, AtomicUInt64}
 import std.net.{SocketAddress, StreamingSocket, SocketException}
 import std.collection.{ArrayList, HashMap}
+import stdx.net.tls.TlsException
 import stdx.log.LogLevel
-import stdx.net.tls.common.TlsException
 
 class HttpServer2 <: ProtocolService {
     // a wrapped tls connection

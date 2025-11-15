@@ -8,7 +8,7 @@
 
 package stdx.net.http
 
-import stdx.crypto.common.*
+import stdx.crypto.crypto.SecureRandom
 
 const MAXUINT16 = 65535
 // decide fin rsv and opcode
@@ -250,7 +250,6 @@ public enum WebSocketFrameType <: Equatable<WebSocketFrameType> & ToString {
  * the masking key must be derived from a strong source of entropy
  */
 func generateMaskingKey(): Array<UInt8> {
-    let arr = Array<UInt8>(4, repeat: 0)
-    getGlobalCryptoKit().getRandomGen().nextBytes(arr)
-    arr
+    let secureRandom = SecureRandom()
+    return secureRandom.nextBytes(4)
 }

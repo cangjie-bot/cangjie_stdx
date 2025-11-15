@@ -10,7 +10,7 @@ package stdx.crypto.keys
 
 import std.sync.AtomicReference
 import stdx.crypto.digest.*
-import stdx.crypto.common.*
+import stdx.crypto.x509.*
 
 public enum Curve {
     P224 | P256 | P384 | P521 | BP256 | BP320 | BP384 | BP512
@@ -43,7 +43,7 @@ public class ECDSAPrivateKey <: PrivateKey {
         evpKeyCtx = EVPKEYCTX(pkey)
     }
 
-    public func encodeToDer(): DerBlob {
+    public override func encodeToDer(): DerBlob {
         var content = getPrivateKeyDer(pkey)
         keepAlive(this)
         DerBlob(content)
@@ -53,30 +53,17 @@ public class ECDSAPrivateKey <: PrivateKey {
         var blob: DerBlob = encodeToDer()
         match (password) {
             case Some(password) => try {
-                var key = GeneralPrivateKey.decodeDer(blob)
-                key.encodeToDer(password: password) // route to GeneralPrivateKey::encodeToDer
-            } catch (e: CryptoException) {
+                var key = PrivateKey.decodeDer(blob)
+                key.encodeToDer(password: password) // route to DerPrivateKeyImpl::encodeToDer
+            } catch (e: X509Exception) {
                 throw CryptoException(e.message)
             }
             case None => blob
         }
     }
 
-    public func encodeToPem(): PemEntry {
+    public override func encodeToPem(): PemEntry {
         PemEntry(PemEntry.LABEL_EC_PRIVATE_KEY, encodeToDer())
-    }
-
-    /**
-     * Encode the key to PemEntry optionally doing encryption using the specified password if any
-     * If the passord is None, then the key will be encoded unencrypted.
-     * An encrypted key produced by this function is always in PKCS8 format.
-     * @throws CryptoException if failed to encode/encrypt or the provided password is empty
-     */
-    public func encodeToPem(password!: ?String): PemEntry {
-        match (password) {
-            case Some(password) => PemEntry(PemEntry.LABEL_ENCRYPTED_PRIVATE_KEY, encodeToDer(password: password))
-            case None => encodeToPem()
-        }
     }
 
     public static func decodeDer(blob: DerBlob): ECDSAPrivateKey {
@@ -86,9 +73,9 @@ public class ECDSAPrivateKey <: PrivateKey {
     public static func decodeDer(blob: DerBlob, password!: ?String): ECDSAPrivateKey {
         match (password) {
             case Some(password) => try {
-                var priKey = GeneralPrivateKey.decodeDer(blob, password: password)
+                var priKey = PrivateKey.decodeDer(blob, password: password)
                 ECDSAPrivateKey(priKey.encodeToDer())
-            } catch (e: CryptoException) {
+            } catch (e: X509Exception) {
                 throw CryptoException(e.message)
             }
             case None => ECDSAPrivateKey(blob)
@@ -103,9 +90,9 @@ public class ECDSAPrivateKey <: PrivateKey {
         password!: ?String
     ): ECDSAPrivateKey {
         try {
-            var priKey = GeneralPrivateKey.decodeFromPem(text, password: password)
+            var priKey = PrivateKey.decodeFromPem(text, password: password)
             ECDSAPrivateKey(priKey.encodeToDer())
-        } catch (e: CryptoException) {
+        } catch (e: X509Exception) {
             throw CryptoException(e.message)
         }
     }
@@ -144,7 +131,7 @@ public class ECDSAPublicKey <: PublicKey {
         evpKeyCtx = EVPKEYCTX(pkey)
     }
 
-    public func encodeToDer(): DerBlob {
+    public override func encodeToDer(): DerBlob {
         var content = getPublicKeyDer(pkey)
         keepAlive(this)
         DerBlob(content)
@@ -155,11 +142,15 @@ public class ECDSAPublicKey <: PublicKey {
     }
 
     public static func decodeFromPem(text: String): ECDSAPublicKey {
-        var pubKey = GeneralPublicKey.decodeFromPem(text)
-        ECDSAPublicKey(pubKey.encodeToDer())
+        try {
+            var pubKey = PublicKey.decodeFromPem(text)
+            ECDSAPublicKey(pubKey.encodeToDer())
+        } catch (e: X509Exception | CryptoException) {
+            throw CryptoException(e.message)
+        }
     }
 
-    public func encodeToPem(): PemEntry {
+    public override func encodeToPem(): PemEntry {
         PemEntry(PemEntry.LABEL_PUBLIC_KEY, encodeToDer())
     }
 

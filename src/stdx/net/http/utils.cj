@@ -10,6 +10,7 @@ package stdx.net.http
 
 import stdx.encoding.base64.toBase64String
 import stdx.encoding.url.{URL, Form}
+import stdx.net.tls.*
 import std.collection.*
 import std.convert.Parsable
 import std.fs.*

@@ -11,9 +11,9 @@ package stdx.net.http
 import std.sync.{AtomicBool, Mutex, AtomicOptionReference}
 import std.net.*
 import std.fs.File
-import stdx.net.tls.common.*
+import stdx.net.tls.*
 import stdx.log.{Logger, LogLevel}
-import stdx.crypto.common.{Certificate, PrivateKey, getGlobalCryptoKit}
+import stdx.crypto.x509.{PrivateKey, X509Certificate}
 
 /**
  * Server Co-routine pool configurations.
@@ -56,7 +56,7 @@ public class ServerBuilder {
     var _distributor: HttpRequestDistributor = DirectDistributor()
     var _protocolServiceFactory: ProtocolServiceFactory = ProtocolServiceFactoryImpl()
     var _transportConfig: TransportConfig = TransportConfig()
-    var _tlsConfig: ?TlsConfig = None
+    var _tlsConfig: ?TlsServerConfig = None
 
     var _readTimeout: Duration = Duration.Max
     var _writeTimeout: Duration = Duration.Max
@@ -162,7 +162,7 @@ public class ServerBuilder {
      * @param config configurations required to support TLS.
      * @return ServerBuilder whose TLS configuration has been set.
      */
-    public func tlsConfig(config: TlsConfig): ServerBuilder {
+    public func tlsConfig(config: TlsServerConfig): ServerBuilder {
         _tlsConfig = config
         return this
     }
@@ -397,7 +397,7 @@ public class ServerBuilder {
 
 public class Server {
     let pool: CoroutinePool
-    var tlsServerSession: ?TlsSession = None
+    var tlsSessionContext = TlsSessionContext.fromName(TLS_CTX_SESSION_NAME)
 
     private var _connId: UInt64 = 0
     private var callBackMutex = Mutex()
@@ -411,7 +411,7 @@ public class Server {
         let _distributor!: HttpRequestDistributor,
         let _protocolServiceFactory!: ProtocolServiceFactory,
         let _transportConfig!: TransportConfig,
-        var _tlsConfig!: ?TlsConfig,
+        var _tlsConfig!: ?TlsServerConfig,
         let _readTimeout!: Duration,
         let _writeTimeout!: Duration,
         let _readHeaderTimeout!: Duration,
@@ -431,9 +431,6 @@ public class Server {
     ) {
         pool = CoroutinePool(_servicePoolConfig.preheat, _servicePoolConfig.capacity, _servicePoolConfig.queueCapacity)
         pool.logger = _logger
-        if (_tlsConfig.isSome()) {
-            tlsServerSession = getGlobalTlsKit().getTlsServerSession(TLS_CTX_SESSION_NAME)
-        }
     }
 
     /* Gets the address bound to this server. */
@@ -486,7 +483,7 @@ public class Server {
     }
 
     /* Gets the tls server config, if TLS is not supported, none is returned.*/
-    public func getTlsConfig(): ?TlsConfig {
+    public func getTlsConfig(): ?TlsServerConfig {
         return _tlsConfig
     }
 
@@ -716,7 +713,11 @@ public class Server {
      */
     public func updateCert(certificateChainFile: String, privateKeyFile: String): Unit {
         var cfg = _tlsConfig ?? throw HttpException("The TLS certificate is not configured.")
-        cfg.certificate = (certificateFromFile(certificateChainFile), privateKeyFromFile(privateKeyFile))
+        if (certificateChainFile.contains(NULL_BYTE) || privateKeyFile.contains(NULL_BYTE)) {
+            throw IllegalArgumentException("The Tls config cannot contain null character!")
+        }
+        cfg.serverCertificate = (X509Certificate.decodeFromPem(String.fromUtf8(File.readFrom(certificateChainFile))),
+            PrivateKey.decodeFromPem(String.fromUtf8(File.readFrom(privateKeyFile))))
         _tlsConfig = cfg
     }
 
@@ -728,9 +729,9 @@ public class Server {
      *
      * @throws HttpException, while the TLS certificate is not configured.
      */
-    public func updateCert(certChain: Array<Certificate>, certKey: PrivateKey): Unit {
+    public func updateCert(certChain: Array<X509Certificate>, certKey: PrivateKey): Unit {
         var cfg = _tlsConfig ?? throw HttpException("The TLS certificate is not configured.")
-        cfg.certificate = (certChain, certKey)
+        cfg.serverCertificate = (certChain, certKey)
         _tlsConfig = cfg
     }
 
@@ -745,7 +746,9 @@ public class Server {
     public func updateCA(newCaFile: String): Unit {
         var cfg = _tlsConfig ?? throw HttpException("The TLS certificate is not configured.")
         if (!newCaFile.isEmpty()) {
-            let certificates = certificateFromFile(newCaFile)
+            let caFileContent = String.fromUtf8(File.readFrom(newCaFile))
+
+            let certificates = X509Certificate.decodeFromPem(caFileContent)
             cfg.verifyMode = CertificateVerifyMode.CustomCA(certificates)
         }
         _tlsConfig = cfg
@@ -758,31 +761,33 @@ public class Server {
      *
      * @throws HttpException, while the TLS certificate is not configured.
      */
-    public func updateCA(newCa: Array<Certificate>): Unit {
+    public func updateCA(newCa: Array<X509Certificate>): Unit {
         var cfg = _tlsConfig ?? throw HttpException("The TLS certificate is not configured.")
         cfg.verifyMode = CustomCA(newCa)
         _tlsConfig = cfg
     }
 
     func protocolService(socket: StreamingSocket): ProtocolService {
-        let (protocol, conn) = match ((socket as TlsConnection, _tlsConfig)) {
-            case (Some(conn), _) =>
+        var conn = socket
+        let protocol = match ((conn as TlsSocket, _tlsConfig)) {
+            case (Some(tlsConn), _) =>
                 if (logger.enabled(LogLevel.TRACE)) {
-                    httpLogTrace(logger, "[Server#protocolService] Got a TLS socket.")
+                    httpLogTrace(logger, "[Server#protocolService] got TlsSocket")
                 }
-                (alpn(conn.handshakeResult.getOrThrow().alpnProtocol), socket)
+                alpn(tlsConn.alpnProtocolName)
             case (_, Some(cfg)) =>
                 if (logger.enabled(LogLevel.TRACE)) {
-                    httpLogTrace(logger, "[Server#protocolService] Got a TLS configuration, ready for handshake.")
+                    httpLogTrace(logger, "[Server#protocolService] got tls config, prepare to handshake.")
                 }
-                let conn = getGlobalTlsKit().getTlsServer(socket, cfg, session: tlsServerSession)
-                let result = conn.handshake(timeout: Duration.second * 3)
-                (alpn(result.alpnProtocol), conn)
-            case (_, _) => (HTTP1_1, socket)
+                let tlsConn = TlsSocket.server(conn, sessionContext: tlsSessionContext, serverConfig: cfg)
+                tlsConn.handshake(timeout: Duration.second * 3)
+                conn = tlsConn
+                alpn(tlsConn.alpnProtocolName)
+            case (_, _) => HTTP1_1
         }
 
         if (logger.enabled(LogLevel.TRACE)) {
-            httpLogTrace(logger, "[Server#protocolService] Protocol: ${protocol}.")
+            httpLogTrace(logger, "[Server#protocolService] protocol: ${protocol}.")
         }
 
         let service = protocolServiceFactory.create(protocol, conn)
@@ -822,13 +827,5 @@ public class Server {
     @OverflowWrapping
     private func increaseConnId(): Unit {
         _connId++ // count connection id for logger
-    }
-
-    func certificateFromFile(path: String): Array<Certificate> {
-        getGlobalCryptoKit().certificateFromPem(String.fromUtf8(File.readFrom(path))).map({c => c})
-    }
-
-    public func privateKeyFromFile(path: String): PrivateKey {
-        getGlobalCryptoKit().privateKeyFromPem(String.fromUtf8(File.readFrom(path)))
     }
 }

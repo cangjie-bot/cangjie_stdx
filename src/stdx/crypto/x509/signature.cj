@@ -8,8 +8,6 @@
 
 package stdx.crypto.x509
 
-import stdx.crypto.common.*
-
 const RSAN_ID: Int64 = 6
 const ECN_ID: Int64 = 408
 const DSAN_ID: Int64 = 116

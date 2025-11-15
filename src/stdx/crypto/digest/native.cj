@@ -8,8 +8,6 @@
 
 package stdx.crypto.digest
 
-import stdx.crypto.common.CryptoException
-
 const SM3_DIGEST_LENGTH: Int64 = 32
 const SM3_BLOCK_SIZE: Int64 = 64
 const SM3_DIGEST_ALGORITHM_NAME: String = "SM3"

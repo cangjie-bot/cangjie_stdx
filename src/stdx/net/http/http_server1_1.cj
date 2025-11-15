@@ -13,8 +13,8 @@ import std.sync.AtomicBool
 import std.net.{StreamingSocket, SocketException}
 import std.convert.Parsable
 import stdx.log.{Logger, LogLevel}
-import stdx.net.tls.common.{TlsConnection, TlsException}
-import stdx.crypto.common.Certificate
+import stdx.net.tls.{TlsSocket, TlsException}
+import stdx.crypto.x509.X509Certificate
 import stdx.encoding.url.URL
 
 class HttpServer1 <: ProtocolService {
@@ -200,10 +200,10 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
         conn = BufferedConn(socket)
     }
 
-    public prop clientCertificate: ?Array<Certificate> {
+    public prop clientCertificate: ?Array<X509Certificate> {
         get() {
             return match (conn.socket) {
-                case tlsConn: TlsConnection => tlsConn.handshakeResult?.peerCertificate ?? None
+                case tlsConn: TlsSocket => tlsConn.clientCertificate
                 case _ => None
             }
         }

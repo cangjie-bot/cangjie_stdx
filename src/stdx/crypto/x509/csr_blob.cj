@@ -8,8 +8,6 @@
 
 package stdx.crypto.x509
 
-import stdx.crypto.common.*
-
 class X509CsrBlob <: Equatable<X509CsrBlob> & Hashable {
     let content: DerBlob
     private let csrInfo: DerSequence

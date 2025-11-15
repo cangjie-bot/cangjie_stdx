@@ -10,6 +10,33 @@ package stdx.net.tls
 
 import stdx.crypto.x509.*
 
+public enum TlsVersion <: ToString {
+    | V1_2 // TLS 1.2
+    | V1_3 // TLS 1.3
+    | Unknown
+
+    public override func toString(): String {
+        match (this) {
+            case V1_2 => "TlsVersion.V1_2"
+            case V1_3 => "TlsVersion.V1_3"
+            case Unknown => "TlsVersion.Unknown"
+        }
+    }
+}
+
+/**
+ * X509 verification mode. A TLS client, once connected, received a server certificate and
+ * should verify it to ensure that the connection has been established to the right peer.
+ * The default behavior is to use the system trust store. However there are cases when it's required
+ * to trust all certificates (in testing and development, usually) or we have a custom CA server whose
+ * certificates couldn't be installed into the system trust store for some reason.
+*/
+public enum CertificateVerifyMode {
+    | Default // default verification mode: validate certificates against system CAs
+    | TrustAll // trust all certificates
+    | CustomCA(Array<X509Certificate>) // validate against the provided list of CAs
+}
+
 /**
  * Whether client need to identify (send certificate).
  */

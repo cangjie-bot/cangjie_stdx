@@ -9,8 +9,6 @@
 package stdx.net.tls
 
 import stdx.crypto.x509.*
-import stdx.crypto.common.*
-import stdx.net.tls.common.TlsException
 
 extend<T> Option<T> {
     func exists() {

@@ -6,7 +6,7 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.net.tls.common
+package stdx.net.tls
 
 /**
  * Failed in any tls-related cases. It may also by thrown because in cases

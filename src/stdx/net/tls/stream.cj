@@ -10,7 +10,6 @@ package stdx.net.tls
 
 import std.io.IOStream
 import std.sync.*
-import stdx.net.tls.common.TlsException
 
 class TlsRawSocket <: IOStream & Resource & ToString {
     private static const BUFFER_SIZE = 16384

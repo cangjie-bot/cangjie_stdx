@@ -13,7 +13,7 @@ import std.io.*
 import std.math.numeric.BigInt
 import std.sync.AtomicReference
 import stdx.crypto.digest.*
-import stdx.crypto.common.*
+import stdx.crypto.x509.*
 
 public enum PadOption {
     OAEP(OAEPOption) | PSS(PSSOption) | PKCS1
@@ -81,36 +81,23 @@ public class RSAPrivateKey <: PrivateKey {
         var blob: DerBlob = encodeToDer()
         match (password) {
             case Some(password) => try {
-                var key = GeneralPrivateKey.decodeDer(blob)
+                var key = PrivateKey.decodeDer(blob)
                 key.encodeToDer(password: password)
-            } catch (e: CryptoException) {
+            } catch (e: X509Exception) {
                 throw CryptoException(e.message)
             }
             case None => blob
         }
     }
 
-    public func encodeToDer(): DerBlob {
+    public override func encodeToDer(): DerBlob {
         var content = getPrivateKeyDer(pkey)
         keepAlive(this)
         DerBlob(content)
     }
 
-    public func encodeToPem(): PemEntry {
+    public override func encodeToPem(): PemEntry {
         PemEntry(PemEntry.LABEL_RSA_PRIVATE_KEY, encodeToDer())
-    }
-
-    /**
-     * Encode the key to PemEntry optionally doing encryption using the specified password if any
-     * If the passord is None, then the key will be encoded unencrypted.
-     * An encrypted key produced by this function is always in PKCS8 format.
-     * @throws CryptoException if failed to encode/encrypt or the provided password is empty
-     */
-    public func encodeToPem(password!: ?String): PemEntry {
-        match (password) {
-            case Some(password) => PemEntry(PemEntry.LABEL_ENCRYPTED_PRIVATE_KEY, encodeToDer(password: password))
-            case None => encodeToPem()
-        }
     }
 
     public static func decodeDer(blob: DerBlob): RSAPrivateKey {
@@ -120,9 +107,9 @@ public class RSAPrivateKey <: PrivateKey {
     public static func decodeDer(blob: DerBlob, password!: ?String): RSAPrivateKey {
         match (password) {
             case Some(password) => try {
-                var priKey = GeneralPrivateKey.decodeDer(blob, password: password)
+                var priKey = PrivateKey.decodeDer(blob, password: password)
                 RSAPrivateKey(priKey.encodeToDer())
-            } catch (e: CryptoException) {
+            } catch (e: X509Exception) {
                 throw CryptoException(e.message)
             }
             case None => RSAPrivateKey(blob)
@@ -138,9 +125,9 @@ public class RSAPrivateKey <: PrivateKey {
         password!: ?String
     ): RSAPrivateKey {
         try {
-            var priKey = GeneralPrivateKey.decodeFromPem(text, password: password)
+            var priKey = PrivateKey.decodeFromPem(text, password: password)
             RSAPrivateKey(priKey.encodeToDer())
-        } catch (e: CryptoException) {
+        } catch (e: X509Exception) {
             throw CryptoException(e.message)
         }
     }
@@ -196,12 +183,12 @@ public class RSAPublicKey <: PublicKey {
         evpKeyCtx = EVPKEYCTX(pkey)
     }
 
-    public func encodeToDer(): DerBlob {
+    public override func encodeToDer(): DerBlob {
         var content = getPublicKeyDer(pkey)
         keepAlive(this)
         DerBlob(content)
     }
-    public func encodeToPem(): PemEntry {
+    public override func encodeToPem(): PemEntry {
         PemEntry(PemEntry.LABEL_PUBLIC_KEY, encodeToDer())
     }
 
@@ -211,9 +198,9 @@ public class RSAPublicKey <: PublicKey {
 
     public static func decodeFromPem(text: String): RSAPublicKey {
         try {
-            var pubKey = GeneralPublicKey.decodeFromPem(text)
+            var pubKey = PublicKey.decodeFromPem(text)
             RSAPublicKey(pubKey.encodeToDer())
-        } catch (e: CryptoException | CryptoException) {
+        } catch (e: X509Exception | CryptoException) {
             throw CryptoException(e.message)
         }
     }

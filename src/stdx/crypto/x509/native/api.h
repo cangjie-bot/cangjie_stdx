@@ -56,4 +56,14 @@ typedef struct EncryptedKeyParams {
     const char* cipherName;
 } EncryptedKeyParams;
 
+void X509ExceptionClear(ExceptionData* exception, DynMsg* dynMsg);
+
+bool X509CheckOrFillException(ExceptionData* exception, bool condition, const char* description, DynMsg* dynMsg);
+
+bool X509CheckNotNull(ExceptionData* exception, const void* candidate, const char* name, DynMsg* dynMsg);
+
+void X509HandleError(ExceptionData* exception, const char* fallback, DynMsg* dynMsg);
+
+const char* X509DescribePrivateKey(EVP_PKEY* key, DynMsg* dynMsg);
+
 #endif

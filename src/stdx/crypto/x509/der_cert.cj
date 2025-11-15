@@ -9,7 +9,6 @@
 package stdx.crypto.x509
 
 import std.time.DateTime
-import stdx.crypto.common.*
 
 class X509Blob <: Equatable<X509Blob> & Hashable {
     let content: DerBlob

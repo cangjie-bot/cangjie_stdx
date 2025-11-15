@@ -11,7 +11,6 @@ package stdx.crypto.x509
 import std.time.DateTime
 import std.collection.{ArrayList, HashSet, contains, map, collectString, filter}
 import std.fs.*
-import stdx.crypto.common.*
 
 // Delete them after Cangjie support these types.
 public type IP = Array<Byte>
@@ -19,7 +18,7 @@ const IPV4_SIZE: Int64 = 4
 const IPV6_SIZE: Int64 = 16
 const V_ASN1_UTF8STRING: Int32 = 12
 
-public class X509Certificate <: Certificate & Equatable<X509Certificate> & Hashable & ToString {
+public class X509Certificate <: Equatable<X509Certificate> & Hashable & ToString {
     private let blob: X509Blob
 
     init(blob: X509Blob) {
@@ -562,7 +561,7 @@ func isDirectory(path: Path): Bool {
         return false
     }
 }
- 
+
 @When[os != "Windows"]
 func isRegular(path: Path): Bool {
     try {
@@ -591,7 +590,7 @@ func getSystemRootCerts(): Array<X509Certificate> {
 @When[os != "Windows"]
 func getSystemRootCerts(): Array<X509Certificate> {
     var result = HashSet<X509Certificate>()
-    let rootList = 
+    let rootList =
         [
             "/etc/ssl/certs/",
             "/etc/pki/tls/certs/",

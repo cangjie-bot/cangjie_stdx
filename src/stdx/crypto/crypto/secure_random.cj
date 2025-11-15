@@ -10,7 +10,6 @@ package stdx.crypto.crypto
 
 import std.math.*
 import std.sync.*
-import stdx.crypto.common.RandomGenerator
 
 public class SecureRandomException <: Exception {
     public init() {
@@ -58,7 +57,7 @@ struct DynMsg {
  *               If supported, openssl can further utilize hardware random number generators that are able to generate stronger random numbers.
  * - Security: `Random` must not be used either for security-critical applications or for protecting sensitive data.
  */
-public class SecureRandom <: RandomGenerator {
+public class SecureRandom {
     /**
      * Initialize with default random seeds.
      * @param `priv` whether to use a separate "private" PRNG instance.

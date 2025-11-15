@@ -6,10 +6,10 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.crypto.common
+package stdx.crypto.x509
 
 public struct DerBlob <: Equatable<DerBlob> & Hashable {
-    protected let content: Array<Byte>
+    let content: Array<Byte>
 
     public init(content: Array<Byte>) {
         this.content = content

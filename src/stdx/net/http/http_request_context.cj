@@ -10,7 +10,7 @@ package stdx.net.http
 
 import std.net.StreamingSocket
 import std.sync.Mutex
-import stdx.crypto.common.Certificate
+import stdx.crypto.x509.X509Certificate
 
 public class HttpContext {
     let writerMtx = Mutex()
@@ -57,17 +57,9 @@ public class HttpContext {
         }
     }
 
-    public prop clientCertificate: ?Array<Certificate> {
+    public prop clientCertificate: ?Array<X509Certificate> {
         get() {
-            match (httpConn.clientCertificate) {
-                case Some(c) =>
-                    if (c.isEmpty()) {
-                        None
-                    } else {
-                        c
-                    }
-                case None => None
-            }
+            httpConn.clientCertificate
         }
     }
 }

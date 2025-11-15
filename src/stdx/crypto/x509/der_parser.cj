@@ -9,7 +9,6 @@
 package stdx.crypto.x509
 
 import std.collection.ArrayList
-import stdx.crypto.common.*
 
 // ITU X.690-202102
 // this is a specialized parser for X509 DER, not a general purpose

@@ -8,8 +8,8 @@
 
 package stdx.crypto.keys
 
+import stdx.crypto.x509.*
 import stdx.crypto.digest.*
-import stdx.crypto.common.*
 import std.sync.AtomicReference
 
 // GM/T 0009-2012
@@ -42,9 +42,9 @@ public class SM2PrivateKey <: PrivateKey {
         var derBlob: DerBlob = encodeToDer()
         match (password) {
             case Some(password) => try {
-                var key = GeneralPrivateKey.decodeDer(derBlob)
+                var key = PrivateKey.decodeDer(derBlob)
                 key.encodeToDer(password: password)
-            } catch (e: CryptoException) {
+            } catch (e: X509Exception) {
                 throw CryptoException(e.message)
             }
             case None => derBlob
@@ -66,9 +66,9 @@ public class SM2PrivateKey <: PrivateKey {
     public static func decodeDer(blob: DerBlob, password!: ?String): SM2PrivateKey {
         match (password) {
             case Some(password) => try {
-                var priKey = GeneralPrivateKey.decodeDer(blob, password: password)
+                var priKey = PrivateKey.decodeDer(blob, password: password)
                 SM2PrivateKey(priKey.encodeToDer())
-            } catch (e: CryptoException) {
+            } catch (e: X509Exception) {
                 throw CryptoException(e.message)
             }
             case None => SM2PrivateKey(blob)
@@ -84,9 +84,9 @@ public class SM2PrivateKey <: PrivateKey {
         password!: ?String
     ): SM2PrivateKey {
         try {
-            var priKey = GeneralPrivateKey.decodeFromPem(text, password: password)
+            var priKey = PrivateKey.decodeFromPem(text, password: password)
             SM2PrivateKey(priKey.encodeToDer())
-        } catch (e: CryptoException) {
+        } catch (e: X509Exception) {
             throw CryptoException(e.message)
         }
     }
@@ -145,9 +145,9 @@ public class SM2PublicKey <: PublicKey {
 
     public static func decodeFromPem(text: String): SM2PublicKey {
         try {
-            var pubKey = GeneralPublicKey.decodeFromPem(text)
+            var pubKey = PublicKey.decodeFromPem(text)
             SM2PublicKey(pubKey.encodeToDer())
-        } catch (e: CryptoException | CryptoException) {
+        } catch (e: X509Exception | CryptoException) {
             throw CryptoException(e.message)
         }
     }

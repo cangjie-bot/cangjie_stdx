@@ -9,7 +9,6 @@
 package stdx.crypto.digest
 
 import std.crypto.digest.Digest
-import stdx.crypto.common.CryptoException
 
 public class SHA1 <: Digest {
     var sha1Ctx: SHACTX

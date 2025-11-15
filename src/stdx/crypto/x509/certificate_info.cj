@@ -9,7 +9,6 @@
 package stdx.crypto.x509
 
 import std.time.DateTime
-import stdx.crypto.common.*
 
 public struct X509CertificateInfo {
     public var serialNumber: SerialNumber

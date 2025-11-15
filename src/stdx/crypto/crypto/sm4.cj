@@ -11,7 +11,6 @@ package stdx.crypto.crypto
 import std.crypto.cipher.*
 import std.io.{InputStream, OutputStream, ByteBuffer}
 import stdx.crypto.digest.*
-import stdx.crypto.common.CryptoException
 
 const SM4_BLOCK_SIZE: Int64 = 16
 const SM4_KEY_SIZE: Int64 = 16

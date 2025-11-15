@@ -6,7 +6,7 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.crypto.common
+package stdx.crypto.x509
 
 import stdx.encoding.base64.toBase64String
 

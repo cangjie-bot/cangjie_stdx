@@ -12,7 +12,7 @@ import std.collection.ArrayList
 import std.sync.{AtomicBool, Mutex}
 import stdx.log.Logger
 import stdx.encoding.url.URL
-import stdx.crypto.common.*
+import stdx.crypto.crypto.SecureRandom
 import stdx.encoding.base64.{toBase64String, fromBase64String}
 
 // GUID is used to generate Sec-WebSocket-Accept.
@@ -811,8 +811,8 @@ func replyUpgradeResponse2(conn: HttpEngineConn2, subProtocol: String, responseH
  * RFC 6455 4.1.7.
  */
 func generateKey(): String {
-    let r = Array<Byte>(16, repeat: 0)
-    getGlobalCryptoKit().getRandomGen().nextBytes(r)
+    let secureRandom = SecureRandom()
+    let r: Array<Byte> = secureRandom.nextBytes(16)
     return toBase64String(r)
 }
 

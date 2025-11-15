@@ -8,8 +8,6 @@
 
 package stdx.net.tls
 
-import stdx.net.tls.common.TlsException
-
 abstract class Buffer {
     protected static const DEFAULT_SIZE = 4096
     protected static const DEFAULT_SIZE_LIMIT = 65536

@@ -8,8 +8,6 @@
 
 package stdx.net.tls
 
-import stdx.net.tls.common.*
-
 const NULL_BYTE = "\0"
 
 func enableSNI(context: CPointer<Ctx>): Unit {
@@ -23,7 +21,7 @@ extend TlsVersion {
         match (this) {
             case V1_2 => CJTLS_PROTO_VERSION_1_2
             case V1_3 => CJTLS_PROTO_VERSION_1_3
-            case _ => CJTLS_PROTO_VERSION_BUTT
+            case Unknown => CJTLS_PROTO_VERSION_BUTT
         }
     }
 }
@@ -32,17 +30,20 @@ extend TlsVersion {
  * @throws TlsException while the minVersion and maxVersion are not set together,
  * or proto versions is set failed.
  */
-func setProtoVersions(ctx: CPointer<Ctx>, supportedVersions: Array<TlsVersion>): Unit {
-    if (supportedVersions.isEmpty()) {
+func setProtoVersions(ctx: CPointer<Ctx>, minVersion: TlsVersion, maxVersion: TlsVersion): Unit {
+    let minV = minVersion.toNumericConstant()
+    let maxV = maxVersion.toNumericConstant()
+
+    if (minV == CJTLS_PROTO_VERSION_BUTT && maxV == CJTLS_PROTO_VERSION_BUTT) {
         return
+    } else if ((minV == CJTLS_PROTO_VERSION_BUTT && maxV != CJTLS_PROTO_VERSION_BUTT) || (minV !=
+        CJTLS_PROTO_VERSION_BUTT && maxV == CJTLS_PROTO_VERSION_BUTT)) {
+        throw TlsException("The minVersion and maxVersion must be set together.")
+    } else if (minV == CJTLS_PROTO_VERSION_1_3 && maxV == CJTLS_PROTO_VERSION_1_2) {
+        throw TlsException("Failed to set proto versions: ${minVersion} ~ ${maxVersion}.")
     }
-    let (minVersion, maxVersion) = match ((supportedVersions.contains(V1_2), supportedVersions.contains(V1_3))) {
-        case (false, false) => return
-        case (true, false) => (V1_2, V1_2)
-        case (false, true) => (V1_3, V1_3)
-        case (true, true) => (V1_2, V1_3)
-    }
-    var ret = unsafe { CJ_TLS_SetProtoVersions(ctx, minVersion.toNumericConstant(), maxVersion.toNumericConstant()) }
+
+    var ret = unsafe { CJ_TLS_SetProtoVersions(ctx, minV, maxV) }
     if (ret <= 0) {
         throw TlsException("Failed to set proto versions: ${minVersion} ~ ${maxVersion}.")
     }

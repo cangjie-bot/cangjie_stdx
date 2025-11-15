@@ -14,53 +14,35 @@ set(LOGGER_DEPENDENCIES
 set(ENCODING_JSON_DEPENDENCIES
     cangjie${BACKEND_TYPE}Serialization)
 
-set(CRYPTO_COMMON_DEPENDENCIES
-    cangjie${BACKEND_TYPE}Base64)
-
-set(CRYPTO_KIT_DEPENDENCIES
-    cangjie${BACKEND_TYPE}CryptoCommon
-    cangjie${BACKEND_TYPE}Crypto
-    cangjie${BACKEND_TYPE}X509
-    cangjie${BACKEND_TYPE}Keys)
-
 set(CRYPTO_DEPENDENCIES
-    cangjie${BACKEND_TYPE}Digest
-    cangjie${BACKEND_TYPE}CryptoCommon)
+    cangjie${BACKEND_TYPE}Digest)
 
 set(CRYPTO_DIGEST_DEPENDENCIES
-    cangjie${BACKEND_TYPE}Hex
-    cangjie${BACKEND_TYPE}CryptoCommon)
+    cangjie${BACKEND_TYPE}Hex)
 
 set(CRYPTO_KEYS_DEPENDENCIES
     cangjie${BACKEND_TYPE}Digest
-    cangjie${BACKEND_TYPE}Hex
-    cangjie${BACKEND_TYPE}CryptoCommon)
+    cangjie${BACKEND_TYPE}X509)
 
 set(X509_DEPENDENCIES
     cangjie${BACKEND_TYPE}Hex
     cangjie${BACKEND_TYPE}Base64
-    cangjie${BACKEND_TYPE}Crypto
-    cangjie${BACKEND_TYPE}Keys
-    cangjie${BACKEND_TYPE}CryptoCommon)
+    cangjie${BACKEND_TYPE}Crypto)
 
 set(NET_TLS_DEPENDENCIES
     cangjie${BACKEND_TYPE}Hex
     cangjie${BACKEND_TYPE}Base64
     cangjie${BACKEND_TYPE}X509
-    cangjie${BACKEND_TYPE}Digest
-    cangjie${BACKEND_TYPE}CryptoCommon
-    cangjie${BACKEND_TYPE}TlsCommon)
-
-set(NET_TLS_COMMON_DEPENDENCIES
-    cangjie${BACKEND_TYPE}CryptoCommon)
+    cangjie${BACKEND_TYPE}Digest)
 
 set(NET_HTTP_DEPENDENCIES
     cangjie${BACKEND_TYPE}Base64
     cangjie${BACKEND_TYPE}Url
     cangjie${BACKEND_TYPE}Log
     cangjie${BACKEND_TYPE}Logger
-    cangjie${BACKEND_TYPE}TlsCommon
-    cangjie${BACKEND_TYPE}CryptoCommon)
+    cangjie${BACKEND_TYPE}Tls
+    cangjie${BACKEND_TYPE}Crypto
+    cangjie${BACKEND_TYPE}X509)
 
 set(UNITTEST_DATA_DEPENDENCIES
     cangjie${BACKEND_TYPE}Serialization

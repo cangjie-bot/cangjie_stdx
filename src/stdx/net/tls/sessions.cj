@@ -13,15 +13,14 @@ import std.time.DateTime
 import std.collection.concurrent.{ConcurrentHashMap, ArrayBlockingQueue}
 import stdx.crypto.x509.*
 import stdx.encoding.hex.toHexString
-import stdx.net.tls.common.*
 
 /**
  * Represents a client session established. This type is opaque and it's internals are implementation specific.
  * Instances of this type are never created by users: instead one should borrow instance from a successfully
  * negotiated TlsSocket after handshake() invocation.
  */
-public class TlsClientSession <: TlsSession & Equatable<TlsClientSession> & ToString & Hashable {
-    private TlsClientSession(
+public struct TlsSession <: Equatable<TlsSession> & ToString & Hashable {
+    private TlsSession(
         let holder: SessionHolder,
         let id: Array<Byte>
     ) {}
@@ -36,16 +35,16 @@ public class TlsClientSession <: TlsSession & Equatable<TlsClientSession> & ToSt
         holder = SessionHolder(pointer)
     }
 
-    public override operator func ==(other: TlsClientSession): Bool {
+    public override operator func ==(other: TlsSession): Bool {
         id == other.id
     }
 
-    public override operator func !=(other: TlsClientSession): Bool {
+    public override operator func !=(other: TlsSession): Bool {
         id != other.id
     }
 
     public override func toString(): String {
-        "TlsClientSession(${toHexString(id)})"
+        "TlsSession(${toHexString(id)})"
     }
 
     public override func hashCode(): Int64 {
@@ -64,65 +63,8 @@ public class TlsClientSession <: TlsSession & Equatable<TlsClientSession> & ToSt
     }
 }
 
-/**
- * When a client attempts to resume a session, both counterparts have
- * to ensure that they are resuming session with a legitime peer.
- * At server side there is a so called session context doing both things: verifying
- * clients and providing info to clients that there is still the same server instance it's connecting to.
- * For a stateful sessions they are literally stored in this context instance so an instance of a session context
- * should be shared between server TlsSocket instances inside of a single server node.
- */
-public class TlsServerSession <: TlsSession & Equatable<TlsServerSession> & ToString {
-    let name: String
-    let store = SessionStore(capacity: 600, timeout: Duration.hour)
-
-    init(name: String) {
-        this.name = name
-    }
-
-    static init() {
-        unsafe {
-            CJ_TLS_SetSessionCallback(
-                CJ_TLS_put_session,
-                CJ_TLS_remove_session,
-                CJ_TLS_find_session,
-                CJ_TLS_assign_session
-            )
-        }
-    }
-
-    ~init() {
-        store.clear()
-    }
-
-    /**
-     * Creates a session context having name as sid and having the default session caching (usually in-memory).
-     * The name is used to distinguish TLS servers so clients do rely on this name to avoid accidental attempts to
-     * resume connection to the wrong server. It is not necessarily to use crypto-secure names here as the underlying
-     * implementation does the job. Two session contexts returned from this function with the same name could be
-     * non-equal and not guaranteed to be replaceable despite the same name they are created from.
-     * So a server instance should create a single session context for the whole lifetime and
-     * use it with every TlsSocket.server() invocation.
-     */
-    public static func fromName(name: String): TlsServerSession {
-        TlsServerSession(name)
-    }
-
-    public override operator func ==(other: TlsServerSession): Bool {
-        this.name == other.name
-    }
-
-    public override operator func !=(other: TlsServerSession): Bool {
-        this.name != other.name
-    }
-
-    public override func toString(): String {
-        "TlsServerSession(${name})"
-    }
-}
-
 extend TlsRawSocket {
-    func setSession(session: TlsClientSession): Unit {
+    func setSession(session: TlsSession): Unit {
         otherNonIO<Unit> {
             ssl, _ => session.holder.setSessoinAt(ssl)
         }
@@ -438,7 +380,7 @@ func CJ_TLS_put_session(
             bridge.socket.newSessionId = unsafe { toArray(id, idLength) }
             sessionStore.put(SessionKey.copyFrom(id, idLength), session)
         } else if (!bridge.server) {
-            bridge.socket.negotiatedSession = TlsClientSession(session)
+            bridge.socket.negotiatedSession = TlsSession(session)
         }
     }
 }
@@ -453,7 +395,7 @@ func CJ_TLS_assign_session(
 
     if (let Some(bridge) <- Bridge.findByStream(ssl)) {
         if (!bridge.server) {
-            bridge.socket.negotiatedSession = TlsClientSession(session)
+            bridge.socket.negotiatedSession = TlsSession(session)
         }
     }
 }
@@ -550,8 +492,8 @@ struct SessionStore {
         queue = ArrayBlockingQueue(capacity)
     }
 
-    func put(key: SessionKey, session: CPointer<NativeSession>): TlsClientSession {
-        let apiSession = TlsClientSession(session)
+    func put(key: SessionKey, session: CPointer<NativeSession>): TlsSession {
+        let apiSession = TlsSession(session)
         sessions.add(key, apiSession.holder)
 
         enqueue(key)
@@ -615,5 +557,62 @@ struct SessionStore {
                 return None
             }
         }
+    }
+}
+
+/**
+ * When a client attempts to resume a session, both counterparts have
+ * to ensure that they are resuming session with a legitime peer.
+ * At server side there is a so called session context doing both things: verifying
+ * clients and providing info to clients that there is still the same server instance it's connecting to.
+ * For a stateful sessions they are literally stored in this context instance so an instance of a session context
+ * should be shared between server TlsSocket instances inside of a single server node.
+ */
+public class TlsSessionContext <: Equatable<TlsSessionContext> & ToString {
+    let name: String
+    let store = SessionStore(capacity: 600, timeout: Duration.hour)
+
+    init(name: String) {
+        this.name = name
+    }
+
+    static init() {
+        unsafe {
+            CJ_TLS_SetSessionCallback(
+                CJ_TLS_put_session,
+                CJ_TLS_remove_session,
+                CJ_TLS_find_session,
+                CJ_TLS_assign_session
+            )
+        }
+    }
+
+    ~init() {
+        store.clear()
+    }
+
+    /**
+     * Creates a session context having name as sid and having the default session caching (usually in-memory).
+     * The name is used to distinguish TLS servers so clients do rely on this name to avoid accidental attempts to
+     * resume connection to the wrong server. It is not necessarily to use crypto-secure names here as the underlying
+     * implementation does the job. Two session contexts returned from this function with the same name could be
+     * non-equal and not guaranteed to be replaceable despite the same name they are created from.
+     * So a server instance should create a single session context for the whole lifetime and
+     * use it with every TlsSocket.server() invocation.
+     */
+    public static func fromName(name: String): TlsSessionContext {
+        TlsSessionContext(name)
+    }
+
+    public override operator func ==(other: TlsSessionContext): Bool {
+        this.name == other.name
+    }
+
+    public override operator func !=(other: TlsSessionContext): Bool {
+        this.name != other.name
+    }
+
+    public override func toString(): String {
+        "TlsSessionContext(${name})"
     }
 }

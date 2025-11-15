@@ -6,7 +6,7 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.crypto.common
+package stdx.crypto.x509
 
 import std.io.ByteBuffer
 import stdx.encoding.base64.fromBase64String
@@ -26,7 +26,7 @@ func parsePem(content: Array<Byte>): Array<PemEntry> {
     let result = ArrayBuilder<PemEntry>()
 
     if (content.size == 0) {
-        throw CryptoException("Failed to parse PEM: Pem is empty.")
+        throw X509Exception("X509 parse pem failed: Pem is empty.")
     }
 
     while (current < content.size) {
@@ -44,22 +44,22 @@ func parsePem(content: Array<Byte>): Array<PemEntry> {
         }
         checkIndex(content, current, bodyEnd)
         let body = String.fromUtf8(trimInnerSpaces(content[current..bodyEnd]))
-        let bodyBytes = fromBase64String(body) ?? throw CryptoException(
-            "Failed to parse PEM: Failed to parse base64 encoded PEM body: ${body}.")
+        let bodyBytes = fromBase64String(body) ?? throw X509Exception(
+            "X509 parse pem failed: Failed to parse base64 encoded PEM body: ${body}.")
 
         current = afterEnd
         result.append(PemEntry(label, headers, DerBlob(bodyBytes)))
     }
 
     if (result.isEmpty()) {
-        throw CryptoException("Failed to parse PEM.")
+        throw X509Exception("X509 parse pem failed: Failed to parse PEM.")
     }
     return result.toArray()
 }
 
 func checkIndex(content: Array<Byte>, begin: Int64, end: Int64) {
     if (begin >= content.size || end > content.size || begin > end) {
-        throw CryptoException("Failed to parse PEM: Index check failed.")
+        throw X509Exception("X509 parse derfield failed: Failed to parse PEM.")
     }
 }
 
@@ -76,8 +76,8 @@ func parsePreeb(start: Int64, content: Array<Byte>): ?(String, Int64) {
 
 func searchEnd(start: Int64, content: Array<Byte>, label: String): (Int64, Int64) {
     let it = concat3(CLOSE_ARRAY, label.toArray(), END_ARRAY)
-    let index = indexOf(content, start, it) ?? throw CryptoException(
-        "Failed to parse PEM: Failed to find PEM entry end, ${String.fromUtf8(it)}.")
+    let index = indexOf(content, start, it) ?? throw X509Exception(
+        "X509 parse pem failed: Failed to find PEM entry end, ${String.fromUtf8(it)}.")
     return (index, index + it.size)
 }
 
@@ -137,7 +137,7 @@ func parseHeader(index: Int64, content: Array<Byte>, builder: ArrayBuilder<(Stri
         if (line.isAsciiBlank()) {
             return (tempIndex, false)
         }
-        throw CryptoException("Failed to parse PEM: Unexpected line in PEM header, line ${line.trimAscii()}.")
+        throw X509Exception("X509 parse pem failed: Unexpected line in PEM header, line ${line.trimAscii()}.")
     }
     let headerName = String.fromUtf8(content[start..delimiterIndex]).trimAsciiEnd()
     let headerValue = String.fromUtf8(content[delimiterIndex + 1..lineEnd]).trimAsciiStart()

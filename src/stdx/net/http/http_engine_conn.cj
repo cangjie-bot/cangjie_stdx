@@ -9,7 +9,7 @@
 package stdx.net.http
 
 import std.net.*
-import stdx.crypto.common.Certificate
+import stdx.crypto.x509.*
 
 abstract class HttpEngineConn {
     //add Timeout size limit
@@ -65,7 +65,7 @@ abstract class HttpEngineConn {
         }
     }
 
-    protected prop clientCertificate: ?Array<Certificate>
+    protected prop clientCertificate: ?Array<X509Certificate>
 
     protected func getSocket(): StreamingSocket
 

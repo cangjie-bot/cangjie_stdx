@@ -10,7 +10,6 @@ package stdx.crypto.x509
 
 import std.convert.Formattable
 import stdx.crypto.crypto.SecureRandom
-import stdx.crypto.common.*
 
 public struct SerialNumber <: Equatable<SerialNumber> & Hashable & ToString {
     private let serialNumber_: Array<Byte>

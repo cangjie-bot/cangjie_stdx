@@ -15,7 +15,7 @@ import std.sync.*
 import std.unicode.UnicodeStringExtension
 import std.process.Process
 import std.env.*
-import stdx.net.tls.common.*
+import stdx.net.tls.*
 import stdx.encoding.url.*
 import stdx.log.*
 
@@ -31,7 +31,7 @@ public class ClientBuilder {
     private var _cookieJar: ?CookieJar = CookieJarImpl(ArrayList<String>(), true)
     private var _poolSize: Int64 = 10
     private var _autoRedirect: Bool = true
-    private var _tlsConfig: ?TlsConfig = None
+    private var _tlsConfig: ?TlsClientConfig = None
     private var _readTimeout: Duration = Duration.second * 15
     private var _writeTimeout: Duration = Duration.second * 15
     private var _headerTableSize: UInt32 = 4096
@@ -146,7 +146,7 @@ public class ClientBuilder {
      * @param config the tls configuration.
      * @return ClientBuilder whose tls has been configured.
      */
-    public func tlsConfig(config: TlsConfig): ClientBuilder {
+    public func tlsConfig(config: TlsClientConfig): ClientBuilder {
         _tlsConfig = config
         return this
     }
@@ -261,7 +261,7 @@ public class ClientBuilder {
         client._poolSize = _poolSize
         client._autoRedirect = _autoRedirect
         client._tlsConfig = _tlsConfig
-        if (_tlsConfig?.supportedAlpnProtocols.contains("h2") ?? false) {
+        if (_tlsConfig?.alpnProtocolsList.contains("h2") ?? false) {
             client.enableH2 = true
         }
         client._connector = _connector
@@ -327,7 +327,7 @@ public class Client {
     var _cookieJar: ?CookieJar = CookieJarImpl(ArrayList<String>(), true)
     var _poolSize: Int64 = 10
     var _autoRedirect: Bool = true
-    var _tlsConfig: ?TlsConfig = None
+    var _tlsConfig: ?TlsClientConfig = None
     var _readTimeout: Duration = Duration.second * 15
     var _writeTimeout: Duration = Duration.second * 15
     var _headerTableSize: UInt32 = 409632
@@ -407,7 +407,7 @@ public class Client {
      * Tls layer config.
      * @return Clone of TLS configuration in client.
      */
-    public func getTlsConfig(): ?TlsConfig {
+    public func getTlsConfig(): ?TlsClientConfig {
         _tlsConfig
     }
 
