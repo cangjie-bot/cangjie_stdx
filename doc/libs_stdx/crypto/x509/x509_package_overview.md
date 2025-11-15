@@ -35,11 +35,18 @@ x509 包提供处理数字证书功能，提供包括解析和序列化 X509 证
 | ----------------------------------------------------- | -------------------------------- |
 | [IP](./x509_package_api/x509_package_type.md#type-ip) | x509 用 Array\<Byte> 来记录 IP。 |
 
+### 接口
+| 接口名                                              | 功能                             |
+| ----------------------------------------------------- | -------------------------------- |
+| [DHParameters](./x509_package_api/x509_package_interfaces.md#interface-dhparameters) | 提供 DH 密钥接口。 |
+| [Key](./x509_package_api/x509_package_interfaces.md#interface-key) | 提供密钥接口 |
+| [PrivateKey](./x509_package_api/x509_package_interfaces.md#interface-privateKey) | 提供私钥接口。 |
+| [PublicKey](./x509_package_api/x509_package_interfaces.md#interface-publicKey) | 提供公钥接口。 |
+
 ### 类
 
 | 类名                                                                                              | 功能                                        |
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| [GeneralDHParameters](./x509_package_api/x509_package_classes.md#class-generaldhparameters)       | 通用的 DH 密钥参数加解密功能实现。          |
 | [X509Certificate](./x509_package_api/x509_package_classes.md#class-x509certificate)               | X509 数字证书是一种用于加密通信的数字证书。 |
 | [X509CertificateRequest](./x509_package_api/x509_package_classes.md#class-x509certificaterequest) | 数字证书签名请求。                          |
 | [X509Name](./x509_package_api/x509_package_classes.md#class-x509name)                             | 证书实体可辨识名称。                        |
@@ -55,8 +62,11 @@ x509 包提供处理数字证书功能，提供包括解析和序列化 X509 证
 
 | 结构体名                                                                                                   | 功能                                             |
 | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| [DerBlob](./x509_package_api/x509_package_structs.md#struct-derblob)                                       | Crypto 支持配置二进制证书流。                               |
 | [ExtKeyUsage](./x509_package_api/x509_package_structs.md#struct-extkeyusage)                               | 数字证书扩展字段。                               |
 | [KeyUsage](./x509_package_api/x509_package_structs.md#struct-keyusage)                                     | 数字证书扩展字段中通常会包含携带公钥的用法说明。 |
+| [Pem](./x509_package_api/x509_package_structs.md#struct-pem)                                               | Pem 结构体。 |
+| [PemEntry](./x509_package_api/x509_package_structs.md#struct-pementry)                                     | Pem 文本格式。 |
 | [SerialNumber](./x509_package_api/x509_package_structs.md#struct-serialnumber)                             | 数字证书的序列号。                               |
 | [Signature](./x509_package_api/x509_package_structs.md#struct-signature)                                   | 数字证书的签名。                                 |
 | [VerifyOption](./x509_package_api/x509_package_structs.md#struct-verifyoption)                             | 校验选项。                                       |

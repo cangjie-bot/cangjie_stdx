@@ -48,4 +48,4 @@ public init(saltLen: Int32)
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 随机盐长度小于 0，抛出异常。
+- [CryptoException](../../digest/digest_package_api/digest_package_exceptions.md#class-cryptoexception) - 随机盐长度小于 0，抛出异常。

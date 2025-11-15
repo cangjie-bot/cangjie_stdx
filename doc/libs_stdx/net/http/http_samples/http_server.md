@@ -11,7 +11,6 @@
 <!-- compile -->
 ```cangjie
 import stdx.net.http.ServerBuilder
-import stdx.net.tls
 
 main() {
     // 1. 构建 Server 实例
@@ -61,7 +60,6 @@ main() {
 <!-- compile -->
 ```cangjie
 import stdx.net.http.*
-import stdx.net.tls.*
 import std.collection.HashMap
 
 // 自定义请求分发器
@@ -103,8 +101,7 @@ main() {
 import std.io.*
 import std.fs.*
 import stdx.net.tls.*
-import stdx.crypto.x509.X509Certificate
-import stdx.crypto.keys.GeneralPrivateKey
+import stdx.crypto.x509.{X509Certificate, PrivateKey}
 import stdx.net.http.*
 
 main() {
@@ -115,7 +112,7 @@ main() {
     // TLS 配置，需要传入配套的证书与私钥文件路径，此处证书和私钥文件需要用户自行提供
     let pem0 = String.fromUtf8(readToEnd(File("/certPath", Read)))
     let pem02 = String.fromUtf8(readToEnd(File("/keyPath", Read)))
-    var tlsConfig = TlsServerConfig(X509Certificate.decodeFromPem(pem0), GeneralPrivateKey.decodeFromPem(pem02))
+    var tlsConfig = TlsServerConfig(X509Certificate.decodeFromPem(pem0), PrivateKey.decodeFromPem(pem02))
     tlsConfig.supportedAlpnProtocols = ["h2"]
     // 2. 构建 Server 实例
     let server = ServerBuilder()
@@ -142,7 +139,8 @@ main() {
 <!-- compile -->
 ```cangjie
 import stdx.net.http.*
-import stdx.net.tls
+import std.io.*
+import std.collection.HashMap
 
 func checksum(chunk: Array<UInt8>): Int64 {
     var sum = 0
@@ -192,7 +190,6 @@ main() {
 <!-- compile -->
 ```cangjie
 import stdx.net.http.*
-import stdx.net.tls
 
 main() {
     // 1. 构建 Server 实例
@@ -215,8 +212,7 @@ import std.io.*
 import std.fs.*
 import stdx.net.tls.*
 import stdx.net.tls.common.*
-import stdx.crypto.x509.X509Certificate
-import stdx.crypto.keys.GeneralPrivateKey
+import stdx.crypto.x509.{X509Certificate, PrivateKey}
 import stdx.net.http.*
 
 //该程序需要用户配置存在且合法的文件路径才能执行
@@ -224,10 +220,10 @@ main() {
     // 1. TLS 配置，其中 TLS 证书和私钥文件用户需自行提供
     let pem0 = String.fromUtf8(readToEnd(File("/certPath", Read)))
     let pem02 = String.fromUtf8(readToEnd(File("/keyPath", Read)))
-    var tlsConfig = TlsServerConfig(X509Certificate.decodeFromPem(pem0), GeneralPrivateKey.decodeFromPem(pem02))
+    var tlsConfig = TlsServerConfig(X509Certificate.decodeFromPem(pem0), PrivateKey.decodeFromPem(pem02))
     tlsConfig.supportedAlpnProtocols = ["http/1.1"]
     let pem = String.fromUtf8(readToEnd(File("/rootCerPath", Read)))
-    tlsConfig.verifyMode = CustomCA(X509Certificate.decodeFromPem(pem).map({certificate => certificate}))
+    tlsConfig.verifyMode = CustomCA(X509Certificate.decodeFromPem(pem))
     // 2. 构建 Server 实例，并启动服务
     let server = ServerBuilder().addr("127.0.0.1").port(8080).tlsConfig(tlsConfig).build()
     spawn {
@@ -254,7 +250,6 @@ import std.io.*
 import std.fs.*
 import std.collection.ArrayList
 import stdx.net.tls.*
-import stdx.net.tls.common.*
 import stdx.crypto.x509.X509Certificate
 import stdx.net.http.*
 
@@ -262,8 +257,8 @@ main() {
     // 1. TLS 配置，其中 TLS 证书文件用户需自行提供
     var tlsConfig = TlsClientConfig()
     let pem = String.fromUtf8(readToEnd(File("/rootCerPath", Read)))
-    tlsConfig.verifyMode = CustomCA(X509Certificate.decodeFromPem(pem).map({certificate => certificate}))
-    tlsConfig.supportedAlpnProtocols = ["h2"]
+    tlsConfig.verifyMode = CustomCA(X509Certificate.decodeFromPem(pem))
+    tlsConfig.alpnProtocolsList = ["h2"]
     // 2. 构建 Client 实例
     let client = ClientBuilder().tlsConfig(tlsConfig).build()
     // 3. 发送请求，接收响应
@@ -283,15 +278,14 @@ server:
 import std.io.*
 import std.fs.*
 import stdx.net.tls.*
-import stdx.crypto.x509.X509Certificate
-import stdx.crypto.keys.GeneralPrivateKey
+import stdx.crypto.x509.{X509Certificate, PrivateKey}
 import stdx.net.http.*
 
 main() {
     // 1. TLS 配置，其中 TLS 证书文件用户需自行提供
     let pem0 = String.fromUtf8(readToEnd(File("/certPath", Read)))
     let pem02 = String.fromUtf8(readToEnd(File("/keyPath", Read)))
-    var tlsConfig = TlsServerConfig(X509Certificate.decodeFromPem(pem0), GeneralPrivateKey.decodeFromPem(pem02))
+    var tlsConfig = TlsServerConfig(X509Certificate.decodeFromPem(pem0), PrivateKey.decodeFromPem(pem02))
     tlsConfig.supportedAlpnProtocols = ["h2"]
     // 2. 构建 Server 实例
     let server = ServerBuilder().addr("127.0.0.1").port(8080).tlsConfig(tlsConfig).build()
