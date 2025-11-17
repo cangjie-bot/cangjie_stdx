@@ -30,10 +30,12 @@ public open func defaultImpl(): Res
 
 - [UnhandledCommandException](./effect_package_exceptions.md#class-unhandledcommandexception) - 该异常在此函数未被重写时抛出。
 
-**示例:**
-以下程序使用一系列效果处理程序来计算一个计算过程在调用 `deeper` 函数时所处的调用层数。
-默认处理程序由 `GetDepth.defaultImpl` 提供，它规定在没有显式处理程序的情况下，深度为 0。
-而 `deeper` 函数安装的每个处理程序都会重新执行 `GetDepth` 效果，并将计算的深度增加 1，即比该调用 `deeper` 之前更深一层。
+示例：
+以下程序连续使用了多个effect handler操作，以展示：每调用一次`deeper`函数，所影响（增加）的调用层数。
+默认情况下，一个default handler由 `GetDepth.defaultImpl` 提供，它规定在没有真正显性handler处理程序的情况下，调用层数为 0。
+而 `deeper` 函数使用的每个handler程序都会重新执行 `GetDepth` function，并将计算的调用层数增加 1，即比该调用 `deeper` 之前更深一层。
+
+
 
 <!-- verify -->
 ```cangjie
@@ -76,5 +78,5 @@ Depth: 1
 Depth: 0
 ```
 
-重写 `defaultImpl` 以始终返回一个值，意味着该程序永远不会抛出 `UnhandledCommandException` 异常。
-这个程序的行为与将 `main` 函数的主体包裹在处理程序 `try {... } handle(_: GetDepth) { resume with 0 }` 中的效果相同。
+这段代码里首先对 `defaultImpl`进行了重载，其始终返回一个值，便意味着该程序永远不会抛出 `UnhandledCommandException` 异常。
+这个程序的行为与将 `main` 函数的主体包裹在handler程序 `try {... } handle(_: GetDepth) { resume with 0 }` 中的效果等价。
