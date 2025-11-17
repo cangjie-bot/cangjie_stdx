@@ -50,7 +50,7 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
         nodeImpl.preWhiteSpaceString() + nodeImpl.toString()
     }
 
-    private func NonTerminalToToken(nt: NonTerminal, startPos: CodePosition): Token {
+    private func nonTerminalToToken(nt: NonTerminal, startPos: CodePosition): Token {
         var strVal = ""
         var isSingleQuote = false
         var delimiterNum: UInt16 = 1
@@ -92,6 +92,16 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
         return token
     }
 
+    func repeatedTerminalToTokens(rt: RepeatedTerminal, off: Offset, startPos: CodePosition, tokenKind: TokenKind, tks: ArrayList<Token>): Offset {
+        var offset = off
+        for (_ in 0..rt.repeat) {
+            let tk = Token(tokenKind).addPosition(startPos + offset)
+            tks.add(tk)
+            offset.moveString(tk.value)
+        }
+        return offset
+    }
+
     public open func toTokens(): Tokens {
         let startPos = nodePos.begin
         let nodeImplFlatter = nodeImpl.flatter()
@@ -103,8 +113,7 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
             var token = Token()
             match (tk) {
                 // literal special handling, these are NonTerminals that can be directly converted into Tokens.
-                case nt: NonTerminal =>
-                    token = NonTerminalToToken(nt, startPos + offset)
+                case nt: NonTerminal => token = nonTerminalToToken(nt, startPos + offset)
                 case _ =>
                     // special handling for TokenTerminal
                     let tokenKind = if (let Some(tt) <- (tk as TokenTerminal)) {
@@ -120,13 +129,8 @@ sealed abstract class SyntaxTreeNode <: ToString & Hashable & Equatable<SyntaxTr
                     // convert Terminal to Token
                     token = match (tk) {
                         case rt: RepeatedTerminal =>
-                            for (_ in 0..rt.repeat) {
-                                let tk = Token(tokenKind).addPosition(startPos + offset)
-                                tks.add(tk)
-                                offset.moveString(tk.value)
-                            }
+                            offset = repeatedTerminalToTokens(rt, offset, startPos, tokenKind, tks)
                             continue
-                            Token(TokenKind.ILLEGAL)
                         case vt: ValuedTerminal => Token(tokenKind, vt.value)
                         case tt: TokenTerminal => Token(tt.tokenKind, tt.value)
                         case _ => Token(tokenKind, tk.toString())

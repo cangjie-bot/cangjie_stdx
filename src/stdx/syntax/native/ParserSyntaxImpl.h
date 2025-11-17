@@ -15,7 +15,7 @@
 #ifndef CANGJIE_PARSER_SYNTAX_IMPL_H
 #define CANGJIE_PARSER_SYNTAX_IMPL_H
 
-#include "ParserSyntax.h"
+#include "cangjie/Parse/Parser.h"
 
 using namespace Cangjie;
 using namespace Cangjie::AST;

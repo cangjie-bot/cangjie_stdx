@@ -43,38 +43,42 @@ class ParserImpl {
         (file, msg)
     }
 
+    func getPreChildren(text: String): Array<SyntaxNodeImpl> {
+        let builder = SyntaxNodeBuilder()
+        let preChildren = ArrayList<SyntaxNodeImpl>()
+        var cnt = 0
+        for (i in 0..text.size) {
+            let cur = text[i..i + 1]
+            // whitespace ended
+            if (cur != NEWLINE && cur != " ") {
+                break
+            }
+            // cnt increase
+            if (cnt == 0 || text[i - 1..i] == cur) {
+                cnt += 1
+            }
+            // cnt downto 0, add current whitespace to array
+            if (text[i + 1..i + 2] != cur) {
+                if (cur == NEWLINE) {
+                    preChildren.add(builder.buildNewline(cnt))
+                } else {
+                    preChildren.add(builder.buildSpace(cnt))
+                }
+                cnt = 0
+            }
+        }
+        return preChildren.toArray()
+    }
+
     func parseText(text: String): (?SyntaxNodeImpl, Array<Diagnostic>) {
         let (node, msg) = NodeLoader.loadText(text)
-        let builder = SyntaxNodeBuilder()
         // build impl tree by NodeFormat_Node
         let res: ?SyntaxNodeImpl = if (let Some(root) <- node) {
             let errMsg = findError(msg)
             if (errMsg != "") {
                 throw Exception("unsupported node type or parse error in parseText function:\n${errMsg}")
             }
-            let preChildren = ArrayList<SyntaxNodeImpl>()
-            var cnt = 0
-            var kind = SyntaxNodeKind.SpaceToken
-            for (i in 0..text.size) {
-                let cur = text[i..i + 1]
-                // whitespace ended
-                if (cur != NEWLINE && cur != " ") {
-                    break
-                }
-                // cnt increase
-                if (cnt == 0 || text[i - 1..i] == cur) {
-                    cnt += 1
-                }
-                // cnt downto 0, add current whitespace to array
-                if (text[i + 1..i + 2] != cur) {
-                    if (cur == NEWLINE) {
-                        preChildren.add(builder.buildNewline(cnt))
-                    } else {
-                        preChildren.add(builder.buildSpace(cnt))
-                    }
-                    cnt = 0
-                }
-            }
+            let preChildren = getPreChildren(text)
             FlatbufferNodeTranslator.translate(root, preChildren: preChildren.toArray())
         } else {
             None
@@ -363,12 +367,12 @@ private class FlatbufferNodeTranslator {
     private func addInnerComments(line: Int32, column: Int32, needNewLine!: Bool = true): Unit {
         for (commentGroup in innerComments) {
             let tmpGroupList = [commentGroup]
-            if (let Some(cmtStartPos) <- getCommentGroupListBeginPos(tmpGroupList) &&
-                isBetweenCursorAndDest(cursorLine, cursorColumn, line, column, cmtStartPos.line, cmtStartPos.column)) {
+            if (let Some(cmtStartPos) <- getCommentGroupListBeginPos(tmpGroupList) && isBetweenCursorAndDest(cursorLine,
+                cursorColumn, line, column, cmtStartPos.line, cmtStartPos.column)) {
                 /*
                 if comments exist, and the comments locate between the Cursor and the Destination position,
                 addWhitespace before the comment, then addComments, addWhitespace before the Destination position at last
-                */
+                 */
                 addWhitespaceWithoutComment(cmtStartPos.line, cmtStartPos.column, needNewLine: needNewLine)
                 moveCursorColumn(cmtStartPos, 0)
 
@@ -2219,8 +2223,9 @@ private class FlatbufferNodeTranslator {
         let astKind: String = nodeBase.getOrThrow().GetAstKind()
         if (astKind == "macro_expand_decl") {
             let table = enumConstructor.table
-            let off: UInt32 = UInt32(table.offset(enumConstructor.DECL)) + table.pos 
-            return transMacroExpandDecl(NodeFormat_MacroExpandDecl(table.bytes, off), Array<SyntaxNodeImpl>(), isEnumConstructor: true)
+            let off: UInt32 = UInt32(table.offset(enumConstructor.DECL)) + table.pos
+            return transMacroExpandDecl(NodeFormat_MacroExpandDecl(table.bytes, off), Array<SyntaxNodeImpl>(),
+                isEnumConstructor: true)
         }
         if (let Some(db) <- enumConstructor.GetBase()) {
             // annotation
@@ -2475,8 +2480,8 @@ private class FlatbufferNodeTranslator {
     }
 
     private func transDeclWithAtExclAnnotation(annos: Array<Option<NodeFormat_Annotation>>,
-        invocation: NodeFormat_MacroInvocation, leadCmts: Array<Option<NodeFormat_CommentGroup>>, trailCmts: Array<Option<NodeFormat_CommentGroup>>,
-        isEnumConstructor!: Bool = false): ?SyntaxNodeImpl {
+        invocation: NodeFormat_MacroInvocation, leadCmts: Array<Option<NodeFormat_CommentGroup>>,
+        trailCmts: Array<Option<NodeFormat_CommentGroup>>, isEnumConstructor!: Bool = false): ?SyntaxNodeImpl {
         // BNF: (former annos)? atExcel decl
         let tmpInnerComments = innerComments
         // transAnnotationList
@@ -2499,7 +2504,7 @@ private class FlatbufferNodeTranslator {
         curChildren = retBefore
         // transDecl
         // merge formerAnnos and atExcel and into decl
-        let declNodeImpl: ?SyntaxNodeImpl = if (let Some(dl) <- invocation.GetDecl()){
+        let declNodeImpl: ?SyntaxNodeImpl = if (let Some(dl) <- invocation.GetDecl()) {
             if (isEnumConstructor) {
                 transEnumConstructor(dl)
             } else {
@@ -2508,7 +2513,7 @@ private class FlatbufferNodeTranslator {
         } else {
             None
         }
-         if (let Some(dl) <- declNodeImpl && let Some(nt) <- (dl as NonTerminal) && nt.children.size != 0) {
+        if (let Some(dl) <- declNodeImpl && let Some(nt) <- (dl as NonTerminal) && nt.children.size != 0) {
             var ret = ArrayList<SyntaxNodeImpl>(nt.children)
             if (let Some(annos) <- formerAnnos && let Some(formers) <- (annos as NonTerminal)) {
                 if (ret[0].kind == SyntaxNodeKind.AnnotationList && let Some(annoList) <- (ret[0] as NonTerminal)) {
@@ -2551,7 +2556,8 @@ private class FlatbufferNodeTranslator {
         // if AtExcl, trans macro  to annotation
         if (let Some(db) <- macroExpandDecl.GetBase() && let Some(invocation) <- macroExpandDecl.GetInvocation() &&
             invocation.GetIsCompileTimeVisible()) {
-            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation, leadCmts, trailCmts, isEnumConstructor: isEnumConstructor)
+            return transDeclWithAtExclAnnotation(db.GetAnnotations(), invocation, leadCmts, trailCmts,
+                isEnumConstructor: isEnumConstructor)
         }
 
         var ret = ArrayList<SyntaxNodeImpl>()
@@ -2598,15 +2604,13 @@ private class FlatbufferNodeTranslator {
                 curChildren = ret
 
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
-            } else {
-                if (let Some(dl) <- invocation.GetDecl()) {
-                    if (isEnumConstructor) {
-                        addChild(ret, transEnumConstructor(dl))
-                    } else {
-                        addChild(ret, transDecl(dl))
-                    }
-                    curChildren = ret
+            } else if (let Some(dl) <- invocation.GetDecl()) {
+                if (isEnumConstructor) {
+                    addChild(ret, transEnumConstructor(dl))
+                } else {
+                    addChild(ret, transDecl(dl))
                 }
+                curChildren = ret
             }
         }
         if (trailCmts.size > 0) {
@@ -2838,7 +2842,7 @@ private class FlatbufferNodeTranslator {
         for (typeParameter in typeParameters) {
             if (let Some(genericTy) <- typeParameter) {
                 addChild(ret, transGenericParam(genericTy))
-                curChildren  = ret
+                curChildren = ret
 
                 transBasicTerminal(genericTy.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
@@ -2877,16 +2881,11 @@ private class FlatbufferNodeTranslator {
         return false
     }
 
-    private func transFuncDecl(funcDecl: NodeFormat_FuncDecl, preChildren: Array<SyntaxNodeImpl>): ?SyntaxNodeImpl {
-        var ret = ArrayList<SyntaxNodeImpl>()
-        var kind = SyntaxNodeKind.FuncDecl
+    func transFuncHeader(funcDecl: NodeFormat_FuncDecl, ret: ArrayList<SyntaxNodeImpl>, nodeKind: SyntaxNodeKind,
+        innerCmts: Array<Option<NodeFormat_CommentGroup>>) {
         var identifier = ""
         var modifiers = Array<Option<NodeFormat_Modifier>>()
-
-        let nodeBase = funcDecl.GetBase().getOrThrow().GetBase()
-        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
-        addLeadingComments(nodeBase, ret, leadCmts, isDecl: true)
-        innerComments = innerCmts
+        var kind = nodeKind
 
         if (let Some(db) <- funcDecl.GetBase()) {
             modifiers = db.GetModifiers()
@@ -2929,7 +2928,13 @@ private class FlatbufferNodeTranslator {
                 }
             }
         }
+        return (ret, kind, identifier, modifiers)
+    }
 
+    func transFuncBody(funcDecl: NodeFormat_FuncDecl, nodes: ArrayList<SyntaxNodeImpl>,
+        innerCmts: Array<Option<NodeFormat_CommentGroup>>, identifier: String,
+        modifiers: Array<Option<NodeFormat_Modifier>>) {
+        var ret: ArrayList<SyntaxNodeImpl> = nodes
         if (let Some(body) <- funcDecl.GetFuncBody()) {
             if (let Some(generic) <- body.GetGeneric()) {
                 let typeParameters = generic.GetTypeParameters()
@@ -2941,24 +2946,21 @@ private class FlatbufferNodeTranslator {
             curChildren = ret
             innerComments = innerCmts
 
-            if (funcDecl.GetIsSetter()) {
-                if (let Some(paramList) <- body.GetParamList()) {
-                    transBasicTerminal(paramList.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
-                    let params = paramList.GetParams()
-                    if (params.size > 0 && let Some(param) <- params[0] && let Some(vb) <- param.GetBase() && let Some(db) <- vb
-                        .GetBase()) {
-                        let paramNodeBase = param.GetNodeBase()
-                        // Setter has no innerComments
-                        let (leadParamListCmts, _, trailParamListCmts) = getCommentGroups(paramNodeBase)
-                        addLeadingComments(paramNodeBase, ret, leadParamListCmts)
-                        transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
-                        if (trailParamListCmts.size > 0) {
-                            addChild(ret, transCommentGroupList(trailParamListCmts))
-                            curChildren = ret
-                        }
-                    }
-                    transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
+            if (funcDecl.GetIsSetter() && let Some(paramList) <- body.GetParamList()) {
+                transBasicTerminal(paramList.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
+                let params = paramList.GetParams()
+                if (params.size > 0 && let Some(param) <- params[0] && let Some(vb) <- param.GetBase() && let Some(db) <- vb
+                    .GetBase()) {
+                    let paramNodeBase = param.GetNodeBase()
+                    // Setter has no innerComments
+                    let (leadParamListCmts, _, trailParamListCmts) = getCommentGroups(paramNodeBase)
+                    addLeadingComments(paramNodeBase, ret, leadParamListCmts)
+                    transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
+
+                    addChild(ret, transCommentGroupList(trailParamListCmts))
+                    curChildren = ret
                 }
+                transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else if (funcDecl.GetIsGetter() || (identifier == "init" && findStatic(modifiers))) {
                 if (let Some(paramList) <- body.GetParamList()) {
                     let paramListBase = paramList.GetBase()
@@ -2994,6 +2996,23 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, transBlock(block))
             }
         }
+        return ret
+    }
+
+    private func transFuncDecl(funcDecl: NodeFormat_FuncDecl, preChildren: Array<SyntaxNodeImpl>): ?SyntaxNodeImpl {
+        var ret = ArrayList<SyntaxNodeImpl>()
+        var kind = SyntaxNodeKind.FuncDecl
+        var identifier = ""
+        var modifiers = Array<Option<NodeFormat_Modifier>>()
+
+        let nodeBase = funcDecl.GetBase().getOrThrow().GetBase()
+        let (leadCmts, innerCmts, trailCmts) = getCommentGroups(nodeBase)
+        addLeadingComments(nodeBase, ret, leadCmts, isDecl: true)
+        innerComments = innerCmts
+
+        (ret, kind, identifier, modifiers) = transFuncHeader(funcDecl, ret, kind, innerCmts)
+
+        ret = transFuncBody(funcDecl, ret, innerCmts, identifier, modifiers)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
             curChildren = ret
@@ -3345,11 +3364,9 @@ private class FlatbufferNodeTranslator {
                 // case 2: match { patterns }
                 transBasicTerminal(matchExpr.GetLeftCurlPos(), SyntaxNodeKind.LCurlToken)
                 // match cases
-                for (matchCase in matchExpr.GetMatchCaseOthers()) {
-                    if (let Some(otherCase) <- matchCase) {
-                        addChild(ret, transMatchCaseOther(otherCase))
-                        curChildren = ret
-                    }
+                for (otherCase in getElements<NodeFormat_MatchCaseOther>(matchExpr.GetMatchCaseOthers())) {
+                    addChild(ret, transMatchCaseOther(otherCase))
+                    curChildren = ret
                 }
                 transBasicTerminal(matchExpr.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
             }
@@ -5248,6 +5265,19 @@ private class FlatbufferNodeTranslator {
         builder.buildNonTerminal(SyntaxNodeKind.QuoteInterpolationExpr, ret.toArray(), preChildren: preChildren)
     }
 
+    func moveCursorByExpr(expr: NodeFormat_Expr): Unit {
+        if (let Some(base) <- expr.GetBase()) {
+            let begin = base.GetBegin()
+            let (beginLine, beginColumn) = match (expr.GetExprType()) {
+                case NodeFormat_AnyExpr.AnyExpr_REF_EXPR => (begin.line, begin.column - 1)
+                case _ => (begin.line, begin.column)
+            }
+            addWhitespace(beginLine, beginColumn, needNewLine: false)
+            // move cursor
+            (cursorLine, cursorColumn) = (beginLine, beginColumn)
+        }
+    }
+
     private func transQuoteExpr(quoteExpr: NodeFormat_QuoteExpr, preChildren: Array<SyntaxNodeImpl>): ?SyntaxNodeImpl {
         addWhitespaceAndMoveCursorToBegin(quoteExpr.GetBase())
         let ret = ArrayList<SyntaxNodeImpl>()
@@ -5263,16 +5293,7 @@ private class FlatbufferNodeTranslator {
             transBasicTerminal(quoteExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
             let children = quoteExpr.GetExprs()
             for (expr in getElements<NodeFormat_Expr>(children)) {
-                if (let Some(base) <- expr.GetBase()) {
-                    let begin = base.GetBegin()
-                    let (beginLine, beginColumn) = match (expr.GetExprType()) {
-                        case NodeFormat_AnyExpr.AnyExpr_REF_EXPR => (begin.line, begin.column - 1)
-                        case _ => (begin.line, begin.column)
-                    }
-                    addWhitespace(beginLine, beginColumn, needNewLine: false)
-                    // move cursor
-                    (cursorLine, cursorColumn) = (beginLine, beginColumn)
-                }
+                moveCursorByExpr(expr)
                 let expr1 = match (expr.GetExprType()) {
                     case NodeFormat_AnyExpr.AnyExpr_TOKEN_PART => transExpr(expr)
                     case _ => transQuoteInterpolationExpr(expr)
@@ -5381,6 +5402,9 @@ private class FlatbufferNodeTranslator {
     }
 
     private func transCommentGroupList(groupList: Array<Option<NodeFormat_CommentGroup>>): ?SyntaxNodeImpl {
+        if (groupList.size == 0) {
+            return None
+        }
         let ret = ArrayList<SyntaxNodeImpl>()
         curChildren = ret
 

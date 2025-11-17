@@ -588,7 +588,7 @@ enum SyntaxNodeKind <: ToString {
             case RuneToken => TokenKind.RUNE
             case BooleanToken => TokenKind.BOOLEAN
             case NothingToken => TokenKind.NOTHING
-            
+
             case StructToken => TokenKind.STRUCT
             case EnumToken => TokenKind.ENUM
             case VArrayToken => TokenKind.VARRAY

@@ -21,7 +21,7 @@ public open class ASTRewriter {
         return SyntaxNodeImplTranslator.translate(newNode.nodeImpl, startPoint.nodePos.begin, newParent).getOrThrow()
     }
 
-    private func IsRewritedChild(hasRewritedChild: Bool, new: SyntaxNodeImpl, old: SyntaxNodeImpl) {
+    private func isRewritedChild(hasRewritedChild: Bool, new: SyntaxNodeImpl, old: SyntaxNodeImpl) {
         if (new.id != old.id) {
             return true
         }
@@ -34,7 +34,7 @@ public open class ASTRewriter {
         let fileImpls = ArrayList<(SyntaxNodeImpl, String)>()
         for (file in node.srcFile) {
             let newNode = (walkAndRewrite<SourceFile>(file) as SourceFile).getOrThrow()
-            hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, file.nodeImpl)
+            hasRewritedChild = isRewritedChild(hasRewritedChild, newNode.nodeImpl, file.nodeImpl)
             fileImpls.add((newNode.nodeImpl, newNode.path))
             fileList.add(newNode)
         }
@@ -64,22 +64,22 @@ public open class ASTRewriter {
             case nt: NonTerminal => for (child in nt.children) {
                 if (child is Terminal) {
                     newNodeImpl.add(child)
-                } else {
-                    // intermediate node in SyntaxNodeImpl
-                    if (child.kind == SyntaxNodeKind.CommentGroupList || child.kind == SyntaxNodeKind.AnnotationList ||
-                        child.kind == SyntaxNodeKind.ModifierList || child.kind == SyntaxNodeKind.TypeArguments ||
-                        child.kind == SyntaxNodeKind.MatchCaseBody || child.kind == SyntaxNodeKind.TokenList) {
-                        hasRewritedChild = walkAndRewriteSpecialNode(child, newNodeImpl, collectChildNodeList, comments)
-                        continue
-                    }
-                    let n = collectChildNodeList.remove(at: 0)
-                    let newNode = walkAndRewrite(n)
-                    hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, child)
-                    newNodeImpl.add(newNode.nodeImpl)
-                    // VArrayType only has one child: Property 'size' is NonTerminal, not SyntaxTreeNode
-                    if (node.nodeImpl.kind == SyntaxNodeKind.VArrayType) {
-                        break
-                    }
+                    continue
+                }
+                // intermediate node in SyntaxNodeImpl
+                if (child.kind == SyntaxNodeKind.CommentGroupList || child.kind == SyntaxNodeKind.AnnotationList ||
+                    child.kind == SyntaxNodeKind.ModifierList || child.kind == SyntaxNodeKind.TypeArguments ||
+                    child.kind == SyntaxNodeKind.MatchCaseBody || child.kind == SyntaxNodeKind.TokenList) {
+                    hasRewritedChild = walkAndRewriteSpecialNode(child, newNodeImpl, collectChildNodeList, comments)
+                    continue
+                }
+                let n = collectChildNodeList.remove(at: 0)
+                let newNode = walkAndRewrite(n)
+                hasRewritedChild = isRewritedChild(hasRewritedChild, newNode.nodeImpl, child)
+                newNodeImpl.add(newNode.nodeImpl)
+                // VArrayType only has one child: Property 'size' is NonTerminal, not SyntaxTreeNode
+                if (node.nodeImpl.kind == SyntaxNodeKind.VArrayType) {
+                    break
                 }
             }
             case _ => throw Exception("RewriteException: SyntaxNodeImpl kind not match.")
@@ -125,7 +125,7 @@ public open class ASTRewriter {
             if (child is NonTerminal && child.toString() != "foreign") {
                 let n = childNodeList.remove(at: 0)
                 let newNode = walkAndRewrite(n)
-                hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, child)
+                hasRewritedChild = isRewritedChild(hasRewritedChild, newNode.nodeImpl, child)
                 newNodeImpl.add(newNode.nodeImpl)
             } else {
                 newNodeImpl.add(child)
@@ -138,26 +138,33 @@ public open class ASTRewriter {
         }
     }
 
+    func getNewCommentGroup(nt: NonTerminal, comments: ArrayList<Comment>): (Array<SyntaxNodeImpl>, Bool) {
+        var hasRewritedChild = false
+        var newCommentGroup = ArrayList<SyntaxNodeImpl>()
+        for (comment in nt.children) {
+            if (comment is NonTerminal) {
+                let n = comments.remove(at: 0)
+                let newNode = walkAndRewrite(n)
+                hasRewritedChild = isRewritedChild(hasRewritedChild, newNode.nodeImpl, comment)
+                newCommentGroup.add(newNode.nodeImpl)
+            } else {
+                newCommentGroup.add(comment)
+            }
+        }
+        return (newCommentGroup.toArray(), hasRewritedChild)
+    }
+
     private func walkAndRewriteComment(groupListImpl: SyntaxNodeImpl, comments: ArrayList<Comment>) {
         var hasRewritedChild = false
+        var newCommentGroup = Array<SyntaxNodeImpl>()
         let list = (groupListImpl as NonTerminal).getOrThrow()
         let newNodeImpl = ArrayList<SyntaxNodeImpl>()
         for (child in list.children) {
             // child is CommentGruop or NL
             match (child) {
                 case nt: NonTerminal =>
-                    let newCommentGruop = ArrayList<SyntaxNodeImpl>()
-                    for (comment in nt.children) {
-                        if (comment is NonTerminal) {
-                            let n = comments.remove(at: 0)
-                            let newNode = walkAndRewrite(n)
-                            hasRewritedChild = IsRewritedChild(hasRewritedChild, newNode.nodeImpl, comment)
-                            newCommentGruop.add(newNode.nodeImpl)
-                        } else {
-                            newCommentGruop.add(comment)
-                        }
-                    }
-                    newNodeImpl.add(NonTerminal(SyntaxNodeKind.CommentGroup, newCommentGruop.toArray()))
+                    (newCommentGroup, hasRewritedChild) = getNewCommentGroup(nt, comments)
+                    newNodeImpl.add(NonTerminal(SyntaxNodeKind.CommentGroup, newCommentGroup))
                 case _ => newNodeImpl.add(child)
             }
         }

@@ -61,7 +61,7 @@ struct CodePosition {
             CodePosition(this.line, this.column + Int32(right.column), fileInfo)
         }
     }
-    
+
     operator func ==(right: CodePosition): Bool {
         if (this.fileInfo == right.fileInfo && this.line == right.line && this.column == right.column) {
             true

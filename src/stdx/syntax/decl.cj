@@ -630,12 +630,14 @@ public class EnumDecl <: Decl {
     /**
      * @brief Initialize a new EnumDecl node.
      */
-    public init(body: Body, constructors: Array<EnumConstructor>, genericConstraints: Option<GenericConstraints>, genericParams: Array<GenericParam>,
-        isNonExhaustive: Bool, name: String, superTyAnnotations: Array<TypeAnnotation>,
-        annotations!: Array<Annotation> = [], modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
+    public init(body: Body, constructors: Array<EnumConstructor>, genericConstraints: Option<GenericConstraints>,
+        genericParams: Array<GenericParam>, isNonExhaustive: Bool, name: String,
+        superTyAnnotations: Array<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        modifiers!: Array<Modifier> = [], comments!: Array<Comment> = []) {
         super(
-            SyntaxNodeImplCreator.createEnumDeclImpl(body, constructors, genericConstraints, genericParams, isNonExhaustive, name,
-                superTyAnnotations, annotations: annotations, modifiers: modifiers, comments: comments))
+            SyntaxNodeImplCreator.createEnumDeclImpl(body, constructors, genericConstraints, genericParams,
+                isNonExhaustive, name, superTyAnnotations, annotations: annotations, modifiers: modifiers,
+                comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<EnumDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -1368,9 +1370,11 @@ public open class LambdaParam <: Parameter {
     /**
      * @brief Initialize a new LambdaParam node.
      */
-    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [], comments!: Array<Comment> = []) {
+    public init(name: String, typeAnnotation: Option<TypeAnnotation>, annotations!: Array<Annotation> = [],
+        comments!: Array<Comment> = []) {
         super(
-            SyntaxNodeImplCreator.createLambdaParamImpl(name, typeAnnotation, annotations: annotations, comments: comments))
+            SyntaxNodeImplCreator.createLambdaParamImpl(name, typeAnnotation, annotations: annotations,
+                comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<LambdaParam>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -2107,8 +2111,7 @@ public class MainDecl <: Decl {
      */
     public init(body: Block, params: ParameterList, retTyAnnotation: Option<TypeAnnotation>,
         comments!: Array<Comment> = []) {
-        super(
-            SyntaxNodeImplCreator.createMainDeclImpl(body, params, retTyAnnotation, comments: comments))
+        super(SyntaxNodeImplCreator.createMainDeclImpl(body, params, retTyAnnotation, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<MainDecl>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
@@ -2479,7 +2482,8 @@ public class PropGetterOrSetter <: Decl {
     /**
      * @brief Initialize a new PropGetterOrSetter node.
      */
-    public init(block: Block, identifier: Option<String>, isGetter: Bool, annotations!: Array<Annotation> = [], comments!: Array<Comment> = []) {
+    public init(block: Block, identifier: Option<String>, isGetter: Bool, annotations!: Array<Annotation> = [],
+        comments!: Array<Comment> = []) {
         super(
             SyntaxNodeImplCreator.createPropGetterOrSetterImpl(block, identifier, isGetter, annotations: annotations,
                 comments: comments))
