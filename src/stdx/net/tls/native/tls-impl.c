@@ -578,7 +578,7 @@ static int SslShutdown(SSL* ssl, ExceptionData* exception, DynMsg* dynMsg)
     }
 
     if (result == 0) {
-        int state = DYN_SSL_get_shutdown(ssl, dynMsg);
+        unsigned int state = (unsigned int)(ssl, dynMsg);
         if ((state & SSL_SENT_SHUTDOWN) == 0) {
             return CJTLS_NEED_WRITE;
         }
