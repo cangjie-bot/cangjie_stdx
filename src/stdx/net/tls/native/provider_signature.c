@@ -96,11 +96,11 @@ static void NormalizeMd(char* name, size_t capacity)
         name[i] = (char)tolower((unsigned char)name[i]);
     }
     if (strcmp(name, "sha2-256") == 0) {
-        strncpy(name, "sha256", capacity);
+        strncpy_s(name, capacity, "sha256", capacity);
     } else if (strcmp(name, "sha2-384") == 0) {
-        strncpy(name, "sha384", capacity);
+        strncpy_s(name, capacity, "sha384", capacity);
     } else if (strcmp(name, "sha2-512") == 0) {
-        strncpy(name, "sha512", capacity);
+        strncpy_s(name, capacity, "sha512", capacity);
     }
     name[capacity - 1] = '\0';
 }
@@ -217,16 +217,17 @@ static int KeylessPssFillSalt(unsigned char* salt, size_t saltLen, DynMsg* dynMs
 static int KeylessPssComputeDigest(const EVP_MD* hashMd, const unsigned char* mhash, size_t hashLen, const unsigned char* salt, size_t saltLen,
                                    unsigned char digest[EVP_MAX_MD_SIZE], DynMsg* dynMsg)
 {
-    size_t mprimeLen = 8 + hashLen + saltLen;
+    size_t prefixZeroLen = 8;
+    size_t mprimeLen = prefixZeroLen + hashLen + saltLen;
     unsigned char* mprime = DYN_OPENSSL_secure_malloc(mprimeLen, dynMsg);
     if (!mprime) {
         KeylessCheckDynMsg(dynMsg, "CRYPTO_secure_malloc");
         return 0;
     }
-    (void)memset_s(mprime, 8, 0x00, 8);
-    (void)memcpy_s(mprime + 8, hashLen + saltLen, mhash, hashLen);
+    (void)memset_s(mprime, prefixZeroLen, 0x00, prefixZeroLen);
+    (void)memcpy_s(mprime + prefixZeroLen, hashLen + saltLen, mhash, hashLen);
     if (saltLen > 0) {
-        (void)memcpy_s(mprime + 8 + hashLen, saltLen, salt, saltLen);
+        (void)memcpy_s(mprime + prefixZeroLen + hashLen, saltLen, salt, saltLen);
     }
 
     EVP_MD_CTX* hash_ctx = DYN_EVP_MD_CTX_new(dynMsg);
@@ -490,7 +491,7 @@ static size_t RsaModulusBits(const unsigned char* n, size_t nLen)
     }
 
     unsigned char byte = n[i];
-    int leading = 0;
+    size_t leading = 0;
     while ((byte & 0x80) == 0) { // count leading zero bits in first non-zero byte
         byte <<= 1;
         ++leading;
@@ -619,14 +620,14 @@ static int KeylessSigSignInit(void* vctx, void* keydata, const OSSL_PARAM params
     }
 
     if (!c->digestName[0]) {
-        strncpy(c->digestName, "sha256", sizeof(c->digestName) - 1);
+        strncpy_s(c->digestName, DIGEST_NAME_MAX_LEN, "sha256", sizeof(c->digestName) - 1);
         c->digestName[sizeof(c->digestName) - 1] = '\0';
     }
     NormalizeMd(c->digestName, sizeof(c->digestName));
     c->mdLen = DigestLenFor(c->digestName);
 
     if (c->padMode == RSA_PKCS1_PSS_PADDING && !c->mgf1Name[0]) {
-        strncpy(c->mgf1Name, c->digestName, sizeof(c->mgf1Name) - 1);
+        strncpy_s(c->mgf1Name, MGF1_NAME_MAX_LEN, c->digestName, sizeof(c->mgf1Name) - 1);
         c->mgf1Name[sizeof(c->mgf1Name) - 1] = '\0';
     }
     return 1;
@@ -672,14 +673,14 @@ static int KeylessSigSetCtxParams(void* vctx, const OSSL_PARAM params[])
     }
 
     if ((p = DYN_OSSL_PARAM_locate_const(params, OSSL_SIGNATURE_PARAM_DIGEST, dynMsg)) && p->data_type == OSSL_PARAM_UTF8_STRING) {
-        strncpy(c->digestName, p->data, sizeof(c->digestName) - 1);
+        strncpy_s(c->digestName, DIGEST_NAME_MAX_LEN, p->data, sizeof(c->digestName) - 1);
         c->digestName[sizeof(c->digestName) - 1] = '\0';
         NormalizeMd(c->digestName, sizeof(c->digestName));
         c->mdLen = DigestLenFor(c->digestName);
     }
 
     if ((p = DYN_OSSL_PARAM_locate_const(params, OSSL_SIGNATURE_PARAM_MGF1_DIGEST, dynMsg)) && p->data_type == OSSL_PARAM_UTF8_STRING) {
-        strncpy(c->mgf1Name, p->data, sizeof(c->mgf1Name) - 1);
+        strncpy_s(c->mgf1Name, MGF1_NAME_MAX_LEN, p->data, sizeof(c->mgf1Name) - 1);
         c->mgf1Name[sizeof(c->mgf1Name) - 1] = '\0';
         NormalizeMd(c->mgf1Name, sizeof(c->mgf1Name));
     }
@@ -693,7 +694,7 @@ static int KeylessSigSetCtxParams(void* vctx, const OSSL_PARAM params[])
     }
 
     if (c->padMode == RSA_PKCS1_PSS_PADDING && c->digestName[0] && !c->mgf1Name[0]) {
-        strncpy(c->mgf1Name, c->digestName, sizeof(c->mgf1Name) - 1);
+        strncpy_s(c->mgf1Name, MGF1_NAME_MAX_LEN, c->digestName, sizeof(c->mgf1Name) - 1);
         c->mgf1Name[sizeof(c->mgf1Name) - 1] = '\0';
     }
     KeylessCheckDynMsg(dynMsg, "KeylessSigSetCtxParams");
@@ -1164,7 +1165,7 @@ static int KeylessSigSign(void* vctx, unsigned char* sig, size_t* siglen, size_t
         return 0;
     }
     if (c->digestName[0] == '\0') {
-        strncpy(c->digestName, "sha256", sizeof(c->digestName) - 1);
+        strncpy_s(c->digestName, DIGEST_NAME_MAX_LEN, "sha256", sizeof(c->digestName) - 1);
         c->digestName[sizeof(c->digestName) - 1] = '\0';
     }
     if (c->mdLen == 0) {

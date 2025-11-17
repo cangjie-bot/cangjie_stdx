@@ -28,10 +28,15 @@ static void KeylessKeyFree(KeylessKey* k)
         return;
     }
     free(k->keyId);
+    k->keyId = NULL;
     free(k->n);
+    k->n = NULL;
     free(k->e);
+    k->e = NULL;
     free(k->ecPoint);
+    k->ecPoint = NULL;
     free(k->groupName);
+    k->groupName = NULL;
     free(k);
 }
 
@@ -113,8 +118,8 @@ static int KeylessImportRsa(KeylessKey* k, const OSSL_PARAM params[])
     BIGNUM *bnN = NULL, *bnE = NULL; // bnN: modulus, bnE: public exponent
     if (DYN_OSSL_PARAM_get_BN(pN, &bnN, dynMsg) && DYN_OSSL_PARAM_get_BN(pE, &bnE, dynMsg)) {
         k->type = KEYLESS_KEY_TYPE_RSA;
-        k->nLen = DYN_BN_num_bytes(bnN, dynMsg);
-        k->eLen = DYN_BN_num_bytes(bnE, dynMsg);
+        k->nLen = (size_t)DYN_BN_num_bytes(bnN, dynMsg);
+        k->eLen = (size_t)DYN_BN_num_bytes(bnE, dynMsg);
         k->n = malloc(k->nLen);
         k->e = malloc(k->eLen);
         if (!k->n || !k->e) {
@@ -227,7 +232,8 @@ static int KeylessImport(void* keyData, int selection, const OSSL_PARAM params[]
     const OSSL_PARAM* pPub = DYN_OSSL_PARAM_locate_const(params, OSSL_PKEY_PARAM_PUB_KEY, dynMsg);
     KeylessCheckDynMsg(dynMsg, "locate OSSL_PKEY_PARAM_RSA_N or OSSL_PKEY_PARAM_PUB_KEY");
 
-    if (selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
+    unsigned int sel = (unsigned int)selection;
+    if (sel & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
         if (pN != NULL && !KeylessImportRsa(k, params)) {
             return 0;
         } else if (pPub != NULL && !KeylessImportEc(k, params)) {
@@ -285,12 +291,13 @@ static int KeylessHas(const void* keyData, int selection)
         return 0;
     }
 
-    int ok = 1;
-    if (selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
+    unsigned int ok = 1;
+    unsigned int sel = (unsigned int)selection;
+    if (sel & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
         ok &= ((k->type == KEYLESS_KEY_TYPE_RSA && k->n && k->e) || (k->type == KEYLESS_KEY_TYPE_EC && k->ecPoint));
     }
 
-    if (selection & OSSL_KEYMGMT_SELECT_PRIVATE_KEY) {
+    if (sel & OSSL_KEYMGMT_SELECT_PRIVATE_KEY) {
         /* We claim private key capability so signature/decryption operations proceed */
         ok &= 1;
     }
@@ -531,7 +538,9 @@ static const OSSL_PARAM* KeylessImportTypes(int selection)
                                         OSSL_PARAM_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME, NULL, 0),
                                         OSSL_PARAM_utf8_string("KEYLESS_ID", NULL, 0),
                                         OSSL_PARAM_END};
-    if (selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
+                                        
+    unsigned int sel = (unsigned int)selection;
+    if (sel & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
         return params;
     }
     return NULL;
@@ -551,8 +560,8 @@ static int KeylessExport(void* keyData, int selection, OSSL_CALLBACK* exportCb, 
 
     OSSL_PARAM params[6]; /* max 5 params(@see KeylessExportTypes) + end */
     size_t idx = 0;
-
-    if (selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
+    unsigned int sel = (unsigned int)selection;
+    if (sel & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
         if (k->type == KEYLESS_KEY_TYPE_RSA) {
             params[idx++] = DYN_OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_RSA_N, k->n, k->nLen, KeylessProviderGetThreadDynMsg());
             params[idx++] = DYN_OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_RSA_E, k->e, k->eLen, KeylessProviderGetThreadDynMsg());
@@ -580,7 +589,8 @@ static const OSSL_PARAM* KeylessExportTypes(int selection)
                                                      OSSL_PARAM_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME, NULL, 0),
                                                      OSSL_PARAM_utf8_string("KEYLESS_ID", NULL, 0),
                                                      OSSL_PARAM_END};
-    if (selection & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
+    unsigned int sel = (unsigned int)selection;
+    if (sel & OSSL_KEYMGMT_SELECT_PUBLIC_KEY) {
         return export_public_union;
     }
     return NULL;
