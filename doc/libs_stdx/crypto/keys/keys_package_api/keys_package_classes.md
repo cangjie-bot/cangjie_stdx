@@ -158,7 +158,7 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
@@ -292,7 +292,7 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) 对象。
+- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) 对象。
 
 异常：
 
@@ -521,7 +521,7 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
@@ -657,7 +657,7 @@ public override func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) 对象。
+- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) 对象。
 
 异常：
 
@@ -894,7 +894,7 @@ public func encodeToPem(password!: ?String): PemEntry
 
 返回值：
 
-- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
@@ -910,7 +910,7 @@ public func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
+- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) - 私钥 PEM 格式的对象。
 
 异常：
 
@@ -1044,7 +1044,7 @@ public func encodeToPem(): PemEntry
 
 返回值：
 
-- [PemEntry](../../common/crypto_common_package_api/crypto_common_package_structs.md#struct-pementry) 对象。
+- [PemEntry](../../x509/x509_package_api/x509_package_structs.md#struct-pementry) 对象。
 
 异常：
 

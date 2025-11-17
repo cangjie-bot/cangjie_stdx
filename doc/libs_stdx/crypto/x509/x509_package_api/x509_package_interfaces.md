@@ -1,12 +1,12 @@
 # 接口
 
-## interface DHParameters
+## interface DHParamters
 
 ```cangjie
-public interface DHParameters <: Key {
+public interface DHParamters <: Key {
     override func encodeToPem(): PemEntry
-    static func decodeDer(blob: DerBlob): DHParameters
-    static func decodeFromPem(text: String): DHParameters
+    static func decodeDer(blob: DerBlob): DHParamters
+    static func decodeFromPem(text: String): DHParamters
 }
 ```
 
@@ -19,7 +19,7 @@ public interface DHParameters <: Key {
 ### static func decodeDer(DerBlob)
 
 ```cangjie
-static func decodeDer(blob: DerBlob): DHParameters
+static func decodeDer(blob: DerBlob): DHParamters
 ```
 
 功能：将 DH 密钥参数从 DER 格式解码。
@@ -35,23 +35,23 @@ static func decodeDer(blob: DerBlob): DHParameters
 
 返回值：
 
-- [DHParameters](x509_package_interfaces.md#interface-dhparameters) - 由 DER 格式解码出的 DH 密钥参数。
+- [DHParamters](x509_package_interfaces.md#interface-dhparamters) - 由 DER 格式解码出的 DH 密钥参数。
 
 异常：
 
-- [X509Exception](x509_package_exceptions.md#class-x509exception) - 当 DER 格式的 DH 秘钥参数内容不正确，无法解析时抛出异常。
+- [X509Exception](x509_package_exceptions.md#class-x509exception) - 当 DER 格式的 DH 密钥参数内容不正确，无法解析时抛出异常。
 
 ### static func decodeFromPem(String)
 
 ```cangjie
-static func decodeFromPem(text: String): DHParameters
+static func decodeFromPem(text: String): DHParamters
 ```
 
 功能：将 DH 密钥参数从 PEM 格式解码。
 
 > **说明：**
 >
-> - PEM 是用 ASCLL(BASE64)编码的证书。
+> PEM 是用 ASCLL(BASE64) 编码的证书。
 
 参数：
 
@@ -59,11 +59,11 @@ static func decodeFromPem(text: String): DHParameters
 
 返回值：
 
-- [DHParameters](x509_package_interfaces.md#interface-dhparameters) - 由 PEM 格式解码出的 DH 密钥参数。
+- [DHParamters](x509_package_interfaces.md#interface-dhparamters) - 由 PEM 格式解码出的 DH 密钥参数。
 
 异常：
 
-- [X509Exception](x509_package_exceptions.md#class-x509exception) - 字符流不符合 PEN 格式，或头文件不符合 DH 秘钥参数头标准（"-----BEGIN DH PARAMETERS-----"）时抛出异常。
+- [X509Exception](x509_package_exceptions.md#class-x509exception) - 字符流不符合 PEM 格式，或文件头不符合 DH 密钥参数头标准（"-----BEGIN DH PARAMETERS-----"）时抛出异常。
 
 ### func encodeToPem()
 
@@ -88,7 +88,7 @@ public interface Key <: ToString {
 }
 ```
 
-功能：密钥接口。公钥用于签名验证或加密，私钥用于签名或解密，公钥和私钥必须相互匹配并形成一对。该类为密钥类，无具体实现，供 [PrivateKey](x509_package_interfaces.md#interface-privatekey)/[PublicKey](x509_package_interfaces.md#interface-publickey) 及用户扩展接口。
+功能：提供密钥接口。公钥用于签名验证或加密，私钥用于签名或解密，公钥和私钥必须相互匹配并形成一对。该类为密钥类，无具体实现，供 [PrivateKey](x509_package_interfaces.md#interface-privatekey)/[PublicKey](x509_package_interfaces.md#interface-publickey) 及用户扩展接口。
 
 父类型：
 
@@ -233,7 +233,7 @@ static func decodeFromPem(text: String): PrivateKey
 
 异常：
 
-- [X509Exception](x509_package_exceptions.md#class-x509exception) - 字符流不符合 PEM 格式，或头文件不符合公钥头标准时抛出异常。
+- [X509Exception](x509_package_exceptions.md#class-x509exception) - 字符流不符合 PEM 格式，或文件头不符合公钥头标准时抛出异常。
 
 ### static func decodeFromPem(String, ?String)
 
@@ -316,7 +316,7 @@ func encodeToPem(password!: ?String): PemEntry
 
 ```cangjie
 public interface PublicKey <: Key {
-    func encodeToPem(): PemEntry
+    override func encodeToPem(): PemEntry
     static func decodeDer(blob: DerBlob): PublicKey
     static func decodeFromPem(text: String): PublicKey
 }
@@ -366,12 +366,12 @@ static func decodeFromPem(text: String): PublicKey
 
 异常：
 
-- [X509Exception](x509_package_exceptions.md#class-x509exception) - 字符流不符合 PEM 格式，或头文件不符合公钥头标准时抛出异常。
+- [X509Exception](x509_package_exceptions.md#class-x509exception) - 字符流不符合 PEM 格式，或文件头不符合公钥头标准时抛出异常。
 
 ### func encodeToPem()
 
 ```cangjie
-func encodeToPem(): PemEntry
+override func encodeToPem(): PemEntry
 ```
 
 功能：将公钥编码为 PEM 格式。

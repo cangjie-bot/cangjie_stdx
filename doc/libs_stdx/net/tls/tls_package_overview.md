@@ -45,7 +45,7 @@ tls 包用于进行安全加密的网络通信，提供创建 TLS 服务器、�
 | [SignatureSchemeType](./tls_package_api/tls_package_enums.md#enum-signatureschemetype)                 | 加密算法类型，用于保护网络通信的安全性和隐私性。                   |
 | [SignatureType](./tls_package_api/tls_package_enums.md#enum-signaturetype)                             | 签名算法类型，用于认证真实性。                                     |
 | [TlsClientIdentificationMode](./tls_package_api/tls_package_enums.md#enum-tlsclientidentificationmode) | 服务端对客户端证书的认证模式。                                     |
-| [TlsVersion](./tls_package_api/tls_package_enums.md#enum-tlsversion) | TSL 协议文本。                                     |
+| [TlsVersion](./tls_package_api/tls_package_enums.md#enum-tlsversion) | TLS 协议文本。                                     |
 ### 结构体
 
 | 结构体名                                                                           | 功能               |

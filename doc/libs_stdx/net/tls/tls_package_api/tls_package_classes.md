@@ -51,7 +51,7 @@ public override func toString(): String
 ### operator func !=(TlsSessionContext)
 
 ```cangjie
-public override operator func !=(other: TlsServerSession): Bool
+public override operator func !=(other: TlsSessionContext): Bool
 ```
 
 功能：判断两 [TlsSessionContext](tls_package_classes.md#class-tlssessioncontext) 实例名称是否不同。
@@ -83,7 +83,7 @@ public override operator func ==(other: TlsSessionContext): Bool
 ## class TlsSocket
 
 ```cangjie
-public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable
+public class TlsSocket <: StreamingSocket & ToString &Equatable<TlsSocket> & Hashable
 ```
 
 功能：[TlsSocket](tls_package_classes.md#class-tlssocket) 用于在客户端及服务端间创建加密传输通道。
@@ -93,6 +93,7 @@ public class TlsSocket <: StreamingSocket & Equatable<TlsSocket> & Hashable
 - StreamingSocket
 - Equatable\<[TlsSocket](#class-tlssocket)>
 - Hashable
+- ToString
 
 ### prop alpnProtocolName
 
@@ -106,7 +107,7 @@ public prop alpnProtocolName: ?String
 
 异常：
 
-- [TlsException](../common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 - IllegalMemoryException - 当内存申请失败时，抛出异常。
 
 ### prop cipherSuite
@@ -119,13 +120,13 @@ public prop cipherSuite: CipherSuite
 
 > **说明：**
 >
-> 密码套件包含加密算法，用于消息认证的散列函数，秘钥交换算法。
+> 密码套件包含加密算法，用于消息认证的散列函数，密钥交换算法。
 
 类型：[CipherSuite](tls_package_structs.md#struct-ciphersuite)
 
-异常:
+异常：
 
-[TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 
 ### prop clientCertificate
 
@@ -143,7 +144,7 @@ public prop clientCertificate: ?Array<X509Certificate>
 
 异常：
 
-[TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 
 
 ### prop domain
@@ -156,7 +157,7 @@ public prop domain: ?String
 
 异常：
 
-[TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 
 类型：?String
 
@@ -181,7 +182,7 @@ public override prop localAddress: SocketAddress
 public prop peerCertificate: ?Array<X509Certificate>
 ```
 
-功能：获取对端证书。在客户端获取时同[serverCertificate](./tls_package_classes.md#prop-clientCertificate),在服务端获取时同[clientCertificate](./tls_package_classes.md#prop-serverCertificate)。
+功能：获取对端证书。在客户端获取时同[serverCertificate](./tls_package_classes.md#prop-serverCertificate),在服务端获取时同[clientCertificate](./tls_package_classes.md#prop-clientCertificate)。
 
 > **注意：**
 >
@@ -189,12 +190,14 @@ public prop peerCertificate: ?Array<X509Certificate>
 >
 > - 通过session 机制恢复连接时，双方都不发送证书，该接口行为如下：
 >
->   - 在服务端，如果被恢复飞原始连接建立时获取了对端证书，服务端将缓存对端证书，并在次数获取到缓存的证书；
+>   - 在服务端，如果被恢复的原始连接建立时获取了对端证书，服务端将缓存对端证书，并在此处获取到缓存的证书；
 >   - 在客户端，不缓存原始连接的对端证书，此处将无法获取对端证书，返回 None。
+
+类型：?Array<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)>
 
 异常：
 
-- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 
 ### prop readTimeout
 
@@ -230,20 +233,20 @@ public override prop remoteAddress: SocketAddress
 ### prop serverCertificate
 
 ```cangjie
-public prop serverCertificate: ?Array<X509Certificate>
+public prop serverCertificate: Array<X509Certificate>
 ```
 
 功能：服务器证书链由服务器提供或在服务器配置中预先配置。在服务端获取时为本端证书，在客户端获取时为对端证书。
 
 >**注意：**
 >
-> 获取对端证书时，如果对端没有发送证书，该接口可能获取失败，返回 None，详见[clientCertificate](./tls_package_classes.md#prop-clientCertificate)。
+> 获取对端证书时，如果对端没有发送证书，该接口可能获取失败，返回 None，详见[peerCertificate](./tls_package_classes.md#prop-peercertificate)。
 
 类型：Array<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)>
 
 异常：
 
-[TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 
 ### prop session
 
@@ -255,13 +258,13 @@ public prop session: ?TlsSession
 
 >**说明：**
 >
-> 服务器不做捕获因此始终为 None。
+> 服务端不做捕获因此始终为 None。
 
-类型：?[TlsSession](tls_package_classes.md#class-tlssession)
+类型：?[TlsSession](tls_package_structs.md#struct-tlssession)
 
 异常：
 
-[TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手，抛出异常。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手，抛出异常。
 
 ### prop socket
 
@@ -285,11 +288,11 @@ public prop tlsVersion: TlsVersion
 
 功能：读取协商到的 TLS 版本。
 
-类型：[TlsVersion](tls_package_enmums.md#enum-tlsversion)
+类型：[TlsVersion](tls_package_enums.md#enum-tlsversion)
 
 异常：
 
-[TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
+- [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 
 ### prop writeTimeout
 
@@ -322,7 +325,7 @@ public static func client(
 参数：
 
 - socket: StreamingSocket - 已连接到服务端的客户端 TCP 套接字。
-- session!: ?[TlsSession](tls_package_structs.md#class-tlssession) - TLS 会话 id，若存在可用的 TLS 会话， 则可通过该 id 恢复历史 TLS 会话，省去 TLS 建立连接时间，但使用该会话依然可能协商失败。默认为 `None`。
+- session!: ?[TlsSession](tls_package_structs.md#struct-tlssession) - TLS 会话 id，若存在可用的 TLS 会话， 则可通过该 id 恢复历史 TLS 会话，省去 TLS 建立连接时间，但使用该会话依然可能协商失败。默认为 `None`。
 - clientConfig!: [TlsClientConfig](tls_package_structs.md#struct-tlsclientconfig) - 客户端配置，默认为 [TlsClientConfig](tls_package_structs.md#struct-tlsclientconfig)()。
 
 返回值：

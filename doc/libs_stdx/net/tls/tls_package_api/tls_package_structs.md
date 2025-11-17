@@ -112,6 +112,7 @@ public mut prop alpnProtocolsList: Array<String>
 类型：Array\<String>
 
 异常：
+
 - IllegalArgumentException - 列表元素有 '\0' 字符时，抛出异常。
 
 ### prop cipherSuitesV1_2
@@ -125,6 +126,7 @@ public mut prop cipherSuitesV1_2: ?Array<String>
 类型：?Array\<String>
 
 异常：
+
 - IllegalArgumentException - 列表元素有 '\0' 字符时，抛出异常。
 
 ### prop cipherSuitesV1_3
@@ -138,6 +140,7 @@ public mut prop cipherSuitesV1_3: ?Array<String>
 类型：?Array\<String>
 
 异常：
+
 - IllegalArgumentException - 列表元素有 '\0' 字符时，抛出异常。
 
 ### prop clientCertificate
@@ -161,6 +164,7 @@ public mut prop domain: ?String
 类型：?String
 
 异常：
+
 - IllegalArgumentException - 参数有 '\0' 字符时，抛出异常。
 
 ### prop maxVersion
@@ -172,7 +176,20 @@ public mut prop maxVersion: TlsVersion
 功能：支持的 TLS 最大的版本。
 
 > **注意**
->
+> 
+> 当仅设置`minVersion`，而未设置`maxVersion`，或设置的`minVersion`高于`maxVersion`，将会在握手阶段抛出[TlsException](tls_package_exceptions.md#class-tlsexception)。
+
+类型：[TlsVersion](tls_package_enums.md#enum-tlsversion)
+
+### prop minVersion
+
+```cangjie
+public mut prop minVersion: TlsVersion
+```
+
+功能：支持的 TLS 最小版本。
+
+> **注意**
 > 当仅设置`minVersion`，而未设置`maxVersion`，或设置的`minVersion`高于`maxVersion`，将会在握手阶段抛出[TlsException](tls_package_exceptions.md#class-tlsexception)。
 
 类型：[TlsVersion](tls_package_enums.md#enum-tlsversion)
@@ -183,7 +200,7 @@ public mut prop maxVersion: TlsVersion
 public mut prop securityLevel: Int32
 ```
 
-功能：指定客户端的安全级别，默认值为2，可选参数值在 0-5内，参数值含义参见openssl-SSL_CTX_set_security_level说明
+功能：指定客户端的安全级别，默认值为2，可选参数值在 0-5内，参数值含义参见openssl-SSL_CTX_set_security_level说明。
 
 类型：Int32
 
@@ -222,7 +239,7 @@ public struct TlsServerConfig {
 ### prop clientIdentityRequired
 
 ```cangjie
-public mut prop clientIdentityRequired: TlsClientIdentificationMode = Disabled
+public var clientIdentityRequired: TlsClientIdentificationMode = Disabled
 ```
 
 功能：设置或获取服务端要求客户端的认证模式，默认值为不要求客户端认证服务端证书，也不要求客户端发送本端证书。
@@ -260,6 +277,7 @@ public mut prop cipherSuitesV1_2: Array<String>
 类型：Array\<String>
 
 异常：
+
 - IllegalArgumentException - 列表元素有 '\0' 字符时，抛出异常。
 
 ### prop cipherSuitesV1_3
@@ -273,17 +291,18 @@ public mut prop cipherSuitesV1_3: Array<String>
 类型：Array\<String>
 
 异常：
+
 - IllegalArgumentException - 列表元素有 '\0' 字符时，抛出异常。
 
 ### prop dhParameters
 
 ```cangjie
-public mut prop dhParameters: ?DHParameters
+public mut prop dhParameters: ?DHParamters
 ```
 
 功能：指定服务端的 DH 密钥参数，默认为 `None`， 默认情况下使用 openssl 自动生成的参数值。
 
-类型：?[DHParameters](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-dhparameters)
+类型：?[DHParamters](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-dhparamters)
 
 ### prop maxVersion
 
@@ -294,7 +313,7 @@ public mut prop maxVersion: TlsVersion
 功能：支持的 TLS 最大版本。
 
 > **注意**
->
+> 
 > 当仅设置`maxVersion`，而未设置`minVersion`，或设置的`maxVersion`低于`minVersion`，将会在握手阶段抛出[TlsException](tls_package_exceptions.md#class-tlsexception)。
 
 类型：[TlsVersion](tls_package_enums.md#enum-tlsversion)
@@ -304,6 +323,7 @@ public mut prop maxVersion: TlsVersion
 ```cangjie
 public mut prop minVersion: TlsVersion
 ```
+
 功能：支持的 TLS 最小版本。
 
 > **注意**
@@ -326,7 +346,7 @@ public mut prop securityLevel: Int32
 
 - IllegalArgumentException - 当配置值不在 0-5 范围内时，抛出异常。
 
-### prop serverCertificate(Array<X509Certificate>, PrivateKey)
+### prop serverCertificate(Array\<X509Certificate>, PrivateKey)
 
 ```cangjie
 public mut prop serverCertificate(Array<X509Certificate>, PrivateKey)
@@ -363,62 +383,75 @@ public init(certChain: Array<X509Certificate>, certKey: PrivateKey)
 - certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - 证书对象。
 - certKey: [PrivateKey](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-privatekey) - 私钥对象。
 
-### struct TlsSession
+## struct TlsSession
 
 ```cangjie
 public struct TlsSession <: Equatable<TlsSession> & ToString & Hashable
 ```
+
 功能：此结构体表示已建立的客户端会话。此结构体实例用户不可创建，其内部结构对用户不可见。
 
 当客户端 TLS 握手成功后，将会生成一个会话，当连接因一些原因丢失后，客户端可以通过这个会话 id 复用此次会话，省略握手流程。
 
 父类型：
 
-Equatable\<[TlsSession](#struct-tlssession)>
-ToString
-Hashable
+- Equatable\<[TlsSession](#struct-tlssession)>
+- ToString
+- Hashable
 
 ### func hashCode()
 
 ```cangjie
 public override func hashCode(): Int64
 ```
-功能：生成会话id的哈希值
+
+功能：生成会话id的哈希值。
 
 返回值：
+
 - Int64 - 会话id的哈希值。
 
 ### func toString()
+
 ```cangjie
 public override func toString(): String
 ```
+
 功能：生成会话id的字符串。
 
 返回值：
+
 - String - [TlsSession](tls_package_structs.md#struct-tlssession) (会话 id 字符串)。
 
-### func !=(TlsSession)
+### operator func !=(TlsSession)
+
 ```cangjie
 public override operator func !=(other: TlsSession): Bool
 ```
+
 功能：判断会话 id 是否不同。
 
 参数：
+
 - other: [TlsSession](tls_package_structs.md#struct-tlssession) - 待比较的会话对象。
 
 返回值：
+
 - Bool - 若会话 id 不同，则返回 `true`，否则返回 `false`。
 
-### func ==(TlsSession)
+### operator func ==(TlsSession)
 
 ```cangjie
 public override operator func ==(other: TlsSession): Bool
 ```
+
 功能：判断会话 id 是否相同。
 
 参数：
+
 - other: [TlsSession](tls_package_structs.md#struct-tlssession) - 待比较的会话对象。
 
 返回值：
+
 - Bool - 若会话 id 相同，则返回 `true`，否则返回 `false`。
 

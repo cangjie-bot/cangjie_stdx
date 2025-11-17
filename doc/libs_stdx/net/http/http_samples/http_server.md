@@ -211,7 +211,6 @@ main() {
 import std.io.*
 import std.fs.*
 import stdx.net.tls.*
-import stdx.net.tls.common.*
 import stdx.crypto.x509.{X509Certificate, PrivateKey}
 import stdx.net.http.*
 

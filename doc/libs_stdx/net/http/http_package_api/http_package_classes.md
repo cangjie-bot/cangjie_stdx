@@ -932,9 +932,7 @@ public init(name: String, value: String, expires!: ?DateTime = None, maxAge!: ?I
     domain!: String = "", path!: String = "", secure!: Bool = false, httpOnly!: Bool = false)
 ```
 
-功能：[Cookie](http_package_classes.md#class-cookie) 构造器。
-
-该构造器会检查传入的各项属性是否满足协议要求，如果不满足则会产生 IllegalArgumentException。具体要求见 [RFC 6265 4.1.1.](https://httpwg.org/specs/rfc6265.html#sane-set-cookie-syntax)。
+功能：[Cookie](http_package_classes.md#class-cookie) 构造器。该构造器会检查传入的各项属性是否满足协议要求，如果不满足则会产生 IllegalArgumentException。具体要求见 [RFC 6265 4.1.1.](https://httpwg.org/specs/rfc6265.html#sane-set-cookie-syntax)。
 
 > **注意：**
 >
@@ -2270,11 +2268,11 @@ public class HttpResponsePusher
 
 > **说明：**
 >
-> - 如果服务器收到请求后，认为客户端后续还需要某些关联资源，可以将其提前推送到客户端；
-> - 服务端推送包括推送请求和推送响应；
-> - 启用服务端推送需要先调用 push 函数发送推送请求，并向服务器注册该请求对应的 handler，用以生成推送响应；
-> - 客户端可设置拒绝服务端推送；
-> - 不允许嵌套推送，即不允许在推送请求对应的 handler 中再次推送。嵌套推送情况下，服务端将不执行推送，并打印日志进行提示。
+> 如果服务器收到请求后，认为客户端后续还需要某些关联资源，可以将其提前推送到客户端；
+> 服务端推送包括推送请求和推送响应；
+> 启用服务端推送需要先调用 push 函数发送推送请求，并向服务器注册该请求对应的 handler，用以生成推送响应；
+> 客户端可设置拒绝服务端推送；
+> 不允许嵌套推送，即不允许在推送请求对应的 handler 中再次推送。嵌套推送情况下，服务端将不执行推送，并打印日志进行提示。
 
 ### static func getPusher(HttpContext)
 
@@ -2318,9 +2316,9 @@ public class HttpResponseWriter {
 
 > **说明：**
 >
-> - 第一次调用 write 函数时，将立即发送 header 和通过参数传入的 body，此后每次调用 write，发送通过参数传入的 body。
-> - 对于 HTTP/1.1，如果设置了 transfer-encoding: chunked，用户每调用一次 write，将发送一个 chunk。
-> - 对于 HTTP/2，用户每调用一次 write，将把指定数据封装并发出。
+> 第一次调用 write 函数时，将立即发送 header 和通过参数传入的 body，此后每次调用 write，发送通过参数传入的 body。
+> 对于 HTTP/1.1，如果设置了 transfer-encoding: chunked，用户每调用一次 write，将发送一个 chunk。
+> 对于 HTTP/2，用户每调用一次 write，将把指定数据封装并发出。
 
 ### HttpResponseWriter(HttpContext)
 
@@ -2408,118 +2406,6 @@ public abstract class ProtocolService
 ```
 
 功能：Http 协议服务实例，为单个客户端连接提供 Http 服务，包括对客户端 request 报文的解析、 request 的分发处理、 response 的发送等。
-
-### prop distributor
-
-```cangjie
-protected prop distributor: HttpRequestDistributor
-```
-
-功能：获取请求分发器，请求分发器会根据 url 将请求分发给对应的 handler。
-
-类型：[HttpRequestDistributor](http_package_interfaces.md#interface-httprequestdistributor)
-
-### prop httpKeepAliveTimeout
-
-```cangjie
-protected prop httpKeepAliveTimeout: Duration
-```
-
-功能：HTTP/1.1 专用，获取服务器设定的保持长连接的超时时间。
-
-类型：Duration
-
-### prop logger
-
-```cangjie
-protected prop logger: Logger
-```
-
-功能：获取服务器日志记录器，设置 logger.level 将立即生效，记录器应该是线程安全的。
-
-类型：[Logger](../../../log/log_package_api/log_package_classes.md#class-logger)
-
-### prop maxRequestBodySize
-
-```cangjie
-protected prop maxRequestBodySize: Int64
-```
-
-功能：获取服务器设定的读取请求的请求体最大值，仅对于 HTTP/1.1 且未设置 "Transfer-Encoding: chunked" 的请求生效。
-
-类型：Int64
-
-### prop maxRequestHeaderSize
-
-```cangjie
-protected prop maxRequestHeaderSize: Int64
-```
-
-功能：获取服务器设定的读取请求的请求头最大值。仅对 HTTP/1.1 生效，HTTP/2 中有专门的配置 maxHeaderListSize。
-
-类型：Int64
-
-### prop readHeaderTimeout
-
-```cangjie
-protected prop readHeaderTimeout: Duration
-```
-
-功能：获取服务器设定的读取请求头的超时时间。
-
-类型：Duration
-
-### prop readTimeout
-
-```cangjie
-protected prop readTimeout: Duration
-```
-
-功能：获取服务器设定的读取整个请求的超时时间。
-
-类型：Duration
-
-### prop server
-
-```cangjie
-protected open mut prop server: Server
-```
-
-功能：返回 [Server](#class-server) 实例，提供默认实现，设置为绑定的 [Server](#class-server) 实例。
-
-### prop writeTimeout
-
-```cangjie
-protected prop writeTimeout: Duration
-```
-
-功能：获取服务器设定的写响应的超时时间。
-
-类型：Duration
-
-### func close()
-
-```cangjie
-protected open func close(): Unit
-```
-
-功能：强制关闭连接，提供默认实现，无任何行为。
-
-### func closeGracefully()
-
-```cangjie
-protected open func closeGracefully(): Unit
-```
-
-功能：优雅关闭连接，提供默认实现，无任何行为。
-
-### func serve()
-
-```cangjie
-protected func serve(): Unit
-```
-
-功能：处理来自客户端连接的请求，不提供默认实现。
 
 ## class RedirectHandler
 
@@ -2820,7 +2706,7 @@ public func getTlsConfig(): ?TlsServerConfig
 
 返回值：
 
-- ?[TlsServerConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsserverconfig)
+- ?[TlsServerConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsserverconfig) - 服务端设定的 TLS 层配置，如果没有设置则返回 None。
 
 ### func onShutdown(() -> Unit)
 

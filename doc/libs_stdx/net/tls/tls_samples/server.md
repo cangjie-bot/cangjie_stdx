@@ -11,7 +11,7 @@
 import std.io.*
 import std.fs.{File, OpenMode}
 import std.net.{TcpServerSocket, TcpSocket}
-import stdx.crypto.x509.{PX509Certificate, PrivateKey}
+import stdx.crypto.x509.{X509Certificate, PrivateKey}
 import stdx.net.tls.*
 
 // 证书及私钥路径，用户需自备

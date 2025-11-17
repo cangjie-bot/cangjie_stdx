@@ -443,6 +443,14 @@ public enum TlsVersion <: ToString {
 
 - ToString
 
+### Unknown
+
+```cangjie
+Unknown
+```
+
+功能：表示未知协议版本。
+
 ### V1_2
 
 ```cangjie

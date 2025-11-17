@@ -298,12 +298,12 @@ Exceptions:
 ### prop dhParameters
 
 ```cangjie
-public mut prop dhParameters: ?DHParameters
+public mut prop dhParameters: ?DHParamters
 ```
 
 Function: Specifies the server's DH key parameters. Default is `None`, in which case OpenSSL auto-generated parameter values are used.
 
-Type: ?[DHParameters](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-dhparameters)
+Type: ?[DHParamters](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-dhparamters)
 
 ### prop maxVersion
 
