@@ -27,7 +27,7 @@ class SyntaxNodeImplTranslator {
     static func translate(root: SyntaxNodeImpl, startPos: CodePosition, parent: ?SyntaxTreeNode): ?SyntaxTreeNode {
         match (root.kind) {
             case SyntaxNodeKind.File => SyntaxNodeImplTranslator().transFileNode(root, startPos.filePath, parent: parent)
-            case _ =>  SyntaxNodeImplTranslator().transNode(root, startPos, parent)
+            case _ => SyntaxNodeImplTranslator().transNode(root, startPos, parent)
         }
     }
 
@@ -76,12 +76,12 @@ class SyntaxNodeImplTranslator {
             case nt: NonTerminal =>
                 var beginPos = startPos
                 for (child in nt.children) {
+                    if (child.kind == SyntaxNodeKind.Modifier && isForeignModifier(child)) {
+                        continue
+                    }
                     match (child.kind) {
                         case SyntaxNodeKind.NewlineToken | SyntaxNodeKind.SpaceToken => beginPos += child.offset
                         case _ =>
-                            if (child.kind == SyntaxNodeKind.Modifier && isForeignModifier(child)) {
-                                continue
-                            }
                             addList<T>(result, transNode(child, beginPos, parent))
                             beginPos += child.offset
                     }
@@ -454,19 +454,21 @@ class SyntaxNodeImplTranslator {
         if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.LSquareToken)) {
             lSquarePos = startPos + lp.offset
             lp.offset.move(v.offset)
-            while (!lp.look(SyntaxNodeKind.RSquareToken)) {
-                if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.Argument)) {
-                    argumentPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
+        }
+        while (!lSquarePos.isNone() && !lp.look(SyntaxNodeKind.RSquareToken)) {
+            if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.Argument)) {
+                argumentPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
+                lp.offset.move(v.offset)
+                if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.CommaToken)) {
+                    commasPos.add(startPos + lp.offset)
                     lp.offset.move(v.offset)
-                    if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.CommaToken)) {
-                        commasPos.add(startPos + lp.offset)
-                        lp.offset.move(v.offset)
-                    }
-                } else {
-                    // note: attr not designed
-                    lp.offset.move(lp.consume().getOrThrow().offset)
                 }
+            } else {
+                // note: attr not designed
+                lp.offset.move(lp.consume().getOrThrow().offset)
             }
+        }
+        if (lSquarePos.isSome()) {
             rSquarePos = startPos + lp.offset
         }
 
@@ -896,9 +898,9 @@ class SyntaxNodeImplTranslator {
         var kind = FuncKind.PrimaryConstructor
         var funcKindKeyWordPos: Option<CodePosition> = None
         let mlp = LocalParser(modifierList.children)
-        while (!mlp.isEnd() && let Some(modifier) <- mlp.consume()) {
+        while (let Some(modifier) <- mlp.getNode()) {
             let mp = LocalParser((modifier as NonTerminal).getOrThrow().children)
-            while (!mp.isEnd() && let Some(vm) <- mp.consume()) {
+            while (let Some(vm) <- mp.getNode()) {
                 match (vm.kind) {
                     case SyntaxNodeKind.ForeignToken =>
                         kind = FuncKind.Foreign
@@ -1395,9 +1397,9 @@ class SyntaxNodeImplTranslator {
     private func transStaticInitModifierList(startPos: CodePosition, modifierList: NonTerminal, lp: LocalParser) {
         var staticKeyWordPos: CodePosition = CodePosition()
         let mlp = LocalParser(modifierList.children)
-        while (!mlp.isEnd() && let Some(modifier) <- mlp.consume()) {
+        while (let Some(modifier) <- mlp.getNode()) {
             let mp = LocalParser((modifier as NonTerminal).getOrThrow().children)
-            while (!mp.isEnd() && let Some(vm) <- mp.consume()) {
+            while (let Some(vm) <- mp.getNode()) {
                 match (vm.kind) {
                     case SyntaxNodeKind.StaticToken =>
                         staticKeyWordPos = startPos + lp.offset + mlp.offset + mp.offset
@@ -3969,6 +3971,14 @@ class LocalParser {
             fail("expect node but empty")
         }
         ret
+    }
+
+    // consume one node, can be empty.
+    func getNode(): ?SyntaxNodeImpl {
+        if (!isEnd()) {
+            return consume()
+        }
+        return None
     }
 
     // consume one token with kind.

@@ -268,7 +268,9 @@ public class MacroExpandExpr <: Expr {
      * @brief Initialize node with callee, attributes and inputs.
      */
     public init(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput, comments!: Array<Comment> = []) {
-        super(SyntaxNodeImplCreator.createMacroExpandExprImpl(calleeMacro, macroAttrs, macroInputs, comments: comments))
+        super(
+            unsafe { SyntaxNodeImplCreator.createMacroExpandExprImpl(calleeMacro, macroAttrs, macroInputs,
+                comments: comments) })
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<MacroExpandExpr>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()

@@ -87,7 +87,7 @@ class NonTerminal <: SyntaxNodeImpl {
         match (kind) {
             // Handle NonTerminal node that converts to a single Token
             case SyntaxNodeKind.RuneLiteral | SyntaxNodeKind.LineStringLiteral | SyntaxNodeKind.MultiLineStringLiteral
-               | SyntaxNodeKind.MultiLineRawStringLiteral => return [this]
+                | SyntaxNodeKind.MultiLineRawStringLiteral => return [this]
             case _ => ()
         }
         let res = ArrayList<SyntaxNodeImpl>()
