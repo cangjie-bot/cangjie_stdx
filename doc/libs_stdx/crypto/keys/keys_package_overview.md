@@ -35,8 +35,6 @@ keys 包提供非对称加密和签名算法，包括 RSA 和 SM2 非对称加�
 | --------------------------------------------------------------------------------------- | ------------------------------ |
 | [ECDSAPrivateKey](./keys_package_api/keys_package_classes.md#class-ecdsaprivatekey)     | ECDSA私钥类。                  |
 | [ECDSAPublicKey](./keys_package_api/keys_package_classes.md#class-ecdsapublickey)       | ECDSA公钥类。                  |
-| [GeneralPrivateKey](./keys_package_api/keys_package_classes.md#class-generalprivatekey) | 通用的私钥参数加解密功能实现。 |
-| [GeneralPublicKey](./keys_package_api/keys_package_classes.md#class-generalpublickey)   | 通用的公钥参数加解密功能实现。 |
 | [RSAPrivateKey](./keys_package_api/keys_package_classes.md#class-rsaprivatekey)         | RSA私钥类。                    |
 | [RSAPublicKey](./keys_package_api/keys_package_classes.md#class-rsapublickey)           | RSA公钥类。                    |
 | [SM2PrivateKey](./keys_package_api/keys_package_classes.md#class-sm2privatekey)         | SM2私钥类。                    |

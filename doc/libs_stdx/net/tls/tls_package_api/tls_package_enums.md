@@ -1,5 +1,49 @@
 # 枚举
 
+## enum CertificateVerifyMode
+
+```cangjie
+public enum CertificateVerifyMode {
+    | CustomCA(Array<X509Certificate>)
+    | Default
+    | TrustAll
+}
+```
+
+功能：对证书验证的处理模式。
+
+> **说明：**
+>
+> CustomCA 模式可使用用户配置的证书地址，适用于用户证书无法设置为系统证书的场景。
+>
+> 证书认证模式，TCP 连接建立成功后，客户端和服务端可交换证书，Default 模式使用系统证书。
+>
+> 在开发测试阶段，可使用 TrustAll 模式，该模式表示本端不作对对端证书的校验。此模式本端信任任意建立连接对象，一般仅在开发测试阶段使用。
+
+### CustomCA(Array\<X509Certificate>)
+
+```cangjie
+CustomCA(Array<X509Certificate>)
+```
+
+功能：表示根据提供的 CA 列表与系统 CA 进行验证。
+
+### Default
+
+```cangjie
+Default
+```
+
+功能：表示默认验证模式，根据系统 CA 验证证书。
+
+### TrustAll
+
+```cangjie
+TrustAll
+```
+
+功能：表示信任所有证书。
+
 ## enum SignatureAlgorithm
 
 ```cangjie
@@ -382,3 +426,55 @@ Required
 ```
 
 功能：表示服务端校验客户端证书，并且要求客户端必须提供证书和公钥，即双向认证。
+
+## enum TlsVersion
+
+```cangjie
+public enum TlsVersion <: ToString {
+    | V1_2
+    | V1_3
+    | Unknown
+}
+```
+
+功能：TLS 协议版本。
+
+父类型：
+
+- ToString
+
+### Unknown
+
+```cangjie
+Unknown
+```
+
+功能：表示未知协议版本。
+
+### V1_2
+
+```cangjie
+V1_2
+```
+
+功能：表示 TLS 1.2 版本。
+
+### V1_3
+
+```cangjie
+V1_3
+```
+
+功能：表示 TLS 1.3 版本。
+
+### func toString()
+
+```cangjie
+public override func toString(): String
+```
+
+功能：返回当前 [TlsVersion](tls_package_enums.md#enum-tlsversion) 的字符串表示。
+
+返回值：
+
+- String - 当前 [TlsVersion](tls_package_enums.md#enum-tlsversion) 的字符串表示。

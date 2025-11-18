@@ -60,7 +60,7 @@ public init(key: Array<Byte>, digest: () -> Digest)
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - key 值为空时，抛出异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - key 值为空时，抛出异常。
 
 ### init(Array\<Byte>, HashType)
 
@@ -77,7 +77,7 @@ public init(key: Array<Byte>, algorithm: HashType)
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - key 值为空时，抛出异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - key 值为空时，抛出异常。
 
 ### static func equal(Array\<Byte>, Array\<Byte>)
 
@@ -110,7 +110,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -126,7 +126,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -138,7 +138,7 @@ public func reset(): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 当内部错误，重置失败，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 当内部错误，重置失败，抛此异常。
 
 ### func write(Array\<Byte>)
 
@@ -154,7 +154,7 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 当 buffer 为空、finish 已经调用生成信息摘要场景，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 当 buffer 为空、finish 已经调用生成信息摘要场景，抛此异常。
 
 ## class MD5
 
@@ -222,7 +222,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -238,7 +238,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -262,7 +262,7 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
 
 ## class SHA1
 
@@ -330,7 +330,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -346,7 +346,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -370,7 +370,7 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
 
 ## class SHA224
 
@@ -438,7 +438,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -454,7 +454,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -478,7 +478,7 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
 
 ## class SHA256
 
@@ -546,7 +546,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -562,7 +562,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -586,7 +586,7 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
 
 ## class SHA384
 
@@ -654,7 +654,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -670,7 +670,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -694,7 +694,7 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
 
 ## class SHA512
 
@@ -762,7 +762,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -778,7 +778,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -802,7 +802,7 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
 
 ## class SM3
 
@@ -870,7 +870,7 @@ public func finish(): Array<Byte>
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算，抛此异常。
 
 ### func finish(Array\<Byte>)
 
@@ -886,7 +886,7 @@ public func finish(to!: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 未重置上下文再次调用 finish 进行摘要计算或者指定输出数组大小不等于摘要算法信息长度，抛此异常。
 
 ### func reset()
 
@@ -910,4 +910,4 @@ public func write(buffer: Array<Byte>): Unit
 
 异常：
 
-- [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。
+- [CryptoException](digest_package_exceptions.md#class-cryptoexception) - 已经调用 finish 进行摘要计算后未重置上下文，抛此异常。

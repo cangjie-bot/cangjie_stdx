@@ -241,14 +241,14 @@ public func get(url: String): HttpResponse
 ### func getTlsConfig()
 
 ```cangjie
-public func getTlsConfig(): ?TlsConfig
+public func getTlsConfig(): ?TlsClientConfig
 ```
 
 功能：获取客户端设定的 TLS 层配置。
 
 返回值：
 
-- ?[TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 客户端设定的 TLS 层配置，如果没有设置则返回 None。
+- ?[TlsClientConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsclientconfig) - 客户端设定的 TLS 层配置，如果没有设置则返回 None。
 
 ### func head(String)
 
@@ -465,7 +465,7 @@ public func send(req: HttpRequest): HttpResponse
 - SocketException - Socket 连接出现错误时抛此异常。
 - [ConnectionException](http_package_exceptions.md#class-connectionexception) - 从连接中读数据时对端已关闭连接抛此异常。
 - SocketTimeoutException - Socket 连接超时抛此异常。
-- [TlsException](../../tls/common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常抛此异常。
+- [TlsException](../../tls/tls_package_api/tls_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常抛此异常。
 - [HttpException](http_package_exceptions.md#class-httpexception) - 当用户未使用 http 库提供的 API 升级 [WebSocket](http_package_classes.md#class-websocket) 时抛此异常。
 - [HttpTimeoutException](http_package_exceptions.md#class-httptimeoutexception) - 请求超时或读 [HttpResponse](http_package_classes.md#class-httpresponse).body 超时抛此异常。
 
@@ -503,7 +503,7 @@ public func upgrade(req: HttpRequest): (HttpResponse, ?StreamingSocket)
     - 发送带 body 的 TRACE 请求；
 - SocketException，[ConnectionException](http_package_exceptions.md#class-connectionexception) - Socket 连接出现异常或被关闭；
 - SocketTimeoutException - Socket 连接超时；
-- [TlsException](../../tls/common/tls_common_package_api/tls_common_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常。
+- [TlsException](../../tls/tls_package_api/tls_package_exceptions.md#class-tlsexception) - Tls 连接建立失败或通信异常。
 
 ## class ClientBuilder
 
@@ -785,17 +785,17 @@ public func readTimeout(timeout: Duration): ClientBuilder
 
 - [ClientBuilder](http_package_classes.md#class-clientbuilder) - 当前 [ClientBuilder](http_package_classes.md#class-clientbuilder) 实例的引用。
 
-### func tlsConfig(TlsConfig)
+### func tlsConfig(TlsClientConfig)
 
 ```cangjie
-public func tlsConfig(config: TlsConfig): ClientBuilder
+public func tlsConfig(config: TlsClientConfig): ClientBuilder
 ```
 
 功能：设置 TLS 层配置，默认不对其进行设置。
 
 参数：
 
-- config: [TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 设定支持 tls 客户端需要的配置信息。
+- config: [TlsClientConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsclientconfig) - 设定支持 tls 客户端需要的配置信息。
 
 返回值：
 
@@ -932,9 +932,7 @@ public init(name: String, value: String, expires!: ?DateTime = None, maxAge!: ?I
     domain!: String = "", path!: String = "", secure!: Bool = false, httpOnly!: Bool = false)
 ```
 
-功能：[Cookie](http_package_classes.md#class-cookie) 构造器。
-
-该构造器会检查传入的各项属性是否满足协议要求，如果不满足则会产生 IllegalArgumentException。具体要求见 [RFC 6265 4.1.1.](https://httpwg.org/specs/rfc6265.html#sane-set-cookie-syntax)。
+功能：[Cookie](http_package_classes.md#class-cookie) 构造器。该构造器会检查传入的各项属性是否满足协议要求，如果不满足则会产生 IllegalArgumentException。具体要求见 [RFC 6265 4.1.1.](https://httpwg.org/specs/rfc6265.html#sane-set-cookie-syntax)。
 
 > **注意：**
 >
@@ -1134,12 +1132,12 @@ public class HttpContext
 ### prop clientCertificate
 
 ```cangjie
-public prop clientCertificate: ?Array<Certificate>
+public prop clientCertificate: ?Array<X509Certificate>
 ```
 
 功能：获取 Http 客户端证书。
 
-类型：?Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)>
+类型：?Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)>
 
 ### prop request
 
@@ -2270,11 +2268,11 @@ public class HttpResponsePusher
 
 > **说明：**
 >
-> - 如果服务器收到请求后，认为客户端后续还需要某些关联资源，可以将其提前推送到客户端；
-> - 服务端推送包括推送请求和推送响应；
-> - 启用服务端推送需要先调用 push 函数发送推送请求，并向服务器注册该请求对应的 handler，用以生成推送响应；
-> - 客户端可设置拒绝服务端推送；
-> - 不允许嵌套推送，即不允许在推送请求对应的 handler 中再次推送。嵌套推送情况下，服务端将不执行推送，并打印日志进行提示。
+> 如果服务器收到请求后，认为客户端后续还需要某些关联资源，可以将其提前推送到客户端；
+> 服务端推送包括推送请求和推送响应；
+> 启用服务端推送需要先调用 push 函数发送推送请求，并向服务器注册该请求对应的 handler，用以生成推送响应；
+> 客户端可设置拒绝服务端推送；
+> 不允许嵌套推送，即不允许在推送请求对应的 handler 中再次推送。嵌套推送情况下，服务端将不执行推送，并打印日志进行提示。
 
 ### static func getPusher(HttpContext)
 
@@ -2318,9 +2316,9 @@ public class HttpResponseWriter {
 
 > **说明：**
 >
-> - 第一次调用 write 函数时，将立即发送 header 和通过参数传入的 body，此后每次调用 write，发送通过参数传入的 body。
-> - 对于 HTTP/1.1，如果设置了 transfer-encoding: chunked，用户每调用一次 write，将发送一个 chunk。
-> - 对于 HTTP/2，用户每调用一次 write，将把指定数据封装并发出。
+> 第一次调用 write 函数时，将立即发送 header 和通过参数传入的 body，此后每次调用 write，发送通过参数传入的 body。
+> 对于 HTTP/1.1，如果设置了 transfer-encoding: chunked，用户每调用一次 write，将发送一个 chunk。
+> 对于 HTTP/2，用户每调用一次 write，将把指定数据封装并发出。
 
 ### HttpResponseWriter(HttpContext)
 
@@ -2408,118 +2406,6 @@ public abstract class ProtocolService
 ```
 
 功能：Http 协议服务实例，为单个客户端连接提供 Http 服务，包括对客户端 request 报文的解析、 request 的分发处理、 response 的发送等。
-
-### prop distributor
-
-```cangjie
-protected prop distributor: HttpRequestDistributor
-```
-
-功能：获取请求分发器，请求分发器会根据 url 将请求分发给对应的 handler。
-
-类型：[HttpRequestDistributor](http_package_interfaces.md#interface-httprequestdistributor)
-
-### prop httpKeepAliveTimeout
-
-```cangjie
-protected prop httpKeepAliveTimeout: Duration
-```
-
-功能：HTTP/1.1 专用，获取服务器设定的保持长连接的超时时间。
-
-类型：Duration
-
-### prop logger
-
-```cangjie
-protected prop logger: Logger
-```
-
-功能：获取服务器日志记录器，设置 logger.level 将立即生效，记录器应该是线程安全的。
-
-类型：[Logger](../../../log/log_package_api/log_package_classes.md#class-logger)
-
-### prop maxRequestBodySize
-
-```cangjie
-protected prop maxRequestBodySize: Int64
-```
-
-功能：获取服务器设定的读取请求的请求体最大值，仅对于 HTTP/1.1 且未设置 "Transfer-Encoding: chunked" 的请求生效。
-
-类型：Int64
-
-### prop maxRequestHeaderSize
-
-```cangjie
-protected prop maxRequestHeaderSize: Int64
-```
-
-功能：获取服务器设定的读取请求的请求头最大值。仅对 HTTP/1.1 生效，HTTP/2 中有专门的配置 maxHeaderListSize。
-
-类型：Int64
-
-### prop readHeaderTimeout
-
-```cangjie
-protected prop readHeaderTimeout: Duration
-```
-
-功能：获取服务器设定的读取请求头的超时时间。
-
-类型：Duration
-
-### prop readTimeout
-
-```cangjie
-protected prop readTimeout: Duration
-```
-
-功能：获取服务器设定的读取整个请求的超时时间。
-
-类型：Duration
-
-### prop server
-
-```cangjie
-protected open mut prop server: Server
-```
-
-功能：返回 [Server](#class-server) 实例，提供默认实现，设置为绑定的 [Server](#class-server) 实例。
-
-### prop writeTimeout
-
-```cangjie
-protected prop writeTimeout: Duration
-```
-
-功能：获取服务器设定的写响应的超时时间。
-
-类型：Duration
-
-### func close()
-
-```cangjie
-protected open func close(): Unit
-```
-
-功能：强制关闭连接，提供默认实现，无任何行为。
-
-### func closeGracefully()
-
-```cangjie
-protected open func closeGracefully(): Unit
-```
-
-功能：优雅关闭连接，提供默认实现，无任何行为。
-
-### func serve()
-
-```cangjie
-protected func serve(): Unit
-```
-
-功能：处理来自客户端连接的请求，不提供默认实现。
 
 ## class RedirectHandler
 
@@ -2813,14 +2699,14 @@ public func closeGracefully(): Unit
 ### func getTlsConfig()
 
 ```cangjie
-public func getTlsConfig(): ?TlsConfig
+public func getTlsConfig(): ?TlsServerConfig
 ```
 
 功能：获取服务器设定的 TLS 层配置。
 
 返回值：
 
-- ?[TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 服务端设定的 TLS 层配置，如果没有设置则返回 None。
+- ?[TlsServerConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsserverconfig) - 服务端设定的 TLS 层配置，如果没有设置则返回 None。
 
 ### func onShutdown(() -> Unit)
 
@@ -2919,17 +2805,17 @@ h2 请求优先级：
 
 - SocketException - 当端口监听失败时，抛出异常。
 
-### func updateCA(Array\<Certificate>)
+### func updateCA(Array\<X509Certificate>)
 
 ```cangjie
-public func updateCA(newCa: Array<Certificate>): Unit
+public func updateCA(newCa: Array<X509Certificate>): Unit
 ```
 
 功能：对 CA 证书进行热更新。
 
 参数：
 
-- newCa: Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)> - CA 证书。
+- newCa: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - CA 证书。
 
 异常：
 
@@ -2953,18 +2839,18 @@ public func updateCA(newCaFile: String): Unit
 - IllegalArgumentException - 参数包含空字符时抛出异常。
 - [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig时抛出异常。
 
-### func updateCert(Array\<Certificate>, PrivateKey)
+### func updateCert(Array\<X509Certificate>, PrivateKey)
 
 ```cangjie
-public func updateCert(certChain: Array<Certificate>, certKey: PrivateKey): Unit
+public func updateCert(certChain: Array<X509Certificate>, certKey: PrivateKey): Unit
 ```
 
 功能：对 TLS 证书进行热更新。
 
 参数：
 
-- certChain: Array\<[Certificate](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-certificate)> - 证书链。
-- certKey: [PrivateKey](../../../crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-privatekey) - 证书匹配的私钥。
+- certChain: Array\<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)> - 证书链。
+- certKey: [PrivateKey](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-privatekey) - 证书匹配的私钥。
 
 异常：
 
@@ -3372,17 +3258,17 @@ public func servicePoolConfig(cfg: ServicePoolConfig): ServerBuilder
 
 - [ServerBuilder](http_package_classes.md#class-serverbuilder) - 当前 [ServerBuilder](http_package_classes.md#class-serverbuilder) 的引用。
 
-### func tlsConfig(TlsConfig)
+### func tlsConfig(TlsServerConfig)
 
 ```cangjie
-public func tlsConfig(config: TlsConfig): ServerBuilder
+public func tlsConfig(config: TlsServerConfig): ServerBuilder
 ```
 
 功能：设置 TLS 层配置，默认不对其进行设置。
 
 参数：
 
-- config: [TlsConfig](../../tls/common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig) - 设定支持 tls 服务所需要的配置信息。
+- config: [TlsServerConfig](../../tls/tls_package_api/tls_package_structs.md#struct-tlsserverconfig) - 设定支持 tls 服务所需要的配置信息。
 
 返回值：
 
