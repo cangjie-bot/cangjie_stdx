@@ -84,6 +84,16 @@ else()
     message(FATAL_ERROR "NOT FOUND CJC")
 endif()
 
+set(AST_SUPPORT_STATIC_LIB ${AST_SUPPORT_LIB_DIR}/libcangjie-ast-support.a)
+if(NOT EXISTS ${AST_SUPPORT_STATIC_LIB})
+    message(FATAL_ERROR "ast-support static library not found at: ${AST_SUPPORT_STATIC_LIB}")
+endif()
+
+add_library(cangjie-ast-support STATIC IMPORTED)
+set_target_properties(cangjie-ast-support PROPERTIES
+    IMPORTED_LOCATION ${AST_SUPPORT_STATIC_LIB}
+)
+
 target_compile_options(${libname} PRIVATE ${CMAKE_C_COVERAGE_FLAGS})
 target_include_directories(${libname} PRIVATE ${CANGJIE_INC_DIR} ${CMAKE_BINARY_DIR}/include)
 if(CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
@@ -92,14 +102,13 @@ if(CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
 endif()
 
 if(DARWIN)
-    target_link_libraries(${libname} PUBLIC cangjie-lsp)
-    add_library(cangjie-lsp SHARED IMPORTED)
-    set_target_properties(cangjie-lsp PROPERTIES IMPORTED_LOCATION ${LSP_LIB_DIR}/libcangjie-lsp.dylib)
+    target_link_libraries(${libname} PUBLIC cangjie-ast-support)
 else()
     if (MINGW)
-        add_library(cangjie-lsp SHARED IMPORTED)
-        set_target_properties(cangjie-lsp PROPERTIES IMPORTED_IMPLIB ${LSP_LIB_DIR}/libcangjie-lsp.dll.a)
-        target_link_libraries(${libname} PUBLIC cangjie-lsp)
+        target_link_libraries(${libname} PUBLIC cangjie-ast-support)
+    else()
+        # Linux / other Unix
+        target_link_libraries(${libname} PUBLIC cangjie-ast-support)
     endif()
 endif()
 
