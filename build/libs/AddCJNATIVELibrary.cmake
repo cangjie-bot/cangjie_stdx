@@ -976,35 +976,50 @@ add_cangjie_library(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
 
-if("$ENV{NO_ASPECTCJ}" STREQUAL "")
-    if(NOT CMAKE_CROSSCOMPILING OR (CMAKE_CROSSCOMPILING AND MINGW))
-        make_cangjie_lib(
-            syntax IS_SHARED
-            DEPENDS
-                cangjie${BACKEND_TYPE}Syntax
-                stdx.syntaxFFI
-            CANGJIE_STD_LIB_LINK std-core std-collection std-sync std-convert std-fs std-sort std-ast
-            OBJECTS ${output_cj_object_dir}/stdx/syntax.o
-            FORCE_LINK_ARCHIVES stdx.syntaxFFI
-            FLAGS ${syntaxFFI_flags}
-                $<$<NOT:$<BOOL:${WIN32}>>:-ldl>
-            )
- 
-        add_library(stdx.syntax STATIC ${output_cj_object_dir}/stdx/syntax.o)
-        target_link_libraries(stdx.syntax stdx.syntaxFFI)
-        set_target_properties(stdx.syntax PROPERTIES LINKER_LANGUAGE C)
-        install(TARGETS stdx.syntax DESTINATION ${output_triple_name}_cjnative/static/stdx)
- 
-        add_cangjie_library(
-            cangjie${BACKEND_TYPE}Syntax
-            NO_SUB_PKG
-            IS_STDXLIB
-            IS_PACKAGE
-            IS_CJNATIVE_BACKEND
-            PACKAGE_NAME "syntax"
-            MODULE_NAME "stdx"
-            SOURCES ${SYNTAX_SRCS}
-            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
-            DEPENDS ${SYNTAX_DEPENDENCIES})
-    endif()
+set(BACKEND)
+if(CANGJIELIB_IS_CJNATIVE_BACKEND)
+    set(BACKEND "cjnative")
 endif()
+string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_cjnative output_cj_lib_dir)
+
+set(STDCPP_FLAG -lstdc++)
+if(DARWIN)
+    set(STDCPP_FLAG -lc++)
+elseif(OHOS)
+    set(STDCPP_FLAG -l:libc++.a)
+endif()
+if (NOT OHOS AND NOT MINGW AND NOT DARWIN AND NOT ANDROID)
+    set(GCC_S_FLAG -lgcc_s)
+endif()
+
+make_cangjie_lib(
+    syntax IS_SHARED
+    DEPENDS
+        cangjie${BACKEND_TYPE}Syntax
+        stdx.syntaxFFI-objs
+    CANGJIE_STD_LIB_LINK std-core std-collection std-sync std-convert std-fs std-sort std-ast
+    OBJECTS ${output_cj_object_dir}/stdx/syntax.o
+    FLAGS 
+        ${STDCPP_FLAG}
+        -lcangjie-ast-support
+        -L${CMAKE_BINARY_DIR}
+        -lstdx.syntaxFFI
+        ${GCC_S_FLAG}
+        $<$<NOT:$<BOOL:${WIN32}>>:-ldl>
+    )
+
+add_library(stdx.syntax STATIC ${output_cj_object_dir}/stdx/syntax.o)
+set_target_properties(stdx.syntax PROPERTIES LINKER_LANGUAGE C)
+install(TARGETS stdx.syntax DESTINATION ${output_triple_name}_cjnative/static/stdx)
+
+add_cangjie_library(
+    cangjie${BACKEND_TYPE}Syntax
+    NO_SUB_PKG
+    IS_STDXLIB
+    IS_PACKAGE
+    IS_CJNATIVE_BACKEND
+    PACKAGE_NAME "syntax"
+    MODULE_NAME "stdx"
+    SOURCES ${SYNTAX_SRCS}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
+    DEPENDS ${SYNTAX_DEPENDENCIES})
