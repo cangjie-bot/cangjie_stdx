@@ -36,6 +36,21 @@ IS_MACOS = platform.system() == "Darwin"
 IS_ARM = platform.uname().processor in ["aarch64", "arm", "arm64"]
 # Wait for the version of aarch64 libcore to be ready.
 MAKE_JOBS = multiprocessing.cpu_count() + 2
+TARGET_DICTIONARY = {
+    "native": None,
+    "ohos-aarch64": "aarch64-linux-ohos",
+    "ohos-arm": "arm-linux-ohos",
+    "ohos-x86_64": "x86_64-linux-ohos",
+    "windows-x86_64": "x86_64-w64-mingw32",
+    "ios-simulator-aarch64": "arm64-apple-ios11-simulator",
+    "ios-aarch64": "arm64-apple-ios11",
+    "android-aarch64": "aarch64-linux-android",
+    "android31-aarch64": "aarch64-linux-android31",
+    "android26-aarch64": "aarch64-linux-android26",
+    "android-x86_64": "x86_64-linux-android",
+    "android31-x86_64": "x86_64-linux-android31",
+    "android26-x86_64": "x86_64-linux-android26"
+}
 
 def resolve_path(path):
     if os.path.isabs(path):
