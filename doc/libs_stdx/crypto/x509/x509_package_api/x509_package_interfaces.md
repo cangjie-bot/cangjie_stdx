@@ -1,12 +1,12 @@
 # 接口
 
-## interface DHParamters
+## interface DHParameters
 
 ```cangjie
-public interface DHParamters <: Key {
+public interface DHParameters <: Key {
     override func encodeToPem(): PemEntry
-    static func decodeDer(blob: DerBlob): DHParamters
-    static func decodeFromPem(text: String): DHParamters
+    static func decodeDer(blob: DerBlob): DHParameters
+    static func decodeFromPem(text: String): DHParameters
 }
 ```
 
@@ -19,7 +19,7 @@ public interface DHParamters <: Key {
 ### static func decodeDer(DerBlob)
 
 ```cangjie
-static func decodeDer(blob: DerBlob): DHParamters
+static func decodeDer(blob: DerBlob): DHParameters
 ```
 
 功能：将 DH 密钥参数从 DER 格式解码。
@@ -35,7 +35,7 @@ static func decodeDer(blob: DerBlob): DHParamters
 
 返回值：
 
-- [DHParamters](x509_package_interfaces.md#interface-dhparamters) - 由 DER 格式解码出的 DH 密钥参数。
+- [DHParameters](x509_package_interfaces.md#interface-dhparameters) - 由 DER 格式解码出的 DH 密钥参数。
 
 异常：
 
@@ -44,7 +44,7 @@ static func decodeDer(blob: DerBlob): DHParamters
 ### static func decodeFromPem(String)
 
 ```cangjie
-static func decodeFromPem(text: String): DHParamters
+static func decodeFromPem(text: String): DHParameters
 ```
 
 功能：将 DH 密钥参数从 PEM 格式解码。
@@ -59,7 +59,7 @@ static func decodeFromPem(text: String): DHParamters
 
 返回值：
 
-- [DHParamters](x509_package_interfaces.md#interface-dhparamters) - 由 PEM 格式解码出的 DH 密钥参数。
+- [DHParameters](x509_package_interfaces.md#interface-dhparameters) - 由 PEM 格式解码出的 DH 密钥参数。
 
 异常：
 

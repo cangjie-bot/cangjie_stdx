@@ -39,7 +39,7 @@ This package requires external dependencies on OpenSSL 3's crypto dynamic librar
 
 | Interface Name                                                  | Functionality                     |
 | ------------------------------------------------------------- | -------------------------------- |
-| [DHParamters](./x509_package_api/x509_package_interfaces.md#interface-dhparamters) | Provides the DH key interface. |
+| [DHParameters](./x509_package_api/x509_package_interfaces.md#interface-dhparamters) | Provides the DH key interface. |
 | [Key](./x509_package_api/x509_package_interfaces.md#interface-key) | Provides the key interface. |
 | [PrivateKey](./x509_package_api/x509_package_interfaces.md#interface-privatekey) | Provides the private key interface. |
 | [PublicKey](./x509_package_api/x509_package_interfaces.md#interface-publickey) | Provides the public key interface. |

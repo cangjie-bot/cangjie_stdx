@@ -40,7 +40,7 @@ x509 包提供处理数字证书功能，提供包括解析和序列化 X509 证
 
 | 接口名                                              | 功能                             |
 | ----------------------------------------------------- | -------------------------------- |
-| [DHParamters](./x509_package_api/x509_package_interfaces.md#interface-dhparameters) | 提供 DH 密钥接口。 |
+| [DHParameters](./x509_package_api/x509_package_interfaces.md#interface-dhparameters) | 提供 DH 密钥接口。 |
 | [Key](./x509_package_api/x509_package_interfaces.md#interface-key) | 提供密钥接口。 |
 | [PrivateKey](./x509_package_api/x509_package_interfaces.md#interface-privateKey) | 提供私钥接口。 |
 | [PublicKey](./x509_package_api/x509_package_interfaces.md#interface-publicKey) | 提供公钥接口。 |

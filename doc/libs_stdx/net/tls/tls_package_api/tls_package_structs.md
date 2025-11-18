@@ -297,12 +297,12 @@ public mut prop cipherSuitesV1_3: Array<String>
 ### prop dhParameters
 
 ```cangjie
-public mut prop dhParameters: ?DHParamters
+public mut prop dhParameters: ?DHParameters
 ```
 
 功能：指定服务端的 DH 密钥参数，默认为 `None`， 默认情况下使用 openssl 自动生成的参数值。
 
-类型：?[DHParamters](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-dhparamters)
+类型：?[DHParameters](../../../crypto/x509/x509_package_api/x509_package_interfaces.md#interface-dhparameters)
 
 ### prop maxVersion
 

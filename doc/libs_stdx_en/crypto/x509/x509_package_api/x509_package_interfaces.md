@@ -1,12 +1,12 @@
 # Interfaces
 
-## interface DHParamters
+## interface DHParameters
 
 ```cangjie
-public interface DHParamters <: Key {
+public interface DHParameters <: Key {
     override func encodeToPem(): PemEntry
-    static func decodeDer(blob: DerBlob): DHParamters
-    static func decodeFromPem(text: String): DHParamters
+    static func decodeDer(blob: DerBlob): DHParameters
+    static func decodeFromPem(text: String): DHParameters
 }
 ```
 
@@ -19,7 +19,7 @@ Parent Types:
 ### static func decodeDer(DerBlob)
 
 ```cangjie
-static func decodeDer(blob: DerBlob): DHParamters
+static func decodeDer(blob: DerBlob): DHParameters
 ```
 
 Function: Decodes DH key parameters from DER format.
@@ -35,7 +35,7 @@ Parameters:
 
 Return Value:
 
-- [DHParamters](x509_package_interfaces.md#interface-dhparameters) - DH key parameters decoded from DER format.
+- [DHParameters](x509_package_interfaces.md#interface-dhparameters) - DH key parameters decoded from DER format.
 
 Exceptions:
 
@@ -44,7 +44,7 @@ Exceptions:
 ### static func decodeFromPem(String)
 
 ```cangjie
-static func decodeFromPem(text: String): DHParamters
+static func decodeFromPem(text: String): DHParameters
 ```
 
 Function: Decodes DH key parameters from PEM format.
@@ -59,7 +59,7 @@ Parameters:
 
 Return Value:
 
-- [DHParamters](x509_package_interfaces.md#interface-dhparameters) - DH key parameters decoded from PEM format.
+- [DHParameters](x509_package_interfaces.md#interface-dhparameters) - DH key parameters decoded from PEM format.
 
 Exceptions:
 
