@@ -97,6 +97,10 @@ function(add_cangjie_library target_name
         list(APPEND cangjie_compile_flags "--output-type=staticlib")
     endif()
 
+    if(TRIPLE STREQUAL "arm-linux-ohos")
+        list(APPEND cangjie_compile_flags "--disable-reflection")
+    endif()
+
     # Set compiler path
     if(CMAKE_CROSSCOMPILING)
         set(CANGJIE_NATIVE_CANGJIE_TOOLS_PATH ${CMAKE_BINARY_DIR}/../build/bin)
@@ -155,9 +159,15 @@ function(add_cangjie_library target_name
     set(COMPILE_CMD ${COMPILE_CMD} ${output_argument} ${output_full_name})
     
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-        list(APPEND COMPILE_CMD "$<IF:$<CONFIG:MinSizeRel>,-Os,-O2>")
-        # The .bc files is for LTO mode and LTO mode does not support -Os and -Oz.
-        list(APPEND COMPILE_BC_CMD "-O2")
+        if(TRIPLE STREQUAL "arm-linux-ohos")
+            list(APPEND COMPILE_CMD "$<IF:$<CONFIG:MinSizeRel>,-Os,-O0>")
+            # .bc files is for LTO mode and LTO mode does not support -Os and -Oz.
+            list(APPEND COMPILE_BC_CMD "-O0")
+        else()
+            list(APPEND COMPILE_CMD "$<IF:$<CONFIG:MinSizeRel>,-Os,-O2>")
+            # The .bc files is for LTO mode and LTO mode does not support -Os and -Oz.
+            list(APPEND COMPILE_BC_CMD "-O2")
+        endif()
     endif()
     
     if(CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
