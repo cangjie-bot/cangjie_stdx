@@ -251,7 +251,7 @@ function(install_cangjie_library_ffi lib_name)
     # Set install dir
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_lib_dir)
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-        install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/static/stdx)
+        install(FILES ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/static/stdx)
     endif()
 endfunction()
 
@@ -259,6 +259,6 @@ function(install_cangjie_library_ffi_s lib_name)
     # Set install dir
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_lib_dir)
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-        install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/dynamic/stdx)
+        install(FILES ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/dynamic/stdx)
     endif()
 endfunction()
