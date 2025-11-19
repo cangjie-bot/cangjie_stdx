@@ -680,6 +680,7 @@ private class FlatbufferNodeTranslator {
                 if (let Some(content) <- vItems[i]) {
                     addChild(ret, transImportContent(content))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 if (i < commaPoses.size) {
                     transBasicTerminal(commaPoses[i], SyntaxNodeKind.CommaToken)
@@ -1149,6 +1150,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(import1) <- imp) {
                 addChild(ret, transImportList(import1))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
 
@@ -1259,6 +1261,7 @@ private class FlatbufferNodeTranslator {
                 }
                 addChild(ret, transModifier(beginPos, kind))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         transBasicTerminal(pkg.GetMacroPos(), SyntaxNodeKind.MacroToken)
@@ -1482,6 +1485,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transVarDeclModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             if (!varDecl.GetEmptyKeyword()) {
                 if (varDecl.GetIsVar()) {
@@ -1540,6 +1544,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transVarDeclModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             if (varDecl.GetIsVar()) {
                 transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.VarToken)
@@ -1557,9 +1562,8 @@ private class FlatbufferNodeTranslator {
                 transBasicTerminal(varDecl.GetColonPos(), SyntaxNodeKind.ColonToken)
                 transType(ty)
                 curChildren = ret
+                innerComments = innerCmts
             }
-            curChildren = ret
-            innerComments = innerCmts
             if (let Some(initializer) <- varDecl.GetInitializer()) {
                 transBasicTerminal(varDecl.GetAssignPos(), SyntaxNodeKind.AssignToken)
                 transNoTerminalExpr(initializer)
@@ -1600,9 +1604,8 @@ private class FlatbufferNodeTranslator {
                 transBasicTerminal(body.GetColonPos(), SyntaxNodeKind.ColonToken)
                 transType(ty)
                 curChildren = ret
+                innerComments = innerCmts
             }
-            curChildren = ret
-            innerComments = innerCmts
             // block
             if (let Some(block) <- body.GetBody()) {
                 addChild(ret, transBlock(block))
@@ -1642,6 +1645,7 @@ private class FlatbufferNodeTranslator {
                 if (!db.GetIsConst() || modifiers.size > 1) {
                     addChild(ret, transModifiers(modifiers))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
             }
 
@@ -1690,6 +1694,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(dl) <- decl) {
                 addChild(ret, transDecl(dl))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         innerComments = innerCmts
@@ -1744,6 +1749,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
 
             // identifier
@@ -1793,6 +1799,7 @@ private class FlatbufferNodeTranslator {
             if (db.GetModifiers().size != 0) {
                 addChild(ret, transModifiers(db.GetModifiers()))
                 curChildren = ret
+                innerComments = innerCmts
             }
             // ClassToken
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.ClassToken)
@@ -1816,6 +1823,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
                 curChildren = ret
+                innerComments = innerCmts
                 if (i < superTypes.size - 1 && let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -1867,6 +1875,7 @@ private class FlatbufferNodeTranslator {
             if (db.GetModifiers().size != 0) {
                 addChild(ret, transModifiers(db.GetModifiers()))
                 curChildren = ret
+                innerComments = innerCmts
             }
             // func
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.StructToken)
@@ -1890,6 +1899,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
                 curChildren = ret
+                innerComments = innerCmts
                 if (i < superTypes.size - 1 && let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -1942,6 +1952,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             // func
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.InterfaceToken)
@@ -1967,6 +1978,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
                 curChildren = ret
+                innerComments = innerCmts
                 if (let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -1980,6 +1992,7 @@ private class FlatbufferNodeTranslator {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
 
@@ -2021,6 +2034,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             // extend
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.ExtendToken)
@@ -2049,6 +2063,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
                 curChildren = ret
+                innerComments = innerCmts
                 if (let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -2062,6 +2077,7 @@ private class FlatbufferNodeTranslator {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
 
@@ -2155,6 +2171,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             // func
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.EnumToken)
@@ -2242,6 +2259,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
 
             // identifier
@@ -2270,10 +2288,12 @@ private class FlatbufferNodeTranslator {
                 if (let Some(vb) <- param.GetBase() && let Some(ty) <- vb.GetType()) {
                     transType(ty)
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 if (trailParamCmts.size > 0) {
                     addChild(ret, transCommentGroupList(trailParamCmts))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 transBasicTerminal(param.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
@@ -2281,10 +2301,12 @@ private class FlatbufferNodeTranslator {
             if (trailParamListCmts.size > 0) {
                 addChild(ret, transCommentGroupList(trailParamListCmts))
                 curChildren = ret
+                innerComments = innerCmts
             }
             if (trailBodyCmts.size > 0) {
                 addChild(ret, transCommentGroupList(trailBodyCmts))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         if (trailCmts.size > 0) {
@@ -2320,6 +2342,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             // prop
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.PropToken)
@@ -2330,6 +2353,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(ty) <- varDecl.GetType()) {
                 transType(ty)
                 curChildren = ret
+                innerComments = innerCmts
             }
             transBasicTerminal(propDecl.GetLeftCurlPos(), SyntaxNodeKind.LCurlToken)
 
@@ -2338,6 +2362,7 @@ private class FlatbufferNodeTranslator {
                 if (let Some(getter) <- getters[0]) {
                     addChild(ret, transFuncDecl(getter))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
             }
             var setters = propDecl.GetSetters()
@@ -2345,6 +2370,7 @@ private class FlatbufferNodeTranslator {
                 if (let Some(setter) <- setters[0]) {
                     addChild(ret, transFuncDecl(setter))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
             }
             transBasicTerminal(propDecl.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
@@ -2381,6 +2407,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.MacroToken)
             // identifier
@@ -2580,6 +2607,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
 
@@ -2602,6 +2630,7 @@ private class FlatbufferNodeTranslator {
 
                 addChild(ret, transTokenList(invocation.GetArgs()))
                 curChildren = ret
+                innerComments = innerCmts
 
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else if (let Some(dl) <- invocation.GetDecl()) {
@@ -2611,6 +2640,7 @@ private class FlatbufferNodeTranslator {
                     addChild(ret, transDecl(dl))
                 }
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         if (trailCmts.size > 0) {
@@ -2655,6 +2685,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
 
@@ -2680,11 +2711,14 @@ private class FlatbufferNodeTranslator {
 
                 addChild(ret, transTokenList(invocation.GetArgs()))
                 curChildren = ret
+                innerComments = innerCmts
 
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else {
                 if (let Some(decl) <- invocation.GetDecl() && let Some(param) <- decl.GetDeclAsFuncParam()) {
                     addChild(ret, transFuncParam(param))
+                    curChildren = ret
+                    innerComments = innerCmts
                 }
             }
         }
@@ -2729,11 +2763,13 @@ private class FlatbufferNodeTranslator {
 
                 addChild(ret, transTokenList(invocation.GetArgs()))
                 curChildren = ret
+                innerComments = innerCmts
 
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else if (let Some(dl) <- invocation.GetDecl()) {
                 addChild(ret, transDecl(dl))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         if (trailCmts.size > 0) {
@@ -2757,6 +2793,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(tyBase) <- ty.GetBase()) {
                 addWhitespaceAndMoveCursorToBegin(tyBase.GetBase())
                 curChildren = ret
+                innerComments = innerCmts
                 addChild(ret, transRefType(ty))
                 moveCursorToEnd(tyBase.GetBase())
             }
@@ -2773,6 +2810,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(upperBound) <- upperBounds[i]) {
                 transType(upperBound)
                 curChildren = ret
+                innerComments = innerCmts
                 if (i < bitAndPos.size) {
                     transBasicTerminal(bitAndPos[i], SyntaxNodeKind.BitAndToken)
                 }
@@ -2821,6 +2859,7 @@ private class FlatbufferNodeTranslator {
             transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
         }
         curChildren = ret
+        innerComments = innerCmts
 
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
@@ -2908,6 +2947,7 @@ private class FlatbufferNodeTranslator {
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
                 curChildren = ret
+                innerComments = innerCmts
             }
             if (funcDecl.GetIsGetter()) {
                 transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.GetToken)
@@ -2959,6 +2999,7 @@ private class FlatbufferNodeTranslator {
 
                     addChild(ret, transCommentGroupList(trailParamListCmts))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else if (funcDecl.GetIsGetter() || (identifier == "init" && findStatic(modifiers))) {
@@ -2983,6 +3024,7 @@ private class FlatbufferNodeTranslator {
                 // type
                 transType(ty)
                 curChildren = ret
+                innerComments = innerCmts
             }
             if (let Some(generic) <- body.GetGeneric()) {
                 let genericConstraints = generic.GetGenericConstraints();
@@ -2990,6 +3032,7 @@ private class FlatbufferNodeTranslator {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
                 curChildren = ret
+                innerComments = innerCmts
             }
             // block
             if (let Some(block) <- body.GetBody()) {
@@ -3086,6 +3129,7 @@ private class FlatbufferNodeTranslator {
                 // The begin of FuncDecl is not begin of annotations
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
                 curChildren = ret
+                innerComments = innerCmts
                 transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
             }
             if (isValidPosition(param.GetColonPos())) {
@@ -3094,6 +3138,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(ty) <- vb.GetType()) {
                 transType(ty)
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         if (trailCmts.size > 0) {
@@ -3124,11 +3169,13 @@ private class FlatbufferNodeTranslator {
                     addWhitespaceAndMoveCursorToBegin(db.GetBase())
                 }
                 curChildren = ret
+                innerComments = innerCmts
                 // modifier
                 let modifiers = db.GetModifiers()
                 if (modifiers.size != 0) {
                     addChild(ret, transModifiers(modifiers))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 if (param.GetHasLetOrVar() && vb.GetIsVar()) {
                     transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.VarToken)
@@ -3145,6 +3192,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(ty) <- vb.GetType()) {
                 transType(ty)
                 curChildren = ret
+                innerComments = innerCmts
             }
             curChildren = ret
             innerComments = innerCmts
@@ -3187,6 +3235,7 @@ private class FlatbufferNodeTranslator {
         for (e in block.GetBody()) {
             if (let Some(expr) <- e) {
                 curChildren = ret
+                innerComments = innerCmts
                 addChild(ret, transRoot(expr))
             }
         }
@@ -3352,12 +3401,14 @@ private class FlatbufferNodeTranslator {
                 transBasicTerminal(matchExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
                 addChild(ret, transExpr(selector))
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(matchExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
                 transBasicTerminal(matchExpr.GetLeftCurlPos(), SyntaxNodeKind.LCurlToken)
                 // match cases
                 for (normalCase in getElements<NodeFormat_MatchCase>(matchExpr.GetMatchCases())) {
                     addChild(ret, transMatchCase(normalCase))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 transBasicTerminal(matchExpr.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
             } else {
@@ -3367,6 +3418,7 @@ private class FlatbufferNodeTranslator {
                 for (otherCase in getElements<NodeFormat_MatchCaseOther>(matchExpr.GetMatchCaseOthers())) {
                     addChild(ret, transMatchCaseOther(otherCase))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 transBasicTerminal(matchExpr.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
             }
@@ -3402,6 +3454,7 @@ private class FlatbufferNodeTranslator {
                 if (let Some(varDecl) <- children[i]) {
                     addChild(ret, transVarDecl(varDecl))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 if (i < commaPos.size) {
                     transBasicTerminal(commaPos[i], SyntaxNodeKind.CommaToken)
@@ -3413,6 +3466,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(block) <- tryExpr.GetTryBlock()) {
                 addChild(ret, transBlock(block))
                 curChildren = ret
+                innerComments = innerCmts
             }
 
             // catch
@@ -3425,11 +3479,13 @@ private class FlatbufferNodeTranslator {
                 if (let Some(pattern) <- catchPatterns[i]) {
                     addChild(ret, transCatchPattern(pattern))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 transBasicTerminal(rParenPos[i], SyntaxNodeKind.RParenToken)
                 if (let Some(block) <- catchBlocks[i]) {
                     addChild(ret, transBlock(block))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
             }
             // finally
@@ -3437,6 +3493,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(block) <- tryExpr.GetFinallyBlock()) {
                 addChild(ret, transBlock(block))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         if (trailCmts.size > 0) {
@@ -3664,12 +3721,15 @@ private class FlatbufferNodeTranslator {
             if (let Some(memAccess) <- expr.GetExprAsMemberAccess()) {
                 addChild(ret, transCompositeType(memAccess))
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(memAccess.GetDotPos(), SyntaxNodeKind.DotToken)
                 addChild(ret, transSymbolRef4MemberAccess(memAccess))
                 curChildren = ret
+                innerComments = innerCmts
             } else if (let Some(refExpr) <- expr.GetExprAsRefExpr()) {
                 addChild(ret, transRefExpr(refExpr))
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         // patterns
@@ -3686,6 +3746,7 @@ private class FlatbufferNodeTranslator {
                     addChild(ret, transPattern(pat))
                 }
                 curChildren = ret
+                innerComments = innerCmts
             }
             // RPAREN
             transBasicTerminal(enumPattern.GetRightParenPos(), SyntaxNodeKind.RParenToken)
@@ -3830,6 +3891,7 @@ private class FlatbufferNodeTranslator {
                     addChild(ret, transPattern(pattern))
                 }
                 curChildren = ret
+                innerComments = innerCmts
             }
             // patternGuard
             if (let Some(patGuard) <- matchCase.GetPatternguard()) {
@@ -3942,6 +4004,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(expr) <- children[i]) {
                 transNoTerminalExpr(expr)
                 curChildren = ret
+                innerComments = innerCmts
             }
             if (i < commaPos.size) {
                 transBasicTerminal(commaPos[i], SyntaxNodeKind.CommaToken)
@@ -3975,6 +4038,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(expr) <- children[i]) {
                 transNoTerminalExpr(expr)
                 curChildren = ret
+                innerComments = innerCmts
             }
             transBasicTerminal(commaPos[i], SyntaxNodeKind.CommaToken)
         }
@@ -4016,6 +4080,7 @@ private class FlatbufferNodeTranslator {
                 addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                 addChild(ret, transFuncArg(arg))
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
@@ -4549,6 +4614,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(expr) <- spawnExpr.GetSpawnArgExpr()) {
                 transNoTerminalExpr(expr)
                 curChildren = ret
+                innerComments = innerCmts
             }
             transBasicTerminal(spawnExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         }
@@ -4768,6 +4834,7 @@ private class FlatbufferNodeTranslator {
                 addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                 addChild(ret, transFuncArg(arg))
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
@@ -4888,6 +4955,7 @@ private class FlatbufferNodeTranslator {
                 if (let Some(interp) <- interpol) {
                     addChild(ret, transExpr(interp, isInterpol: true))
                     curChildren = ret
+                    innerComments = innerCmts
                 }
             }
             ret.add(quoteToken)
@@ -5087,6 +5155,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(pattern) <- patterns[i]) {
                 addChild(ret, transPattern(pattern))
                 curChildren = ret
+                innerComments = innerCmts
                 if (i < bitOrTokens.size) {
                     transBasicTerminal(bitOrTokens[i], SyntaxNodeKind.BitOrToken)
                 }
@@ -5300,6 +5369,7 @@ private class FlatbufferNodeTranslator {
                 }
                 addChild(ret, expr1)
                 curChildren = ret
+                innerComments = innerCmts
             }
             transBasicTerminal(quoteExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         }
@@ -5330,6 +5400,7 @@ private class FlatbufferNodeTranslator {
                 if (let Some(baseFunc) <- callExpr.GetBaseFunc()) {
                     transNoTerminalExpr(baseFunc)
                     curChildren = ret
+                    innerComments = innerCmts
                 }
                 transBasicTerminal(callExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
                 // funcArgs
@@ -5338,19 +5409,23 @@ private class FlatbufferNodeTranslator {
                     addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                     addChild(ret, transFuncArg(arg))
                     curChildren = ret
+                    innerComments = innerCmts
                     transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
                 }
                 curChildren = ret
+                innerComments = innerCmts
                 transBasicTerminal(callExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
                 moveCursorToEnd(callExpr.GetBase())
             } else if (let Some(refExpr) <- expr.GetExprAsRefExpr()) {
                 addChild(ret, transRefExpr(refExpr))
                 moveCursorToEnd(refExpr.GetBase())
                 curChildren = ret
+                innerComments = innerCmts
             } else if (let Some(memberAccess) <- expr.GetExprAsMemberAccess()) {
                 addChild(ret, transMemberAccess(memberAccess))
                 moveCursorToEnd(memberAccess.GetBase())
                 curChildren = ret
+                innerComments = innerCmts
             }
         }
         if (let Some(lambda) <- trailingClosureExpr.GetLambda()) {
@@ -5370,6 +5445,8 @@ private class FlatbufferNodeTranslator {
 
     private func getCommentGroups(nodeBase: ?NodeFormat_NodeBase) {
         if (let Some(node) <- nodeBase && let Some(cmts) <- node.GetComments()) {
+            let (lead, inner, trail) = (cmts.GetLeadingComments(), cmts.GetInnerComments(), cmts.GetTrailingComments())
+            println("current node comment: lead: ${lead.size}, inner: ${inner.size}, trail: ${trail.size}")
             (cmts.GetLeadingComments(), cmts.GetInnerComments(), cmts.GetTrailingComments())
         } else {
             (Array<Option<NodeFormat_CommentGroup>>(), Array<Option<NodeFormat_CommentGroup>>(),
