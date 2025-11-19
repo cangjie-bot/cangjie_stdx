@@ -492,6 +492,11 @@ private class FlatbufferNodeTranslator {
         }
     }
 
+    private func resetGlobalVariables(ret: ArrayList<SyntaxNodeImpl>, innerCmts: Array<Option<NodeFormat_CommentGroup>>) {
+        curChildren = ret
+        innerComments = innerCmts
+    }
+
     private func getSyntaxImplKind(num: UInt16): SyntaxNodeKind {
         match (num) {
             case 8 /*EXP*/ => SyntaxNodeKind.ExpToken
@@ -679,7 +684,7 @@ private class FlatbufferNodeTranslator {
             for (i in 0..vItems.size) {
                 if (let Some(content) <- vItems[i]) {
                     addChild(ret, transImportContent(content))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 if (i < commaPoses.size) {
                     transBasicTerminal(commaPoses[i], SyntaxNodeKind.CommaToken)
@@ -695,8 +700,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(nodeKind, ret.toArray())
@@ -721,8 +725,7 @@ private class FlatbufferNodeTranslator {
         if (let Some(base) <- imports.GetBase()) {
             if (!isSamePosition(imports.GetImportPos(), base.GetBegin())) {
                 addChild(ret, transModifier(base.GetBegin(), kind))
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         transBasicTerminal(imports.GetImportPos(), SyntaxNodeKind.ImportToken)
@@ -731,8 +734,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ImportSpec, ret.toArray())
@@ -775,8 +777,7 @@ private class FlatbufferNodeTranslator {
         moveCursorColumn(col: Int32(ty.size))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.PrimitiveType, ret.toArray())
@@ -796,8 +797,7 @@ private class FlatbufferNodeTranslator {
         moveCursorColumn(col: Int32(ty.size))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.PrimitiveType, ret.toArray())
@@ -821,8 +821,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.RefType, ret.toArray())
@@ -848,13 +847,11 @@ private class FlatbufferNodeTranslator {
                     startFromBegin = false
                 }
                 transType(type_, startFromBegin: startFromBegin)
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(db.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(ty.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         transBasicTerminal(ty.GetArrowPos(), SyntaxNodeKind.ArrowToken)
         if (let Some(t) <- ty.GetRetType()) {
@@ -862,8 +859,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.FuncType, ret.toArray())
@@ -881,8 +877,7 @@ private class FlatbufferNodeTranslator {
         addChild(ret, builder.buildBasicTerminal(SyntaxNodeKind.ThisTypeToken))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.PrimitiveType, ret.toArray())
@@ -908,19 +903,16 @@ private class FlatbufferNodeTranslator {
                     startFromBegin = false
                 }
                 transType(type_, startFromBegin: startFromBegin)
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
 
                 transBasicTerminal(db.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(ty.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TupleType, ret.toArray())
@@ -977,8 +969,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         return builder.buildNonTerminal(SyntaxNodeKind.OptionType, ret.toArray())
@@ -997,13 +988,11 @@ private class FlatbufferNodeTranslator {
         if (let Some(ty) <- parenType.GetType()) {
             transType(ty)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(parenType.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ParenType, ret.toArray())
@@ -1042,8 +1031,7 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(baseTy) <- qualifiedType.GetBaseType()) {
             transBaseIdentTokens(baseTy)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(qualifiedType.GetDotPos(), SyntaxNodeKind.DotToken)
         transIdentifier(qualifiedType.GetFieldPos(), qualifiedType.GetField())
@@ -1054,8 +1042,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.QualifiedType, ret.toArray())
@@ -1083,22 +1070,19 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(vArrayType.GetLeftAnglePos(), SyntaxNodeKind.LtToken)
         if (let Some(ty) <- vArrayType.GetTypeArgument()) {
             transType(ty)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (let Some(tb) <- ty.GetBase()) {
                 transBasicTerminal(tb.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
         if (let Some(constantTy) <- vArrayType.GetConstantType()) {
             transTypeAnnotation(constantTy)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(vArrayType.GetRightAnglePos(), SyntaxNodeKind.GtToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.VArrayType, ret.toArray())
@@ -1135,37 +1119,32 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(featuresNode) <- file.GetFeature()) {
             addChild(ret, transFeaturesDirective(featuresNode))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         if (let Some(packageNode) <- file.GetPackage()) {
             addChild(ret, transPackageSpec(packageNode))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         let imports = file.GetImports()
         for (imp in imports) {
             if (let Some(import1) <- imp) {
                 addChild(ret, transImportList(import1))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
 
         let decls: Array<Option<NodeFormat_Decl>> = file.GetDecls()
         for (node in decls) {
-            curChildren = ret
-            innerComments = innerCmts // set context node
+            resetGlobalVariables(ret, innerCmts) // set context node
             if (let Some(decl) <- node) {
                 addChild(ret, transDecl(decl))
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.File, ret.toArray())
@@ -1258,7 +1237,7 @@ private class FlatbufferNodeTranslator {
                     case _ => SyntaxNodeKind.InternalToken
                 }
                 addChild(ret, transModifier(beginPos, kind))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         transBasicTerminal(pkg.GetMacroPos(), SyntaxNodeKind.MacroToken)
@@ -1267,8 +1246,7 @@ private class FlatbufferNodeTranslator {
         if (prefixPaths.size != 0) {
             addChild(ret, transPackagePrefixes(prefixPaths, pkg.GetPrefixPoses(), pkg.GetPrefixDotPoses()))
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         addWhitespace(pkg.GetPackageNamePos())
         let packageName = pkg.GetPackageName()
         ret.add(builder.buildValuedTerminal(getPackageIndentKind(packageName), packageName))
@@ -1276,8 +1254,7 @@ private class FlatbufferNodeTranslator {
 
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.PackageSpec, ret.toArray())
@@ -1335,8 +1312,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(arg) <- p) {
                 addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                 addChild(ret, transFuncArg(arg))
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
@@ -1345,8 +1321,7 @@ private class FlatbufferNodeTranslator {
             let argRet = ArrayList<SyntaxNodeImpl>()
             curChildren = argRet
             transNoTerminalExpr(cond)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             addChild(ret, builder.buildNonTerminal(SyntaxNodeKind.Argument, argRet.toArray()))
         }
         let attrs = annotation.GetAttrs()
@@ -1374,8 +1349,7 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(annotation.GetRightSquarePos(), SyntaxNodeKind.RSquareToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.Annotation, ret.toArray())
@@ -1416,8 +1390,7 @@ private class FlatbufferNodeTranslator {
         moveCursorToEnd(modifier.GetBase())
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.Modifier, ret.toArray())
@@ -1474,14 +1447,13 @@ private class FlatbufferNodeTranslator {
                 // The begin of VarDecl is not begin of annotations
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transVarDeclModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             if (!varDecl.GetEmptyKeyword()) {
                 if (varDecl.GetIsVar()) {
@@ -1493,15 +1465,13 @@ private class FlatbufferNodeTranslator {
                 }
             }
             addChild(ret, transVarPattern4VarDecl(varDecl))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (let Some(ty) <- varDecl.GetType()) {
                 transBasicTerminal(varDecl.GetColonPos(), SyntaxNodeKind.ColonToken)
                 transType(ty)
                 curChildren = ret
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (let Some(initializer) <- varDecl.GetInitializer()) {
                 transBasicTerminal(varDecl.GetAssignPos(), SyntaxNodeKind.AssignToken)
                 transNoTerminalExpr(initializer)
@@ -1509,8 +1479,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.VarDecl, ret.toArray(), preChildren: preChildren)
@@ -1533,13 +1502,12 @@ private class FlatbufferNodeTranslator {
                 // The begin of VarWithPatternDecl is not begin of annotations
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transVarDeclModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             if (varDecl.GetIsVar()) {
                 transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.VarToken)
@@ -1551,15 +1519,12 @@ private class FlatbufferNodeTranslator {
             if (let Some(pattern) <- varDecl.GetPattern()) {
                 addChild(ret, transPattern(pattern))
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (let Some(ty) <- varDecl.GetType()) {
                 transBasicTerminal(varDecl.GetColonPos(), SyntaxNodeKind.ColonToken)
                 transType(ty)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
-            curChildren = ret
-            innerComments = innerCmts
             if (let Some(initializer) <- varDecl.GetInitializer()) {
                 transBasicTerminal(varDecl.GetAssignPos(), SyntaxNodeKind.AssignToken)
                 transNoTerminalExpr(initializer)
@@ -1567,8 +1532,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.VarDecl, ret.toArray(), preChildren: preChildren)
@@ -1584,8 +1548,7 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(db) <- mainDecl.GetBase()) {
             addWhitespaceAndMoveCursorToBegin(db.GetBase())
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.MainToken)
         }
         if (let Some(body) <- mainDecl.GetFuncBody()) {
@@ -1594,15 +1557,12 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, transParamList(paramList))
                 moveCursorToEnd(paramList.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (let Some(ty) <- body.GetRetType()) {
                 transBasicTerminal(body.GetColonPos(), SyntaxNodeKind.ColonToken)
                 transType(ty)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
-            curChildren = ret
-            innerComments = innerCmts
             // block
             if (let Some(block) <- body.GetBody()) {
                 addChild(ret, transBlock(block))
@@ -1610,8 +1570,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MainDecl, ret.toArray(), preChildren: preChildren)
@@ -1634,14 +1593,13 @@ private class FlatbufferNodeTranslator {
                 // The begin of TypeAlias is not begin of annotations
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 if (!db.GetIsConst() || modifiers.size > 1) {
                     addChild(ret, transModifiers(modifiers))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
             }
 
@@ -1655,20 +1613,17 @@ private class FlatbufferNodeTranslator {
                         transTypeArguments(typeParameters, generic.GetLeftAnglePos(), generic.GetRightAnglePos()))
                 }
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(typeAlias.GetAssignPos(), SyntaxNodeKind.AssignToken)
         if (let Some(ty) <- typeAlias.GetType()) {
             transType(ty)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TypeAlias, ret.toArray(), preChildren: preChildren)
@@ -1682,22 +1637,20 @@ private class FlatbufferNodeTranslator {
         innerComments = innerCmts
 
         addWhitespaceAndMoveCursor(lcurlPos)
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(lcurlPos, SyntaxNodeKind.LCurlToken)
 
         for (decl in decls) {
             if (let Some(dl) <- decl) {
                 addChild(ret, transDecl(dl))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         innerComments = innerCmts
         transBasicTerminal(rcurlPos, SyntaxNodeKind.RCurlToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.Body, ret.toArray())
@@ -1737,13 +1690,12 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
 
             // identifier
@@ -1755,8 +1707,7 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, transParamList(paramList))
                 moveCursorToEnd(paramList.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             // block
             if (let Some(block) <- body.GetBody()) {
@@ -1765,8 +1716,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.FuncDecl, ret.toArray(), preChildren: preChildren)
@@ -1787,12 +1737,11 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             if (db.GetModifiers().size != 0) {
                 addChild(ret, transModifiers(db.GetModifiers()))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // ClassToken
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.ClassToken)
@@ -1805,8 +1754,7 @@ private class FlatbufferNodeTranslator {
                     transTypeArguments(generic.GetTypeParameters(), generic.GetLeftAnglePos(),
                         generic.GetRightAnglePos()))
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(classDecl.GetUpperBoundPos(), SyntaxNodeKind.UpperBoundToken)
@@ -1815,31 +1763,27 @@ private class FlatbufferNodeTranslator {
         for (i in 0..superTypes.size) {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 if (i < superTypes.size - 1 && let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         if (let Some(db) <- classDecl.GetBase() && let Some(generic) <- db.GetGeneric() &&
             generic.GetGenericConstraints().size != 0) {
             addChild(ret, transGenericConstraints(generic.GetGenericConstraints()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         if (let Some(body) <- classDecl.GetBody()) {
             addChild(ret, transClassBody(body.GetBase(), body.GetDecls(), body.GetLeftCurlPos(), body.GetRightCurlPos()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ClassDecl, ret.toArray(), preChildren: preChildren)
@@ -1861,12 +1805,11 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             if (db.GetModifiers().size != 0) {
                 addChild(ret, transModifiers(db.GetModifiers()))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // func
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.StructToken)
@@ -1879,8 +1822,7 @@ private class FlatbufferNodeTranslator {
                     transTypeArguments(generic.GetTypeParameters(), generic.GetLeftAnglePos(),
                         generic.GetRightAnglePos()))
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(structDecl.GetUpperBoundPos(), SyntaxNodeKind.UpperBoundToken)
@@ -1889,31 +1831,27 @@ private class FlatbufferNodeTranslator {
         for (i in 0..superTypes.size) {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 if (i < superTypes.size - 1 && let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         if (let Some(db) <- structDecl.GetBase() && let Some(generic) <- db.GetGeneric() &&
             generic.GetGenericConstraints().size > 0) {
             addChild(ret, transGenericConstraints(generic.GetGenericConstraints()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         if (let Some(body) <- structDecl.GetBody()) {
             addChild(ret, transClassBody(body.GetBase(), body.GetDecls(), body.GetLeftCurlPos(), body.GetRightCurlPos()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.StructDecl, ret.toArray(), preChildren: preChildren)
@@ -1935,13 +1873,12 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // func
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.InterfaceToken)
@@ -1956,8 +1893,7 @@ private class FlatbufferNodeTranslator {
                         transTypeArguments(typeParameters, generic.GetLeftAnglePos(), generic.GetRightAnglePos()))
                 }
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(interfaceDecl.GetUpperBoundPos(), SyntaxNodeKind.UpperBoundToken)
@@ -1966,7 +1902,7 @@ private class FlatbufferNodeTranslator {
         for (i in 0..superTypes.size) {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 if (let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -1979,20 +1915,18 @@ private class FlatbufferNodeTranslator {
                 if (genericConstraints.size != 0) {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
 
         if (let Some(body) <- interfaceDecl.GetBody()) {
             let declList = body.GetDecls()
             addChild(ret, transClassBody(body.GetBase(), declList, body.GetLeftCurlPos(), body.GetRightCurlPos()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.InterfaceDecl, ret.toArray(), preChildren: preChildren)
@@ -2014,13 +1948,12 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // extend
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.ExtendToken)
@@ -2032,14 +1965,12 @@ private class FlatbufferNodeTranslator {
                         transTypeArguments(typeParameters, generic.GetLeftAnglePos(), generic.GetRightAnglePos()))
                 }
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         if (let Some(extendType) <- extendDecl.GetExtendedType()) {
             transType(extendType)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(extendDecl.GetUpperBoundPos(), SyntaxNodeKind.UpperBoundToken)
@@ -2048,7 +1979,7 @@ private class FlatbufferNodeTranslator {
         for (i in 0..superTypes.size) {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 if (let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -2061,7 +1992,7 @@ private class FlatbufferNodeTranslator {
                 if (genericConstraints.size != 0) {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
 
@@ -2069,8 +2000,7 @@ private class FlatbufferNodeTranslator {
         addChild(ret, transClassBody(memberDecls, extendDecl.GetLeftCurlPos(), extendDecl.GetRightCurlPos()))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ExtendDecl, ret.toArray(), preChildren: preChildren)
@@ -2148,13 +2078,12 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // func
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.EnumToken)
@@ -2169,8 +2098,7 @@ private class FlatbufferNodeTranslator {
                         transTypeArguments(typeParameters, generic.GetLeftAnglePos(), generic.GetRightAnglePos()))
                 }
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(enumDecl.GetUpperBoundPos(), SyntaxNodeKind.UpperBoundToken)
@@ -2179,8 +2107,7 @@ private class FlatbufferNodeTranslator {
         for (i in 0..superTypes.size) {
             if (let Some(anno) <- superTypes[i]) {
                 transType(anno)
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
                 if (let Some(base) <- anno.GetBase()) {
                     transBasicTerminal(base.GetBitAndPos(), SyntaxNodeKind.BitAndToken)
                 }
@@ -2193,8 +2120,7 @@ private class FlatbufferNodeTranslator {
                 if (genericConstraints.size != 0) {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
             }
         }
 
@@ -2202,12 +2128,10 @@ private class FlatbufferNodeTranslator {
         var constructors = enumDecl.GetConstructors()
         addChild(ret,
             transEnumBody(enumDecl, memberDecls, constructors, enumDecl.GetLeftCurlPos(), enumDecl.GetRightCurlPos()))
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.EnumDecl, ret.toArray(), preChildren: preChildren)
@@ -2235,13 +2159,12 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
 
             // identifier
@@ -2269,28 +2192,27 @@ private class FlatbufferNodeTranslator {
                 // type
                 if (let Some(vb) <- param.GetBase() && let Some(ty) <- vb.GetType()) {
                     transType(ty)
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 if (trailParamCmts.size > 0) {
                     addChild(ret, transCommentGroupList(trailParamCmts))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 transBasicTerminal(param.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
             transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             if (trailParamListCmts.size > 0) {
                 addChild(ret, transCommentGroupList(trailParamListCmts))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             if (trailBodyCmts.size > 0) {
                 addChild(ret, transCommentGroupList(trailBodyCmts))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.EnumConstructor, ret.toArray())
@@ -2313,13 +2235,12 @@ private class FlatbufferNodeTranslator {
                 // The begin of FuncDecl is not begin of annotations
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // prop
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.PropToken)
@@ -2329,7 +2250,7 @@ private class FlatbufferNodeTranslator {
 
             if (let Some(ty) <- varDecl.GetType()) {
                 transType(ty)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             transBasicTerminal(propDecl.GetLeftCurlPos(), SyntaxNodeKind.LCurlToken)
 
@@ -2337,22 +2258,21 @@ private class FlatbufferNodeTranslator {
             if (getters.size != 0) {
                 if (let Some(getter) <- getters[0]) {
                     addChild(ret, transFuncDecl(getter))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
             }
             var setters = propDecl.GetSetters()
             if (setters.size != 0) {
                 if (let Some(setter) <- setters[0]) {
                     addChild(ret, transFuncDecl(setter))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
             }
             transBasicTerminal(propDecl.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.PropDecl, ret.toArray(), preChildren: preChildren)
@@ -2374,13 +2294,12 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.MacroToken)
             // identifier
@@ -2392,8 +2311,7 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, transParamList(paramList))
                 moveCursorToEnd(paramList.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             if (let Some(ty) <- body.GetRetType() && isValidPosition(body.GetColonPos())) {
                 // :
@@ -2401,8 +2319,7 @@ private class FlatbufferNodeTranslator {
                 // type
                 transType(ty)
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // block
             if (let Some(block) <- body.GetBody()) {
                 addChild(ret, transBlock(block))
@@ -2410,8 +2327,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MacroDecl, ret.toArray(), preChildren: preChildren)
@@ -2573,13 +2489,12 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
 
@@ -2587,21 +2502,19 @@ private class FlatbufferNodeTranslator {
             transBasicTerminal(invocation.GetAtPos(), SyntaxNodeKind.AtToken)
 
             addChild(ret, transSymbolRef4Invocation(invocation))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             transBasicTerminal(invocation.GetLeftSquarePos(), SyntaxNodeKind.LSquareToken)
 
             addChild(ret, transTokenList(invocation.GetAttrs()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             transBasicTerminal(invocation.GetRightSquarePos(), SyntaxNodeKind.RSquareToken)
 
             if (invocation.GetHasParenthesis()) {
                 transBasicTerminal(invocation.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
 
                 addChild(ret, transTokenList(invocation.GetArgs()))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
 
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else if (let Some(dl) <- invocation.GetDecl()) {
@@ -2610,13 +2523,12 @@ private class FlatbufferNodeTranslator {
                 } else {
                     addChild(ret, transDecl(dl))
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MacroExpandDecl, ret.toArray(), preChildren: preChildren)
@@ -2648,30 +2560,26 @@ private class FlatbufferNodeTranslator {
             } else {
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             let modifiers = db.GetModifiers()
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
 
         if (let Some(invocation) <- macroExpandParam.GetInvocation()) {
             transBasicTerminal(invocation.GetAtPos(), SyntaxNodeKind.AtToken)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             addChild(ret, transSymbolRef4Invocation(invocation))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             transBasicTerminal(invocation.GetLeftSquarePos(), SyntaxNodeKind.LSquareToken)
 
             addChild(ret, transTokenList(invocation.GetAttrs()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             transBasicTerminal(invocation.GetRightSquarePos(), SyntaxNodeKind.RSquareToken)
 
@@ -2679,19 +2587,19 @@ private class FlatbufferNodeTranslator {
                 transBasicTerminal(invocation.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
 
                 addChild(ret, transTokenList(invocation.GetArgs()))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
 
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else {
                 if (let Some(decl) <- invocation.GetDecl() && let Some(param) <- decl.GetDeclAsFuncParam()) {
                     addChild(ret, transFuncParam(param))
+                    resetGlobalVariables(ret, innerCmts)
                 }
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MacroExpandParam, ret.toArray())
@@ -2709,18 +2617,15 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(invocation) <- macroExpandExpr.GetInvocation()) {
             transBasicTerminal(invocation.GetAtPos(), SyntaxNodeKind.AtToken)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             addChild(ret, transSymbolRef4Invocation(invocation))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             transBasicTerminal(invocation.GetLeftSquarePos(), SyntaxNodeKind.LSquareToken)
 
             addChild(ret, transTokenList(invocation.GetAttrs()))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             transBasicTerminal(invocation.GetRightSquarePos(), SyntaxNodeKind.RSquareToken)
 
@@ -2728,18 +2633,17 @@ private class FlatbufferNodeTranslator {
                 transBasicTerminal(invocation.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
 
                 addChild(ret, transTokenList(invocation.GetArgs()))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
 
                 transBasicTerminal(invocation.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else if (let Some(dl) <- invocation.GetDecl()) {
                 addChild(ret, transDecl(dl))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MacroExpandExpr, ret.toArray(), preChildren: preChildren)
@@ -2756,13 +2660,12 @@ private class FlatbufferNodeTranslator {
         if (let Some(ty) <- constraint.GetType()) {
             if (let Some(tyBase) <- ty.GetBase()) {
                 addWhitespaceAndMoveCursorToBegin(tyBase.GetBase())
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 addChild(ret, transRefType(ty))
                 moveCursorToEnd(tyBase.GetBase())
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(constraint.GetOperatorPos(), SyntaxNodeKind.UpperBoundToken)
         let upperBounds = constraint.GetUpperBound()
         let bitAndPos = constraint.GetBitAndPosVec()
@@ -2772,7 +2675,7 @@ private class FlatbufferNodeTranslator {
         for (i in 0..upperBounds.size) {
             if (let Some(upperBound) <- upperBounds[i]) {
                 transType(upperBound)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 if (i < bitAndPos.size) {
                     transBasicTerminal(bitAndPos[i], SyntaxNodeKind.BitAndToken)
                 }
@@ -2780,8 +2683,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.GenericConstraint, ret.toArray())
@@ -2820,12 +2722,11 @@ private class FlatbufferNodeTranslator {
         if (let Some(db) <- param.GetBase()) {
             transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
         }
-        curChildren = ret
+        resetGlobalVariables(ret, innerCmts)
 
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.GenericParam, ret.toArray())
@@ -2902,12 +2803,11 @@ private class FlatbufferNodeTranslator {
                 // The begin of FuncDecl is not begin of annotations
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // modifier
             if (modifiers.size != 0) {
                 addChild(ret, transModifiers(modifiers))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             if (funcDecl.GetIsGetter()) {
                 transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.GetToken)
@@ -2943,8 +2843,7 @@ private class FlatbufferNodeTranslator {
                         transTypeArguments(typeParameters, generic.GetLeftAnglePos(), generic.GetRightAnglePos()))
                 }
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             if (funcDecl.GetIsSetter() && let Some(paramList) <- body.GetParamList()) {
                 transBasicTerminal(paramList.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
@@ -2958,7 +2857,7 @@ private class FlatbufferNodeTranslator {
                     transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
 
                     addChild(ret, transCommentGroupList(trailParamListCmts))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
             } else if (funcDecl.GetIsGetter() || (identifier == "init" && findStatic(modifiers))) {
@@ -2975,21 +2874,20 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, transParamList(paramList))
                 moveCursorToEnd(paramList.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (let Some(ty) <- body.GetRetType()) {
                 // :
                 transBasicTerminal(body.GetColonPos(), SyntaxNodeKind.ColonToken)
                 // type
                 transType(ty)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             if (let Some(generic) <- body.GetGeneric()) {
                 let genericConstraints = generic.GetGenericConstraints();
                 if (genericConstraints.size != 0) {
                     addChild(ret, transGenericConstraints(genericConstraints))
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // block
             if (let Some(block) <- body.GetBody()) {
@@ -3015,8 +2913,7 @@ private class FlatbufferNodeTranslator {
         ret = transFuncBody(funcDecl, ret, innerCmts, identifier, modifiers)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(kind, ret.toArray(), preChildren: preChildren)
@@ -3041,31 +2938,27 @@ private class FlatbufferNodeTranslator {
             addWhitespaceAndMoveCursorToBegin(param.GetNodeBase())
             if (let Some(macroExpandParam) <- param.GetMacroParamAsMacroExpandParam()) {
                 addChild(ret, transMacroExpandParam(macroExpandParam))
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
                 if (i < params.size - 1) {
                     addChild(ret, builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
                 }
                 moveCursorColumn(col: Int32(SyntaxNodeKind.CommaToken.toString().size))
             } else if (isLambda) {
                 addChild(ret, transLambdaParam(param))
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
                 if (isValidPosition(param.GetCommaPos())) {
                     transBasicTerminal(param.GetCommaPos(), SyntaxNodeKind.CommaToken)
                 }
             } else {
                 addChild(ret, transFuncParam(param))
-                curChildren = ret
-                innerComments = innerCmts
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(param.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
         transBasicTerminal(paramList.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ParameterList, ret.toArray())
@@ -3080,12 +2973,11 @@ private class FlatbufferNodeTranslator {
         innerComments = innerCmts
 
         if (let Some(vb) <- param.GetBase()) {
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (let Some(db) <- vb.GetBase()) {
                 // The begin of FuncDecl is not begin of annotations
                 addWhitespaceAndMoveCursorToBegin(db.GetBase())
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 transIdentifier(db.GetIdentifierPos(), db.GetIdentifier())
             }
             if (isValidPosition(param.GetColonPos())) {
@@ -3093,13 +2985,12 @@ private class FlatbufferNodeTranslator {
             }
             if (let Some(ty) <- vb.GetType()) {
                 transType(ty)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.LambdaParam, ret.toArray())
@@ -3123,12 +3014,12 @@ private class FlatbufferNodeTranslator {
                     // The begin of FuncDecl is not begin of annotations
                     addWhitespaceAndMoveCursorToBegin(db.GetBase())
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 // modifier
                 let modifiers = db.GetModifiers()
                 if (modifiers.size != 0) {
                     addChild(ret, transModifiers(modifiers))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 if (param.GetHasLetOrVar() && vb.GetIsVar()) {
                     transBasicTerminal(db.GetKeywordPos(), SyntaxNodeKind.VarToken)
@@ -3144,10 +3035,9 @@ private class FlatbufferNodeTranslator {
             // type
             if (let Some(ty) <- vb.GetType()) {
                 transType(ty)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
 
             if (let Some(expr) <- param.GetAssignment()) {
                 transBasicTerminal(vb.GetAssignPos(), SyntaxNodeKind.AssignToken)
@@ -3156,8 +3046,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.FuncParam, ret.toArray(), preChildren: preChildren)
@@ -3181,22 +3070,19 @@ private class FlatbufferNodeTranslator {
         innerComments = innerCmts
 
         addWhitespaceAndMoveCursor(block.GetLeftCurlPos())
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(block.GetLeftCurlPos(), SyntaxNodeKind.LCurlToken)
         for (e in block.GetBody()) {
             if (let Some(expr) <- e) {
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 addChild(ret, transRoot(expr))
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(block.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.Block, ret.toArray(), preChildren: preChildren)
@@ -3216,8 +3102,7 @@ private class FlatbufferNodeTranslator {
         addChild(ret, transSafeBlock(block))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.UnsafeExpr, ret.toArray(), preChildren: preChildren)
@@ -3318,14 +3203,12 @@ private class FlatbufferNodeTranslator {
         innerComments = innerCmts
 
         if (let Some(db) <- matchExpr.GetBase()) {
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             transBasicTerminal(db.GetBegin(), SyntaxNodeKind.WildcardToken)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.WildcardPattern, ret.toArray(), preChildren: preChildren)
@@ -3341,8 +3224,7 @@ private class FlatbufferNodeTranslator {
         innerComments = innerCmts
 
         if (let Some(db) <- matchExpr.GetBase()) {
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // match
             transBasicTerminal(db.GetBegin(), SyntaxNodeKind.MatchToken)
 
@@ -3351,13 +3233,13 @@ private class FlatbufferNodeTranslator {
                 // case 1: match (expr) { patterns }
                 transBasicTerminal(matchExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
                 addChild(ret, transExpr(selector))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(matchExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
                 transBasicTerminal(matchExpr.GetLeftCurlPos(), SyntaxNodeKind.LCurlToken)
                 // match cases
                 for (normalCase in getElements<NodeFormat_MatchCase>(matchExpr.GetMatchCases())) {
                     addChild(ret, transMatchCase(normalCase))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 transBasicTerminal(matchExpr.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
             } else {
@@ -3366,15 +3248,14 @@ private class FlatbufferNodeTranslator {
                 // match cases
                 for (otherCase in getElements<NodeFormat_MatchCaseOther>(matchExpr.GetMatchCaseOthers())) {
                     addChild(ret, transMatchCaseOther(otherCase))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 transBasicTerminal(matchExpr.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MatchExpr, ret.toArray(), preChildren: preChildren)
@@ -3390,8 +3271,7 @@ private class FlatbufferNodeTranslator {
         innerComments = innerCmts
 
         if (let Some(db) <- tryExpr.GetBase()) {
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // try
             transBasicTerminal(db.GetBegin(), SyntaxNodeKind.TryToken)
             // resourceSpec
@@ -3401,7 +3281,7 @@ private class FlatbufferNodeTranslator {
             for (i in 0..children.size) {
                 if (let Some(varDecl) <- children[i]) {
                     addChild(ret, transVarDecl(varDecl))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 if (i < commaPos.size) {
                     transBasicTerminal(commaPos[i], SyntaxNodeKind.CommaToken)
@@ -3412,7 +3292,7 @@ private class FlatbufferNodeTranslator {
             // tryBlock
             if (let Some(block) <- tryExpr.GetTryBlock()) {
                 addChild(ret, transBlock(block))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
 
             // catch
@@ -3424,25 +3304,24 @@ private class FlatbufferNodeTranslator {
                 transBasicTerminal(lParenPos[i], SyntaxNodeKind.LParenToken)
                 if (let Some(pattern) <- catchPatterns[i]) {
                     addChild(ret, transCatchPattern(pattern))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 transBasicTerminal(rParenPos[i], SyntaxNodeKind.RParenToken)
                 if (let Some(block) <- catchBlocks[i]) {
                     addChild(ret, transBlock(block))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
             }
             // finally
             transBasicTerminal(tryExpr.GetFinallyPos(), SyntaxNodeKind.FinallyToken)
             if (let Some(block) <- tryExpr.GetFinallyBlock()) {
                 addChild(ret, transBlock(block))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TryExpr, ret.toArray(), preChildren: preChildren)
@@ -3481,8 +3360,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ConstPattern, ret.toArray())
@@ -3503,8 +3381,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.WildcardPattern, ret.toArray())
@@ -3527,8 +3404,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.VarBindingPattern, ret.toArray())
@@ -3549,8 +3425,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.VarOrEnumPattern, ret.toArray())
@@ -3571,19 +3446,16 @@ private class FlatbufferNodeTranslator {
         if (let Some(pat) <- typePattern.GetPattern()) {
             addChild(ret, transPattern(pat))
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(typePattern.GetColonPos(), SyntaxNodeKind.ColonToken)
         // type
         if (let Some(ty) <- typePattern.GetType()) {
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             transType(ty)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TypePattern, ret.toArray())
@@ -3630,16 +3502,14 @@ private class FlatbufferNodeTranslator {
                     }
                 }
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             if (!stack.isEmpty()) {
                 transBasicTerminal(curMem.GetDotPos(), SyntaxNodeKind.DotToken)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.CompositeType, ret.toArray())
@@ -3663,13 +3533,13 @@ private class FlatbufferNodeTranslator {
         if (let Some(expr) <- enumPattern.GetRef()) {
             if (let Some(memAccess) <- expr.GetExprAsMemberAccess()) {
                 addChild(ret, transCompositeType(memAccess))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(memAccess.GetDotPos(), SyntaxNodeKind.DotToken)
                 addChild(ret, transSymbolRef4MemberAccess(memAccess))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             } else if (let Some(refExpr) <- expr.GetExprAsRefExpr()) {
                 addChild(ret, transRefExpr(refExpr))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         // patterns
@@ -3685,15 +3555,14 @@ private class FlatbufferNodeTranslator {
                 if (let Some(pat) <- patterns[i]) {
                     addChild(ret, transPattern(pat))
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // RPAREN
             transBasicTerminal(enumPattern.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.EnumPattern, ret.toArray())
@@ -3721,15 +3590,13 @@ private class FlatbufferNodeTranslator {
             if (let Some(pat) <- patterns[i]) {
                 addChild(ret, transPattern(pat))
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         // RPAREN
         transBasicTerminal(tuplePattern.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TuplePattern, ret.toArray())
@@ -3774,8 +3641,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.CatchPattern, ret.toArray())
@@ -3794,13 +3660,11 @@ private class FlatbufferNodeTranslator {
             if (let Some(node) <- exprOrDecl) {
                 addChild(ret, transRoot(node))
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MatchCaseBody, ret.toArray())
@@ -3829,15 +3693,14 @@ private class FlatbufferNodeTranslator {
                 if (let Some(pattern) <- patterns[i]) {
                     addChild(ret, transPattern(pattern))
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             // patternGuard
             if (let Some(patGuard) <- matchCase.GetPatternguard()) {
                 transBasicTerminal(matchCase.GetIfPos(), SyntaxNodeKind.WhereToken)
                 addChild(ret, transExpr(patGuard))
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // =>
             transBasicTerminal(matchCase.GetArrowPos(), SyntaxNodeKind.DoubleArrowToken)
             // body
@@ -3847,8 +3710,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MatchCase, ret.toArray())
@@ -3870,8 +3732,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(caseExpr) <- matchCase.GetMatchExpr()) {
                 addChild(ret, transExpr(caseExpr))
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             // =>
             transBasicTerminal(matchCase.GetArrowPos(), SyntaxNodeKind.DoubleArrowToken)
             // body
@@ -3881,8 +3742,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MatchCase, ret.toArray())
@@ -3917,8 +3777,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.RefExpr, ret.toArray(), preChildren: preChildren)
@@ -3941,7 +3800,7 @@ private class FlatbufferNodeTranslator {
         for (i in 0..children.size) {
             if (let Some(expr) <- children[i]) {
                 transNoTerminalExpr(expr)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             if (i < commaPos.size) {
                 transBasicTerminal(commaPos[i], SyntaxNodeKind.CommaToken)
@@ -3950,8 +3809,7 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(arrayLit.GetRightCurlPos(), SyntaxNodeKind.RSquareToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ArrayLiteral, ret.toArray(), preChildren: preChildren)
@@ -3974,21 +3832,19 @@ private class FlatbufferNodeTranslator {
         for (i in 0..commaPos.size) {
             if (let Some(expr) <- children[i]) {
                 transNoTerminalExpr(expr)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             transBasicTerminal(commaPos[i], SyntaxNodeKind.CommaToken)
         }
         if (let Some(expr) <- children[commaPos.size]) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(tupleLit.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TupleLiteral, ret.toArray(), preChildren: preChildren)
@@ -4006,8 +3862,7 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(tp) <- arrayExpr.GetType()) {
             transType(tp)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(arrayExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
 
@@ -4015,7 +3870,7 @@ private class FlatbufferNodeTranslator {
             if (let Some(arg) <- p) {
                 addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                 addChild(ret, transFuncArg(arg))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
@@ -4023,8 +3878,7 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(arrayExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.VArrayExpr, ret.toArray(), preChildren: preChildren)
@@ -4043,8 +3897,7 @@ private class FlatbufferNodeTranslator {
         if (let Some(start) <- rangeExpr.GetStartExpr()) {
             transNoTerminalExpr(start)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         var kind = SyntaxNodeKind.RangeOpToken
         if (rangeExpr.GetIsClosed()) {
@@ -4055,8 +3908,7 @@ private class FlatbufferNodeTranslator {
         if (let Some(stop) <- rangeExpr.GetStopExpr()) {
             transNoTerminalExpr(stop)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         if (let Some(step) <- rangeExpr.GetStepExpr()) {
             transBasicTerminal(rangeExpr.GetColonPos(), SyntaxNodeKind.ColonToken)
@@ -4064,8 +3916,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.RangeExpr, ret.toArray(), preChildren: preChildren)
@@ -4084,15 +3935,13 @@ private class FlatbufferNodeTranslator {
         if (let Some(expr) <- incOrDecExpr.GetExpr()) {
             transNoTerminalExpr(expr)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         let opKind = getSyntaxImplKind(incOrDecExpr.GetOperatorKind())
         transBasicTerminal(incOrDecExpr.GetOperatorPos(), opKind)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.IncOrDecExpr, ret.toArray(), preChildren: preChildren)
@@ -4112,14 +3961,12 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(expr) <- parenExpr.GetExpr()) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(parenExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ParenExpr, ret.toArray(), preChildren: preChildren)
@@ -4137,8 +3984,7 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(expr) <- isExpr.GetExpr()) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(isExpr.GetIsPos(), SyntaxNodeKind.IsToken)
@@ -4147,8 +3993,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.IsExpr, ret.toArray(), preChildren: preChildren)
@@ -4166,8 +4011,7 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(expr) <- asExpr.GetExpr()) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(asExpr.GetAsPos(), SyntaxNodeKind.AsToken)
@@ -4176,8 +4020,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.AsExpr, ret.toArray(), preChildren: preChildren)
@@ -4195,23 +4038,19 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(tp) <- typeConvExpr.GetType()) {
             transType(tp)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(typeConvExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
 
         if (let Some(expr) <- typeConvExpr.GetExpr()) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(typeConvExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TypeConvExpr, ret.toArray(), preChildren: preChildren)
@@ -4230,13 +4069,11 @@ private class FlatbufferNodeTranslator {
         if (let Some(baseExpr) <- optionalExpr.GetBaseExpr()) {
             transNoTerminalExpr(baseExpr)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(optionalExpr.GetQuestPos(), SyntaxNodeKind.QuestToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.OptionalExpr, ret.toArray(), preChildren: preChildren)
@@ -4263,8 +4100,7 @@ private class FlatbufferNodeTranslator {
         if (let Some(lhs) <- assignExpr.GetLeftValue()) {
             transNoTerminalExpr(lhs)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         let assignOpKind = getSyntaxImplKind(assignExpr.GetAssignOp())
         transBasicTerminal(assignExpr.GetAssignPos(), assignOpKind)
@@ -4274,8 +4110,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.AssignExpr, ret.toArray(), preChildren: preChildren)
@@ -4313,8 +4148,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ReturnExpr, ret.toArray(), preChildren: preChildren)
@@ -4341,8 +4175,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(jumpKind, ret.toArray(), preChildren: preChildren)
@@ -4376,15 +4209,13 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(baseExpr) <- memberAccess.GetBaseExpr()) {
             transNoTerminalExpr(baseExpr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(memberAccess.GetDotPos(), SyntaxNodeKind.DotToken)
         addChild(ret, transSymbolRef4MemberAccess(memberAccess))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.MemberAccess, ret.toArray(), preChildren: preChildren)
@@ -4402,8 +4233,7 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(baseExpr) <- subscriptExpr.GetBaseExpr()) {
             transNoTerminalExpr(baseExpr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(subscriptExpr.GetLeftSquarePos(), SyntaxNodeKind.LSquareToken)
 
@@ -4422,8 +4252,7 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(subscriptExpr.GetRightSquarePos(), SyntaxNodeKind.RSquareToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.SubscriptExpr, ret.toArray(), preChildren: preChildren)
@@ -4448,24 +4277,21 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, transParamList(paramList, isLambda: true))
                 moveCursorToEnd(paramList.GetBase())
             }
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             transBasicTerminal(funcBody.GetArrowPos(), SyntaxNodeKind.DoubleArrowToken)
 
             if (let Some(blockNode) <- funcBody.GetBody()) {
                 var body = blockNode.GetBody()
                 for (node in getElements<NodeFormat_Node>(body)) {
                     addChild(ret, transRoot(node))
-                    curChildren = ret
-                    innerComments = innerCmts
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 transBasicTerminal(blockNode.GetRightCurlPos(), SyntaxNodeKind.RCurlToken)
             }
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.Lambda, ret.toArray(), preChildren: preChildren)
@@ -4487,12 +4313,10 @@ private class FlatbufferNodeTranslator {
         if (let Some(expr) <- throwExpr.GetExpr()) {
             transNoTerminalExpr(expr)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ThrowExpr, ret.toArray(), preChildren: preChildren)
@@ -4514,8 +4338,7 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(expr) <- synchronizedExpr.GetMutexExpr()) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
 
         transBasicTerminal(synchronizedExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
@@ -4525,8 +4348,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.SynchronizedExpr, ret.toArray(), preChildren: preChildren)
@@ -4548,7 +4370,7 @@ private class FlatbufferNodeTranslator {
             transBasicTerminal(spawnExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
             if (let Some(expr) <- spawnExpr.GetSpawnArgExpr()) {
                 transNoTerminalExpr(expr)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             transBasicTerminal(spawnExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         }
@@ -4556,12 +4378,10 @@ private class FlatbufferNodeTranslator {
         if (let Some(expr) <- spawnExpr.GetTaskExpr()) {
             transNoTerminalExpr(expr)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.SpawnExpr, ret.toArray(), preChildren: preChildren)
@@ -4582,8 +4402,7 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(ifExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
         if (let Some(expr) <- ifExpr.GetCondExpr()) {
             addChild(ret, transDisjunctionCondition(expr))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(ifExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
 
@@ -4592,8 +4411,7 @@ private class FlatbufferNodeTranslator {
         }
 
         if (ifExpr.GetHasElse()) {
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
             transBasicTerminal(ifExpr.GetElsePos(), SyntaxNodeKind.ElseToken)
             if (let Some(elseBody) <- ifExpr.GetElseBody()) {
                 // BlockExpr or IfExpr
@@ -4602,8 +4420,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.IfExpr, ret.toArray(), preChildren: preChildren)
@@ -4623,8 +4440,7 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(whileExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
         if (let Some(expr) <- whileExpr.GetCondExpr()) {
             addChild(ret, transDisjunctionCondition(expr))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(whileExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (let Some(block) <- whileExpr.GetBody()) {
@@ -4632,8 +4448,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.WhileExpr, ret.toArray(), preChildren: preChildren)
@@ -4653,20 +4468,17 @@ private class FlatbufferNodeTranslator {
         if (let Some(block) <- doWhileExpr.GetBody()) {
             addChild(ret, transBlock(block))
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(doWhileExpr.GetWhilePos(), SyntaxNodeKind.WhileToken)
         transBasicTerminal(doWhileExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
         if (let Some(expr) <- doWhileExpr.GetCondExpr()) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(doWhileExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.DoWhileExpr, ret.toArray(), preChildren: preChildren)
@@ -4688,20 +4500,17 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(forInExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
         if (let Some(pattern) <- forInExpr.GetPattern()) {
             addChild(ret, transPattern(pattern))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(forInExpr.GetInPos(), SyntaxNodeKind.InToken)
         if (let Some(inExpr) <- forInExpr.GetInExpr()) {
             addChild(ret, transExpr(inExpr))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         if (let Some(patternGuard) <- forInExpr.GetPatternGuard()) {
             transBasicTerminal(forInExpr.GetIfPos(), SyntaxNodeKind.WhereToken)
             addChild(ret, transExpr(patternGuard))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(forInExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (let Some(block) <- forInExpr.GetBody()) {
@@ -4709,8 +4518,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ForInExpr, ret.toArray(), preChildren: preChildren)
@@ -4732,13 +4540,11 @@ private class FlatbufferNodeTranslator {
         }
         if (let Some(expr) <- argument.GetExpr()) {
             transNoTerminalExpr(expr)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.Argument, ret.toArray())
@@ -4757,8 +4563,7 @@ private class FlatbufferNodeTranslator {
         // baseFunc
         if (let Some(baseFunc) <- callExpr.GetBaseFunc()) {
             transNoTerminalExpr(baseFunc)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(callExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
         // funcArgs
@@ -4767,17 +4572,15 @@ private class FlatbufferNodeTranslator {
             if (let Some(arg) <- p) {
                 addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                 addChild(ret, transFuncArg(arg))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
             }
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         transBasicTerminal(callExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.CallExpr, ret.toArray(), preChildren: preChildren)
@@ -4800,8 +4603,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.UnaryExpr, ret.toArray(), preChildren: preChildren)
@@ -4819,11 +4621,9 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(lhs) <- biExpr.GetLeftExpr()) {
             transNoTerminalExpr(lhs)
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         let opKind = getSyntaxImplKind(biExpr.GetOperatorKind())
         transBasicTerminal(biExpr.GetOperatorPos(), opKind)
@@ -4832,8 +4632,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.BinaryExpr, ret.toArray(), preChildren: preChildren)
@@ -4854,14 +4653,12 @@ private class FlatbufferNodeTranslator {
         transBasicTerminal(interpolationExpr.GetDollarPos(), SyntaxNodeKind.DollarToken)
         if (let Some(block) <- interpolationExpr.GetBlock()) {
             addChild(ret, transBlock(block))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         moveCursorToEnd(base)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.InterpolationExpr, ret.toArray(), preChildren: preChildren)
@@ -4887,7 +4684,7 @@ private class FlatbufferNodeTranslator {
             for (interpol in interpols) {
                 if (let Some(interp) <- interpol) {
                     addChild(ret, transExpr(interp, isInterpol: true))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
             }
             ret.add(quoteToken)
@@ -4895,8 +4692,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         builder.buildNonTerminal(SyntaxNodeKind.LineStringLiteral, ret.toArray(), preChildren: preChildren)
     }
@@ -4929,8 +4725,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         builder.buildNonTerminal(SyntaxNodeKind.MultiLineStringLiteral, ret.toArray(), preChildren: preChildren)
     }
@@ -4987,8 +4782,7 @@ private class FlatbufferNodeTranslator {
         ret.add(all: [prefix, quoteToken, value, quoteToken])
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         builder.buildNonTerminal(SyntaxNodeKind.RuneLiteral, ret.toArray())
     }
@@ -5006,8 +4800,7 @@ private class FlatbufferNodeTranslator {
         ret.add(all: [hashToken, quoteToken, value, quoteToken, hashToken])
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         builder.buildNonTerminal(SyntaxNodeKind.MultiLineRawStringLiteral, ret.toArray())
     }
@@ -5037,8 +4830,7 @@ private class FlatbufferNodeTranslator {
 
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ValuedLiteral, ret.toArray(), preChildren: preChildren)
@@ -5059,8 +4851,7 @@ private class FlatbufferNodeTranslator {
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.UnitLiteral, ret.toArray(), preChildren: preChildren)
@@ -5086,27 +4877,24 @@ private class FlatbufferNodeTranslator {
         for (i in 0..patterns.size) {
             if (let Some(pattern) <- patterns[i]) {
                 addChild(ret, transPattern(pattern))
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 if (i < bitOrTokens.size) {
                     transBasicTerminal(bitOrTokens[i], SyntaxNodeKind.BitOrToken)
                 }
             }
         }
 
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
 
         transBasicTerminal(letPattern.GetBackarrowPos(), SyntaxNodeKind.BackArrowToken)
 
         if (let Some(expr) <- letPattern.GetInitializer()) {
             transNoTerminalExpr(expr)
         }
-        curChildren = ret
-        innerComments = innerCmts
+        resetGlobalVariables(ret, innerCmts)
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.LetPattern, ret.toArray(), preChildren: preChildren)
@@ -5199,16 +4987,14 @@ private class FlatbufferNodeTranslator {
 
         if (let Some(expr) <- parenCondition.GetExpr()) {
             addChild(ret, transDisjunctionCondition(expr))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         transBasicTerminal(parenCondition.GetRightParenPos(), SyntaxNodeKind.RParenToken)
 
         moveCursorToEnd(parenCondition.GetBase())
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.ParenCondition, ret.toArray())
@@ -5258,8 +5044,7 @@ private class FlatbufferNodeTranslator {
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.QuoteInterpolationExpr, ret.toArray(), preChildren: preChildren)
@@ -5299,14 +5084,13 @@ private class FlatbufferNodeTranslator {
                     case _ => transQuoteInterpolationExpr(expr)
                 }
                 addChild(ret, expr1)
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
             transBasicTerminal(quoteExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.QuoteExpr, ret.toArray(), preChildren: preChildren)
@@ -5329,7 +5113,7 @@ private class FlatbufferNodeTranslator {
                 // baseFunc
                 if (let Some(baseFunc) <- callExpr.GetBaseFunc()) {
                     transNoTerminalExpr(baseFunc)
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                 }
                 transBasicTerminal(callExpr.GetLeftParenPos(), SyntaxNodeKind.LParenToken)
                 // funcArgs
@@ -5337,32 +5121,30 @@ private class FlatbufferNodeTranslator {
                 for (arg in getElements<NodeFormat_FuncArg>(args)) {
                     addWhitespaceAndMoveCursorToBegin(arg.GetBase())
                     addChild(ret, transFuncArg(arg))
-                    curChildren = ret
+                    resetGlobalVariables(ret, innerCmts)
                     transBasicTerminal(arg.GetCommaPos(), SyntaxNodeKind.CommaToken)
                 }
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
                 transBasicTerminal(callExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
                 moveCursorToEnd(callExpr.GetBase())
             } else if (let Some(refExpr) <- expr.GetExprAsRefExpr()) {
                 addChild(ret, transRefExpr(refExpr))
                 moveCursorToEnd(refExpr.GetBase())
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             } else if (let Some(memberAccess) <- expr.GetExprAsMemberAccess()) {
                 addChild(ret, transMemberAccess(memberAccess))
                 moveCursorToEnd(memberAccess.GetBase())
-                curChildren = ret
+                resetGlobalVariables(ret, innerCmts)
             }
         }
         if (let Some(lambda) <- trailingClosureExpr.GetLambda()) {
             addChild(ret, transLambda(lambda))
             moveCursorToEnd(lambda.GetBase())
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         if (trailCmts.size > 0) {
             addChild(ret, transCommentGroupList(trailCmts))
-            curChildren = ret
-            innerComments = innerCmts
+            resetGlobalVariables(ret, innerCmts)
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.TrailingClosureExpr, ret.toArray(), preChildren: preChildren)
