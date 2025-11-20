@@ -17,6 +17,8 @@ OAT.xml @xuanjz
 
 /src/stdx/net/ @ovy
 
+/src/stdx/syntax/ @chuckchen521 @mini-tang
+
 #stdx docs
 /doc/ @luojianing
 /doc/libs_stdx/compress/ @jiyaun_99 @luojianing
