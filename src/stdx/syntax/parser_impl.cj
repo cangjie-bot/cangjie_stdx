@@ -4950,7 +4950,7 @@ private class FlatbufferNodeTranslator {
         }
         let ret = match (kind) {
             case 0 /*INTEGER*/ => transValuedLiteral(lit, preChildren)
-            case 1 /*RUNE_BYTE*/ => builder.buildInvalidTerminal() // need to delete here
+            case 1 /*RUNE_BYTE*/ => throw Exception("Rune Byte literal is not supported in syntax")
             case 2 /*FLOAT*/ => transValuedLiteral(lit, preChildren)
             case 3 /*RUNE*/ => buildRuneLiteral(lit, litToken, isSingle)
             case 4 /*STRING*/ => match (strKind) {

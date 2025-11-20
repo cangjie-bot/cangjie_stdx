@@ -381,7 +381,7 @@ public func getAsKeyWordPos(): CodePositionRange
 
 ```cangjie
 public class AssignExpr <: Expr {
-    public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = [])
+    public init(assignOpKind: AssignOpKind, lhs: SyntaxTreeNode, rhs: Expr, comments!: Array<Comment> = [])
 }
 ```
 
@@ -406,12 +406,12 @@ public prop assignOpKind: AssignOpKind
 ### prop lhs
 
 ```cangjie
-public prop lhs: Expr
+public prop lhs: SyntaxTreeNode
 ```
 
 功能：获取 [AssignExpr](#class-assignexpr) 节点中的左操作数。
 
-类型：[Expr](#class-expr)
+类型：[SyntaxTreeNode](#class-syntaxtreenode)
 
 ### prop rhs
 
@@ -423,10 +423,10 @@ public prop rhs: Expr
 
 类型：[Expr](#class-expr)
 
-### init(AssignOpKind, Expr, Expr, Array\<Comment>)
+### init(AssignOpKind, SyntaxTreeNode, Expr, Array\<Comment>)
 
 ```cangjie
-public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = [])
+public init(assignOpKind: AssignOpKind, lhs: SyntaxTreeNode, rhs: Expr, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [AssignExpr](#class-assignexpr) 对象，表示赋值表达式。
@@ -434,7 +434,7 @@ public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<C
 参数：
 
 - assignOpKind: [AssignOpKind](syntax_package_enums.md#enum-assignopkind) - 赋值操作符类型。
-- lhs: [Expr](#class-expr) - 左操作数表达式。
+- lhs: [SyntaxTreeNode](#class-syntaxtreenode) - 左操作数节点。
 - rhs: [Expr](#class-expr) - 右操作数表达式。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
@@ -7742,13 +7742,13 @@ public func getTryKeyWordPos(): CodePositionRange
 
 ```cangjie
 public class TupleLiteral <: Expr {
-    public init(elements: Array<Expr>, comments!: Array<Comment> = [])
+    public init(elements: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
 }
 ```
 
 功能：表示 `Tuple` 字面量节点。
 
-[TupleLiteral](#class-tupleliteral) 节点：使用格式 `(element1, element2, ... , elementN)` 表示， 每个 `element` 是一个表达式。
+[TupleLiteral](#class-tupleliteral) 节点：使用格式 `(element1, element2, ... , elementN)` 表示， 每个 `element` 是一个语法树节点。
 
 父类型：
 
@@ -7757,24 +7757,24 @@ public class TupleLiteral <: Expr {
 ### prop elements
 
 ```cangjie
-public prop elements: Array<Expr>
+public prop elements: Array<SyntaxTreeNode>
 ```
 
-功能：获取 [TupleLiteral](#class-tupleliteral) 中的表达式列表。
+功能：获取 [TupleLiteral](#class-tupleliteral) 中的节点列表。
 
-类型：Array\<[Expr](#class-expr)>
+类型：Array\<[SyntaxTreeNode](#class-syntaxtreenode)>
 
-### init(Array\<Expr>, Array\<Comment>)
+### init(Array\<SyntaxTreeNode>, Array\<Comment>)
 
 ```cangjie
-public init(elements: Array<Expr>, comments!: Array<Comment> = [])
+public init(elements: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [TupleLiteral](#class-tupleliteral) 对象，表示元组字面量表达式，如 `(1, "hello")`。
 
 参数：
 
-- elements: Array\<[Expr](#class-expr)> - 元组元素表达式列表。
+- elements: Array\<[SyntaxTreeNode](#class-syntaxtreenode)> - 元组元素节点列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getCommasPos()

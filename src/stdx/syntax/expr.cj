@@ -321,7 +321,7 @@ public class AssignExpr <: Expr {
     /**
      * @brief Initialize a new AssignExpr node.
      */
-    public init(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = []) {
+    public init(assignOpKind: AssignOpKind, lhs: SyntaxTreeNode, rhs: Expr, comments!: Array<Comment> = []) {
         super(SyntaxNodeImplCreator.createAssignExprImpl(assignOpKind, lhs, rhs, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
@@ -351,11 +351,11 @@ public class AssignExpr <: Expr {
      * This member variable stores the left-hand side expression where the value is
      * assigned.
      */
-    public prop lhs: Expr {
+    public prop lhs: SyntaxTreeNode {
         get() {
             let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfos.lhsPropInfo.index]
             let offset = propInfos.lhsPropInfo.offset
-            cast<Expr>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
+            cast<SyntaxTreeNode>(SyntaxNodeImplTranslator.translate(curNode, startPos + offset, this)).getOrThrow()
         }
     }
 
@@ -2254,11 +2254,12 @@ public class MatchCase <: SyntaxTreeNode {
             let lp = LocalParser((curNode as NonTerminal).getOrThrow().children, offset)
 
             while (!lp.isEnd()) {
-                let node = lp.consume()
-                bodys.add(
-                    cast<SyntaxTreeNode>(SyntaxNodeImplTranslator.translate(node.getOrThrow(), startPos + lp.offset,
-                        this)).getOrThrow())
-                lp.moveOffset(node)
+                if (let Some(node) <- lp.tryConsume()) {
+                    bodys.add(
+                        cast<SyntaxTreeNode>(SyntaxNodeImplTranslator.translate(node, startPos + lp.offset, this))
+                            .getOrThrow())
+                    lp.moveOffset(node)
+                }
             }
             bodys.toArray()
         }
@@ -4188,7 +4189,7 @@ public class TupleLiteral <: Expr {
     /**
      * @brief Initialize a new TupleLiteral node.
      */
-    public init(elements: Array<Expr>, comments!: Array<Comment> = []) {
+    public init(elements: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
         super(SyntaxNodeImplCreator.createTupleLiteralImpl(elements, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
@@ -4204,23 +4205,22 @@ public class TupleLiteral <: Expr {
      *
      * This member variable stores an array of expressions of type Expr.
      */
-    public prop elements: Array<Expr> {
+    public prop elements: Array<SyntaxTreeNode> {
         get() {
             let lp = LocalParser((nodeImpl as NonTerminal).getOrThrow().children, propInfos.elementsPropInfo.offset,
                 index: propInfos.elementsPropInfo.index)
-            let exprs = ArrayList<Expr>()
+            let nodes = ArrayList<SyntaxTreeNode>()
             let predictExpr = {
                 kind: SyntaxNodeKind => kind.isExpr()
             }
-            while (lp.look(predictExpr)) {
+            while (lp.look(predictExpr) || lp.look(SyntaxNodeKind.WildcardPattern)) {
                 if (let Some(node) <- lp.consume()) {
-                    exprs.add(
-                        cast<Expr>(SyntaxNodeImplTranslator.translate(node, startPos + lp.offset, this)).getOrThrow())
+                    nodes.add(SyntaxNodeImplTranslator.translate(node, startPos + lp.offset, this).getOrThrow())
                     lp.moveOffset(node)
                 }
                 lp.moveOffset(lp.lookAndConsume(SyntaxNodeKind.CommaToken))
             }
-            exprs.toArray()
+            nodes.toArray()
         }
     }
 }

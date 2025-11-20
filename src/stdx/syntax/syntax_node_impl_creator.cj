@@ -17,7 +17,7 @@ class SyntaxNodeImplCreator {
     private init() {
     }
 
-    unsafe static func checkIdentifier(identifier: String, paramName: String, nodeName: String, useContext!: Bool = true): Unit {
+    static unsafe func checkIdentifier(identifier: String, paramName: String, nodeName: String, useContext!: Bool = true): Unit {
         var textPtr: CString = CString(CPointer<UInt8>())
         try {
             textPtr = LibC.mallocCString(identifier)
@@ -1311,7 +1311,7 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.ArrayLiteral, ret.toArray())
     }
 
-    static func createTupleLiteralImpl(elements: Array<Expr>, comments!: Array<Comment> = []) {
+    static func createTupleLiteralImpl(elements: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
         let builder = SyntaxNodeBuilder()
         let ret = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(ret, comments)
@@ -1387,7 +1387,8 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.OptionalExpr, ret.toArray())
     }
 
-    static func createAssignExprImpl(assignOpKind: AssignOpKind, lhs: Expr, rhs: Expr, comments!: Array<Comment> = []) {
+    static func createAssignExprImpl(assignOpKind: AssignOpKind, lhs: SyntaxTreeNode, rhs: Expr,
+        comments!: Array<Comment> = []) {
         let builder = SyntaxNodeBuilder()
         let ret = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(ret, comments)
@@ -2065,7 +2066,7 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.TrailingClosureExpr, parts.toArray())
     }
 
-    unsafe static func tokensToImplArray(tks: Tokens, tokBytes: CPointer<UInt8>, spaceFlag: CPointer<Bool>): Array<SyntaxNodeImpl> {
+    static unsafe func tokensToImplArray(tks: Tokens, tokBytes: CPointer<UInt8>, spaceFlag: CPointer<Bool>): Array<SyntaxNodeImpl> {
         try {
             let builder = SyntaxNodeBuilder()
             let arr = ArrayList<SyntaxNodeImpl>()
@@ -2082,7 +2083,7 @@ class SyntaxNodeImplCreator {
         }
     }
 
-    unsafe static func createMacroExpandExprImpl(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
+    static unsafe func createMacroExpandExprImpl(calleeMacro: Expr, macroAttrs: Tokens, macroInputs: MacroExpandInput,
         comments!: Array<Comment> = []) {
         if (calleeMacro.nodeImpl.kind != SyntaxNodeKind.MemberAccess && calleeMacro.nodeImpl.kind != SyntaxNodeKind
             .RefExpr) {
