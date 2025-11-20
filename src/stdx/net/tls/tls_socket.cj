@@ -89,7 +89,7 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
             TlsSocket.keylessCallback.add(keyId.toString(), (serverConfig._keylessSignFunc, serverConfig._keylessDecryptFunc))
             LibC.free(keyId)
         }
-        
+
         TlsSocket(socket, HandshakeConfig.KeylessServer(serverConfig, None))
     }
 
@@ -231,7 +231,7 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
             if (connState.isClient) {
                 return None
             }
- 
+
             // some resumed conn may be faster than full handshake conn, check again
             if (let Some(id) <- resumedSessionId && let Some(store) <- connState.bridge.sessionStore) {
                 if (let Some(holder) <- store.tryGetHolder(SessionKey(id))) {
@@ -239,7 +239,7 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
                     return holder.getCerts()
                 }
             }
- 
+
             return None
         }
     }
@@ -268,11 +268,11 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
 
         let success = try {
             match (handshake) {
-                case HandshakeConfig.Client(config, session) => 
+                case HandshakeConfig.Client(config, session) =>
                     connect(started.socket, timeout ?? defaultTimeout, config, session)
-                case HandshakeConfig.Server(config, context) => 
+                case HandshakeConfig.Server(config, context) =>
                     handleAccepted(started.socket, timeout ?? defaultTimeout, config, context)
-                case HandshakeConfig.KeylessServer(config, context) => 
+                case HandshakeConfig.KeylessServer(config, context) =>
                     handleAccepted(started.socket, timeout ?? defaultTimeout, config, context)
             }
         } catch (e: Exception) {
@@ -486,7 +486,12 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
             context.configureClient(cfg, session)
 
             let stream = context.createStream(socket)
-            let bridge = stream.createBridge(this, sessionStore: None, keylogCallback: cfg.keylogCallback)
+            let certificateVerifyCallback: ?CertificateVerifyCallbackFunction = match (cfg.verifyMode) {
+                case CustomVerify(callback) => callback
+                case _ => None
+            }
+            let bridge = stream.createBridge(this, sessionStore: None, keylogCallback: cfg.keylogCallback,
+                certificateVerifyCallback: certificateVerifyCallback)
             try {
                 Bridge.register(bridge)
                 if (let Some(session) <- session) {
@@ -545,10 +550,15 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
                 context.configureServer(cfg, sessionContext)
 
                 let stream = context.createStream(socket)
+                let certificateVerifyCallback: ?CertificateVerifyCallbackFunction = match (cfg.verifyMode) {
+                    case CustomVerify(callback) => callback
+                    case _ => None
+                }
                 let bridge = stream.createBridge(
                     this,
                     sessionStore: sessionContext?.store,
-                    keylogCallback: cfg.keylogCallback
+                    keylogCallback: cfg.keylogCallback,
+                    certificateVerifyCallback: certificateVerifyCallback
                 )
                 try {
                     Bridge.register(bridge)
@@ -589,12 +599,17 @@ public class TlsSocket <: TlsConnection & Equatable<TlsSocket> & Hashable {
             let context = TlsContext(server: true, enableKeylog: cfg.keylogCallback.isSome())
             try {
                 context.configureServer(cfg, sessionContext)
- 
+
                 let stream = context.createStream(socket)
+                let certificateVerifyCallback: ?CertificateVerifyCallbackFunction = match (cfg.verifyMode) {
+                    case CustomVerify(callback) => callback
+                    case _ => None
+                }
                 let bridge = stream.createBridge(
                     this,
                     sessionStore: sessionContext?.store,
-                    keylogCallback: cfg.keylogCallback
+                    keylogCallback: cfg.keylogCallback,
+                    certificateVerifyCallback: certificateVerifyCallback
                 )
                 try {
                     Bridge.register(bridge)
