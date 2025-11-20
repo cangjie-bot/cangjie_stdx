@@ -1,4 +1,10 @@
-#define _GNU_SOURCE
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This source file is part of the Cangjie project, licensed under Apache-2.0
+ * with Runtime Library Exception.
+ *
+ * See https://cangjie-lang.cn/pages/LICENSE for license information.
+ */
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -16,8 +22,7 @@
 #include <utime.h>
 #include <time.h>
 #include <stdint.h>
-
-int32_t CJ_TAR_GetMode(const char *path) {
+extern int32_t CJ_TAR_GetMode(const char *path) {
     if (!path) {
         return -1;
     }
@@ -28,7 +33,7 @@ int32_t CJ_TAR_GetMode(const char *path) {
     return (int32_t)(st.st_mode & 07777);
 }
 
-int32_t CJ_TAR_GetUid(const char *path) {
+extern int32_t CJ_TAR_GetUid(const char *path) {
     if (!path) {
         return -1;
     }
@@ -39,7 +44,7 @@ int32_t CJ_TAR_GetUid(const char *path) {
     return (int32_t)st.st_uid;
 }
 
-int32_t CJ_TAR_GetGid(const char *path) {
+extern int32_t CJ_TAR_GetGid(const char *path) {
     if (!path) {
         return -1;
     }
@@ -50,7 +55,7 @@ int32_t CJ_TAR_GetGid(const char *path) {
     return (int32_t)st.st_gid;
 }
 
-char *CJ_TAR_GetUserName(const char *path) {
+extern char *CJ_TAR_GetUserName(const char *path) {
     if (!path) {
         return NULL;
     }
@@ -65,7 +70,7 @@ char *CJ_TAR_GetUserName(const char *path) {
     return pw->pw_name;
 }
 
-char *CJ_TAR_GetGroupName(const char *path) {
+extern char *CJ_TAR_GetGroupName(const char *path) {
     if (!path) {
         return NULL;
     }
@@ -80,7 +85,7 @@ char *CJ_TAR_GetGroupName(const char *path) {
     return gr->gr_name;
 }
 
-int32_t CJ_TAR_GetDeviceMajor(const char *path) {
+extern int32_t CJ_TAR_GetDeviceMajor(const char *path) {
     if (!path) {
         return -1;
     }
@@ -91,7 +96,7 @@ int32_t CJ_TAR_GetDeviceMajor(const char *path) {
     return (int32_t)major(st.st_rdev);
 }
 
-int32_t CJ_TAR_GetDeviceMinor(const char *path) {
+extern int32_t CJ_TAR_GetDeviceMinor(const char *path) {
     if (!path) {
         return -1;
     }
@@ -102,7 +107,7 @@ int32_t CJ_TAR_GetDeviceMinor(const char *path) {
     return (int32_t)minor(st.st_rdev);
 }
 
-int CJ_TAR_SetMode(const char *path, int32_t mode) {
+extern int CJ_TAR_SetMode(const char *path, int32_t mode) {
     if (!path) {
         return -1;
     }
@@ -112,7 +117,7 @@ int CJ_TAR_SetMode(const char *path, int32_t mode) {
     return 0;
 }
 
-int CJ_TAR_SetUid(const char *path, int32_t uid) {
+extern int CJ_TAR_SetUid(const char *path, int32_t uid) {
     if (!path) {
         return -1;
     }
@@ -126,7 +131,7 @@ int CJ_TAR_SetUid(const char *path, int32_t uid) {
     return 0;
 }
 
-int CJ_TAR_SetGid(const char *path, int32_t gid) {
+extern int CJ_TAR_SetGid(const char *path, int32_t gid) {
     if (!path) {
         return -1;
     }
@@ -140,7 +145,7 @@ int CJ_TAR_SetGid(const char *path, int32_t gid) {
     return 0;
 }
 
-int CJ_TAR_SetUserName(const char *path, const char *username) {
+extern int CJ_TAR_SetUserName(const char *path, const char *username) {
     if (!path || !username) {
         return -1;
     }
@@ -158,7 +163,7 @@ int CJ_TAR_SetUserName(const char *path, const char *username) {
     return 0;
 }
 
-int CJ_TAR_SetGroupName(const char *path, const char *groupname) {
+extern int CJ_TAR_SetGroupName(const char *path, const char *groupname) {
     if (!path || !groupname) {
         return -1;
     }
@@ -176,7 +181,7 @@ int CJ_TAR_SetGroupName(const char *path, const char *groupname) {
     return 0;
 }
 
-int CJ_TAR_SetModificationTime(const char *path, int64_t timestamp) {
+extern int CJ_TAR_SetModificationTime(const char *path, int64_t timestamp) {
     struct stat st;
     if (stat(path, &st) != 0) {
         return -1;
@@ -188,7 +193,7 @@ int CJ_TAR_SetModificationTime(const char *path, int64_t timestamp) {
     return utime(path, &times);
 }
 
-int CJ_TAR_SetAccessTime(const char *path, int64_t timestamp) {
+extern int CJ_TAR_SetAccessTime(const char *path, int64_t timestamp) {
     struct stat st;
     if (stat(path, &st) != 0) {
         return -1;

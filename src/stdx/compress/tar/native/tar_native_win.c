@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2025. All rights reserved.
+ * This source file is part of the Cangjie project, licensed under Apache-2.0
+ * with Runtime Library Exception.
+ *
+ * See https://cangjie-lang.cn/pages/LICENSE for license information.
+ */
+
 #include <windows.h>
 #include <wchar.h>
 #include <time.h>
@@ -21,7 +29,7 @@ static FILETIME ToFileTime(time_t t) {
     return ft;
 }
 
-int CJ_TAR_SetModificationTime(const char *path, int64_t timestamp) {
+extern int CJ_TAR_SetModificationTime(const char *path, int64_t timestamp) {
     wchar_t *wpath = ToWString(path);
     if (wpath == NULL) {
         return -1;
@@ -41,7 +49,7 @@ int CJ_TAR_SetModificationTime(const char *path, int64_t timestamp) {
     return 0;
 }
 
-int CJ_TAR_SetAccessTime(const char *path, int64_t timestamp) {
+extern int CJ_TAR_SetAccessTime(const char *path, int64_t timestamp) {
     wchar_t *wpath = ToWString(path);
     if (wpath == NULL) {
         return -1;
@@ -61,7 +69,7 @@ int CJ_TAR_SetAccessTime(const char *path, int64_t timestamp) {
     return 0;
 }
 
-int CJ_TAR_SetChangeTime(const char *path, int64_t timestamp) {
+extern int CJ_TAR_SetChangeTime(const char *path, int64_t timestamp) {
     wchar_t* wpath = ToWString(path);
     HANDLE hFile = CreateFileW(wpath, FILE_WRITE_ATTRIBUTES, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     free(wpath);

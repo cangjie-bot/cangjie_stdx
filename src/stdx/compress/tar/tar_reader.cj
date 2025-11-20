@@ -22,11 +22,7 @@ private enum PaxDataState {
 }
 
 func calculateDataBlockPadding(size: Int64): Int64 {
-    let s = size % TAR_BLOCK_SIZE
-    if (s == 0) {
-        return 0
-    }
-    return TAR_BLOCK_SIZE - s
+    return (TAR_BLOCK_SIZE - (size % TAR_BLOCK_SIZE)) % TAR_BLOCK_SIZE
 }
 
 public class TarReader<T> <: Iterable<TarEntry> where T <: InputStream {
