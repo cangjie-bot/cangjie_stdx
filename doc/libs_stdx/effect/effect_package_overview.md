@@ -158,6 +158,7 @@ No handler here
 | 类名                   | 功能                                                     |
 | ---------------------- | ------------------------------------------------------------ |
 | [Command\<Res>](./effect_package_api/effect_package_classes.md#class-commandres)         | 一个抽象类，表示一种**效应（effect）**，该效应预期会返回类型为 `Res` 的结果。该类提供了一个可以被重写的默认处理本类效应的方法 [defaultImpl](./effect_package_api/effect_package_classes.md#func-defaultimpl)，该默认处理方法在效应没有被处理的时候调用，默认实现会抛出 [UnhandledCommandException](./effect_package_api/effect_package_exceptions.md#class-unhandledcommandexception) 异常。 |
+| [Resumption\<Res, Ret>](./effect_package_api/effect_package_classes.md#class-resumptionres-ret) | 一个密封的抽象类，用于定义当某个效应被 handler 捕获并处理后，程序应如何继续执行。它接收效应的结果类型 `Res`，并返回类型 `Ret`。这是 continuation（继续执行）的核心机制。 |
 
 ### 异常类
 

@@ -25,3 +25,19 @@ public open func defaultImpl(): Res
 异常：
 
 - [UnhandledCommandException](./effect_package_exceptions.md#class-unhandledcommandexception) - 该异常在此函数未被重写时抛出。
+
+
+## class Resumption\<Res, Ret>
+
+```cangjie
+public sealed abstract class Resumption<Res, Ret> {}
+```
+
+功能：这是一个密封的抽象类，用于定义当某个 `Command`（效应）被 handler 处理时，系统传递给用户的**resumption（继续执行的上下文）**。
+
+它为用户提供了一种机制：在处理完一个效应之后，可以选择**如何继续程序的执行**。
+
+返回值：
+
+- Res：继续执行时需要提供的值的类型。
+- Ret：完成恢复（resumption）之后，返回的最终结果类型。

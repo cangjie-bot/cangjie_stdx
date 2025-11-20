@@ -31,3 +31,5 @@ public abstract class Command<Res> {
         throw UnhandledCommandException()
     }
 }
+
+abstract sealed class Resumption<Res, Ret> {}
