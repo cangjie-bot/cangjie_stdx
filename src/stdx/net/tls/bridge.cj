@@ -23,6 +23,7 @@ struct Bridge {
         private let context: CPointer<Ctx>,
         let sessionStore: ?SessionStore,
         let keylogCalback: ?KeylogCallbackFunction,
+        let certificateVerifyCallback: ?CertificateVerifyCallbackFunction,
         let server: Bool
     ) {
     }
