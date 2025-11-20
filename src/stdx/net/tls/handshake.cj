@@ -251,9 +251,10 @@ extend TlsContext {
             case CustomCA(items) =>
                 let ca = items.map({c => c as X509Certificate ??
                     throw TlsException("Only certificates of type `X509Certificate` are allowed.")})
-                
+
                 configureCustomCA(context, ca, exception)
                 configureCustomCA(context, X509Certificate.systemRootCerts(), exception)
+            case CustomVerify(callback) => setContextCustomVerify(callback)
             case _ => TlsException("Unsupported verify mode.")
         }
     }
@@ -296,6 +297,15 @@ extend TlsContext {
 
         if (result == 0) {
             throw TlsException("Failed to configure TlsClientIdentificationMode.")
+        }
+    }
+
+    private func setContextCustomVerify(callback: CertificateVerifyCallbackFunction): Unit {
+        withContext<Unit> {
+            nativeContext, _ =>
+                var dynMsg = DynMsg()
+                unsafe { CJ_TLS_DYN_SetCustomVerifyMode(nativeContext, inout dynMsg) }
+                checkDynMsg(dynMsg)
         }
     }
 }
@@ -352,6 +362,8 @@ foreign {
     func CJ_TLS_DYN_SetClientVerifyMode(context: CPointer<Ctx>, required: Int32, verify: Int32, dynMsg: CPointer<DynMsg>): Int32
 
     func CJ_TLS_DYN_SetSecurityLevel(context: CPointer<Ctx>, level: Int32, dynMsg: CPointer<DynMsg>): Int32
+
+    func CJ_TLS_DYN_SetCustomVerifyMode(context: CPointer<Ctx>, dynMsg: CPointer<DynMsg>): Int32
 }
 
 func CJ_TLS_Add_CA(
@@ -461,4 +473,27 @@ func CJ_TLS_Use_Cert(
         checkDynMsg(dynMsg)
         return res
     }
+}
+
+@C
+func customVerifyCallback(context: CPointer<Ctx>, chain: CPointer<CertChainItem>, count: Int32): Int32 {
+    let certificatesToVerify: Array<Certificate>
+    if (chain.isNull() || count == 0) {
+        certificatesToVerify = []
+    } else {
+        try {
+            let certificates = unsafe { TlsRawSocket.convertNativeChain(chain, Int64(count)) } ?? []
+            certificatesToVerify = certificates.map({c => c})
+        } finally {
+            CJ_TLS_DYN_CertChainFree(chain, count, NULL)
+        }
+    }
+
+    if (let Some(bridge) <- Bridge.findByContext(context)) {
+        if (let Some(verify) <- bridge.certificateVerifyCallback) {
+            let passed = verify(certificatesToVerify)
+            return if (passed) { 1 } else { 0 }
+        }
+    }
+    return 1
 }

@@ -426,7 +426,7 @@ extern int CJ_TLS_DYN_SetKeylessPrivateKey(SSL_CTX* ctx, ExceptionData* exceptio
     NOT_NULL_OR_RETURN(exception, ctx, 0, dynMsg);
 
     X509* leaf = DYN_SSL_CTX_get0_certificate(ctx, dynMsg);
-    char* spki_hex = calloc(65, sizeof(char)); // 64 hexadecimal characters + a null terminator for a SHA-256 hash of the Subject Public Key Info. 
+    char* spki_hex = calloc(65, sizeof(char)); // 64 hexadecimal characters + a null terminator for a SHA-256 hash of the Subject Public Key Info.
     CertIssuerSerialSha256Hex(leaf, spki_hex);
 
     EVP_PKEY* key = CreateKeylessKeyFromCtx(ctx, spki_hex, dynMsg);
@@ -666,5 +666,61 @@ extern int CJ_TLS_DYN_SetSecurityLevel(SSL_CTX* ctx, int32_t level, DynMsg* dynM
     /* set the security level to be safe enough */
     DYN_SSL_CTX_set_security_level(ctx, (int)level, dynMsg);
 
+    return 1;
+}
+
+int customVerifyCallback(SSL_CTX* context, struct CertChainItem* chain, int count);
+
+extern int CJ_TLS_DYN_VerifyCallback(X509_STORE_CTX* storeCtx, void* arg) {
+    (void)arg;
+    SSL* ssl = DYN_X509_STORE_CTX_get_ex_data(storeCtx, DYN_SSL_get_ex_data_X509_STORE_CTX_idx(NULL), NULL);
+    if (ssl == NULL) {
+        return 0;
+    }
+    SSL_CTX* ctx = DYN_SSL_get_SSL_CTX(ssl, NULL);
+    if (ctx == NULL) {
+        return 0;
+    }
+
+    STACK_OF(X509)* chain = DYN_X509_STORE_CTX_get0_untrusted(storeCtx, NULL);
+    if (chain == NULL) {
+        return customVerifyCallback(ctx, NULL, 0);
+    }
+    int count = DYN_OPENSSL_sk_num((void*)chain, NULL);
+    if (count < 0) {
+        return 0;
+    } else if (count == 0) {
+        return customVerifyCallback(ctx, NULL, 0);
+    } else if (count > MAX_CERT_COUNT) {
+        return 0;
+    }
+
+    struct CertChainItem* certs = malloc(sizeof(struct CertChainItem) * (size_t)count);
+    if (certs == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < count; ++i) {
+        X509* cert = (X509*)DYN_OPENSSL_sk_value((void*)chain, i, NULL);
+        if (cert == NULL) {
+            CJ_TLS_DYN_CertChainFree(certs, i, NULL);
+            return 0;
+        }
+
+        if (!EncodeCertTo(&certs[i], cert, NULL)) {
+            CJ_TLS_DYN_CertChainFree(certs, i, NULL);
+            return 0;
+        }
+    }
+    return customVerifyCallback(ctx, certs, count);
+}
+
+extern int CJ_TLS_DYN_SetCustomVerifyMode(SSL_CTX* ctx, DynMsg* dynMsg)
+{
+    if (!LoadDynFuncForCustomVerifyCallback(dynMsg)) {
+        return 0;
+    }
+
+    DYN_SSL_CTX_set_cert_verify_callback(ctx, CJ_TLS_DYN_VerifyCallback, NULL, dynMsg);
     return 1;
 }
