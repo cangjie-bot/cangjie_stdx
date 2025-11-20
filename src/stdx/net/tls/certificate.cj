@@ -10,7 +10,9 @@ package stdx.net.tls
 
 import stdx.crypto.x509.*
 import stdx.crypto.common.*
-import stdx.net.tls.common.TlsException
+import stdx.net.tls.common.*
+
+type CertificateVerifyCallbackFunction = (Array<Certificate>) -> Bool
 
 extend<T> Option<T> {
     func exists() {
@@ -55,7 +57,7 @@ extend TlsRawSocket {
         }
     }
 
-    private unsafe func convertNativeChain(chain: CPointer<CertChainItem>, itemsCount: Int64): ?Array<X509Certificate> {
+    protected static unsafe func convertNativeChain(chain: CPointer<CertChainItem>, itemsCount: Int64): ?Array<X509Certificate> {
         var maxDerSize: Int32 = 0
         var resultCount = 0
         for (index in 0..itemsCount) {
@@ -86,7 +88,7 @@ extend TlsRawSocket {
         return result.toArray()
     }
 
-    private unsafe func convertNativeCertificate(certificate: CertChainItem, buffer: Array<Byte>): X509Certificate {
+    private static unsafe func convertNativeCertificate(certificate: CertChainItem, buffer: Array<Byte>): X509Certificate {
         copy(source: CPointer(certificate.buffer), destination: buffer, count: UIntNative(certificate.size))
         X509Certificate.decodeFromDer(DerBlob(buffer[0..Int64(certificate.size)].clone()))
     }
