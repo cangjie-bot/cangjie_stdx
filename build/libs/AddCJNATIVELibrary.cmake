@@ -976,11 +976,6 @@ add_cangjie_library(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
 
-set(arm32_ast_support)
-if(TRIPLE STREQUAL "arm-linux-ohos")
-    set(arm32_ast_support -L$ENV{CANGJIE_HOME}/lib/linux_ohos_arm_cjnative)
-endif()
-
 if("$ENV{NO_ASPECTCJ}" STREQUAL "")
     if(NOT CMAKE_CROSSCOMPILING OR (CMAKE_CROSSCOMPILING AND MINGW))
         make_cangjie_lib(
@@ -992,8 +987,6 @@ if("$ENV{NO_ASPECTCJ}" STREQUAL "")
             OBJECTS ${output_cj_object_dir}/stdx/syntax.o
             FORCE_LINK_ARCHIVES stdx.syntaxFFI
             FLAGS ${syntaxFFI_flags}
-                ${arm32_ast_support}
-                -lcangjie-ast-support
                 $<$<NOT:$<BOOL:${WIN32}>>:-ldl>
             )
  
