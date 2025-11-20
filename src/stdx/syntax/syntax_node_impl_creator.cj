@@ -201,6 +201,9 @@ class SyntaxNodeImplCreator {
 
     static func createGenericConstraintImpl(typeArgument: TypeAnnotation, upperTypes: Array<TypeAnnotation>,
         comments!: Array<Comment> = []) {
+        if (upperTypes.isEmpty()) {
+            throw Exception("InitException: The input 'upperTypes' cannot be empty for 'GenericConstraint' init.")
+        }
         let builder = SyntaxNodeBuilder()
         let ret = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(ret, comments)

@@ -2948,6 +2948,10 @@ public init(typeArgument: TypeAnnotation, upperBounds: Array<TypeAnnotation>, co
 - upperBounds: Array\<[TypeAnnotation](#class-typeannotation)> - 上界类型列表。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `upperBounds` 为空时，抛出异常，异常中包含报错提示信息。
+
 ### func getBitAndsPos()
 
 ```cangjie
