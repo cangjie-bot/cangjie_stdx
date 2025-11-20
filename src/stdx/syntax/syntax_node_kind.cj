@@ -285,7 +285,6 @@ enum SyntaxNodeKind <: ToString {
     | IdentToken /* x */
     | PackageIdentifierToken /* x-y */
     | IntegerLiteralToken /* e.g. "1" */
-    | CharBytePrefixToken /* b */
     | FloatLiteralToken /* e.g. "'1.0'" */
     | CommentToken /* e.g. "/*xx*/" */
     | NewlineToken /* newline */
@@ -477,12 +476,11 @@ enum SyntaxNodeKind <: ToString {
             case IdentToken => "IdentToken"
             case PackageIdentifierToken => "PackageIdentifierToken"
             case IntegerLiteralToken => "IntegerLiteralToken"
-            case CharBytePrefixToken => 'b'
-            case FloatLiteralToken => ""
-            case CommentToken => ""
-            case NewlineToken => ""
-            case EndToken => ""
-            case SentinelToken => ""
+            case FloatLiteralToken => "FloatLiteralToken"
+            case CommentToken => "CommentToken"
+            case NewlineToken => "NewlineToken"
+            case EndToken => "EndToken"
+            case SentinelToken => "SentinelToken"
             case RunePrefixToken => 'r'
             case SingleQuoteToken => "'"
             case DoubleQuoteToken => '"'

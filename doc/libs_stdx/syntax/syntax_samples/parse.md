@@ -16,12 +16,12 @@ main(){
 
 利用 parseFile 函数将上述文件解析为一个 [ParsingResult](../syntax_package_api/syntax_package_classes.md#class-parsingresultt-where-t--syntaxtreenode)\<[SourceFile](../syntax_package_api/syntax_package_classes.md#class-sourcefile)> 对象，代码如下所示：
 
-<!-- verify -->
+<!-- compile -->
 ```cangjie
 import stdx.syntax.*
 
 main() {
-    let file = parseFile(a.cj).node.getOrThrow() // 获取一个 SourceFile 类型的语法树
+    let file = parseFile("a.cj").node.getOrThrow() // 获取一个 SourceFile 类型的语法树
     println(file.toString()) // 打印该语法树， 应与原文件中内容完全一致
 }
 ```
@@ -51,7 +51,7 @@ func foo() {
 
 利用 parsePackage 函数将上述代码解析为一个 [ParsingResult](../syntax_package_api/syntax_package_classes.md#class-parsingresultt-where-t--syntaxtreenode)\<[Package](../syntax_package_api/syntax_package_classes.md#class-package)> 对象，代码如下所示：
 
-<!-- verify -->
+<!-- compile -->
 ```cangjie
 import stdx.syntax.*
 

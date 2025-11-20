@@ -41,15 +41,15 @@ public class BinaryCounter <: ASTVisitor {
             // 遇到 BinaryExpr 时计数 +1 并继续
             case _: BinaryExpr =>
                 count += 1
-                return PreActionMode.CONTINUE
+                return PreActionMode.Continue
 
             // 遇到 CallExpr 立即停止整个遍历
             case _: CallExpr =>
                 println("Found CallExpr, stop traversal")
-                return PreActionMode.STOP
+                return PreActionMode.Stop
 
             // 其它节点保持默认行为
-            case _ => PreActionMode.CONTINUE
+            case _ => PreActionMode.Continue
         }
     }
 }

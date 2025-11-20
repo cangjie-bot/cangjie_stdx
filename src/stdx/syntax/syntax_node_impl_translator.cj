@@ -110,8 +110,9 @@ class SyntaxNodeImplTranslator {
         let beginPos = getBeginPos(node, startPos)
         let ret: ?SyntaxTreeNode = match (node) {
             case nt: NonTerminal => transNonTerminal(nt, beginPos, parent)
-            case t: Terminal => transTerminal(t, beginPos, parent)
-            case _ => None
+            case _ =>
+                fail("terminal node kind - ${node.kind.toString()} - ${node.toString()} need to be translated");
+                None
         }
         ret
     }
@@ -222,14 +223,6 @@ class SyntaxNodeImplTranslator {
             case SyntaxNodeKind.FeatureId => transFeatureId(node, startPos, parent)
             case _ =>
                 fail("nonterminal node kind - ${node.kind.toString()} - ${node.toString()} need to be translated");
-                None
-        }
-    }
-
-    private func transTerminal(node: Terminal, startPos: CodePosition, parent: ?SyntaxTreeNode): ?SyntaxTreeNode {
-        match (node.kind) {
-            case _ =>
-                fail("terminal node kind - ${node.kind.toString()} - ${node.toString()} need to be translated");
                 None
         }
     }
@@ -834,9 +827,10 @@ class SyntaxNodeImplTranslator {
         let upperBoundsPropInfos = ArrayList<PropInfo>()
         let bitEndPos = ArrayList<CodePosition>()
         while (!lp.isEnd()) {
-            let upperNode = lp.consume()
-            upperBoundsPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
-            lp.offset.move(upperNode?.offset)
+            if (let Some(node) <- lp.tryConsume()) {
+                upperBoundsPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
+                lp.offset.move(node.offset)
+            }
 
             if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.BitAndToken)) {
                 bitEndPos.add(startPos + lp.offset)
@@ -861,8 +855,10 @@ class SyntaxNodeImplTranslator {
         let constraintsPropInfos = ArrayList<PropInfo>()
         while (!lp.isEnd()) {
             let constraintNode = lp.consume(kind: SyntaxNodeKind.GenericConstraint)
-            constraintsPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
-            lp.offset.move(constraintNode?.offset)
+            if (constraintNode.isSome()) {
+                constraintsPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
+                lp.offset.move(constraintNode?.offset)
+            }
 
             if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.CommaToken)) {
                 commasPos.add(startPos + lp.offset)
@@ -2133,7 +2129,7 @@ class SyntaxNodeImplTranslator {
         let sep = SyntaxNodeKind.CommaToken
         var findStart = false
         var exprsPropInfo = PropInfo()
-        while (lp.look(predictExpr)) {
+        while (lp.look(predictExpr) || lp.look(SyntaxNodeKind.WildcardPattern)) {
             if (let Some(node) <- lp.consume()) {
                 if (!findStart) {
                     findStart = true
@@ -2470,8 +2466,9 @@ class SyntaxNodeImplTranslator {
 
         var retValPropInfo: ?PropInfo = None
         if (!lp.isEnd()) {
-            curNode = lp.consume()
-            retValPropInfo = PropInfo(lp.cur - 1, lp.offset)
+            if (lp.tryConsume().isSome()) {
+                retValPropInfo = PropInfo(lp.cur - 1, lp.offset)
+            }
         }
         let posInfo = ReturnExprPosInfos(returnPos)
         let propInfo = (ReturnExprPropInfos(retValPropInfo))
@@ -2534,9 +2531,10 @@ class SyntaxNodeImplTranslator {
 
         var endPropInfo: ?PropInfo = None
         if (!lp.look(SyntaxNodeKind.ColonToken) && !lp.isEnd()) {
-            let endNode = lp.consume()
-            endPropInfo = PropInfo(lp.cur - 1, lp.offset)
-            lp.offset.move(endNode?.offset)
+            if (let Some(endNode) <- lp.tryConsume()) {
+                endPropInfo = PropInfo(lp.cur - 1, lp.offset)
+                lp.offset.move(endNode.offset)
+            }
         }
         var colonPos: ?CodePosition = None
         var stepPropInfo: ?PropInfo = None
@@ -3616,9 +3614,10 @@ class SyntaxNodeImplTranslator {
             colonPos = startPos + lp.offset
             lp.moveOffset(v)
             while (!lp.isEnd()) {
-                let typeNode = lp.consume()
-                exceptionTypesPropInfo.add(PropInfo(lp.cur - 1, lp.offset))
-                lp.moveOffset(typeNode)
+                if (let Some(typeNode) <- lp.tryConsume()) {
+                    exceptionTypesPropInfo.add(PropInfo(lp.cur - 1, lp.offset))
+                    lp.moveOffset(typeNode)
+                }
 
                 if (let Some(b) <- lp.lookAndConsume(SyntaxNodeKind.BitOrToken)) {
                     bitOrsPos.add(startPos + lp.offset)
@@ -3975,10 +3974,13 @@ class LocalParser {
 
     // consume one node, can be empty.
     func tryConsume(): ?SyntaxNodeImpl {
+        var ret: ?SyntaxNodeImpl = None
+        consumeWhitespace()
         if (!isEnd()) {
-            return consume()
+            ret = nodes[cur]
+            cur++
         }
-        return None
+        ret
     }
 
     // consume one token with kind.
