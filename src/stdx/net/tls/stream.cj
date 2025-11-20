@@ -82,9 +82,10 @@ class TlsRawSocket <: IOStream & Resource & ToString {
     func createBridge(
         tlsSocket: TlsSocket,
         sessionStore!: ?SessionStore,
-        keylogCallback!: ?KeylogCallbackFunction
+        keylogCallback!: ?KeylogCallbackFunction,
+        certificateVerifyCallback!: ?CertificateVerifyCallbackFunction
     ): Bridge {
-        Bridge(tlsSocket, ssl, context, sessionStore, keylogCallback, server)
+        Bridge(tlsSocket, ssl, context, sessionStore, keylogCallback, certificateVerifyCallback, server)
     }
 
     /**
