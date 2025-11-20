@@ -91,17 +91,6 @@ if(CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
     target_compile_definitions(${libname} PRIVATE CANGJIE_ENABLE_GCOV)
 endif()
 
-if(DARWIN)
-    target_link_libraries(${libname} PUBLIC cangjie-lsp)
-    add_library(cangjie-lsp SHARED IMPORTED)
-    set_target_properties(cangjie-lsp PROPERTIES IMPORTED_LOCATION ${LSP_LIB_DIR}/libcangjie-lsp.dylib)
-else()
-    if (MINGW)
-        add_library(cangjie-lsp SHARED IMPORTED)
-        set_target_properties(cangjie-lsp PROPERTIES IMPORTED_IMPLIB ${LSP_LIB_DIR}/libcangjie-lsp.dll.a)
-        target_link_libraries(${libname} PUBLIC cangjie-lsp)
-    endif()
-endif()
 
 # install for dynamic and static lib
 install_cangjie_library_ffi(${libname})
