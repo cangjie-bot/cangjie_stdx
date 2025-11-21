@@ -104,7 +104,7 @@ let stevenAccount: Account = Account("Steven", 0.0)
 
 ### 调用接收函数
 
-与普通函数不同，接收函数的调用是异步的，并返回一个 [ActorFuture<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) 对象。通过该对象，可以等待接收函数执行完成并获取结果，其中 `T` 是该接收函数的返回类型。例如，调用 getBalance 时，将返回一个 [ActorFuture<Float64>](./actors_package_api/actors_package_classes.md#class-actorfuture) 的对象：
+与普通函数不同，接收函数的调用是异步的，并返回一个 [ActorFuture\<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) 对象。通过该对象，可以等待接收函数执行完成并获取结果，其中 `T` 是该接收函数的返回类型。例如，调用 getBalance 时，将返回一个 [ActorFuture\<Float64>](./actors_package_api/actors_package_classes.md#class-actorfuture) 的对象：
 
 ```cangjie
 let fut: ActorFuture<Float64> = stevenAccount.getBalance()
@@ -112,7 +112,7 @@ let fut: ActorFuture<Float64> = stevenAccount.getBalance()
 
 当接收函数被调用时，调用请求会被加入到一个队列中，并在该 actor 的附属线程上按顺序执行。
 
-随后，我们可以通过调用 [ActorFuture<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) 的 get 函数来阻塞当前线程，直到 steven.getBalance() 函数执行完成，并返回一个 `T` 类型的值。
+随后，我们可以通过调用 [ActorFuture\<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) 的 get 函数来阻塞当前线程，直到 steven.getBalance() 函数执行完成，并返回一个 `T` 类型的值。
 
 ```cangjie
 let stevenBalance: Float64 = fut.get()
