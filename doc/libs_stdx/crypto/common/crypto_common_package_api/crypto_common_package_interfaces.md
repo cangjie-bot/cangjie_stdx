@@ -522,7 +522,7 @@ public func nextBits(bits: UInt64): UInt64
 
 - UInt64 - 生成的指定位长的随机数。
 
-### func nextBytes(Array<Byte>)
+### func nextBytes(Array\<Byte>)
 
 ```cangjie
 public func nextBytes(bytes: Array<Byte>): Unit

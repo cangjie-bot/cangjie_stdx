@@ -10,7 +10,7 @@ public class CompressInputStream <: InputStream {
 
 功能：压缩输入流。
 
-可将 [CompressInputStream](zlib_package_classes.md#class-compressinputstream) 实例通过构造函数绑定到任意 InputStream 类型输入流，通过循环调用 read(outBuf: Array<Byte>) 函数，将该输入流中的数据压缩，并将压缩后的数据输出到传入的字节数组。
+可将 [CompressInputStream](zlib_package_classes.md#class-compressinputstream) 实例通过构造函数绑定到任意 InputStream 类型输入流，通过循环调用 read(outBuf: Array\<Byte>) 函数，将该输入流中的数据压缩，并将压缩后的数据输出到传入的字节数组。
 
 父类型：
 
@@ -109,7 +109,7 @@ public class CompressOutputStream <: OutputStream {
 
 功能：压缩输出流。
 
-可将 [CompressOutputStream](zlib_package_classes.md#class-compressoutputstream) 实例通过构造函数绑定到任意 OutputStream 类型输出流，调用 write(inBuf: Array<Byte>) 函数读取、压缩指定字节数组中的数据，并将压缩后的数据输出到绑定的输出流。
+可将 [CompressOutputStream](zlib_package_classes.md#class-compressoutputstream) 实例通过构造函数绑定到任意 OutputStream 类型输出流，调用 write(inBuf: Array\<Byte>) 函数读取、压缩指定字节数组中的数据，并将压缩后的数据输出到绑定的输出流。
 
 父类型：
 
@@ -210,7 +210,7 @@ public class DecompressInputStream <: InputStream {
 
 功能：解压输入流。
 
-可将 [DecompressInputStream](zlib_package_classes.md#class-decompressinputstream) 实例通过构造函数绑定到任意 InputStream 输入流，通过循环调用 read(outBuf: Array<Byte>) 函数读取、解压输入流中的数据，并将解压后数据输出到指定字节数组。
+可将 [DecompressInputStream](zlib_package_classes.md#class-decompressinputstream) 实例通过构造函数绑定到任意 InputStream 输入流，通过循环调用 read(outBuf: Array\<Byte>) 函数读取、解压输入流中的数据，并将解压后数据输出到指定字节数组。
 
 父类型：
 
@@ -321,7 +321,7 @@ public class DecompressOutputStream <: OutputStream {
 
 功能：解压输出流。
 
-可将 [DecompressOutputStream](zlib_package_classes.md#class-decompressoutputstream) 实例通过构造函数绑定到指定的 OutputStream 类型输出流，通过调用 write(inBuf: Array<Byte>) 函数读取、解压指定字节数组中的数据，并将解压后数据输出到绑定的输出流中。
+可将 [DecompressOutputStream](zlib_package_classes.md#class-decompressoutputstream) 实例通过构造函数绑定到指定的 OutputStream 类型输出流，通过调用 write(inBuf: Array\<Byte>) 函数读取、解压指定字节数组中的数据，并将解压后数据输出到绑定的输出流中。
 
 父类型：
 
