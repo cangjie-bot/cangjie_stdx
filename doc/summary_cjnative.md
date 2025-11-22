@@ -137,6 +137,7 @@
         - [客户端示例](libs_stdx/net/tls/tls_samples/client.md)
         - [证书热更新](libs_stdx/net/tls/tls_samples/hot_update_cert.md)
         - [服务端示例](libs_stdx/net/tls/tls_samples/server.md)
+        - [自定义证书校验](libs_stdx/net/tls/tls_samples/custom_verify.md)
 - [stdx.net.tls.common](libs_stdx/net/tls/common/tls_common_package_overview.md)
     - [函数](libs_stdx/net/tls/common/tls_common_package_api/tls_common_package_funcs.md)
     - [接口](libs_stdx/net/tls/common/tls_common_package_api/tls_common_package_interfaces.md)
