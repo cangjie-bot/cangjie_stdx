@@ -137,6 +137,7 @@
         - [Client Example](libs_stdx_en/net/tls/tls_samples/client.md)
         - [Certificate Hot Update](libs_stdx_en/net/tls/tls_samples/hot_update_cert.md)
         - [Server Example](libs_stdx_en/net/tls/tls_samples/server.md)
+        - [Custom Validation Example](libs_stdx_en/net/tls/tls_samples/custom_verify.md)
 - [stdx.net.tls.common](libs_stdx_en/net/tls/common/tls_common_package_overview.md)
     - [Functions](libs_stdx_en/net/tls/common/tls_common_package_api/tls_common_package_funcs.md)
     - [Interfaces](libs_stdx_en/net/tls/common/tls_common_package_api/tls_common_package_interfaces.md)
