@@ -7,6 +7,8 @@
 
 # Defining dependencies for all backends, BACKEND_TYPE is defined outside where this file is included
 
+set(SYNTAX_DEPENDENCIES FLATC_OUTPUTS)
+
 set(LOGGER_DEPENDENCIES
     cangjie${BACKEND_TYPE}Log
     cangjie${BACKEND_TYPE}JsonStream)
@@ -81,5 +83,3 @@ endif()
 set(ACTORS_DEPENDENCIES)
 
 set(ACTORS_MACROS_DEPENDENCIES)
-
-set(SYNTAX_DEPENDENCIES FLATC_OUTPUTS)
