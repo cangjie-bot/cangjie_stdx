@@ -976,35 +976,33 @@ add_cangjie_library(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
 
-if("$ENV{NO_ASPECTCJ}" STREQUAL "")
-    if(NOT CMAKE_CROSSCOMPILING OR (CMAKE_CROSSCOMPILING AND MINGW))
-        make_cangjie_lib(
-            syntax IS_SHARED
-            DEPENDS
-                cangjie${BACKEND_TYPE}Syntax
-                stdx.syntaxFFI
-            CANGJIE_STD_LIB_LINK std-core std-collection std-sync std-convert std-fs std-sort std-ast
-            OBJECTS ${output_cj_object_dir}/stdx/syntax.o
-            FORCE_LINK_ARCHIVES stdx.syntaxFFI
-            FLAGS ${syntaxFFI_flags}
-                $<$<NOT:$<BOOL:${WIN32}>>:-ldl>
-            )
- 
-        add_library(stdx.syntax STATIC ${output_cj_object_dir}/stdx/syntax.o)
-        target_link_libraries(stdx.syntax stdx.syntaxFFI)
-        set_target_properties(stdx.syntax PROPERTIES LINKER_LANGUAGE C)
-        install(TARGETS stdx.syntax DESTINATION ${output_triple_name}_cjnative/static/stdx)
- 
-        add_cangjie_library(
+if(NOT (CMAKE_CROSSCOMPILING AND OHOS))	
+    make_cangjie_lib(
+        syntax IS_SHARED
+        DEPENDS
             cangjie${BACKEND_TYPE}Syntax
-            NO_SUB_PKG
-            IS_STDXLIB
-            IS_PACKAGE
-            IS_CJNATIVE_BACKEND
-            PACKAGE_NAME "syntax"
-            MODULE_NAME "stdx"
-            SOURCES ${SYNTAX_SRCS}
-            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
-            DEPENDS ${SYNTAX_DEPENDENCIES})
-    endif()
+            stdx.syntaxFFI
+        CANGJIE_STD_LIB_LINK std-core std-collection std-sync std-convert std-fs std-sort std-ast
+        OBJECTS ${output_cj_object_dir}/stdx/syntax.o
+        FORCE_LINK_ARCHIVES stdx.syntaxFFI
+        FLAGS ${syntaxFFI_flags}
+            $<$<NOT:$<BOOL:${WIN32}>>:-ldl>
+        )
+
+    add_library(stdx.syntax STATIC ${output_cj_object_dir}/stdx/syntax.o)
+    target_link_libraries(stdx.syntax stdx.syntaxFFI)
+    set_target_properties(stdx.syntax PROPERTIES LINKER_LANGUAGE C)
+    install(TARGETS stdx.syntax DESTINATION ${output_triple_name}_cjnative/static/stdx)
+
+    add_cangjie_library(
+        cangjie${BACKEND_TYPE}Syntax
+        NO_SUB_PKG
+        IS_STDXLIB
+        IS_PACKAGE
+        IS_CJNATIVE_BACKEND
+        PACKAGE_NAME "syntax"
+        MODULE_NAME "stdx"
+        SOURCES ${SYNTAX_SRCS}
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
+        DEPENDS ${SYNTAX_DEPENDENCIES})
 endif()
