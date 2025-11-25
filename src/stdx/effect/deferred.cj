@@ -88,7 +88,7 @@ class DeferredHandlerCase<Cmd, Res, Ret> <: DeferredHandlerCase1<Res, Ret> {
     }
     var command: Option<Cmd> = None
     var resumption: Option<ResumptionInternal<Res, Ret>> = None
-    protected override func tryHandle<R1>(maybeCmd: Command<R1>): Option<R1> {
+    protected override func tryHandle<R1>(maybeCmd: Command<R1>, box!: FrameBox): Option<R1> {
         // EXECUTED BY HANDLEE
         match (maybeCmd as Cmd) {
             case Some(cmd) =>
@@ -123,7 +123,7 @@ internal class DeferredFrame<Ret> <: HandlerFrame {
     var handleeThread = ThreadHandle()
     var handlerRequest: HandlerRequest<Ret> = Invalid
 
-    public DeferredFrame(let fn: () -> HandlerRequest<Ret>) {}
+    public DeferredFrame(let fn: () -> Ret) {}
     public func start(): Ret {
         // EXECUTED BY HANDLER
         this.parent = HandlerFrame.getActiveFrame()
@@ -132,7 +132,7 @@ internal class DeferredFrame<Ret> <: HandlerFrame {
             this.handleeThread = unsafe { CJ_MRT_GetCurrentCJThread() }
             HandlerFrame.setActiveFrame(this)
             try {
-                this.request(fn())
+                this.request(HandlerRequest<Ret>.Return(fn()))
             } catch (exn: Exception) {
                 this.request(Throw(exn))
             } catch (err: Error) {
