@@ -18,3 +18,6 @@ src/stdx/syntax/NodeFormat_generated.cj
 src/stdx/syntax/table.cj
 src/stdx/syntax/flatbuffer_object.cj
 src/stdx/syntax/decode.cj
+src/stdx/syntax/builder.cj
+src/stdx/syntax/constants.cj
+src/stdx/syntax/exception.cj
