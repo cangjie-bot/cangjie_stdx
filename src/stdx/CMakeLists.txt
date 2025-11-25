@@ -17,12 +17,7 @@ add_subdirectory(net)
 add_subdirectory(unittest)
 add_subdirectory(actors)
 add_subdirectory(string_intern)
-
-if (CANGJIE_CODEGEN_CJNATIVE_BACKEND AND "$ENV{NO_ASPECTCJ}" STREQUAL "")
-    if (NOT CMAKE_CROSSCOMPILING OR (CMAKE_CROSSCOMPILING AND MINGW))
-        add_subdirectory(syntax)
-    endif()
-endif()
+add_subdirectory(syntax)
 
 if(CANGJIE_CODEGEN_CJNATIVE_BACKEND AND "$ENV{NO_ASPECTCJ}" STREQUAL "")
     if(CMAKE_CROSSCOMPILING)
