@@ -11,7 +11,12 @@ get_filename_component(FILENAME ${SCHEMA_SRC} NAME_WE)
 set(FLATC_EXECUTABLE "${CMAKE_BINARY_DIR}/bin/flatc")
 set(FLATBUFFER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/../../../../third_party/flatbuffers)
 
-# message(FATAL_ERROR "flatbuffer source: ${CMAKE_CURRENT_SOURCE_DIR}")
+if(IOS)
+    get_directory_property(SRC_COMPILE_OPTIONS COMPILE_OPTIONS)
+    list(REMOVE_ITEM SRC_COMPILE_OPTIONS "--target=${TRIPLE}")
+    set_directory_properties(PROPERTIES COMPILE_OPTIONS "${SRC_COMPILE_OPTIONS}")
+    add_compile_options(--target=${CXX_COMPATIABLE_TRIPLE})
+endif()
 
 set(FLATC_CPP_OUTPUT "${CMAKE_BINARY_DIR}/include/flatbuffers/${FILENAME}_generated.h")
 add_custom_command(
@@ -100,7 +105,7 @@ if(CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
     target_compile_definitions(${libname} PRIVATE CANGJIE_ENABLE_GCOV)
 endif()
 
-if(DARWIN)
+if(DARWIN AND NOT IOS)
     target_link_libraries(${libname} PUBLIC cangjie-lsp)
     add_library(cangjie-lsp SHARED IMPORTED)
     set_target_properties(cangjie-lsp PROPERTIES IMPORTED_LOCATION ${LSP_LIB_DIR}/libcangjie-lsp.dylib)
