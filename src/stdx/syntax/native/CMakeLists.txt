@@ -32,12 +32,21 @@ add_custom_command(
     COMMAND sed 's/std.ast/stdx.syntax/g' ${FLATBUFFER_DEPEND_CJ_DIR}/flatbuffer_object.cj > ${CMAKE_BINARY_DIR}/flatbuffer_object.cj
     COMMAND sed 's/std.ast/stdx.syntax/g' ${FLATBUFFER_DEPEND_CJ_DIR}/decode.cj > ${CMAKE_BINARY_DIR}/decode.cj
     COMMAND sed 's/std.ast/stdx.syntax/g' ${FLATBUFFER_DEPEND_CJ_DIR}/table.cj > ${CMAKE_BINARY_DIR}/table.cj
+    COMMAND sed 's/std.ast/stdx.syntax/g' ${FLATBUFFER_DEPEND_CJ_DIR}/builder.cj > ${CMAKE_BINARY_DIR}/builder.cj
+    COMMAND sed 's/std.ast/stdx.syntax/g' ${FLATBUFFER_DEPEND_CJ_DIR}/constants.cj > ${CMAKE_BINARY_DIR}/constants.cj
+    COMMAND sed 's/std.ast/stdx.syntax/g' ${FLATBUFFER_DEPEND_CJ_DIR}/exception.cj > ${CMAKE_BINARY_DIR}/exception.cj
     COMMAND sed 's/std.ast/stdx.syntax/g' ${CMAKE_BINARY_DIR}/${FILENAME}_generated.cj > ${CMAKE_BINARY_DIR}/${FILENAME}_generated_update.cj
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/flatbuffer_object.cj
             ${CMAKE_SOURCE_DIR}/src/stdx/syntax/
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/decode.cj
             ${CMAKE_SOURCE_DIR}/src/stdx/syntax/
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/table.cj
+            ${CMAKE_SOURCE_DIR}/src/stdx/syntax/
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/builder.cj
+            ${CMAKE_SOURCE_DIR}/src/stdx/syntax/
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/constants.cj
+            ${CMAKE_SOURCE_DIR}/src/stdx/syntax/
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/exception.cj
             ${CMAKE_SOURCE_DIR}/src/stdx/syntax/
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_BINARY_DIR}/${FILENAME}_generated_update.cj
             ${CMAKE_SOURCE_DIR}/src/stdx/syntax/${FILENAME}_generated.cj
