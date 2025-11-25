@@ -2,12 +2,12 @@
 
 ## 版本介绍
 
-该版本版本号 1.0.4.1.alpha.40, 构建时间 xxx，构建 id xxx.
+该版本版本号 1.0.4.1.alpha.40, 构建时间 2025-11-20，构建 id 03432a58ac9585fbd9f5addf880f72c6a423b7af.
 
 ## 新增特性
 
-* url库新增对url编解码的静态接口。
-* 扩展库适配鸿蒙PC
+* url 库新增对 url 编解码的静态接口，详见 [decode(String): String](../libs_stdx/encoding/url/url_package_api/url_package_classes.md#static-func-decodestring-string-string)、 [encode(String): String](../libs_stdx/encoding/url/url_package_api/url_package_classes.md#static-func-encodestring-string-string)、[decodeComponent(String): String](../libs_stdx/encoding/url/url_package_api/url_package_classes.md#static-func-decodecomponentstring-string)、[encodeComponent(String): String](../libs_stdx/encoding/url/url_package_api/url_package_classes.md#static-func-encodecomponentstring-string)。
+* 扩展库适配鸿蒙PC。
 
 ## 变更特性
 
