@@ -378,7 +378,10 @@ class HttpServer2 <: ProtocolService {
             stream.preProcess(frame)
         } catch (se: HttpStreamException) {
             // stream exception must be caught and processed here, because the outer function can not get the stream
-            stream.close(se.h2Error, se.message)
+            let now = MonoTime.now()
+            let needSlow = now - lastExceptionTime < Duration.second * 5
+            lastExceptionTime = now
+            stream.close(se.h2Error, se.message, slow: needSlow)
         }
     }
 
@@ -400,7 +403,7 @@ class HttpServer2 <: ProtocolService {
         }
         let reqCount = AtomicUInt64(0)
         while (!quit.load()) {
-            let stream = requestQueue.receive(timeout: Duration.millisecond * 10) ?? continue
+            let stream = requestQueue.receive() ?? continue
             spawn {
                 reqCount.fetchAdd(1)
                 try {
@@ -921,7 +924,7 @@ class HttpServer2 <: ProtocolService {
                     if (stream.isRst.compareAndSwap(true, false)) {
                         activeClientRstStreamNum.fetchSub(1)
                     }
-                case (false, false) => activeClientStreamNum.fetchSub(1)
+                case (false, false) => activeClientStreamNum.fetchSubChecked()
             }
         }
     }
@@ -973,7 +976,7 @@ class HttpServer2 <: ProtocolService {
                 activePushStreamNum.fetchSub(1)
             case false =>
                 activeClientRstStreamNum.fetchAdd(1)
-                activeClientStreamNum.fetchSub(1)
+                activeClientStreamNum.fetchSubChecked()
         }
     }
 
@@ -1035,5 +1038,17 @@ class HttpServer2 <: ProtocolService {
             return true
         }
         false
+    }
+}
+
+extend AtomicUInt32 {
+    func fetchSubChecked(): UInt32 {
+        if (this.compareAndSwap(1, 0)) {
+            return 1
+        }
+        if (this.load() == 0) {
+            return 0
+        }
+        this.fetchSub(1)
     }
 }

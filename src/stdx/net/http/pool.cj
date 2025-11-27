@@ -177,7 +177,7 @@ class PutSafeRingPool<T> <: Pool<T> {
         if (capacity <= 0) {
             throw HttpException("InternalError, pool capacity must >= 0, current capacity = ${capacity}.")
         }
-        this.data = Array<Option<T>>(capacity + 1, {_ => newFn()})
+        this.data = Array<Option<T>>(capacity + 1, repeat: None)
         this.capacity = capacity
         this.newFn = newFn
         this.resetFn = resetFn

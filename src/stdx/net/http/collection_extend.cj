@@ -107,8 +107,8 @@ class ClosableNonBlockingQueue<E> <: Resource {
     }
 
     public func close(): Unit {
-        while (let Some(v) <- queue.remove()) {}
         quit.store(true)
+        while (let Some(v) <- queue.remove()) {}
     }
 
     public func isClosed(): Bool {

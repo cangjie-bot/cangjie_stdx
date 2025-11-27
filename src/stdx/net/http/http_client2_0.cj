@@ -867,6 +867,7 @@ class HttpClientEngine2 {
         }
         // non ack
         sendSettings(true)
+        var seenSeverMaxStreamSetting = false
         for ((k, v) in frame.settings) {
             validSetting(k, v)
             if (k == SettingsHeaderTableSize.code) {
@@ -879,7 +880,14 @@ class HttpClientEngine2 {
             if (k == SettingsInitialWindowSize.code) {
                 setActiveStreamWindow(v)
             }
+            if (k == SettingsMaxConcurrentStreams.code){
+                seenSeverMaxStreamSetting = true
+            }
             remoteSettings.add(k, v)
+        }
+
+        if (!seenSeverMaxStreamSetting) {
+            remoteSettings.add(SettingsMaxConcurrentStreams.code, DEFAULT_MAX_CONCURRENT_STREAMS)
         }
 
         // set fieldsWriter buffer
