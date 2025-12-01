@@ -4,7 +4,7 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-package stdx.CHIR.pluginEntry
+package stdx.CHIR.serialize
 
 let SIZE_OF_OFFSET: UInt32 = 4
 let SIZE_OF_UINT32: UInt32 = 4

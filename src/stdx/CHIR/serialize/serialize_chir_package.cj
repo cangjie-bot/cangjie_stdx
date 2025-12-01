@@ -6,13 +6,13 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.CHIR.pluginEntry
+package stdx.CHIR.serialize
 
 import stdx.CHIR.lib.*
 
 let builder = Builder(0)
 
-internal func serialize(pkg: Package): (CPointer<UInt8>, Int64) {
+public func serialize(pkg: Package): (CPointer<UInt8>, Int64) {
     builder.reset()
     return serializePackage(builder, pkg)
 }

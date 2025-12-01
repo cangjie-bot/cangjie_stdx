@@ -3,7 +3,7 @@
 
 // cangjieformat:disable all
 
-package stdx.CHIR.pluginEntry
+package stdx.CHIR.serialize
 
 enum PackageFormat_CHIRTypeKind {
     CHIRTypeKind_INVALID |

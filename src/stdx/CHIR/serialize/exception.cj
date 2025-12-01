@@ -4,7 +4,7 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-package stdx.CHIR.pluginEntry
+package stdx.CHIR.serialize
 
 class FlatBuffersException <: Exception {
     init() {

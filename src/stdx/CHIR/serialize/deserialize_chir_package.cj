@@ -6,11 +6,11 @@
  * See https://cangjie-lang.cn/pages/LICENSE for license information.
  */
 
-package stdx.CHIR.pluginEntry
+package stdx.CHIR.serialize
 
 import stdx.CHIR.lib.*
 
-internal func deserialize(root: CPointer<UInt8>, length: Int64): Package {
+public func deserialize(root: CPointer<UInt8>, length: Int64): Package {
     if (root.isNull()) {
         throw Exception("root is null in deserialize")
     }

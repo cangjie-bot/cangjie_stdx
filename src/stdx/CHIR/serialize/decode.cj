@@ -4,7 +4,7 @@
 //
 // See https://cangjie-lang.cn/pages/LICENSE for license information.
 
-package stdx.CHIR.pluginEntry
+package stdx.CHIR.serialize
 
 func boundsCheck(buf: Array<UInt8>, sz: Int64): Bool {
     if (sz < 0 || sz > buf.size) {
