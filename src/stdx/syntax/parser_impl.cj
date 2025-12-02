@@ -1169,16 +1169,16 @@ private class FlatbufferNodeTranslator {
         builder.buildNonTerminal(SyntaxNodeKind.FeatureId, ret.toArray())
     }
 
-    private func transFeaturesDirective(ftr: NodeFormat_FeaturesDirective): ?SyntaxNodeImpl {
-        addWhitespaceAndMoveCursorToBegin(ftr.GetBase())
+    private func transFeaturesSet(ftrSet: NodeFormat_FeaturesSet): ?SyntaxNodeImpl {
+        addWhitespaceAndMoveCursorToBegin(ftrSet.GetBase())
         let ret = ArrayList<SyntaxNodeImpl>()
         curChildren = ret
 
-        if (let Some(base) <- ftr.GetBase()) {
-            transBasicTerminal(base.GetBegin(), SyntaxNodeKind.FeaturesToken)
-        }
-        let commaPoses = ftr.GetCommaPoses()
-        let content = ftr.GetContent()
+        let lCurlPos = ftrSet.GetLCurlPos()
+        let rCurlPos = ftrSet.GetRCurlPos()
+        let content = ftrSet.GetContent()
+        let commaPoses = ftrSet.GetCommaPoses()
+        transBasicTerminal(lCurlPos, SyntaxNodeKind.LCurlToken)
         for (i in 0..content.size) {
             if (let Some(item) <- content[i]) {
                 addChild(ret, transFeatureId(item))
@@ -1187,6 +1187,27 @@ private class FlatbufferNodeTranslator {
             if (i < commaPoses.size) {
                 transBasicTerminal(commaPoses[i], SyntaxNodeKind.CommaToken)
             }
+        }
+        transBasicTerminal(rCurlPos, SyntaxNodeKind.RCurlToken)
+        builder.buildNonTerminal(SyntaxNodeKind.FeaturesSet, ret.toArray())
+    }
+    
+    private func transFeaturesDirective(ftr: NodeFormat_FeaturesDirective): ?SyntaxNodeImpl {
+        addWhitespaceAndMoveCursorToBegin(ftr.GetBase())
+        let ret = ArrayList<SyntaxNodeImpl>()
+        curChildren = ret
+
+        let annos = ftr.GetAnnotations()
+        if (annos.size != 0) {
+            addChild(ret, transAnnotations(annos))
+        } else {
+            addWhitespaceAndMoveCursorToBegin(ftr.GetBase())
+        }
+        curChildren = ret
+        transBasicTerminal(ftr.GetFeaturesPos(), SyntaxNodeKind.FeaturesToken)
+        if (let Some(ftrSet) <- ftr.GetFeaturesSet()) {
+            addChild(ret, transFeaturesSet(ftrSet))
+            curChildren = ret
         }
         builder.buildNonTerminal(SyntaxNodeKind.FeaturesDirective, ret.toArray())
     }
