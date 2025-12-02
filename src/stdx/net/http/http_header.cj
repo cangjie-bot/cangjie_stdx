@@ -333,11 +333,14 @@ class HeaderValueIterator <: Iterator<String> {
     HeaderValueIterator(var hv: HeaderValue) {}
 
     public func next(): ?String {
+        println("[D] next | pos: ${pos}")
         if (pos == -2) {
+            println("[D] next | pos == 2")
             pos++
             return hv.single.toString()
         }
         if (pos < hv.extra.size - 1) {
+            println("[D] next | pos > 2")
             pos++
             return hv.extra[pos].toString()
         }
