@@ -16,6 +16,7 @@ enum SyntaxNodeKind <: ToString {
     | File /* SourceFile */
     | Package
     | FeaturesDirective
+    | FeaturesSet
     | FeatureId
     | PackageSpec
     | PackagePrefixes
