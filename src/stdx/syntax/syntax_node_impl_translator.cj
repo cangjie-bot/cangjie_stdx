@@ -220,6 +220,7 @@ class SyntaxNodeImplTranslator {
             case SyntaxNodeKind.ImportMulti => transImportMulti(node, startPos, parent)
             case SyntaxNodeKind.ImportSingle => transImportSingle(node, startPos, parent)
             case SyntaxNodeKind.FeaturesDirective => transFeaturesDirective(node, startPos, parent)
+            case SyntaxNodeKind.FeaturesSet => transFeaturesSet(node, startPos, parent)
             case SyntaxNodeKind.FeatureId => transFeatureId(node, startPos, parent)
             case _ =>
                 fail("nonterminal node kind - ${node.kind.toString()} - ${node.toString()} need to be translated");
@@ -299,42 +300,72 @@ class SyntaxNodeImplTranslator {
     }
 
     private func transFeaturesDirective(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): FeaturesDirective {
-        // BNF: FEATURES NL* FeatureId (COMMA NL* FeatureId)* end+
+        // BNF: annotationList? FEATURES NL* featuresSet end+
+        var featuresKeywordPos = CodePosition()
+        var ftrSetPropInfo = PropInfo()
+        let annosPropInfos = ArrayList<PropInfo>()
         let lp = LocalParser(node.children)
-        var featuresKeyWordPos = CodePosition()
-        if (let Some(kwNode) <- lp.consume(kind: SyntaxNodeKind.FeaturesToken)) {
-            featuresKeyWordPos = startPos + lp.offset
-            lp.moveOffset(kwNode)
+        while (lp.look(SyntaxNodeKind.Annotation)) {
+            let node = lp.consume()
+            if (let Some(annoNode) <- node) {
+                annosPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
+                lp.moveOffset(annoNode)
+            }
         }
+        if (let Some(keyNode) <- lp.consume(kind: SyntaxNodeKind.FeaturesToken)) {
+            featuresKeywordPos = startPos + lp.offset
+            lp.moveOffset(keyNode)
+        }
+        if (let Some(ftrSetNode) <- lp.consume(kind: SyntaxNodeKind.FeaturesSet)) {
+            ftrSetPropInfo = PropInfo(lp.cur - 1, lp.offset)
+            lp.moveOffset(ftrSetNode)
+        }
+        let ftrDIrectivePosInfos = FeaturesDirectivePosInfos(featuresKeywordPos)
+        let ftrDirectivePropInfos = FeaturesDirectivePropInfos(annosPropInfos.toArray(), ftrSetPropInfo)
+        FeaturesDirective(node, startPos, parent, ftrDIrectivePosInfos, ftrDirectivePropInfos)
+    }
+
+    private func transFeaturesSet(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): FeaturesSet {
+        // BNF: LCURL NL* featureId NL* (COMMA NL* featureId NL*)* RCURL
+        var lCurlPos = CodePosition()
+        var rCurlPos = CodePosition()
         let commaPoses = ArrayList<CodePosition>()
-        let contentsPropInfo = ArrayList<PropInfo>()
+        let contentPropInfos = ArrayList<PropInfo>()
+        let lp = LocalParser(node.children)
+        if (let Some(lCurlNode) <- lp.lookAndConsume(SyntaxNodeKind.LCurlToken)) {
+            lCurlPos = startPos + lp.offset
+            lp.moveOffset(lCurlNode)
+        }
         while (lp.look(SyntaxNodeKind.FeatureId)) {
             let node = lp.consume()
             if (let Some(ftrIdNode) <- node) {
-                contentsPropInfo.add(PropInfo(lp.cur - 1, lp.offset))
+                contentPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
                 lp.moveOffset(ftrIdNode)
             }
-
             if (let Some(commaNode) <- lp.lookAndConsume(SyntaxNodeKind.CommaToken)) {
                 commaPoses.add(startPos + lp.offset)
                 lp.moveOffset(commaNode)
             }
         }
-        let ftrDirectivePropInfos = FeaturesDirectivePropInfos(contentsPropInfo.toArray())
-        let ftrDirectivePosInfos = FeaturesDirectivePosInfos(featuresKeyWordPos, commaPoses.toArray())
-        FeaturesDirective(node, startPos, parent, ftrDirectivePosInfos, ftrDirectivePropInfos)
+        if (let Some(rCurlNode) <- lp.lookAndConsume(SyntaxNodeKind.RCurlToken)) {
+            rCurlPos = startPos + lp.offset
+            lp.moveOffset(rCurlNode)
+        }
+        let ftrSetPosInfos = FeaturesSetPosInfos(lCurlPos, rCurlPos, commaPoses.toArray())
+        let ftrSetPropInfos = FeaturesSetPropInfos(contentPropInfos.toArray())
+        FeaturesSet(node, startPos, parent, ftrSetPosInfos, ftrSetPropInfos)
     }
 
     private func transFeatureId(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): FeatureId {
         // BNF: Identifier (DOT Identifier)*
-        let result = ArrayList<String>()
+        let identValues = ArrayList<String>()
         let identifierPos = ArrayList<CodePosition>()
         let dotPoses = ArrayList<CodePosition>()
         let lp = LocalParser((node as NonTerminal).getOrThrow().children)
         while (true) {
             let ident = lp.consume()
             if (let Some(node) <- ident) {
-                result.add(getValue(node))
+                identValues.add(getValue(node))
                 identifierPos.add(startPos + lp.offset)
                 lp.moveOffset(node)
             }
@@ -346,7 +377,7 @@ class SyntaxNodeImplTranslator {
             }
         }
         let ftrIdPosInfos = FeatureIdPosInfos(identifierPos.toArray(), dotPoses.toArray())
-        return FeatureId(node, startPos, parent, result.toArray(), ftrIdPosInfos)
+        return FeatureId(node, startPos, parent, identValues.toArray(), ftrIdPosInfos)
     }
 
     private func transPackageHeader(node: NonTerminal, startPos: CodePosition, parent: ?SyntaxTreeNode): PackageHeader {
