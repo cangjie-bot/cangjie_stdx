@@ -5,8 +5,8 @@ import stdx.plugin.register.*
 import std.collection.*
 import std.ast.*
 
-@RegisterPlugin
-class MyPlugin2 <: Plugin<Package>  {
+@RegisterPlugin[Package]
+class MyPlugin2  {
     // 在遍历CHIR之前运行一次，可以进行一些初始化操作
     public func preVisit(): Unit {
         println(name + " preVisit")

@@ -11,22 +11,17 @@ macro package stdx.plugin.register
 import stdx.plugin.*
 import std.ast.*
 
-public macro RegisterPlugin(input: Tokens): Tokens {
+public macro RegisterPlugin(node: Tokens, input: Tokens): Tokens {
     let subClassDecl = (parseDecl(input) as ClassDecl).getOrThrow()
-    if (subClassDecl.superTypes.size != 1) {
-        throw Exception(subClassDecl.identifier.value + " must have exactly one super type")
+    var superTypes = subClassDecl.superTypes
+    for (superType in superTypes) {
+        if ((superType as RefType).getOrThrow().identifier.value == "Plugin") {
+            throw Exception(subClassDecl.identifier.value + " can't inherit from class Plugin<T> manually.")
+        }
     }
-    let superType = (subClassDecl.superTypes[0] as RefType).getOrThrow()
-    if (superType.identifier.value != "Plugin") {
-        throw Exception(subClassDecl.identifier.value + " must inherit from Plugin")
-    }
-    let typeArgs = superType.typeArguments
-    if (typeArgs.size != 1) {
-        throw Exception("class Plugin must have exactly one type argument")
-    }
-    // TOOD: 目前宏展开阶段无法获取token的package name，需要等late宏的实现，暂时先简单处理一下
-    let typeArgName = (typeArgs[0] as RefType).getOrThrow().identifier.value
-    let isCHIRPlugin = typeArgName == "Function" || typeArgName == "Package"
+    superTypes.add(RefType(quote(Plugin<$node>)))
+    let nodeName = node.toString()
+    let isCHIRPlugin = nodeName == "Function" || nodeName == "Package"
     if (isCHIRPlugin) {
         return generateCHIRPluginInfo(subClassDecl)
     } else {
