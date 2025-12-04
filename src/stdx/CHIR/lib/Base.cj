@@ -11,7 +11,25 @@ package stdx.CHIR.lib
 internal abstract class Base {
     private var attributes: AttributeInfo = AttributeInfo()
     private var annotations: Annotation = Annotation()
+    private var chirAnno = ArrayList<CHIRAnno>()
 
+    public func getAnno<T>(): Any where T <: CHIRAnno {
+        for (anno in chirAnno) {
+            if (anno is T) {
+                return anno.get()
+            }
+        }
+        return T.defaultValue()
+    }
+    public func setAnno<T>(value: Any): Unit where T <: CHIRAnno {
+        for (anno in chirAnno) {
+            if (anno is T) {
+                anno.set(value)
+                return
+            }
+        }
+        chirAnno.add(T.create(value))
+    }
     public func enableOpen(): Unit {
         attributes.setAttr(Attribute.VIRTUAL, true)
     }
