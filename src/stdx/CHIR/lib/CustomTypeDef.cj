@@ -8,7 +8,7 @@
 
 package stdx.CHIR.lib
 
-internal enum CustomDefKind {
+protected enum CustomDefKind {
     CLASS | ENUM | EXTEND | STRUCT
 }
 

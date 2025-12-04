@@ -8,7 +8,7 @@
 
 package stdx.CHIR.lib
 
-internal enum ExprKind {
+protected enum ExprKind {
     // terminator
     GOTO | BRANCH | MULTI_BRANCH | EXIT |
     APPLY_WITH_EXCEPTION | INVOKE_WITH_EXCEPTION | INTRINSIC_WITH_EXCEPTION |
@@ -35,7 +35,7 @@ internal enum ExprKind {
     CONSTANT | DEBUG | TUPLE | INSTANCE_OF | TYPE_CAST | GET_EXCEPTION | SPAWN | LAMBDA | GET_INSTANTIATE_VALUE |
     APPLY | INVOKE | INTRINSIC | GET_RTTI | GET_RTTI_STATIC
 
-    internal func IsTerminator(): Bool {
+    protected func IsTerminator(): Bool {
         match (this) {
             case GOTO | BRANCH | MULTI_BRANCH | EXIT |
             APPLY_WITH_EXCEPTION | INVOKE_WITH_EXCEPTION | INTRINSIC_WITH_EXCEPTION |
@@ -45,14 +45,14 @@ internal enum ExprKind {
         }
     }
 
-    internal func IsUnary(): Bool {
+    protected func IsUnary(): Bool {
         match (this) {
             case NEG | NOT | BIT_NOT => true
             case _ => false
         }
     }
 
-    internal func IsBinary(): Bool {
+    protected func IsBinary(): Bool {
         match (this) {
             case ADD | SUB | MUL | DIV | MOD | EXP |
             L_SHIFT | R_SHIFT | BIT_AND | BIT_OR | BIT_XOR |
@@ -63,11 +63,11 @@ internal enum ExprKind {
     }
 }
 
-internal enum OverflowStrategy {
+protected enum OverflowStrategy {
     NA | WRAPPING | THROWING | SATURATING
 }
 
-internal enum IntrinsicKind {
+protected enum IntrinsicKind {
     INOUT
 }
 
@@ -713,5 +713,49 @@ public class GetInstantiateValue <: Expression {
     internal init(val: Value, instantiateTypes: ArrayList<Type>, owner: Block) {
         super(ExprKind.GET_INSTANTIATE_VALUE, ArrayList<Value>([val]), owner)
         this._instantiateTypes = instantiateTypes
+    }
+}
+
+public class GOTO <: Expression {
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+    internal init(target: Block, owner: Block) {
+        super(ExprKind.GOTO, owner)
+        _operands.add(target)
+    }
+}
+
+public class BRANCH <: Expression {
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+    internal init(condition: Value, trueTarget: Block, falseTarget: Block, owner: Block) {
+        super(ExprKind.BRANCH, ArrayList<Value>([condition]), owner)
+        _operands.add(trueTarget)
+        _operands.add(falseTarget)
+    }
+}
+
+public class MULTI_BRANCH <: Expression {
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+    internal init(condition: Value, targets: ArrayList<Block>, owner: Block) {
+        super(ExprKind.MULTI_BRANCH, ArrayList<Value>([condition]), owner)
+        _operands.add(all: ArrayList<Value>(targets.size, { i => targets[i] }))
+    }
+}
+
+public class EXIT <: Expression {
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+    internal init(owner: Block) {
+        super(ExprKind.EXIT, owner)
     }
 }

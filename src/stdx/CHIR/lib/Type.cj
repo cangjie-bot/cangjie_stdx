@@ -8,14 +8,14 @@
 
 package stdx.CHIR.lib
 
-internal enum TypeKind <: ToString & Equatable<TypeKind> {
+protected enum TypeKind <: ToString & Equatable<TypeKind> {
     INVALID |
     INT8 | INT16 | INT32 | INT64 | INT_NATIVE |
     UINT8 | UINT16 | UINT32 | UINT64 | UINT_NATIVE |
     FLOAT16 | FLOAT32 | FLOAT64 |
     BOOL | RUNE | UNIT | NOTHING |
     CLASS | ENUM | STRUCT | TUPLE |
-    CPOINTER | CSTRING | RAW_ARRAY | VARRAY | GENERIC | REF | BOX | THIS | FUNC
+    CPOINTER | CSTRING | RAW_ARRAY | VARRAY | GENERIC | REF | BOX | THIS | FUNC | VOID
 
     public func toString(): String {
         match (this) {
@@ -50,6 +50,7 @@ internal enum TypeKind <: ToString & Equatable<TypeKind> {
             case BOX =>         "Box"
             case THIS =>        "This"
             case FUNC =>        "Func"
+            case VOID =>        "Void"
         }
     }
 
@@ -434,6 +435,13 @@ public class TupleType <: Type {
     }
     internal init(elementType: ArrayList<Type>) {
         super(TypeKind.TUPLE, elementType)
+        setHashCode()
+    }
+}
+
+public class VoidType <: BuiltinType {
+    internal init() {
+        super(TypeKind.VOID)
         setHashCode()
     }
 }

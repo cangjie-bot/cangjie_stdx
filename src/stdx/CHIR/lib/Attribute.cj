@@ -10,7 +10,7 @@ package stdx.CHIR.lib
 
 const ATTR_SIZE: UInt64 = 64
 
-internal enum Attribute <: ToString & Equatable<Attribute> {
+protected enum Attribute <: ToString & Equatable<Attribute> {
     ATTR_BEGIN |
     STATIC |    ///< Mark whether a member is a static one.
     PUBLIC |    ///< Mark whether a member is a public one.
@@ -151,7 +151,7 @@ internal enum Attribute <: ToString & Equatable<Attribute> {
             case _                                            => false
         }
     }
-    internal func toUInt64(): UInt64 {
+    protected func toUInt64(): UInt64 {
         match (this) {
             case ATTR_BEGIN           => 0  // just a placeholder
             case STATIC               => 0
@@ -194,7 +194,7 @@ internal enum Attribute <: ToString & Equatable<Attribute> {
             case ATTR_END             => ATTR_SIZE  // Invalid, return size to indicate error
         }
     }
-    internal func getNextAttribute(): Attribute {
+    protected func getNextAttribute(): Attribute {
         match (this) {
             case ATTR_BEGIN           => STATIC
             case STATIC               => PUBLIC
@@ -243,7 +243,7 @@ internal enum Attribute <: ToString & Equatable<Attribute> {
  * AttributeInfo class for managing attribute flags
  * Uses a bitset-like approach with UInt64 to store up to 64 attributes
  */
-internal class AttributeInfo <: ToString {
+protected class AttributeInfo <: ToString {
     private var attributesInfo: UInt64 = 0
 
     public init() {
@@ -257,7 +257,7 @@ internal class AttributeInfo <: ToString {
     /**
      * Set an attribute to enabled or disabled
      */
-    internal func setAttr(attr: Attribute, enable: Bool): Unit {
+    protected func setAttr(attr: Attribute, enable: Bool): Unit {
         if (enable) {
             let bitIndex = attr.toUInt64()
             if (bitIndex < ATTR_SIZE) {
@@ -274,7 +274,7 @@ internal class AttributeInfo <: ToString {
     /**
      * Test whether an attribute is set
      */
-    internal func testAttr(attr: Attribute): Bool {
+    protected func testAttr(attr: Attribute): Bool {
         let bitIndex = attr.toUInt64()
         if (bitIndex >= ATTR_SIZE) {
             return false
@@ -300,5 +300,9 @@ internal class AttributeInfo <: ToString {
             return ""
         }
         return String.join(result.toArray(), delimiter: ", ")
+    }
+
+    protected func getRawAttrs(): UInt64 {
+        return attributesInfo
     }
 }

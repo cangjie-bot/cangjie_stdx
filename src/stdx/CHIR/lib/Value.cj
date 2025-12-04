@@ -8,7 +8,7 @@
 
 package stdx.CHIR.lib
 
-internal enum ValueKind <: ToString & Equatable<ValueKind> {
+protected enum ValueKind <: ToString & Equatable<ValueKind> {
     GLOBAL_VAR | LOCAL_VAR | PARAMETER | FUNC | BLOCK | BLOCK_GROUP | LITERAL | MEMBER_VAR
 
     public operator func==(other: ValueKind): Bool {

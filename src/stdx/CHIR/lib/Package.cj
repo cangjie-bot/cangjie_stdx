@@ -18,8 +18,10 @@ public enum AccessLevel {
 }
 
 public class Package <: ToString {
-    internal let _name: String
-    internal let _accessLevel: AccessLevel
+    private let _name: String
+    private let _accessLevel: AccessLevel
+    private var _packageInitFunc: ?Function = None
+    private var _packageLiteralInitFunc: ?Function = None
 
     private var _importedVars = ArrayList<GlobalVar>()
     private var _importedFuncs = ArrayList<Function>()
@@ -36,6 +38,23 @@ public class Package <: ToString {
     private var _extends = ArrayList<ExtendDef>()
 
     // ----------------------- Public API -----------------------
+    protected mut prop packageInitFunc: ?Function {
+        get() {
+            return _packageInitFunc
+        }
+        set(value) {
+            _packageInitFunc = value
+        }
+    }
+    protected mut prop packageLiteralInitFunc: ?Function {
+        get() {
+            return _packageLiteralInitFunc
+        }
+        set(value) {
+            _packageLiteralInitFunc = value
+        }
+    }
+    
     // TODO: 后面实现
     public func toString(): String {
         String()
