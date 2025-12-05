@@ -18,6 +18,7 @@ add_subdirectory(unittest)
 add_subdirectory(actors)
 add_subdirectory(string_intern)
 add_subdirectory(syntax)
+add_subdirectory(semantic)
 
 if(CANGJIE_CODEGEN_CJNATIVE_BACKEND AND "$ENV{NO_ASPECTCJ}" STREQUAL "")
     if(CMAKE_CROSSCOMPILING)
