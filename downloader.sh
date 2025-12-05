@@ -1,0 +1,179 @@
+#!/bin/bash
+
+# Exit on any error
+set -e
+
+# --- Helper Functions ---
+
+# Print error message and exit
+error_exit() {
+    echo "Error: $1" >&2
+    exit 1
+}
+
+# Get current platform and architecture
+get_platform_arch() {
+    os=$(uname -s)
+    arch=$(uname -m)
+
+    case "$os" in
+        Linux)
+            platform="linux"
+            ;;
+        Darwin)
+            platform="mac"
+            ;;
+        *)
+            error_exit "Unsupported operating system: $os"
+            ;;
+    esac
+
+    case "$arch" in
+        x86_64)
+            architecture="x64"
+            ;;
+        aarch64 | arm64)
+            architecture="aarch64"
+            ;;
+        *)
+            error_exit "Unsupported architecture: $arch"
+            ;;
+    esac
+
+    echo "${platform}-${architecture}"
+}
+
+# --- Main Script ---
+
+# 1. Argument Parsing
+PLATFORM_ARCH=""
+DEST_DIR="."
+
+usage() {
+    echo "Usage: $0 <version> [-p <platform-arch>] [-d <extract-dir>]"
+    echo "Example: $0 1.0.3.1 -p linux-x64 -d ./output"
+    exit 1
+}
+
+if [ "$#" -lt 1 ] || [[ "$1" == -* ]]; then
+    echo -n "Version: "
+    read -r VERSION
+else
+    VERSION="$1"
+    shift # Remove version from argument list
+fi
+
+while getopts ":p:d:" opt; do
+  case ${opt} in
+    p )
+      PLATFORM_ARCH=$OPTARG
+      ;;
+    d )
+      DEST_DIR=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      ;;
+    : )
+      echo "Invalid option: -$OPTARG requires an argument" >&2
+      usage
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+if [ "$#" -gt 0 ]; then
+    echo "Error: Unexpected arguments found."
+    usage
+fi
+
+# Set defaults if not provided
+if [ -z "$PLATFORM_ARCH" ]; then
+    PLATFORM_ARCH=$(get_platform_arch)
+fi
+
+# Validate platform-architecture
+case "$PLATFORM_ARCH" in
+    linux-aarch64|linux-x64|mac-aarch64|mac-x64|ohos-aarch64|ohos-x64|windows-x64)
+        # valid
+        ;;
+    *)
+        error_exit "Unsupported platform-architecture: $PLATFORM_ARCH"
+        ;;
+esac
+
+# 2. Define Variables
+REPO_URL="https://gitcode.com/Cangjie/cangjie_stdx"
+FILENAME="cangjie-stdx-${PLATFORM_ARCH}-${VERSION}.zip"
+DOWNLOAD_URL="${REPO_URL}/releases/download/v${VERSION}/${FILENAME}"
+CACHE_DIR="$HOME/.cangjie_stdx/v${VERSION}"
+CACHED_FILE="${CACHE_DIR}/${FILENAME}"
+EXTRACTED_DIR_NAME="cangjie-stdx-${PLATFORM_ARCH}-${VERSION}"
+
+# 3. Destination Directory Check
+if [ ! -d "$DEST_DIR" ]; then
+    error_exit "Destination directory does not exist: $DEST_DIR"
+fi
+DEST_DIR_ABS=$(cd "$DEST_DIR" && pwd)
+
+# 4. Cache and Download Logic
+mkdir -p "$CACHE_DIR"
+
+if [ -f "$CACHED_FILE" ]; then
+    echo "Using cached file: $CACHED_FILE"
+else
+    echo "Downloading from: $DOWNLOAD_URL"
+    if command -v curl &> /dev/null; then
+        curl -# -L -o "$CACHED_FILE" "$DOWNLOAD_URL"
+    elif command -v wget &> /dev/null; then
+        wget -q --show-progress -O "$CACHED_FILE" "$DOWNLOAD_URL"
+    else
+        error_exit "Please install 'curl' or 'wget' to download files."
+    fi
+
+    if [ $? -ne 0 ]; then
+        rm -f "$CACHED_FILE" # Clean up partial download
+        error_exit "Download failed."
+    fi
+fi
+
+# Verify file type
+if ! file --mime-type "$CACHED_FILE" | grep -q "application/zip"; then
+    rm -f "$CACHED_FILE"
+    error_exit "Downloaded file is not a zip archive. Please check if the version number is correct."
+fi
+
+# 5. Extraction and Rename Logic
+echo "Extracting to: $DEST_DIR_ABS"
+# Create a temporary directory for extraction to safely get the top-level folder name
+TMP_EXTRACT_DIR=$(mktemp -d)
+unzip -q "$CACHED_FILE" -d "$TMP_EXTRACT_DIR" || error_exit "Unzip failed. The file might be corrupted or not a valid zip archive."
+
+# Find the top-level directory within the temp extraction folder
+TOP_LEVEL_DIR=$(find "$TMP_EXTRACT_DIR" -mindepth 1 -maxdepth 1 -type d)
+
+if [ -z "$TOP_LEVEL_DIR" ] || [ ! -d "$TOP_LEVEL_DIR" ]; then
+    rm -rf "$TMP_EXTRACT_DIR"
+    error_exit "Could not find a top-level directory in the zip file."
+fi
+
+# Move and rename the extracted content
+FINAL_PATH="${DEST_DIR_ABS}/${EXTRACTED_DIR_NAME}"
+if [ -d "$FINAL_PATH" ]; then
+    echo "Warning: Target directory already exists. Overwriting: ${FINAL_PATH}"
+    rm -rf "$FINAL_PATH"
+fi
+mv "$TOP_LEVEL_DIR" "$FINAL_PATH"
+
+# Clean up temp directory
+rm -rf "$TMP_EXTRACT_DIR"
+
+# 6. Post-extraction for macOS
+if [[ "$(uname -s)" == "Darwin" && "$PLATFORM_ARCH" == mac-* ]]; then
+    echo "Removing quarantine attribute for macOS..."
+    xattr -d -r com.apple.quarantine "$FINAL_PATH" 2>/dev/null || true
+fi
+
+# 7. Success Output
+echo "Successfully extracted to: $FINAL_PATH"

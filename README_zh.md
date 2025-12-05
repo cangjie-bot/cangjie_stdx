@@ -26,6 +26,66 @@
 `stdx` 相关 API 请参见 [API接口说明](./doc/libs_stdx/summary_cjnative.md)。
 相关指导请参见 [开发指南](https://gitcode.com/Cangjie/cangjie_docs/)。
 
+## 快速获取
+
+本仓提供了快捷命令，用于快速下载和解压指定版本的二进制产物。
+
+### Linux/macOS
+
+依赖 `curl` 和 `unzip` 命令，请确保您的环境中已安装这些工具。
+
+在命令行中直接执行（注意尾部的参数，按需修改）：
+
+```shell
+bash -c "$(curl -fsSL https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.sh)" -- 1.0.0.1
+```
+
+### Windows
+
+在操作之前，您可能需要调整 PowerShell 的执行策略（仅需一次）。
+
+请以管理员身份打开 PowerShell 并执行以下命令：
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+然后，在普通 PowerShell 窗口中执行脚本（注意尾部的参数，按需修改）：
+
+```powershell
+irm https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.ps1 -OutFile "$env:TEMP\downloader.ps1"; & "$env:TEMP\downloader.ps1" 1.0.0.1
+```
+
+### 参数说明
+
+-   `<版本号>`: **必选参数**，指定要下载的版本，例如 `1.0.0.1`。
+-   `-p <平台-架构>`: **可选参数**，指定平台和架构。如果省略，脚本将自动检测当前系统。
+-   `-d <解压目录>`: **可选参数**，指定解压的目标路径。如果省略，默认为当前目录。
+
+**参数使用示例:**
+
+```shell
+# 在 Linux/macOS 下载 v1.0.0.1 的 ohos-aarch64 版本，并解压到 ./cangjie_libs 目录
+bash -c "$(curl -fsSL https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.sh)" -- 1.0.0.1 -p ohos-aarch64 -d ./cangjie_libs
+```
+
+```powershell
+# 在 Windows 下载 v1.0.0.1 的 linux-x64 版本，并解压到 C:\cangjie_libs 目录
+irm https://raw.gitcode.com/Cangjie/cangjie_stdx/raw/dev/downloader.ps1 -OutFile "$env:TEMP\downloader.ps1"; & "$env:TEMP\downloader.ps1" 1.0.0.1 -p windows-x64 -d C:\cangjie_libs
+```
+
+### 支持的 <平台-架构>
+
+当前支持以下平台与架构组合：
+
+-   `linux-aarch64`
+-   `linux-x64`
+-   `mac-aarch64`
+-   `mac-x64`
+-   `ohos-aarch64`
+-   `ohos-x64`
+-   `windows-x64`
+
 ## 目录结构
 
 ```text
