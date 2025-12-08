@@ -9,7 +9,6 @@
 package stdx.effect
 
 internal import std.sync.AtomicBool
-internal import std.collection.ArrayList
 
 private type ThreadHandle = CPointer<Unit>
 
@@ -24,6 +23,9 @@ foreign func CJ_MRT_ThreadResumeAndWait(readyThread: ThreadHandle): Unit
 
 @FastNative
 foreign func CJ_MRT_ThreadReady(readyThread: ThreadHandle): Unit
+
+@FastNative
+foreign func CJ_MRT_GetCJThreadState(thread: ThreadHandle): Int64
 
 enum HandlerResponse<Res> {
     Resume(Res) | Throw(Exception) | Abort(Error) | Invalid
@@ -171,6 +173,13 @@ internal class DeferredFrame<Ret> <: HandlerFrame {
     func request(req: HandlerRequest<Ret>) {
         // EXECUTED BY HANDLEE
         this.handlerRequest = req
+        // The number 3 is the internal representation for the "Pending" thread
+        // state. The ThreadState method to parse an integer into an explicit enum
+        // is not public at time of writing.
+        while (3 != unsafe { CJ_MRT_GetCJThreadState(this.handlerThread) }) {
+            // Ensure that the handler thread is ready to process the request
+            sleep(Duration.Zero)
+        }
         unsafe { CJ_MRT_ThreadResumeAndWait(this.handlerThread) }
     }
 }
