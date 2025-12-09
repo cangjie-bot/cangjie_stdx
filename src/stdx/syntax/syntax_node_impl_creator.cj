@@ -1742,6 +1742,61 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.PropGetterOrSetter, ret.toArray())
     }
 
+    static func createFeatureIdImpl(featureNameIdentifiers: Array<String>, comments!: Array<Comment> = []) {
+        if (featureNameIdentifiers.size == 0) {
+            throw Exception(
+                "InitException: The input 'featureNameIdentifiers' cannot be empty for 'FeatureId' init.")
+        }
+        let builder = SyntaxNodeBuilder()
+        let ret = ArrayList<SyntaxNodeImpl>()
+        addCommentToNode(ret, comments)
+
+        for (i in 0..featureNameIdentifiers.size) {
+            unsafe { checkIdentifier(featureNameIdentifiers[i], "identifier", "FeatureId") }
+            ret.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, featureNameIdentifiers[i]))
+            if (i + 1 < featureNameIdentifiers.size) {
+                ret.add(builder.buildBasicTerminal(SyntaxNodeKind.DotToken))
+            }
+        }
+
+        builder.buildNonTerminal(SyntaxNodeKind.FeatureId, ret.toArray())
+    }
+
+    static func createFeaturesSetImpl(features: Array<FeatureId>, comments!: Array<Comment> = []) {
+        let builder = SyntaxNodeBuilder()
+        let ret = ArrayList<SyntaxNodeImpl>()
+        addCommentToNode(ret, comments)
+
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
+        for (i in 0..features.size) {
+            ret.add(features[i].nodeImpl)
+            if (i + 1 < features.size) {
+                ret.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
+                ret.add(builder.buildSpace(1))
+            }
+        }
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
+
+        builder.buildNonTerminal(SyntaxNodeKind.FeaturesSet, ret.toArray())
+    }
+
+    static func createFeaturesDirectiveImpl(annotations: Array<Annotation>, set: FeaturesSet,
+        comments!: Array<Comment> = []) {
+        let builder = SyntaxNodeBuilder()
+        let ret = ArrayList<SyntaxNodeImpl>()
+        addCommentToNode(ret, comments)
+
+        if (annotations.size != 0) {
+            ret.add(createAnnotationList(annotations))
+        }
+
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.FeaturesToken))
+        ret.add(builder.buildSpace(1))
+        ret.add(set.nodeImpl)
+
+        builder.buildNonTerminal(SyntaxNodeKind.FeaturesDirective, ret.toArray())
+    }
+
     static func createPackageHeaderImpl(accessModifier: Option<Modifier>, isMacroPkg: Bool,
         packageNameIdentifiers: Array<String>, comments!: Array<Comment> = []) {
         if (packageNameIdentifiers.size == 0) {
