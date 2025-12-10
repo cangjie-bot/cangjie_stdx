@@ -91,17 +91,14 @@ protected enum TypeKind <: ToString & Equatable<TypeKind> {
     }
 }
 
-sealed abstract class Type <: ToString & Equatable<Type> {
+sealed abstract class Type <: ToString & Hashable & Equatable<Type> {
     // member var
     internal let kind: TypeKind
     internal var typeArgs: ArrayList<Type>
     private var _hashCode: Int64 = 0
 
-    // prop
-    internal prop hashCode: Int64 {
-        get() {
-            _hashCode
-        }
+    public func hashCode(): Int64 {
+        _hashCode
     }
     
     // public method
@@ -111,8 +108,8 @@ sealed abstract class Type <: ToString & Equatable<Type> {
     public func isSameTypeKind(other: Type): Bool {
         return this.kind == other.kind
     }
-    public operator func==(other: Type): Bool {
-        return this._hashCode == other._hashCode
+    public open operator func==(other: Type): Bool {
+        return this._hashCode == other._hashCode && this.kind == other.kind && this.typeArgs == other.typeArgs
     }
     public func IsFloatType(): Bool {
         return kind == TypeKind.FLOAT16 || kind == TypeKind.FLOAT32 || kind == TypeKind.FLOAT64
@@ -191,7 +188,7 @@ sealed abstract class Type <: ToString & Equatable<Type> {
     }
 }
 
-public class BoxType <: Type {
+public class BoxType <: Type & Equatable<BoxType> {
     public func toString(): String {
         return "Box<" + getBaseType().toString() + ">"
     }
@@ -202,25 +199,34 @@ public class BoxType <: Type {
         super(TypeKind.BOX, ArrayList<Type>([baseType]))
         setHashCode()
     }
+    public operator func==(other: BoxType): Bool {
+        return (this as Type) == (other as Type)
+    }
 }
 
-sealed abstract class BuiltinType <: Type {
+sealed abstract class BuiltinType <: Type & Equatable<BuiltinType> {
     internal init(kind: TypeKind) {
         super(kind)
     }
     internal init(kind: TypeKind, typeArgs: ArrayList<Type>) {
         super(kind, typeArgs)
     }
+    public operator func==(other: BuiltinType): Bool {
+        return (this as Type) == (other as Type)
+    }
 }
 
-public class BoolType <: BuiltinType {
+public class BoolType <: BuiltinType & Equatable<BoolType> {
     internal init() {
         super(TypeKind.BOOL)
         setHashCode()
     }
+    public operator func==(_: BoolType): Bool {
+        return true
+    }
 }
 
-public class CPointerType <: BuiltinType {
+public class CPointerType <: BuiltinType & Equatable<CPointerType> {
     public func toString(): String {
         return "CPointer<" + getElementType().toString() + ">"
     }
@@ -231,29 +237,41 @@ public class CPointerType <: BuiltinType {
         super(TypeKind.CPOINTER, ArrayList<Type>([elementType]))
         setHashCode()
     }
+    public operator func==(other: CPointerType): Bool {
+        return this.getElementType() == other.getElementType()
+    }
 }
 
-public class CStringType <: BuiltinType {
+public class CStringType <: BuiltinType & Equatable<CStringType> {
     internal init() {
         super(TypeKind.CSTRING)
         setHashCode()
     }
+    public operator func==(_: CStringType): Bool {
+        return true
+    }
 }
 
-public class NothingType <: BuiltinType {
+public class NothingType <: BuiltinType & Equatable<NothingType> {
     internal init() {
         super(TypeKind.NOTHING)
         setHashCode()
     }
-}
-
-sealed abstract class NumericType <: BuiltinType {
-    internal init(kind: TypeKind) {
-        super(kind)
+    public operator func==(_: NothingType): Bool {
+        return true
     }
 }
 
-public class FloatType <: NumericType {
+sealed abstract class NumericType <: BuiltinType & Equatable<NumericType> {
+    internal init(kind: TypeKind) {
+        super(kind)
+    }
+    public operator func==(other: NumericType): Bool {
+        return this.kind == other.kind
+    }
+}
+
+public class FloatType <: NumericType & Equatable<FloatType> {
     internal init(kind: TypeKind) {
         super(kind)
         setHashCode()
@@ -261,9 +279,12 @@ public class FloatType <: NumericType {
             throw Exception("Create FloatType with wrong kind: " + kind.toString())
         }
     }
+    public operator func==(other: FloatType): Bool {
+        return this.kind == other.kind
+    }
 }
 
-public class IntType <: NumericType {
+public class IntType <: NumericType & Equatable<IntType> {
     internal init(kind: TypeKind) {
         super(kind)
         setHashCode()
@@ -271,9 +292,16 @@ public class IntType <: NumericType {
             throw Exception("Create IntType with wrong kind: " + kind.toString())
         }
     }
+    public func isSigned(): Bool {
+        return kind == TypeKind.INT8 || kind == TypeKind.INT16 || kind == TypeKind.INT32 || kind == TypeKind.INT64 ||
+            kind == TypeKind.INT_NATIVE
+    }
+    public operator func==(other: IntType): Bool {
+        return this.kind == other.kind
+    }
 }
 
-public class RawArrayType <: BuiltinType {
+public class RawArrayType <: BuiltinType & Equatable<RawArrayType> {
     public func toString(): String {
         return "RawArray<" + getElementType().toString() + ">"
     }
@@ -284,23 +312,32 @@ public class RawArrayType <: BuiltinType {
         super(TypeKind.RAW_ARRAY, ArrayList<Type>([elementType]))
         setHashCode()
     }
+    public operator func==(other: RawArrayType): Bool {
+        return this.getElementType() == other.getElementType()
+    }
 }
 
-public class RuneType <: BuiltinType {
+public class RuneType <: BuiltinType & Equatable<RuneType> {
     internal init() {
         super(TypeKind.RUNE)
         setHashCode()
     }
+    public operator func==(_: RuneType): Bool {
+        return true
+    }
 }
 
-public class UnitType <: BuiltinType {
+public class UnitType <: BuiltinType & Equatable<UnitType> {
     internal init() {
         super(TypeKind.UNIT)
         setHashCode()
     }
+    public operator func==(_: UnitType): Bool {
+        return true
+    }
 }
 
-public class VArrayType <: BuiltinType {
+public class VArrayType <: BuiltinType & Equatable<VArrayType> {
     private let size: Int64
 
     public func toString(): String {
@@ -313,6 +350,9 @@ public class VArrayType <: BuiltinType {
         super(TypeKind.VARRAY, ArrayList<Type>([elementType]))
         this.size = size
         setHashCode()
+    }
+    public operator func==(other: VArrayType): Bool {
+        return this.getElementType() == other.getElementType() && this.size == other.size
     }
 }
 
@@ -328,7 +368,7 @@ private func typeArgsToString(start: String, typeArgs: ArrayList<Type>, end: Str
     return start + res.removeSuffix(", ") + end
 }
 
-sealed abstract class CustomType <: Type {
+sealed abstract class CustomType <: Type & Equatable<CustomType> {
     internal var def: CustomTypeDef
 
     public func toString(): String {
@@ -342,30 +382,47 @@ sealed abstract class CustomType <: Type {
         super(kind, genericTypeParams)
         this.def = def
     }
+    public operator func==(other: CustomType): Bool {
+        return this.kind == other.kind &&
+            this.def == other.def &&
+            this.typeArgs == other.typeArgs
+    }
 }
 
-public class ClassType <: CustomType {
+public class ClassType <: CustomType & Equatable<ClassType> {
     internal init(def: ClassDef, genericTypeParams: ArrayList<Type>) {
         super(TypeKind.CLASS, def, genericTypeParams)
         setHashCode()
     }
+    public operator func==(other: ClassType): Bool {
+        return this.def == other.def &&
+            this.typeArgs == other.typeArgs
+    }
 }
 
-public class StructType <: CustomType {
+public class StructType <: CustomType & Equatable<StructType> {
     internal init(def: StructDef, genericTypeParams: ArrayList<Type>) {
         super(TypeKind.STRUCT, def, genericTypeParams)
         setHashCode()
     }
+    public operator func==(other: StructType): Bool {
+        return this.def == other.def &&
+            this.typeArgs == other.typeArgs
+    }
 }
 
-public class EnumType <: CustomType {
+public class EnumType <: CustomType & Equatable<EnumType> {
     internal init(def: EnumDef, genericTypeParams: ArrayList<Type>) {
         super(TypeKind.ENUM, def, genericTypeParams)
         setHashCode()
     }
+    public operator func==(other: EnumType): Bool {
+        return this.def == other.def &&
+            this.typeArgs == other.typeArgs
+    }
 }
 
-public class FuncType <: Type {
+public class FuncType <: Type & Equatable<FuncType> {
     private let hasVarArg: Bool
     private let isCFunc: Bool
 
@@ -385,9 +442,15 @@ public class FuncType <: Type {
         this.isCFunc = cFunc
         setHashCode()
     }
+    public operator func==(other: FuncType): Bool {
+        return this.getParamTypes() == other.getParamTypes() &&
+            this.getReturnType() == other.getReturnType() &&
+            this.hasVarArg == other.hasVarArg &&
+            this.isCFunc == other.isCFunc
+    }
 }
 
-public class GenericType <: Type {
+public class GenericType <: Type & Equatable<GenericType> {
     private let identifier: String
     private let srcCodeIdentifier: String
     private var upperBounds: ArrayList<Type> = ArrayList<Type>()
@@ -401,15 +464,23 @@ public class GenericType <: Type {
         this.srcCodeIdentifier = srcCodeIdentifier
         setHashCode()
     }
-}
-
-internal class InvalidType <: Type {
-    internal init() {
-        super(TypeKind.INVALID)
+    public operator func==(other: GenericType): Bool {
+        return this.identifier == other.identifier &&
+            this.srcCodeIdentifier == other.srcCodeIdentifier &&
+            this.upperBounds == other.upperBounds
     }
 }
 
-public class RefType <: Type {
+internal class InvalidType <: Type & Equatable<InvalidType> {
+    internal init() {
+        super(TypeKind.INVALID)
+    }
+    public operator func==(_: InvalidType): Bool {
+        return true
+    }
+}
+
+public class RefType <: Type & Equatable<RefType> {
     public func getBaseType(): Type {
         return typeArgs[0]
     }
@@ -417,16 +488,22 @@ public class RefType <: Type {
         super(TypeKind.REF, ArrayList<Type>([baseType]))
         setHashCode()
     }
+    public operator func==(other: RefType): Bool {
+        return this.getBaseType() == other.getBaseType()
+    }
 }
 
-public class ThisType <: Type {
+public class ThisType <: Type & Equatable<ThisType> {
     internal init() {
         super(TypeKind.THIS)
         setHashCode()
     }
+    public operator func==(_: ThisType): Bool {
+        return true
+    }
 }
 
-public class TupleType <: Type {
+public class TupleType <: Type & Equatable<TupleType> {
     public func toString(): String {
         this.kind.toString() + typeArgsToString("(", getElementTypes(), ")")
     }
@@ -436,6 +513,9 @@ public class TupleType <: Type {
     internal init(elementType: ArrayList<Type>) {
         super(TypeKind.TUPLE, elementType)
         setHashCode()
+    }
+    public operator func==(other: TupleType): Bool {
+        return this.getElementTypes() == other.getElementTypes()
     }
 }
 

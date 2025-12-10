@@ -29,14 +29,15 @@ public class CHIRBuilder {
     private let nothingTy = NothingType()
     private let runeTy = RuneType()
     private let thisTy = ThisType()
+    private let voidTy = VoidType()
 
-    private var classTypes = HashMap<Int64, ClassType>()
-    private var structTypes = HashMap<Int64, StructType>()
-    private var enumTypes = HashMap<Int64, EnumType>()
-    private var funcTypes = HashMap<Int64, FuncType>()
-    private var genericTypes = HashMap<Int64, GenericType>()
-    private var refTypes = HashMap<Int64, RefType>()
-    private var boxTypes = HashMap<Int64, BoxType>()
+    private var classTypes = HashMap<ClassType, ClassType>()
+    private var structTypes = HashMap<StructType, StructType>()
+    private var enumTypes = HashMap<EnumType, EnumType>()
+    private var funcTypes = HashMap<FuncType, FuncType>()
+    private var genericTypes = HashMap<GenericType, GenericType>()
+    private var refTypes = HashMap<RefType, RefType>()
+    private var boxTypes = HashMap<BoxType, BoxType>()
 
     public init(p: Package) {
         this.curPkg = p
@@ -143,69 +144,74 @@ public class CHIRBuilder {
             return thisTy
         }
     }
+    public prop voidType: VoidType {
+        get() {
+            return voidTy
+        }
+    }
 
     // ----------------------- custom type -----------------------
     public func GetClassType(def: ClassDef, args: ArrayList<Type>): ClassType {
         let temp = ClassType(def, args)
-        let res = classTypes.get(temp.hashCode)
+        let res = classTypes.get(temp)
         if (res.isSome()) {
             return res.getOrThrow()
         }
-        classTypes.add(temp.hashCode, temp)
+        classTypes.add(temp, temp)
         return temp
     }
     public func GetStructType(def: StructDef, args: ArrayList<Type>): StructType {
         let temp = StructType(def, args)
-        let res = structTypes.get(temp.hashCode)
+        let res = structTypes.get(temp)
         if (res.isSome()) {
             return res.getOrThrow()
         }
-        structTypes.add(temp.hashCode, temp)
+        structTypes.add(temp, temp)
         return temp
     }
     public func GetEnumType(def: EnumDef, args: ArrayList<Type>): EnumType {
         let temp = EnumType(def, args)
-        let res = enumTypes.get(temp.hashCode)
+        let res = enumTypes.get(temp)
         if (res.isSome()) {
             return res.getOrThrow()
         }
-        enumTypes.add(temp.hashCode, temp)
+        enumTypes.add(temp, temp)
         return temp
     }
     public func GetFuncType(paramTypes: ArrayList<Type>, retType: Type, varArg !: Bool = false, cFunc !: Bool = false): FuncType {
         let temp = FuncType(paramTypes, retType, varArg, cFunc)
-        let res = funcTypes.get(temp.hashCode)
+        let res = funcTypes.get(temp)
         if (res.isSome()) {
             return res.getOrThrow()
         }
-        funcTypes.add(temp.hashCode, temp)
+        funcTypes.add(temp, temp)
         return temp
     }
     public func GetGenericType(identifier: String, srcCodeIdentifier: String): GenericType {
         let temp = GenericType(identifier, srcCodeIdentifier)
-        let res = genericTypes.get(temp.hashCode)
+        let res = genericTypes.get(temp)
         if (res.isSome()) {
             return res.getOrThrow()
         }
-        genericTypes.add(temp.hashCode, temp)
+        genericTypes.add(temp, temp)
         return temp
     }
     public func GetRefType(baseType: Type): RefType {
         let temp = RefType(baseType)
-        let res = refTypes.get(temp.hashCode)
+        let res = refTypes.get(temp)
         if (res.isSome()) {
             return res.getOrThrow()
         }
-        refTypes.add(temp.hashCode, temp)
+        refTypes.add(temp, temp)
         return temp
     }
     public func GetBoxType(baseType: Type): BoxType {
         let temp = BoxType(baseType)
-        let res = boxTypes.get(temp.hashCode)
+        let res = boxTypes.get(temp)
         if (res.isSome()) {
             return res.getOrThrow()
         }
-        boxTypes.add(temp.hashCode, temp)
+        boxTypes.add(temp, temp)
         return temp
     }
 
@@ -231,6 +237,35 @@ public class CHIRBuilder {
         curPkg.addImportedVar(temp)
         temp.enableImported()
         return temp
+    }
+
+    // ----------------------- LiteralValue API -----------------------
+    public func CreateBoolLiteral(value: Bool): BoolLiteral {
+        return BoolLiteral(this.boolType, value)
+    }
+
+    public func CreateRuneLiteral(value: Rune): RuneLiteral {
+        return RuneLiteral(this.runeType, value)
+    }
+
+    public func CreateIntLiteral(ty: IntType, value: UInt64): IntLiteral {
+        return IntLiteral(ty, value)
+    }
+
+    public func CreateFloatLiteral(ty: FloatType, value: Float64): FloatLiteral {
+        return FloatLiteral(ty, value)
+    }
+
+    public func CreateStringLiteral(value: String): StringLiteral {
+        return StringLiteral(this.cstringType, value)
+    }
+
+    public func CreateUnitLiteral(): UnitLiteral {
+        return UnitLiteral(this.unitType)
+    }
+
+    public func CreateNullLiteral(): NullLiteral {
+        return NullLiteral(this.nothingType)
     }
 
     // ----------------------- create expression -----------------------

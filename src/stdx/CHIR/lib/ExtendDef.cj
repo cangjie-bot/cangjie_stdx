@@ -9,7 +9,7 @@
 package stdx.CHIR.lib
 
 public class ExtendDef <: CustomTypeDef {
-    internal init(identifier: String, srcName: String, pkgName: String) {
+    protected init(identifier: String, srcName: String, pkgName: String) {
         super(CustomDefKind.EXTEND, identifier, srcName, pkgName)
     }
 }

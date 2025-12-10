@@ -9,7 +9,7 @@
 package stdx.CHIR.lib
 
 public class ClassDef <: CustomTypeDef {
-    internal init(identifier: String, srcName: String, pkgName: String) {
+    protected init(identifier: String, srcName: String, pkgName: String) {
         super(CustomDefKind.CLASS, identifier, srcName, pkgName)
     }
 }

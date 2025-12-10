@@ -118,13 +118,13 @@ sealed abstract class Expression <: Base & ToString {
         return false
     }
 
-    internal init(kind: ExprKind, operands: ArrayList<Value>, owner: Block) {
+    protected init(kind: ExprKind, operands: ArrayList<Value>, owner: Block) {
         this.kind = kind
         this._operands = operands
         this._owner = owner
     }
 
-    internal init(kind: ExprKind, owner: Block) {
+    protected init(kind: ExprKind, owner: Block) {
         this.kind = kind
         this._operands = ArrayList<Value>()
         this._owner = owner
@@ -139,17 +139,17 @@ public class UnaryExpression <: Expression {
         String()
     }
 
-    internal init(kind: ExprKind, op: Value, overflow: OverflowStrategy, owner: Block) {
+    protected init(kind: ExprKind, op: Value, overflow: OverflowStrategy, owner: Block) {
         super(kind, ArrayList<Value>([op]), owner)
         this._overflow = overflow
     }
 
-    internal init(kind: ExprKind, op: Value, owner: Block) {
+    protected init(kind: ExprKind, op: Value, owner: Block) {
         super(kind, ArrayList<Value>([op]), owner)
         this._overflow = OverflowStrategy.NA
     }
 
-    internal init(kind: ExprKind, op: Value, owner: Block, normal: Block, err: Block) {
+    protected init(kind: ExprKind, op: Value, owner: Block, normal: Block, err: Block) {
         super(kind, ArrayList<Value>([op]), owner)
         this._overflow = OverflowStrategy.THROWING
         _operands.add(normal)
@@ -165,17 +165,17 @@ public class BinaryExpression <: Expression {
         String()
     }
 
-    internal init(kind: ExprKind, leftOp: Value, rightOp: Value, overflow: OverflowStrategy, owner: Block) {
+    protected init(kind: ExprKind, leftOp: Value, rightOp: Value, overflow: OverflowStrategy, owner: Block) {
         super(kind, ArrayList<Value>([leftOp, rightOp]), owner)
         this._overflow = overflow
     }
 
-    internal init(kind: ExprKind, leftOp: Value, rightOp: Value, owner: Block) {
+    protected init(kind: ExprKind, leftOp: Value, rightOp: Value, owner: Block) {
         super(kind, ArrayList<Value>([leftOp, rightOp]), owner)
         this._overflow = OverflowStrategy.NA
     }
 
-    internal init(kind: ExprKind, leftOp: Value, rightOp: Value, owner: Block, normal: Block, err: Block) {
+    protected init(kind: ExprKind, leftOp: Value, rightOp: Value, owner: Block, normal: Block, err: Block) {
         super(kind, ArrayList<Value>([leftOp, rightOp]), owner)
         this._overflow = OverflowStrategy.THROWING
         _operands.add(normal)
@@ -188,7 +188,7 @@ public class Constant <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(val: LiteralValue, owner: Block) {
+    protected init(val: LiteralValue, owner: Block) {
         super(ExprKind.CONSTANT, ArrayList<Value>([val]), owner)
     }
 }
@@ -207,12 +207,12 @@ public class Allocate <: Expression {
         String()
     }
 
-    internal init(ty: Type, owner: Block) {
+    protected init(ty: Type, owner: Block) {
         super(ExprKind.ALLOCATE, owner)
         this._ty = ty
     }
 
-    internal init(ty: Type, owner: Block, normal: Block, err: Block) {
+    protected init(ty: Type, owner: Block, normal: Block, err: Block) {
         super(ExprKind.ALLOCATE_WITH_EXCEPTION, owner)
         _operands.add(normal)
         _operands.add(err)
@@ -225,7 +225,7 @@ public class Load <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(location: Value, owner: Block) {
+    protected init(location: Value, owner: Block) {
         super(ExprKind.LOAD, ArrayList<Value>([location]), owner)
     }
 }
@@ -235,7 +235,7 @@ public class Store <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(val: Value, location: Value, owner: Block) {
+    protected init(val: Value, location: Value, owner: Block) {
         super(ExprKind.STORE, ArrayList<Value>([val, location]), owner)
     }
 }
@@ -254,7 +254,7 @@ public class GetElementRef <: Expression {
         String()
     }
 
-    internal init(location: Value, path: ArrayList<UInt64>, owner: Block) {
+    protected init(location: Value, path: ArrayList<UInt64>, owner: Block) {
         super(ExprKind.GET_ELEMENT_REF, ArrayList<Value>([location]), owner)
         this._path = path
     }
@@ -274,7 +274,7 @@ public class StoreElementRef <: Expression {
         String()
     }
 
-    internal init(val: Value, location: Value, path: ArrayList<UInt64>, owner: Block) {
+    protected init(val: Value, location: Value, path: ArrayList<UInt64>, owner: Block) {
         super(ExprKind.STORE_ELEMENT_REF, ArrayList<Value>([val, location]), owner)
         this._path = path
     }
@@ -308,7 +308,7 @@ sealed abstract class FuncCall <: Expression {
         }
     }
 
-    internal init(kind: ExprKind, funcCallCtx: FuncCallContext, owner: Block) {
+    protected init(kind: ExprKind, funcCallCtx: FuncCallContext, owner: Block) {
         super(kind, funcCallCtx.args, owner)
         this._instantiatedTypeArgs = funcCallCtx.instTypeArgs
         this._thisType = funcCallCtx.thisType
@@ -321,12 +321,12 @@ public class Apply <: FuncCall {
         String()
     }
 
-    internal init(callee: Value, funcCallCtx: FuncCallContext, owner: Block) {
+    protected init(callee: Value, funcCallCtx: FuncCallContext, owner: Block) {
         super(ExprKind.APPLY, funcCallCtx, owner)
         _operands.add(callee, at: 0)
     }
 
-    internal init(callee: Value, funcCallCtx: FuncCallContext, owner: Block, normal: Block, err: Block) {
+    protected init(callee: Value, funcCallCtx: FuncCallContext, owner: Block, normal: Block, err: Block) {
         super(ExprKind.APPLY_WITH_EXCEPTION, funcCallCtx, owner)
         _operands.add(callee, at: 0)
         _operands.add(normal)
@@ -342,12 +342,12 @@ public class Intrinsic <: FuncCall {
         String()
     }
 
-    internal init(calleeKind: IntrinsicKind, funcCallCtx: FuncCallContext, owner: Block) {
+    protected init(calleeKind: IntrinsicKind, funcCallCtx: FuncCallContext, owner: Block) {
         super(ExprKind.INTRINSIC, funcCallCtx, owner)
         this._calleeKind = calleeKind
     }
 
-    internal init(calleeKind: IntrinsicKind, funcCallCtx: FuncCallContext, owner: Block, normal: Block, err: Block) {
+    protected init(calleeKind: IntrinsicKind, funcCallCtx: FuncCallContext, owner: Block, normal: Block, err: Block) {
         super(ExprKind.INTRINSIC_WITH_EXCEPTION, funcCallCtx, owner)
         this._calleeKind = calleeKind
         _operands.add(normal)
@@ -375,13 +375,13 @@ public class Invoke <: FuncCall {
         String()
     }
 
-    internal init(callContext: InvokeCallContext, owner: Block) {
+    protected init(callContext: InvokeCallContext, owner: Block) {
         super(ExprKind.INVOKE, callContext.funcCallCtx, owner)
         _operands.add(callContext.caller, at: 0)
         this._srcVirtualFunc = callContext.srcVirtualFunc
     }
 
-    internal init(callContext: InvokeCallContext, owner: Block, normal: Block, err: Block) {
+    protected init(callContext: InvokeCallContext, owner: Block, normal: Block, err: Block) {
         super(ExprKind.INVOKE_WITH_EXCEPTION, callContext.funcCallCtx, owner)
         _operands.add(callContext.caller, at: 0)
         _operands.add(normal)
@@ -395,7 +395,7 @@ public class GetRTTI <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(val: Value, owner: Block) {
+    protected init(val: Value, owner: Block) {
         super(ExprKind.GET_RTTI, ArrayList<Value>([val]), owner)
     }
 }
@@ -414,7 +414,7 @@ public class GetRTTIStatic <: Expression {
         String()
     }
 
-    internal init(ty: Type, owner: Block) {
+    protected init(ty: Type, owner: Block) {
         super(ExprKind.GET_RTTI_STATIC, owner)
         this._ty = ty
     }
@@ -435,17 +435,17 @@ public class TypeCast <: Expression {
         }
     }
 
-    internal init(srcVal: Value, targetTy: Type, owner: Block) {
+    protected init(srcVal: Value, targetTy: Type, owner: Block) {
         super(ExprKind.TYPE_CAST, ArrayList<Value>([srcVal]), owner)
         this._targetTy = targetTy
         this._overflow = OverflowStrategy.NA
     }
-    internal init(srcVal: Value, targetTy: Type, overflow: OverflowStrategy, owner: Block) {
+    protected init(srcVal: Value, targetTy: Type, overflow: OverflowStrategy, owner: Block) {
         super(ExprKind.TYPE_CAST, ArrayList<Value>([srcVal]), owner)
         this._targetTy = targetTy
         this._overflow = overflow
     }
-    internal init(srcVal: Value, targetTy: Type, owner: Block, normal: Block, err: Block) {
+    protected init(srcVal: Value, targetTy: Type, owner: Block, normal: Block, err: Block) {
         super(ExprKind.TYPE_CAST_WITH_EXCEPTION, ArrayList<Value>([srcVal]), owner)
         _operands.add(normal)
         _operands.add(err)
@@ -468,7 +468,7 @@ public class InstanceOf <: Expression {
         String()
     }
 
-    internal init(srcVal: Value, targetTy: Type, owner: Block) {
+    protected init(srcVal: Value, targetTy: Type, owner: Block) {
         super(ExprKind.INSTANCE_OF, ArrayList<Value>([srcVal]), owner)
         this._targetTy = targetTy
     }
@@ -479,7 +479,7 @@ public class Tuple <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(elements: ArrayList<Value>, owner: Block) {
+    protected init(elements: ArrayList<Value>, owner: Block) {
         super(ExprKind.TUPLE, elements, owner)
     }
 }
@@ -498,7 +498,7 @@ public class Field <: Expression {
         String()
     }
 
-    internal init(location: Value, path: ArrayList<UInt64>, owner: Block) {
+    protected init(location: Value, path: ArrayList<UInt64>, owner: Block) {
         super(ExprKind.FIELD, ArrayList<Value>([location]), owner)
         this._path = path
     }
@@ -518,12 +518,12 @@ public class RawArrayAllocate <: Expression {
         String()
     }
 
-    internal init(elementType: Type, size: Value, owner: Block) {
+    protected init(elementType: Type, size: Value, owner: Block) {
         super(ExprKind.RAW_ARRAY_ALLOCATE, ArrayList<Value>([size]), owner)
         this._elementType = elementType
     }
 
-    internal init(elementType: Type, size: Value, owner: Block, normal: Block, err: Block) {
+    protected init(elementType: Type, size: Value, owner: Block, normal: Block, err: Block) {
         super(ExprKind.RAW_ARRAY_ALLOCATE_WITH_EXCEPTION, ArrayList<Value>([size]), owner)
         _operands.add(normal)
         _operands.add(err)
@@ -537,7 +537,7 @@ public class RawArrayLiteralInit <: Expression {
         String()
     }
 
-    internal init(memory: Value, elements: ArrayList<Value>, owner: Block) {
+    protected init(memory: Value, elements: ArrayList<Value>, owner: Block) {
         super(ExprKind.RAW_ARRAY_LITERAL_INIT, elements, owner)
         _operands.add(memory, at: 0)
     }
@@ -548,7 +548,7 @@ public class RawArrayInitByValue <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(memory: Value, size: Value, initVal: Value, owner: Block) {
+    protected init(memory: Value, size: Value, initVal: Value, owner: Block) {
         super(ExprKind.RAW_ARRAY_INIT_BY_VALUE, ArrayList<Value>([memory, size, initVal]), owner)
     }
 }
@@ -558,7 +558,7 @@ public class VArrayExpr <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(elements: ArrayList<Value>, owner: Block) {
+    protected init(elements: ArrayList<Value>, owner: Block) {
         super(ExprKind.VARRAY, elements, owner)
     }
 }
@@ -568,7 +568,7 @@ public class VArrayBuilder <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(size: Value, initVal: Value, initFunc: Value, owner: Block) {
+    protected init(size: Value, initVal: Value, initFunc: Value, owner: Block) {
         super(ExprKind.VARRAY_BUILDER, ArrayList<Value>([size, initVal, initFunc]), owner)
     }
 }
@@ -578,7 +578,7 @@ public class GetException <: Expression {
     public func toString(): String {
         String()
     }
-    internal init(owner: Block) {
+    protected init(owner: Block) {
         super(ExprKind.GET_EXCEPTION, owner)
     }
 }
@@ -633,7 +633,7 @@ public class Lambda <: Expression {
         String()
     }
 
-    internal init(ty: FuncType, identifier: String, srcName: String, owner: Block) {
+    protected init(ty: FuncType, identifier: String, srcName: String, owner: Block) {
         super(ExprKind.LAMBDA, owner)
         this._identifier = identifier
         this._srcCodeIdentifier = srcName
@@ -655,7 +655,7 @@ public class Debug <: Expression {
         String()
     }
 
-    internal init(location: Value, srcName: String, owner: Block) {
+    protected init(location: Value, srcName: String, owner: Block) {
         super(ExprKind.DEBUG, ArrayList<Value>([location]), owner)
         this._srcCodeIdentifier = srcName
     }
@@ -675,21 +675,21 @@ public class Spawn <: Expression {
         String()
     }
 
-    internal init(lambda: Value, owner: Block) {
+    protected init(lambda: Value, owner: Block) {
         super(ExprKind.SPAWN, ArrayList<Value>([lambda]), owner)
     }
 
-    internal init(lambda: Value, arg: Value, owner: Block) {
+    protected init(lambda: Value, arg: Value, owner: Block) {
         super(ExprKind.SPAWN, ArrayList<Value>([lambda, arg]), owner)
     }
 
-    internal init(lambda: Value, owner: Block, normal: Block, err: Block) {
+    protected init(lambda: Value, owner: Block, normal: Block, err: Block) {
         super(ExprKind.SPAWN_WITH_EXCEPTION, ArrayList<Value>([lambda]), owner)
         _operands.add(normal)
         _operands.add(err)
     }
 
-    internal init(lambda: Value, arg: Value, owner: Block, normal: Block, err: Block) {
+    protected init(lambda: Value, arg: Value, owner: Block, normal: Block, err: Block) {
         super(ExprKind.SPAWN_WITH_EXCEPTION, ArrayList<Value>([lambda, arg]), owner)
         _operands.add(normal)
         _operands.add(err)
@@ -710,7 +710,7 @@ public class GetInstantiateValue <: Expression {
         String()
     }
 
-    internal init(val: Value, instantiateTypes: ArrayList<Type>, owner: Block) {
+    protected init(val: Value, instantiateTypes: ArrayList<Type>, owner: Block) {
         super(ExprKind.GET_INSTANTIATE_VALUE, ArrayList<Value>([val]), owner)
         this._instantiateTypes = instantiateTypes
     }

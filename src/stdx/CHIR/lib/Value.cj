@@ -39,7 +39,7 @@ protected enum ValueKind <: ToString & Equatable<ValueKind> {
     }
 }
 
-internal enum LiteralKind <: Equatable<LiteralKind> {
+protected enum LiteralKind <: Equatable<LiteralKind> {
     BOOL | RUNE | INT | FLOAT | STRING | UNIT | NULL
 
     public operator func==(other: LiteralKind): Bool {
@@ -109,12 +109,12 @@ sealed abstract class Value <: Base & ToString {
     public func IsLiteralValue(): Bool {
         return kind == ValueKind.LITERAL
     }
-    internal init(kind: ValueKind, identifier: String) {
+    protected init(kind: ValueKind, identifier: String) {
         this.kind = kind
         this._type = g_invalidType
         this._identifier = identifier
     }
-    internal init(kind: ValueKind, ty: Type, identifier: String) {
+    protected init(kind: ValueKind, ty: Type, identifier: String) {
         this.kind = kind
         this._type = ty
         this._identifier = identifier
@@ -162,7 +162,7 @@ public class Block <: Value {
         String()
     }
 
-    internal init(identifier: String, owner: BlockGroup) {
+    protected init(identifier: String, owner: BlockGroup) {
         super(ValueKind.BLOCK, identifier)
         this._owner = owner
     }
@@ -206,7 +206,7 @@ public class BlockGroup <: Value {
         String()
     }
 
-    internal init(identifier: String, owner: Value) {
+    protected init(identifier: String, owner: Value) {
         super(ValueKind.BLOCK_GROUP, identifier)
         this._owner = owner
     }
@@ -235,7 +235,7 @@ sealed abstract class GlobalValue <: Value {
         }
     }
 
-    internal init(kind: ValueKind, ty: Type, identifier: String, srcName: String, pkgName: String) {
+    protected init(kind: ValueKind, ty: Type, identifier: String, srcName: String, pkgName: String) {
         super(kind, ty, identifier)
         this._srcCodeIdentifier = srcName
         this._packageName = pkgName
@@ -260,7 +260,7 @@ public class GlobalVar <: GlobalValue {
         return isImported() && !_initializer.isNone()
     }
 
-    internal init(ty: Type, identifier: String, srcName: String, pkgName: String) {
+    protected init(ty: Type, identifier: String, srcName: String, pkgName: String) {
         super(ValueKind.GLOBAL_VAR, ty, identifier, srcName, pkgName)
     }
 }
@@ -315,7 +315,7 @@ public class Function <: GlobalValue {
         return !_body.isNone()
     }
 
-    internal init(ty: FuncType, identifier: String, srcName: String, pkgName: String) {
+    protected init(ty: FuncType, identifier: String, srcName: String, pkgName: String) {
         super(ValueKind.FUNC, ty, identifier, srcName, pkgName)
     }
 
@@ -326,7 +326,7 @@ public class Function <: GlobalValue {
     }
 }
 
-public class LiteralValue <: Value {
+sealed abstract class LiteralValue <: Value {
     private let literalKind: LiteralKind
 
     // TODO: 后面实现
@@ -334,9 +334,108 @@ public class LiteralValue <: Value {
         String()
     }
 
-    internal init(ty: Type, literalKind: LiteralKind) {
+    protected init(ty: Type, literalKind: LiteralKind) {
         super(ValueKind.LITERAL, ty, String.empty)
         this.literalKind = literalKind
+    }
+}
+
+public class BoolLiteral <: LiteralValue {
+    private let _value: Bool
+
+    public prop value: Bool {
+        get() {
+            return _value
+        }
+    }
+
+    protected init(ty: BoolType, value: Bool) {
+        super(ty, LiteralKind.BOOL)
+        this._value = value
+    }
+}
+
+public class RuneLiteral <: LiteralValue {
+    private let _value: Rune
+
+    public prop value: Rune {
+        get() {
+            return _value
+        }
+    }
+
+    protected init(ty: RuneType, value: Rune) {
+        super(ty, LiteralKind.RUNE)
+        this._value = value
+    }
+}
+
+public class IntLiteral <: LiteralValue {
+    private let _value: UInt64
+
+    public prop value: UInt64 {
+        get() {
+            return _value
+        }
+    }
+
+    public func isSigned(): Bool {
+        return (ty as IntType).getOrThrow().isSigned()
+    }
+
+    public func getSignedValue(): Int64 {
+        return Int64(_value)
+    }
+
+    public func getUnsignedValue(): UInt64 {
+        return _value
+    }
+
+    protected init(ty: IntType, value: UInt64) {
+        super(ty, LiteralKind.INT)
+        this._value = value
+    }
+}
+
+public class FloatLiteral <: LiteralValue {
+    private let _value: Float64
+
+    public prop value: Float64 {
+        get() {
+            return _value
+        }
+    }
+
+    protected init(ty: FloatType, value: Float64) {
+        super(ty, LiteralKind.FLOAT)
+        this._value = value
+    }
+}
+
+public class StringLiteral <: LiteralValue {
+    private let _value: String
+
+    public prop value: String {
+        get() {
+            return _value
+        }
+    }
+
+    protected init(ty: CStringType, value: String) {
+        super(ty, LiteralKind.STRING)
+        this._value = value
+    }
+}
+
+public class UnitLiteral <: LiteralValue {
+    protected init(ty: UnitType) {
+        super(ty, LiteralKind.UNIT)
+    }
+}
+
+public class NullLiteral <: LiteralValue {
+    protected init(ty: NothingType) {
+        super(ty, LiteralKind.NULL)
     }
 }
 
@@ -367,7 +466,7 @@ public class LocalVar <: Value {
         String()
     }
 
-    internal init(ty: Type, identifier: String, expr: Expression) {
+    protected init(ty: Type, identifier: String, expr: Expression) {
         super(ValueKind.LOCAL_VAR, ty, identifier)
         this._expr = expr
     }
@@ -387,7 +486,7 @@ public class MemberVar <: Value {
         String()
     }
 
-    internal init(ty: Type, identifier: String, owner: CustomTypeDef) {
+    protected init(ty: Type, identifier: String, owner: CustomTypeDef) {
         super(ValueKind.MEMBER_VAR, ty, identifier)
         this._owner = owner
     }
@@ -416,7 +515,7 @@ public class Parameter <: Value {
         String()
     }
 
-    internal init(ty: Type, identifier: String, owner: Value) {
+    protected init(ty: Type, identifier: String, owner: Value) {
         super(ValueKind.PARAMETER, ty, identifier)
         this._owner = owner
     }

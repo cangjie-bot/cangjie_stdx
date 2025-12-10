@@ -7,12 +7,14 @@
  */
 
 package stdx.CHIR.lib
+import std.deriving.*
 
+@Derive[Equatable]
 protected enum CustomDefKind {
     CLASS | ENUM | EXTEND | STRUCT
 }
 
-sealed abstract class CustomTypeDef <: Base {
+sealed abstract class CustomTypeDef <: Base & Equatable<CustomTypeDef> {
     private let kind: CustomDefKind
     private let identifier: String
     private let srcCodeIdentifier: String
@@ -22,10 +24,16 @@ sealed abstract class CustomTypeDef <: Base {
         return identifier.removePrefix(GLOBAL_VAL_PREFIX)
     }
 
-    internal init(kind: CustomDefKind, identifier: String, srcName: String, pkgName: String) {
+    protected init(kind: CustomDefKind, identifier: String, srcName: String, pkgName: String) {
         this.kind = kind
         this.identifier = identifier
         this.srcCodeIdentifier = srcName
         this.packageName = pkgName
+    }
+    public operator func==(other: CustomTypeDef): Bool {
+        return this.kind == other.kind &&
+            this.identifier == other.identifier &&
+            this.srcCodeIdentifier == other.srcCodeIdentifier &&
+            this.packageName == other.packageName
     }
 }
