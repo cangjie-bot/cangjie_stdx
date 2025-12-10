@@ -9,7 +9,8 @@
 package stdx.CHIR.lib
 
 public class ExtendDef <: CustomTypeDef {
-    protected init(identifier: String, srcName: String, pkgName: String) {
+    internal init(identifier: String, srcName: String, pkgName: String) {
         super(CustomDefKind.EXTEND, identifier, srcName, pkgName)
+        this._hashCode = calculateHashCode()
     }
 }

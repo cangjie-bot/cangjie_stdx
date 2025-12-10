@@ -354,6 +354,32 @@ class Builder {
     }
 
     /*
+     * Create an Int32 vector and return its offset.
+     */
+    func createInt32Vector(v: Array<Int32>): UInt32 {
+        this.assertNotNested()
+        this.nested = true
+        this.startVector(4, v.size, 4)
+        for (i in v.size - 1..=0 : -1) {
+            this.prependInt32(v[i])
+        }
+        return this.endVector(v.size)
+    }
+
+    /*
+     * Create a UInt32 vector and return its offset.
+     */
+    func createUInt32Vector(v: Array<UInt32>): UInt32 {
+        this.assertNotNested()
+        this.nested = true
+        this.startVector(4, v.size, 4)
+        for (i in v.size - 1..=0 : -1) {
+            this.prependUInt32(v[i])
+        }
+        return this.endVector(v.size)
+    }
+
+    /*
      * Assert that we are currently serializing an object.
      */
     private func assertNested(): Unit {

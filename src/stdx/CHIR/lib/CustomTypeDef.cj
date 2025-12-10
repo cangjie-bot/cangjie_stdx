@@ -14,21 +14,50 @@ protected enum CustomDefKind {
     CLASS | ENUM | EXTEND | STRUCT
 }
 
-sealed abstract class CustomTypeDef <: Base & Equatable<CustomTypeDef> {
-    private let kind: CustomDefKind
-    private let identifier: String
-    private let srcCodeIdentifier: String
-    private let packageName: String
+sealed abstract class CustomTypeDef <: Base & Equatable<CustomTypeDef> & Hashable {
+    private let _kind: CustomDefKind
+    private let _identifier: String
+    private let _srcCodeIdentifier: String
+    private let _packageName: String
+    internal var _hashCode: Int64 = 0
 
-    public func getIdentifierWithoutPrefix(): String {
-        return identifier.removePrefix(GLOBAL_VAL_PREFIX)
+    public func hashCode(): Int64 {
+        return _hashCode
     }
 
-    protected init(kind: CustomDefKind, identifier: String, srcName: String, pkgName: String) {
-        this.kind = kind
-        this.identifier = identifier
-        this.srcCodeIdentifier = srcName
-        this.packageName = pkgName
+    protected prop kind: CustomDefKind {
+        get() {
+            return _kind
+        }
+    }
+    public prop identifier: String {
+        get() {
+            return _identifier
+        }
+    }
+    public prop identifierWithoutPrefix: String {
+        get() {
+            return _identifier.removePrefix(GLOBAL_VAL_PREFIX)
+        }
+    }
+    public prop srcCodeIdentifier: String {
+        get() {
+            return _srcCodeIdentifier
+        }
+    }
+    public prop packageName: String {
+        get() {
+            return _packageName
+        }
+    }
+    internal func calculateHashCode(): Int64 {
+        return identifier.hashCode()
+    }
+    internal init(kind: CustomDefKind, identifier: String, srcName: String, pkgName: String) {
+        this._kind = kind
+        this._identifier = identifier
+        this._srcCodeIdentifier = srcName
+        this._packageName = pkgName
     }
     public operator func==(other: CustomTypeDef): Bool {
         return this.kind == other.kind &&

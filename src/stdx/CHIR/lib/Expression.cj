@@ -71,12 +71,16 @@ protected enum IntrinsicKind {
     INOUT
 }
 
-sealed abstract class Expression <: Base & ToString {
+sealed abstract class Expression <: Base & ToString & Hashable {
     internal let kind: ExprKind
     internal var _operands: ArrayList<Value>
     internal var _blockGroups = ArrayList<BlockGroup>()
     internal var _owner: Block
     internal var _result: ?LocalVar = None
+
+    public func hashCode(): Int64 {
+        return _result.getOrThrow().hashCode()
+    }
 
     public prop operands: ArrayList<Value> {
         get() {
@@ -96,9 +100,9 @@ sealed abstract class Expression <: Base & ToString {
         }
     }
 
-    public prop result: ?LocalVar {
+    public prop result: LocalVar {
         get() {
-            return _result
+            return _result.getOrThrow()
         }
     }
 
@@ -716,7 +720,7 @@ public class GetInstantiateValue <: Expression {
     }
 }
 
-public class GOTO <: Expression {
+public class GoTo <: Expression {
     // TODO: 后面实现
     public func toString(): String {
         String()
@@ -727,7 +731,7 @@ public class GOTO <: Expression {
     }
 }
 
-public class BRANCH <: Expression {
+public class Branch <: Expression {
     // TODO: 后面实现
     public func toString(): String {
         String()
@@ -739,7 +743,7 @@ public class BRANCH <: Expression {
     }
 }
 
-public class MULTI_BRANCH <: Expression {
+public class MultiBranch <: Expression {
     // TODO: 后面实现
     public func toString(): String {
         String()
@@ -750,7 +754,7 @@ public class MULTI_BRANCH <: Expression {
     }
 }
 
-public class EXIT <: Expression {
+public class Exit <: Expression {
     // TODO: 后面实现
     public func toString(): String {
         String()

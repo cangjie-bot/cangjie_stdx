@@ -373,7 +373,7 @@ sealed abstract class CustomType <: Type & Equatable<CustomType> {
 
     public func toString(): String {
         return this.kind.toString() + "-" +
-            def.getIdentifierWithoutPrefix() + typeArgsToString("<", getInstantiatedTypeArgs(), ">")
+            def.identifierWithoutPrefix + typeArgsToString("<", getInstantiatedTypeArgs(), ">")
     }
     public func getInstantiatedTypeArgs(): ArrayList<Type> {
         return typeArgs

@@ -39,7 +39,7 @@ protected enum ValueKind <: ToString & Equatable<ValueKind> {
     }
 }
 
-protected enum LiteralKind <: Equatable<LiteralKind> {
+internal enum LiteralKind <: Equatable<LiteralKind> {
     BOOL | RUNE | INT | FLOAT | STRING | UNIT | NULL
 
     public operator func==(other: LiteralKind): Bool {
@@ -56,10 +56,11 @@ protected enum LiteralKind <: Equatable<LiteralKind> {
     }
 }
 
-sealed abstract class Value <: Base & ToString {
+sealed abstract class Value <: Base & ToString & Hashable {
     internal let kind: ValueKind
     internal let _type: Type
     internal let _identifier: String
+    internal var _hashCode: Int64 = 0
     private var _users = ArrayList<Expression>()
 
     public prop ty: Type {
@@ -77,11 +78,10 @@ sealed abstract class Value <: Base & ToString {
             return _users
         }
     }
-    public open prop topLevelFunc: Function {
-        get() {
-            throw Exception("topLevelFunc is not supported for this value: " + kind.toString())
-        }
+    public func hashCode(): Int64 {
+        return _hashCode
     }
+
     public func IsBlock(): Bool {
         return kind == ValueKind.BLOCK
     }
@@ -109,12 +109,15 @@ sealed abstract class Value <: Base & ToString {
     public func IsLiteralValue(): Bool {
         return kind == ValueKind.LITERAL
     }
-    protected init(kind: ValueKind, identifier: String) {
+
+    protected open func calculateHashCode(): Int64
+
+    internal init(kind: ValueKind, identifier: String) {
         this.kind = kind
         this._type = g_invalidType
         this._identifier = identifier
     }
-    protected init(kind: ValueKind, ty: Type, identifier: String) {
+    internal init(kind: ValueKind, ty: Type, identifier: String) {
         this.kind = kind
         this._type = ty
         this._identifier = identifier
@@ -162,9 +165,14 @@ public class Block <: Value {
         String()
     }
 
-    protected init(identifier: String, owner: BlockGroup) {
+    protected override func calculateHashCode(): Int64 {
+        return (_owner.topLevelFunc.identifier + "_BG" + _owner.identifier + "_B" + identifier).hashCode()
+    }
+
+    internal init(identifier: String, owner: BlockGroup) {
         super(ValueKind.BLOCK, identifier)
         this._owner = owner
+        this._hashCode = calculateHashCode()
     }
 }
 
@@ -172,6 +180,7 @@ public class BlockGroup <: Value {
     // TODO: 能不能不用Option
     private var _entryBlock: ?Block = None
     private var _blocks = ArrayList<Block>()
+    // owner is lambda(LocalVar) or global function(Function)
     private var _owner: Value
 
     public prop entryBlock: Block {
@@ -196,8 +205,9 @@ public class BlockGroup <: Value {
         get() {
             if (_owner.IsFunction()) {
                 return (_owner as Function).getOrThrow()
+            } else {
+                return (_owner as LocalVar).getOrThrow().topLevelFunc
             }
-            return _owner.topLevelFunc
         }
     }
 
@@ -206,9 +216,14 @@ public class BlockGroup <: Value {
         String()
     }
 
-    protected init(identifier: String, owner: Value) {
+    protected override func calculateHashCode(): Int64 {
+        return (topLevelFunc.identifier + "_BG" + identifier).hashCode()
+    }
+
+    internal init(identifier: String, owner: Value) {
         super(ValueKind.BLOCK_GROUP, identifier)
         this._owner = owner
+        this._hashCode = calculateHashCode()
     }
 }
 
@@ -235,7 +250,11 @@ sealed abstract class GlobalValue <: Value {
         }
     }
 
-    protected init(kind: ValueKind, ty: Type, identifier: String, srcName: String, pkgName: String) {
+    protected override func calculateHashCode(): Int64 {
+        return identifier.hashCode()
+    }
+
+    internal init(kind: ValueKind, ty: Type, identifier: String, srcName: String, pkgName: String) {
         super(kind, ty, identifier)
         this._srcCodeIdentifier = srcName
         this._packageName = pkgName
@@ -260,8 +279,9 @@ public class GlobalVar <: GlobalValue {
         return isImported() && !_initializer.isNone()
     }
 
-    protected init(ty: Type, identifier: String, srcName: String, pkgName: String) {
+    internal init(ty: Type, identifier: String, srcName: String, pkgName: String) {
         super(ValueKind.GLOBAL_VAR, ty, identifier, srcName, pkgName)
+        this._hashCode = calculateHashCode()
     }
 }
 
@@ -315,8 +335,9 @@ public class Function <: GlobalValue {
         return !_body.isNone()
     }
 
-    protected init(ty: FuncType, identifier: String, srcName: String, pkgName: String) {
+    internal init(ty: FuncType, identifier: String, srcName: String, pkgName: String) {
         super(ValueKind.FUNC, ty, identifier, srcName, pkgName)
+        this._hashCode = calculateHashCode()
     }
 
     internal func GenerateLocalId(): UInt64 {
@@ -329,12 +350,7 @@ public class Function <: GlobalValue {
 sealed abstract class LiteralValue <: Value {
     private let literalKind: LiteralKind
 
-    // TODO: 后面实现
-    public func toString(): String {
-        String()
-    }
-
-    protected init(ty: Type, literalKind: LiteralKind) {
+    internal init(ty: Type, literalKind: LiteralKind) {
         super(ValueKind.LITERAL, ty, String.empty)
         this.literalKind = literalKind
     }
@@ -349,9 +365,19 @@ public class BoolLiteral <: LiteralValue {
         }
     }
 
-    protected init(ty: BoolType, value: Bool) {
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+
+    protected override func calculateHashCode(): Int64 {
+        return _value.toString().hashCode()
+    }
+
+    internal init(ty: BoolType, value: Bool) {
         super(ty, LiteralKind.BOOL)
         this._value = value
+        this._hashCode = calculateHashCode()
     }
 }
 
@@ -364,18 +390,32 @@ public class RuneLiteral <: LiteralValue {
         }
     }
 
-    protected init(ty: RuneType, value: Rune) {
+    internal init(ty: RuneType, value: Rune) {
         super(ty, LiteralKind.RUNE)
         this._value = value
+        this._hashCode = calculateHashCode()
+    }
+
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+
+    protected override func calculateHashCode(): Int64 {
+        return _value.toString().hashCode()
     }
 }
 
 public class IntLiteral <: LiteralValue {
     private let _value: UInt64
-
-    public prop value: UInt64 {
+    public prop unsignedValue: UInt64 {
         get() {
             return _value
+        }
+    }
+    public prop signedValue: Int64 {
+        get() {
+            return Int64(_value)
         }
     }
 
@@ -383,59 +423,97 @@ public class IntLiteral <: LiteralValue {
         return (ty as IntType).getOrThrow().isSigned()
     }
 
-    public func getSignedValue(): Int64 {
-        return Int64(_value)
-    }
-
-    public func getUnsignedValue(): UInt64 {
-        return _value
-    }
-
-    protected init(ty: IntType, value: UInt64) {
+    internal init(ty: IntType, value: UInt64) {
         super(ty, LiteralKind.INT)
         this._value = value
+        this._hashCode = calculateHashCode()
+    }
+
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+
+    protected override func calculateHashCode(): Int64 {
+        return (ty.toString() + "_" + _value.toString()).hashCode()
     }
 }
 
 public class FloatLiteral <: LiteralValue {
     private let _value: Float64
-
     public prop value: Float64 {
         get() {
             return _value
         }
     }
-
-    protected init(ty: FloatType, value: Float64) {
+    internal init(ty: Type, value: Float64) {
         super(ty, LiteralKind.FLOAT)
         this._value = value
+        this._hashCode = calculateHashCode()
+    }
+
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+
+    protected override func calculateHashCode(): Int64 {
+        return (ty.toString() + "_" + _value.toString()).hashCode()
     }
 }
 
 public class StringLiteral <: LiteralValue {
     private let _value: String
-
     public prop value: String {
         get() {
             return _value
         }
     }
-
-    protected init(ty: CStringType, value: String) {
+    internal init(ty: Type, value: String) {
         super(ty, LiteralKind.STRING)
         this._value = value
+        this._hashCode = calculateHashCode()
+    }
+
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+
+    protected override func calculateHashCode(): Int64 {
+        return (ty.toString() + "_" + _value.toString()).hashCode()
     }
 }
 
 public class UnitLiteral <: LiteralValue {
-    protected init(ty: UnitType) {
+    internal init(ty: UnitType) {
         super(ty, LiteralKind.UNIT)
+        this._hashCode = calculateHashCode()
+    }
+
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+
+    protected override func calculateHashCode(): Int64 {
+        return ty.toString().hashCode()
     }
 }
 
 public class NullLiteral <: LiteralValue {
-    protected init(ty: NothingType) {
+    internal init(ty: Type) {
         super(ty, LiteralKind.NULL)
+        this._hashCode = calculateHashCode()
+    }
+
+    // TODO: 后面实现
+    public func toString(): String {
+        String()
+    }
+
+    protected override func calculateHashCode(): Int64 {
+        return ty.toString().hashCode()
     }
 }
 
@@ -466,9 +544,14 @@ public class LocalVar <: Value {
         String()
     }
 
-    protected init(ty: Type, identifier: String, expr: Expression) {
+    protected override func calculateHashCode(): Int64 {
+        return (topLevelFunc.identifier + "_LV" + identifier).hashCode()
+    }
+
+    internal init(ty: Type, identifier: String, expr: Expression) {
         super(ValueKind.LOCAL_VAR, ty, identifier)
         this._expr = expr
+        this._hashCode = calculateHashCode()
     }
 }
 
@@ -486,9 +569,14 @@ public class MemberVar <: Value {
         String()
     }
 
-    protected init(ty: Type, identifier: String, owner: CustomTypeDef) {
+    protected override func calculateHashCode(): Int64 {
+        return (_owner.identifier + "_MV" + identifier).hashCode()
+    }
+
+    internal init(ty: Type, identifier: String, owner: CustomTypeDef) {
         super(ValueKind.MEMBER_VAR, ty, identifier)
         this._owner = owner
+        this._hashCode = calculateHashCode()
     }
 }
 
@@ -505,8 +593,9 @@ public class Parameter <: Value {
         get() {
             if (_owner.IsFunction()) {
                 return (_owner as Function).getOrThrow()
+            } else {
+                return (_owner as LocalVar).getOrThrow().topLevelFunc
             }
-            return _owner.topLevelFunc
         }
     }
 
@@ -515,8 +604,13 @@ public class Parameter <: Value {
         String()
     }
 
-    protected init(ty: Type, identifier: String, owner: Value) {
+    protected override func calculateHashCode(): Int64 {
+        return (topLevelFunc.identifier + "_P" + identifier).hashCode()
+    }
+
+    internal init(ty: Type, identifier: String, owner: Value) {
         super(ValueKind.PARAMETER, ty, identifier)
         this._owner = owner
+        this._hashCode = calculateHashCode()
     }
 }
