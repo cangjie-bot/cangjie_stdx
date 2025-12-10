@@ -762,15 +762,17 @@ static int BuildRemoteAlg(KeylessSignCtx* c)
 {
     if (c->type == KEYLESS_KEY_TYPE_RSA) { /* RSA */
         const char* mode = (c->padMode == RSA_PKCS1_PSS_PADDING) ? "pss" : "pkcs1";
-        snprintf(c->algName, sizeof(c->algName), "rsa-raw-%s", mode);
+        (void)snprintf_s(c->algName, sizeof(c->algName), sizeof(c->algName) - 1, "rsa-raw-%s", mode);
         return 1;
     }
+
     if (c->type == KEYLESS_KEY_TYPE_EC) {
         const char* grp = KeylessKeyGetGroup(c->keyData);
         const char* gshort = grp ? grp : "unknown";
-        snprintf(c->algName, sizeof(c->algName), "ecdsa-%s-%s", gshort, c->digestName[0] ? c->digestName : "sha256");
+        (void)snprintf_s(c->algName, sizeof(c->algName), sizeof(c->algName) - 1, "ecdsa-%s-%s", gshort, c->digestName[0] ? c->digestName : "sha256");
         return 1;
     }
+
     return 0;
 }
 
