@@ -106,7 +106,7 @@ internal enum LiteralKind <: Equatable<LiteralKind> {
 sealed abstract class Value <: Base & ToString & Hashable & Equatable<Value> {
     internal let kind: ValueKind
     internal let _type: Type
-    internal let _identifier: String
+    internal var _identifier: String
     internal var _hashCode: Int64 = 0
     private var _users = ArrayList<Expression>()
 
@@ -115,9 +115,12 @@ sealed abstract class Value <: Base & ToString & Hashable & Equatable<Value> {
             return _type
         }
     }
-    public prop identifier: String {
+    public mut prop identifier: String {
         get() {
             return _identifier
+        }
+        set(value) {
+            _identifier = value
         }
     }
     public prop users: ArrayList<Expression> {

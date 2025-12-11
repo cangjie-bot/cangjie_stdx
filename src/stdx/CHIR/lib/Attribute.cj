@@ -282,6 +282,10 @@ protected class AttributeInfo <: ToString {
         return (attributesInfo & (UInt64(1) << bitIndex)) != 0
     }
 
+    protected func appendAttrs(info : AttributeInfo) {
+        attributesInfo |= info.attributesInfo
+    }
+
     public func toString(): String {
         var result = ArrayList<String>()
         // Iterate through all attributes and build string

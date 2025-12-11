@@ -7,6 +7,7 @@
  */
 
 package stdx.CHIR.lib
+import std.sort.*
 
 protected enum TypeKind <: ToString & Equatable<TypeKind> {
     INVALID |
@@ -171,6 +172,23 @@ sealed abstract class Type <: ToString & Hashable & Equatable<Type> {
     }
     public func IsFuncType(): Bool {
         return kind == TypeKind.FUNC
+    }
+    public func IsPrimitiveType(): Bool {
+        return IsIntType() || IsFloatType() || IsBoolType() ||
+            IsRuneType() || IsUnitType() || IsNothingType()
+    }
+    public func IsValueType(): Bool {
+        return IsPrimitiveType() || IsEnumType() || IsTupleType() ||
+            IsStructType() || IsVArrayType() || IsCPointerType() ||
+            IsCStringType() || IsFuncType()
+    }
+
+    public func stripAllRefs(): Type {
+        var baseTy: Type = this
+        while (baseTy.IsRefType()) {
+            baseTy = (baseTy as RefType).getOrThrow().getBaseType()
+        }
+        return baseTy
     }
 
     // internal method
@@ -472,6 +490,30 @@ public class GenericType <: Type & Equatable<GenericType> {
         return this.identifier == other.identifier &&
             this.srcCodeIdentifier == other.srcCodeIdentifier &&
             this.upperBounds == other.upperBounds
+    }
+    protected func setUpperBounds(bounds: Iterable<Type>) {
+        for (bound in bounds) {
+            if (bound.stripAllRefs().IsValueType()) {
+                throw IllegalArgumentException("Generic type upper bound should NOT be value type!")
+            }
+        }
+        this.upperBounds = collectArrayList<Type>(bounds)
+        sort(this.upperBounds,
+            by: { l, r =>
+                let lstring = l.toString()
+                let rstring = r.toString()
+                if (lstring == rstring) {
+                    return Ordering.EQ
+                } else if (lstring < rstring) {
+                    return Ordering.LT
+                } else {
+                    return Ordering.GT
+                }
+            },
+            stable: true,
+            descending: false
+        )
+        setHashCode()
     }
 }
 

@@ -7,9 +7,11 @@
  */
 
 package stdx.CHIR.lib
+import std.deriving.*
 
+@Derive[Equatable]
 protected enum LinkType <: ToString {
-    EXTERNAL | INTERNAL | WEAK_ODR | LINKONCE_ODR
+    EXTERNAL | INTERNAL | WEAK_ODR | LINKONCE_ODR | EXTERNAL_WEAK
 
     public func toString(): String {
         match (this) {
@@ -17,6 +19,7 @@ protected enum LinkType <: ToString {
             case INTERNAL => "internal"
             case WEAK_ODR => "weak_odr"
             case LINKONCE_ODR => "linkonce_odr"
+            case EXTERNAL_WEAK => "external_weak"
         }
     }
 }
@@ -244,6 +247,28 @@ protected class NeverOverflowInfo <: CHIRAnno {
     }
     static public func create(value: Any): CHIRAnno {
         return NeverOverflowInfo((value as Bool).getOrThrow())
+    }
+}
+
+protected class GeneratedFromForIn <: CHIRAnno {
+    private var v: Bool
+    protected init(value: Bool) {
+        this.v = value
+    }
+    public func get(): Any {
+        return v
+    }
+    public func set(value: Any): Unit {
+        this.v = (value as Bool).getOrThrow()
+    }
+    public func toString(): String {
+        return "GeneratedFromForIn: " + v.toString()
+    }
+    static public func defaultValue(): Any {
+        return false
+    }
+    static public func create(value: Any): CHIRAnno {
+        return GeneratedFromForIn((value as Bool).getOrThrow())
     }
 }
 
