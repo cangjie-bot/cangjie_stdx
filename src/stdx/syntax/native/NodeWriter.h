@@ -234,6 +234,7 @@ private:
     flatbuffers::Offset<NodeFormat::ImportContent> SerializeImportContent(const AST::ImportContent& content);
     flatbuffers::Offset<NodeFormat::PackageSpec> SerializePackageSpec(AstPackageSpec packageSpec);
     flatbuffers::Offset<NodeFormat::FeaturesDirective> SerializeFeaturesDirective(AstFeaturesDirective featureDirective);
+    flatbuffers::Offset<NodeFormat::FeaturesSet> SerializeFeaturesSet(const AST::FeaturesSet& fSet);
     flatbuffers::Offset<NodeFormat::FeatureId> SerializeFeatureId(const AST::FeatureId& featureId);
     flatbuffers::Offset<NodeFormat::CommentGroups> SerializeCommentGroups(AstCommentGroups comments);
     flatbuffers::Offset<NodeFormat::CommentGroup> SerializeCommentGroup(AstCommentGroup commentGroup);

@@ -135,6 +135,9 @@ public open class ASTVisitor {
             case whileExpr: WhileExpr => visitWhileExpr(whileExpr)
             case wildcardPattern: WildcardPattern => visitWildcardPattern(wildcardPattern)
             case synchronizedExpr: SynchronizedExpr => visitSynchronizedExpr(synchronizedExpr)
+            case featuresDirective: FeaturesDirective => visitFeaturesDirective(featuresDirective)
+            case featuresSet: FeaturesSet => visitFeaturesSet(featuresSet)
+            case featureId: FeatureId => visitFeatureId(featureId)
             case _ => throw Exception()
         }
     }
@@ -904,6 +907,24 @@ public open class ASTVisitor {
     private func visitSynchronizedExpr(node: SynchronizedExpr) {
         walk(node.structuredMutex)
         walk(node.block)
+    }
+
+    private func visitFeaturesDirective(node: FeaturesDirective) {
+        for (a in node.annotations) {
+            walk(a)
+        }
+        walk(node.featuresSet)
+    }
+
+    private func visitFeaturesSet(node: FeaturesSet) {
+        for (f in node.content) {
+            walk(f)
+        }
+        // content is Array<FeatureId>
+    }
+
+    private func visitFeatureId(node: FeatureId) {
+        // featureNameIdentifiers is Array<String>, no need to walk
     }
 
     public open func preAction(node: SyntaxTreeNode): PreActionMode {

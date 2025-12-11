@@ -852,6 +852,18 @@ public class FeatureId <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new FeatureId node.
+     */
+    public init(identifiers: Array<String>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createFeatureIdImpl(identifiers, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let retNode = cast<FeatureId>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.featureNameIdentifiers_ = retNode.featureNameIdentifiers
+        this.posInfos = retNode.posInfos
+    }
+
+    /**
      * @brief Gets the position range of identifiers in the feature id.
      *
      * @param none
@@ -897,12 +909,114 @@ public class FeatureId <: SyntaxTreeNode {
     }
 }
 
+class FeaturesSetPosInfos {
+    FeaturesSetPosInfos(let lCurlPos: CodePosition,
+        let rCurlPos: CodePosition, let commaPoses: Array<CodePosition>) {}
+}
+
+class FeaturesSetPropInfos {
+    FeaturesSetPropInfos(let contentPropInfos: Array<PropInfo>) {}
+}
+
+/**
+ * @brief Represents a features set and contains information about
+ * used features, extending SyntaxTreeNode.
+ */
+public class FeaturesSet <: SyntaxTreeNode {
+    private let startPos: CodePosition
+    private let posInfos: FeaturesSetPosInfos
+    private let propInfos: FeaturesSetPropInfos
+
+    init(nodeImpl: SyntaxNodeImpl, startPos: CodePosition, parentNode: ?SyntaxTreeNode,
+        posInfos: FeaturesSetPosInfos, propInfos: FeaturesSetPropInfos) {
+            super(CodePositionRange(startPos, startPos + nodeImpl.offset), nodeImpl, parentNode)
+            this.startPos = startPos
+            this.posInfos = posInfos
+            this.propInfos = propInfos
+        }
+    
+    /**
+     * @brief Initialize a new FeaturesSet node.
+     */
+    public init(features: Array<FeatureId>, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createFeaturesSetImpl(features, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let retNode = cast<FeaturesSet>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.posInfos = retNode.posInfos
+        this.propInfos = retNode.propInfos
+    }
+
+    /**
+     * @brief Gets the position ranges of the '{' in the features set.
+     *
+     * @param none
+     * @return A CodePositionRange representing the position ranges of the '{'.
+     *
+     * @throws none
+     */
+    public func getLCurlPos(): CodePositionRange {
+        let endPos = posInfos.lCurlPos + SyntaxNodeKind.LCurlToken.size
+        return CodePositionRange(posInfos.lCurlPos, endPos)
+    }
+
+    /**
+     * @brief Gets the position ranges of the '}' in the features set.
+     *
+     * @param none
+     * @return A CodePositionRange representing the position ranges of the '}'.
+     *
+     * @throws none
+     */
+    public func getRCurlPos(): CodePositionRange {
+        let endPos = posInfos.rCurlPos + SyntaxNodeKind.RCurlToken.size
+        return CodePositionRange(posInfos.rCurlPos, endPos)
+    }
+
+    /**
+     * @brief Gets the position ranges of the commas in the features set.
+     *
+     * @param none
+     * @return An Array of CodePositionRange representing the position ranges of the commas.
+     *
+     * @throws none
+     */
+    public func getCommaPoses(): Array<CodePositionRange> {
+        let size = posInfos.commaPoses.size
+        let ret = Array<CodePositionRange>(size, repeat: CodePositionRange())
+        for (i in 0..size) {
+            let endPos = posInfos.commaPoses[i] + SyntaxNodeKind.CommaToken.size
+            ret[i] = CodePositionRange(posInfos.commaPoses[i], endPos)
+        }
+        ret
+    }
+
+    /**
+     * @brief Gets the content of the features set.
+     */
+    public prop content: Array<FeatureId> {
+        get() {
+            let ret = ArrayList<FeatureId>()
+            for (propInfo in propInfos.contentPropInfos) {
+                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+                ret.add(
+                    cast<FeatureId>(SyntaxNodeImplTranslator.translate(curNode, startPos + propInfo.offset, this))
+                        .getOrThrow()
+                )
+            }
+            return ret.toArray()
+        }
+    }
+
+}
+
 class FeaturesDirectivePosInfos {
-    FeaturesDirectivePosInfos(let featuresKeyWordPos: CodePosition, let commaPoses: Array<CodePosition>) {}
+    FeaturesDirectivePosInfos(let featuresKeywordPos: CodePosition) {}
 }
 
 class FeaturesDirectivePropInfos {
-    FeaturesDirectivePropInfos(let contentsPropInfo: Array<PropInfo>) {}
+    FeaturesDirectivePropInfos(let annotations: Array<PropInfo>, let featuresSetPropInfo: PropInfo) {}
 }
 
 /**
@@ -923,6 +1037,19 @@ public class FeaturesDirective <: SyntaxTreeNode {
     }
 
     /**
+     * @brief Initialize a new FeaturesDirective node.
+     */
+    public init(annotations: Array<Annotation>, set: FeaturesSet, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createFeaturesDirectiveImpl(annotations, set, comments: comments))
+        let startPos = DEFAULT_START_POS
+        let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
+        let retNode = cast<FeaturesDirective>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
+        this.startPos = startPos
+        this.posInfos = retNode.posInfos
+        this.propInfos = retNode.propInfos
+    }
+
+    /**
      * @brief Gets the position range of the 'features' keyword in the features directive.
      *
      * @param none
@@ -930,42 +1057,39 @@ public class FeaturesDirective <: SyntaxTreeNode {
      *
      * @throws none
      */
-    public func getFeaturesKeyWordPos(): CodePositionRange {
-        let endPos = posInfos.featuresKeyWordPos + SyntaxNodeKind.FeaturesToken.size
-        return CodePositionRange(posInfos.featuresKeyWordPos, endPos)
+    public func getFeaturesKeywordPos(): CodePositionRange {
+        let endPos = posInfos.featuresKeywordPos + SyntaxNodeKind.FeaturesToken.size
+        return CodePositionRange(posInfos.featuresKeywordPos, endPos)
     }
 
     /**
-     * @brief Gets the position ranges of the commas in the features directive.
-     *
-     * @param none
-     * @return An Array of CodePositionRange representing the position ranges of the commas.
-     *
-     * @throws none
+     * @brief Gets an array of annotations in the features directive.
      */
-    public func getCommaPoses(): Array<CodePositionRange> {
-        let size = posInfos.commaPoses.size
-        let ret = Array<CodePositionRange>(size, repeat: CodePositionRange())
-        for (i in 0..size) {
-            let endPos = posInfos.commaPoses[i] + SyntaxNodeKind.CommaToken.size
-            ret[i] = CodePositionRange(posInfos.commaPoses[i], endPos)
-        }
-        return ret
-    }
-
-    /**
-     * @brief Gets the content of the features directive.
-     */
-    public prop content: Array<FeatureId> {
+    public prop annotations: Array<Annotation> {
         get() {
-            let ret = ArrayList<FeatureId>()
-            for (propInfo in propInfos.contentsPropInfo) {
+            let annos = ArrayList<Annotation>()
+            for (propInfo in propInfos.annotations) {
                 let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
-                ret.add(
-                    cast<FeatureId>(SyntaxNodeImplTranslator.translate(curNode, startPos + propInfo.offset, this))
-                        .getOrThrow())
+                annos.add(
+                    cast<Annotation>(SyntaxNodeImplTranslator.translate(curNode, startPos + propInfo.offset, this))
+                        .getOrThrow()
+                )
             }
-            return ret.toArray()
+            return annos.toArray()
+        }
+    }
+
+    /**
+     * @brief Gets the features set with information about declared features in the features directive.
+     */
+    public prop featuresSet: FeaturesSet {
+        get() {
+            let propInfo = propInfos.featuresSetPropInfo
+            let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
+            let ftrSet = cast<FeaturesSet>(SyntaxNodeImplTranslator.translate(curNode, startPos + propInfo.offset, this))
+                .getOrThrow()
+            
+            return ftrSet
         }
     }
 }
