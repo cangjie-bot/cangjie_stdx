@@ -39,6 +39,53 @@ protected enum ValueKind <: ToString & Equatable<ValueKind> {
     }
 }
 
+protected enum FuncKind <: ToString & Equatable<FuncKind> {
+    DEFAULT | GETTER | SETTER | LAMBDA |
+    CLASS_CONSTRUCTOR | PRIMAL_CLASS_CONSTRUCTOR | STRUCT_CONSTRUCTOR | PRIMAL_STRUCT_CONSTRUCTOR |
+    GLOBALVAR_INIT | FINALIZER | MAIN_ENTRY | ANNOFACTORY_FUNC | MACRO_FUNC | DEFAULT_PARAMETER_FUNC | INSTANCEVAR_INIT
+
+    public operator func==(other: FuncKind): Bool {
+        match ((this, other)) {
+            case (DEFAULT, DEFAULT) => true
+            case (GETTER, GETTER) => true
+            case (SETTER, SETTER) => true
+            case (LAMBDA, LAMBDA) => true
+            case (CLASS_CONSTRUCTOR, CLASS_CONSTRUCTOR) => true
+            case (PRIMAL_CLASS_CONSTRUCTOR, PRIMAL_CLASS_CONSTRUCTOR) => true
+            case (STRUCT_CONSTRUCTOR, STRUCT_CONSTRUCTOR) => true
+            case (PRIMAL_STRUCT_CONSTRUCTOR, PRIMAL_STRUCT_CONSTRUCTOR) => true
+            case (GLOBALVAR_INIT, GLOBALVAR_INIT) => true
+            case (FINALIZER, FINALIZER) => true
+            case (MAIN_ENTRY, MAIN_ENTRY) => true
+            case (ANNOFACTORY_FUNC, ANNOFACTORY_FUNC) => true
+            case (MACRO_FUNC, MACRO_FUNC) => true
+            case (DEFAULT_PARAMETER_FUNC, DEFAULT_PARAMETER_FUNC) => true
+            case (INSTANCEVAR_INIT, INSTANCEVAR_INIT) => true
+            case _ => false
+        }
+    }
+
+    public func toString(): String {
+        match (this) {
+            case DEFAULT => "Default"
+            case GETTER => "Getter"
+            case SETTER => "Setter"
+            case LAMBDA => "Lambda"
+            case CLASS_CONSTRUCTOR => "ClassConstructor"
+            case PRIMAL_CLASS_CONSTRUCTOR => "PrimaClassConstructor"
+            case STRUCT_CONSTRUCTOR => "StructConstructor"
+            case PRIMAL_STRUCT_CONSTRUCTOR => "PrimaStructConstructor"
+            case GLOBALVAR_INIT => "GlobalVarInit"
+            case FINALIZER => "Finalizer"
+            case MAIN_ENTRY => "MainEntry"
+            case ANNOFACTORY_FUNC => "AnnoFactoryFunc"
+            case MACRO_FUNC => "MacroFunc"
+            case DEFAULT_PARAMETER_FUNC => "DefaultParameterFunc"
+            case INSTANCEVAR_INIT => "InstanceVarInit"
+        }
+    }
+}
+
 internal enum LiteralKind <: Equatable<LiteralKind> {
     BOOL | RUNE | INT | FLOAT | STRING | UNIT | NULL
 
@@ -56,7 +103,7 @@ internal enum LiteralKind <: Equatable<LiteralKind> {
     }
 }
 
-sealed abstract class Value <: Base & ToString & Hashable {
+sealed abstract class Value <: Base & ToString & Hashable & Equatable<Value> {
     internal let kind: ValueKind
     internal let _type: Type
     internal let _identifier: String
@@ -82,31 +129,31 @@ sealed abstract class Value <: Base & ToString & Hashable {
         return _hashCode
     }
 
-    public func IsBlock(): Bool {
+    public func isBlock(): Bool {
         return kind == ValueKind.BLOCK
     }
-    public func IsBlockGroup(): Bool {
+    public func isBlockGroup(): Bool {
         return kind == ValueKind.BLOCK_GROUP
     }
-    public func IsLocalVar(): Bool {
+    public func isLocalVar(): Bool {
         return kind == ValueKind.LOCAL_VAR
     }
-    public func IsParameter(): Bool {
+    public func isParameter(): Bool {
         return kind == ValueKind.PARAMETER
     }
-    public func IsFunc(): Bool {
+    public func isFunc(): Bool {
         return kind == ValueKind.FUNC
     }
-    public func IsLiteral(): Bool {
+    public func isLiteral(): Bool {
         return kind == ValueKind.LITERAL
     }
-    public func IsGlobalVar(): Bool {
+    public func isGlobalVar(): Bool {
         return kind == ValueKind.GLOBAL_VAR
     }
-    public func IsFunction(): Bool {
+    public func isFunction(): Bool {
         return kind == ValueKind.FUNC
     }
-    public func IsLiteralValue(): Bool {
+    public func isLiteralValue(): Bool {
         return kind == ValueKind.LITERAL
     }
 
@@ -169,6 +216,13 @@ public class Block <: Value {
         return (_owner.topLevelFunc.identifier + "_BG" + _owner.identifier + "_B" + identifier).hashCode()
     }
 
+    public operator func==(other: Value): Bool {
+        let o = (other as Block).getOrThrow()
+        return this.identifier == o.identifier &&
+            this.owner.identifier == o.owner.identifier &&
+            this.topLevelFunc.identifier == o.topLevelFunc.identifier
+    }
+
     internal init(identifier: String, owner: BlockGroup) {
         super(ValueKind.BLOCK, identifier)
         this._owner = owner
@@ -203,7 +257,7 @@ public class BlockGroup <: Value {
 
     public prop topLevelFunc: Function {
         get() {
-            if (_owner.IsFunction()) {
+            if (_owner.isFunction()) {
                 return (_owner as Function).getOrThrow()
             } else {
                 return (_owner as LocalVar).getOrThrow().topLevelFunc
@@ -214,6 +268,12 @@ public class BlockGroup <: Value {
     // TODO: 后面实现
     public func toString(): String {
         String()
+    }
+
+    public operator func==(other: Value): Bool {
+        let o = (other as BlockGroup).getOrThrow()
+        return this.identifier == o.identifier &&
+            this.topLevelFunc.identifier == o.topLevelFunc.identifier
     }
 
     protected override func calculateHashCode(): Int64 {
@@ -227,7 +287,8 @@ public class BlockGroup <: Value {
     }
 }
 
-sealed abstract class GlobalValue <: Value {
+sealed abstract class GlobalSymbol <: Value {
+    internal let _rawMangledName: String
     internal let _srcCodeIdentifier: String
     internal let _packageName: String
     internal var _declaredParent: ?CustomTypeDef = None
@@ -250,23 +311,35 @@ sealed abstract class GlobalValue <: Value {
         }
     }
 
+    protected prop rawMangledName: String {
+        get() {
+            return _rawMangledName
+        }
+    }
+
+    public operator func==(other: Value): Bool {
+        let o = (other as GlobalSymbol).getOrThrow()
+        return this.identifier == o.identifier
+    }
+
     protected override func calculateHashCode(): Int64 {
         return identifier.hashCode()
     }
 
-    internal init(kind: ValueKind, ty: Type, identifier: String, srcName: String, pkgName: String) {
+    internal init(kind: ValueKind, ty: Type, identifier: String, srcName: String, pkgName: String, rawMangledName: String) {
         super(kind, ty, identifier)
         this._srcCodeIdentifier = srcName
         this._packageName = pkgName
+        this._rawMangledName = rawMangledName
     }
 }
 
-public class GlobalVar <: GlobalValue {
+public class GlobalVar <: GlobalSymbol {
     private let _initializer: ?Value = None
 
-    public prop initializer: Value {
+    public prop initializer: ?Value {
         get() {
-            return _initializer.getOrThrow()
+            return _initializer
         }
     }
 
@@ -279,20 +352,27 @@ public class GlobalVar <: GlobalValue {
         return isImported() && !_initializer.isNone()
     }
 
-    internal init(ty: Type, identifier: String, srcName: String, pkgName: String) {
-        super(ValueKind.GLOBAL_VAR, ty, identifier, srcName, pkgName)
+    internal init(ty: Type, identifier: String, srcName: String, pkgName: String, rawMangledName: String) {
+        super(ValueKind.GLOBAL_VAR, ty, identifier, srcName, pkgName, rawMangledName)
         this._hashCode = calculateHashCode()
     }
 }
 
-public class Function <: GlobalValue {
+public class Function <: GlobalSymbol {
     private var _parameters = ArrayList<Parameter>()
     private var _genericTypeParams = ArrayList<GenericType>()
     private var _body: ?BlockGroup = None
     private var _retValue: ?LocalVar = None
-    private var localId: UInt64 = 0
-    private var blockId: UInt64 = 0
-    private var blockGroupId: UInt64 = 0
+    private var _localId: UInt64 = 0
+    private var _blockId: UInt64 = 0
+    private var _blockGroupId: UInt64 = 0
+    private var _genericDecl: ?Function = None
+    private var _funcKind: FuncKind = FuncKind.DEFAULT
+    private var _isFastNative: Bool = false
+    private var _isCFFIWrapper: Bool = false
+    private var _oriLambdaFuncTy: ?Type = None
+    private var _oriLambdaGenericTypeParams: ?ArrayList<GenericType> = None
+    private var _paramDftValHostFunc: ?Function = None
 
     public prop parameters: ArrayList<Parameter> {
         get() {
@@ -300,9 +380,87 @@ public class Function <: GlobalValue {
         }
     }
 
+    public prop paramDftValHostFunc: ?Function {
+        get() {
+            return _paramDftValHostFunc
+        }
+    }
+
+    public mut prop isFastNative: Bool {
+        get() {
+            return _isFastNative
+        }
+        set(v) {
+            _isFastNative = v
+        }
+    }
+
+    public mut prop isCFFIWrapper: Bool {
+        get() {
+            return _isCFFIWrapper
+        }
+        set(v) {
+            _isCFFIWrapper = v
+        }
+    }
+
+    public mut prop oriLambdaFuncTy: ?Type {
+        get() {
+            return _oriLambdaFuncTy
+        }
+        set(v) {
+            _oriLambdaFuncTy = v
+        }
+    }
+
+    public mut prop oriLambdaGenericTypeParams: ?ArrayList<GenericType> {
+        get() {
+            return _oriLambdaGenericTypeParams
+        }
+        set(v) {
+            _oriLambdaGenericTypeParams = v
+        }
+    }
+
+    public mut prop genericDecl: ?Function {
+        get() {
+            return _genericDecl
+        }
+        set(v) {
+            _genericDecl = v
+        }
+    }
+
+    protected mut prop funcKind: FuncKind {
+        get() {
+            return _funcKind
+        }
+        set(v) {
+            _funcKind = v
+        }
+    }
+
     public prop genericTypeParams: ArrayList<GenericType> {
         get() {
             return _genericTypeParams
+        }
+    }
+
+    protected prop localId: UInt64 {
+        get() {
+            return _localId
+        }
+    }
+
+    protected prop blockId: UInt64 {
+        get() {
+            return _blockId
+        }
+    }
+
+    protected prop blockGroupId: UInt64 {
+        get() {
+            return _blockGroupId
         }
     }
 
@@ -335,14 +493,14 @@ public class Function <: GlobalValue {
         return !_body.isNone()
     }
 
-    internal init(ty: FuncType, identifier: String, srcName: String, pkgName: String) {
-        super(ValueKind.FUNC, ty, identifier, srcName, pkgName)
+    internal init(ty: FuncType, identifier: String, srcName: String, pkgName: String, rawMangledName: String) {
+        super(ValueKind.FUNC, ty, identifier, srcName, pkgName, rawMangledName)
         this._hashCode = calculateHashCode()
     }
 
     internal func GenerateLocalId(): UInt64 {
-        let temp = localId
-        localId++
+        let temp = _localId
+        _localId++
         return temp
     }
 }
@@ -370,6 +528,11 @@ public class BoolLiteral <: LiteralValue {
         String()
     }
 
+    public operator func==(other: Value): Bool {
+        let o = (other as BoolLiteral).getOrThrow()
+        return this.value == o.value
+    }
+
     protected override func calculateHashCode(): Int64 {
         return _value.toString().hashCode()
     }
@@ -388,6 +551,11 @@ public class RuneLiteral <: LiteralValue {
         get() {
             return _value
         }
+    }
+
+    public operator func==(other: Value): Bool {
+        let o = (other as RuneLiteral).getOrThrow()
+        return this.value == o.value
     }
 
     internal init(ty: RuneType, value: Rune) {
@@ -434,6 +602,11 @@ public class IntLiteral <: LiteralValue {
         String()
     }
 
+    public operator func==(other: Value): Bool {
+        let o = (other as IntLiteral).getOrThrow()
+        return this.unsignedValue == o.unsignedValue && this.ty == o.ty
+    }
+
     protected override func calculateHashCode(): Int64 {
         return (ty.toString() + "_" + _value.toString()).hashCode()
     }
@@ -455,6 +628,11 @@ public class FloatLiteral <: LiteralValue {
     // TODO: 后面实现
     public func toString(): String {
         String()
+    }
+
+    public operator func==(other: Value): Bool {
+        let o = (other as FloatLiteral).getOrThrow()
+        return this.value == o.value && this.ty == o.ty
     }
 
     protected override func calculateHashCode(): Int64 {
@@ -480,6 +658,11 @@ public class StringLiteral <: LiteralValue {
         String()
     }
 
+    public operator func==(other: Value): Bool {
+        let o = (other as StringLiteral).getOrThrow()
+        return this.value == o.value && this.ty == o.ty
+    }
+
     protected override func calculateHashCode(): Int64 {
         return (ty.toString() + "_" + _value.toString()).hashCode()
     }
@@ -496,6 +679,11 @@ public class UnitLiteral <: LiteralValue {
         String()
     }
 
+    public operator func==(other: Value): Bool {
+        let o = (other as UnitLiteral).getOrThrow()
+        return this.ty == o.ty
+    }
+
     protected override func calculateHashCode(): Int64 {
         return ty.toString().hashCode()
     }
@@ -510,6 +698,11 @@ public class NullLiteral <: LiteralValue {
     // TODO: 后面实现
     public func toString(): String {
         String()
+    }
+
+    public operator func==(other: Value): Bool {
+        let o = (other as NullLiteral).getOrThrow()
+        return this.ty == o.ty
     }
 
     protected override func calculateHashCode(): Int64 {
@@ -544,6 +737,12 @@ public class LocalVar <: Value {
         String()
     }
 
+    public operator func==(other: Value): Bool {
+        let o = (other as LocalVar).getOrThrow()
+        return this.topLevelFunc.identifier == o.topLevelFunc.identifier &&
+            this.identifier == o.identifier
+    }
+
     protected override func calculateHashCode(): Int64 {
         return (topLevelFunc.identifier + "_LV" + identifier).hashCode()
     }
@@ -569,6 +768,12 @@ public class MemberVar <: Value {
         String()
     }
 
+    public operator func==(other: Value): Bool {
+        let o = (other as MemberVar).getOrThrow()
+        return this.owner.identifier == o.owner.identifier &&
+            this.identifier == o.identifier
+    }
+
     protected override func calculateHashCode(): Int64 {
         return (_owner.identifier + "_MV" + identifier).hashCode()
     }
@@ -591,7 +796,7 @@ public class Parameter <: Value {
 
     public prop topLevelFunc: Function {
         get() {
-            if (_owner.IsFunction()) {
+            if (_owner.isFunction()) {
                 return (_owner as Function).getOrThrow()
             } else {
                 return (_owner as LocalVar).getOrThrow().topLevelFunc
@@ -602,6 +807,12 @@ public class Parameter <: Value {
     // TODO: 后面实现
     public func toString(): String {
         String()
+    }
+
+    public operator func==(other: Value): Bool {
+        let o = (other as Parameter).getOrThrow()
+        return this.topLevelFunc.identifier == o.topLevelFunc.identifier &&
+            this.identifier == o.identifier
     }
 
     protected override func calculateHashCode(): Int64 {

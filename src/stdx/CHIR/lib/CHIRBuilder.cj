@@ -29,7 +29,6 @@ public class CHIRBuilder {
     private let nothingTy = NothingType()
     private let runeTy = RuneType()
     private let thisTy = ThisType()
-    private let voidTy = VoidType()
 
     private var classTypes = HashMap<ClassType, ClassType>()
     private var structTypes = HashMap<StructType, StructType>()
@@ -144,11 +143,6 @@ public class CHIRBuilder {
             return thisTy
         }
     }
-    public prop voidType: VoidType {
-        get() {
-            return voidTy
-        }
-    }
 
     // ----------------------- custom type -----------------------
     public func GetClassType(def: ClassDef, args: ArrayList<Type>): ClassType {
@@ -216,24 +210,24 @@ public class CHIRBuilder {
     }
 
     // ----------------------- create value -----------------------
-    public func CreateGlobalFunc(ty: FuncType, mangledName: String, srcName: String, pkgName: String): Function {
-        let temp = Function(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName)
+    public func CreateGlobalFunc(ty: FuncType, mangledName: String, srcName: String, pkgName: String, rawMangledName!: String = ""): Function {
+        let temp = Function(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName, rawMangledName)
         curPkg.addGlobalFunc(temp)
         return temp
     }
-    public func CreateImportedFunc(ty: FuncType, mangledName: String, srcName: String, pkgName: String): Function {
-        let temp = Function(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName)
+    public func CreateImportedFunc(ty: FuncType, mangledName: String, srcName: String, pkgName: String, rawMangledName!: String = ""): Function {
+        let temp = Function(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName, rawMangledName)
         curPkg.addImportedFunc(temp)
         temp.enableImported()
         return temp
     }
-    public func CreateGlobalVar(ty: Type, mangledName: String, srcName: String, pkgName: String): GlobalVar {
-        let temp = GlobalVar(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName)
+    public func CreateGlobalVar(ty: Type, mangledName: String, srcName: String, pkgName: String, rawMangledName!: String = ""): GlobalVar {
+        let temp = GlobalVar(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName, rawMangledName)
         curPkg.addGlobalVar(temp)
         return temp
     }
-    public func CreateImportedVar(ty: Type, mangledName: String, srcName: String, pkgName: String): GlobalVar {
-        let temp = GlobalVar(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName)
+    public func CreateImportedVar(ty: Type, mangledName: String, srcName: String, pkgName: String, rawMangledName!: String = ""): GlobalVar {
+        let temp = GlobalVar(ty, GLOBAL_VAL_PREFIX + mangledName, srcName, pkgName, rawMangledName)
         curPkg.addImportedVar(temp)
         temp.enableImported()
         return temp

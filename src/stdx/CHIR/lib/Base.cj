@@ -10,22 +10,31 @@ package stdx.CHIR.lib
 
 protected abstract class Base {
     private var _attributes: AttributeInfo = AttributeInfo()
-    private var _annotations: Annotation = Annotation()
+    private var _annotation: Annotation = Annotation()
     private var _chirAnno = ArrayList<CHIRAnno>()
+    private var _debugLocation: DebugLocation = DebugLocation()
 
     protected prop attributes: AttributeInfo {
         get() {
             return _attributes
         }
     }
-    protected prop annotations: Annotation {
+    protected prop annotation: Annotation {
         get() {
-            return _annotations
+            return _annotation
         }
     }
     protected prop chirAnno: ArrayList<CHIRAnno> {
         get() {
             return _chirAnno
+        }
+    }
+    protected mut prop debugLocation: DebugLocation {
+        get() {
+            return _debugLocation
+        }
+        set(v) {
+            _debugLocation = v
         }
     }
 

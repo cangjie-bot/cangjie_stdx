@@ -15,7 +15,7 @@ protected enum TypeKind <: ToString & Equatable<TypeKind> {
     FLOAT16 | FLOAT32 | FLOAT64 |
     BOOL | RUNE | UNIT | NOTHING |
     CLASS | ENUM | STRUCT | TUPLE |
-    CPOINTER | CSTRING | RAW_ARRAY | VARRAY | GENERIC | REF | BOX | THIS | FUNC | VOID
+    CPOINTER | CSTRING | RAW_ARRAY | VARRAY | GENERIC | REF | BOX | THIS | FUNC
 
     public func toString(): String {
         match (this) {
@@ -50,7 +50,6 @@ protected enum TypeKind <: ToString & Equatable<TypeKind> {
             case BOX =>         "Box"
             case THIS =>        "This"
             case FUNC =>        "Func"
-            case VOID =>        "Void"
         }
     }
 
@@ -338,7 +337,7 @@ public class UnitType <: BuiltinType & Equatable<UnitType> {
 }
 
 public class VArrayType <: BuiltinType & Equatable<VArrayType> {
-    private let size: Int64
+    private let _size: Int64
 
     public func toString(): String {
         return "VArray<" + getElementType().toString() + "$" + size.toString() + ">"
@@ -346,9 +345,14 @@ public class VArrayType <: BuiltinType & Equatable<VArrayType> {
     public func getElementType(): Type {
         return typeArgs[0]
     }
+    public prop size: Int64 {
+        get() {
+            return _size
+        }
+    }
     internal init(elementType: Type, size: Int64) {
         super(TypeKind.VARRAY, ArrayList<Type>([elementType]))
-        this.size = size
+        this._size = size
         setHashCode()
     }
     public operator func==(other: VArrayType): Bool {
@@ -516,12 +520,5 @@ public class TupleType <: Type & Equatable<TupleType> {
     }
     public operator func==(other: TupleType): Bool {
         return this.getElementTypes() == other.getElementTypes()
-    }
-}
-
-public class VoidType <: BuiltinType {
-    internal init() {
-        super(TypeKind.VOID)
-        setHashCode()
     }
 }

@@ -71,7 +71,7 @@ protected enum IntrinsicKind {
     INOUT
 }
 
-sealed abstract class Expression <: Base & ToString & Hashable {
+sealed abstract class Expression <: Base & ToString & Hashable & Equatable<Expression> {
     internal let kind: ExprKind
     internal var _operands: ArrayList<Value>
     internal var _blockGroups = ArrayList<BlockGroup>()
@@ -80,6 +80,10 @@ sealed abstract class Expression <: Base & ToString & Hashable {
 
     public func hashCode(): Int64 {
         return _result.getOrThrow().hashCode()
+    }
+
+    public operator func==(other: Expression): Bool {
+        return this.result == other.result
     }
 
     public prop operands: ArrayList<Value> {
@@ -117,7 +121,7 @@ sealed abstract class Expression <: Base & ToString & Hashable {
             return true
         }
         if (kind.IsUnary() || kind.IsBinary()) {
-            return operands[-1].IsBlock()
+            return operands[-1].isBlock()
         }
         return false
     }
