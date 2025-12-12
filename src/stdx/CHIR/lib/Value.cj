@@ -8,22 +8,11 @@
 
 package stdx.CHIR.lib
 
-protected enum ValueKind <: ToString & Equatable<ValueKind> {
-    GLOBAL_VAR | LOCAL_VAR | PARAMETER | FUNC | BLOCK | BLOCK_GROUP | LITERAL | MEMBER_VAR
+import std.deriving.*
 
-    public operator func==(other: ValueKind): Bool {
-        match ((this, other)) {
-            case (GLOBAL_VAR, GLOBAL_VAR) => true
-            case (LOCAL_VAR, LOCAL_VAR) => true
-            case (PARAMETER, PARAMETER) => true
-            case (FUNC, FUNC) => true
-            case (BLOCK, BLOCK) => true
-            case (BLOCK_GROUP, BLOCK_GROUP) => true
-            case (LITERAL, LITERAL) => true
-            case (MEMBER_VAR, MEMBER_VAR) => true
-            case _ => false
-        }
-    }
+@Derive[Equatable]
+protected enum ValueKind <: ToString {
+    GLOBAL_VAR | LOCAL_VAR | PARAMETER | FUNC | BLOCK | BLOCK_GROUP | LITERAL | MEMBER_VAR
 
     public func toString(): String {
         match (this) {
@@ -39,31 +28,11 @@ protected enum ValueKind <: ToString & Equatable<ValueKind> {
     }
 }
 
-protected enum FuncKind <: ToString & Equatable<FuncKind> {
+@Derive[Equatable]
+protected enum FuncKind <: ToString {
     DEFAULT | GETTER | SETTER | LAMBDA |
     CLASS_CONSTRUCTOR | PRIMAL_CLASS_CONSTRUCTOR | STRUCT_CONSTRUCTOR | PRIMAL_STRUCT_CONSTRUCTOR |
     GLOBALVAR_INIT | FINALIZER | MAIN_ENTRY | ANNOFACTORY_FUNC | MACRO_FUNC | DEFAULT_PARAMETER_FUNC | INSTANCEVAR_INIT
-
-    public operator func==(other: FuncKind): Bool {
-        match ((this, other)) {
-            case (DEFAULT, DEFAULT) => true
-            case (GETTER, GETTER) => true
-            case (SETTER, SETTER) => true
-            case (LAMBDA, LAMBDA) => true
-            case (CLASS_CONSTRUCTOR, CLASS_CONSTRUCTOR) => true
-            case (PRIMAL_CLASS_CONSTRUCTOR, PRIMAL_CLASS_CONSTRUCTOR) => true
-            case (STRUCT_CONSTRUCTOR, STRUCT_CONSTRUCTOR) => true
-            case (PRIMAL_STRUCT_CONSTRUCTOR, PRIMAL_STRUCT_CONSTRUCTOR) => true
-            case (GLOBALVAR_INIT, GLOBALVAR_INIT) => true
-            case (FINALIZER, FINALIZER) => true
-            case (MAIN_ENTRY, MAIN_ENTRY) => true
-            case (ANNOFACTORY_FUNC, ANNOFACTORY_FUNC) => true
-            case (MACRO_FUNC, MACRO_FUNC) => true
-            case (DEFAULT_PARAMETER_FUNC, DEFAULT_PARAMETER_FUNC) => true
-            case (INSTANCEVAR_INIT, INSTANCEVAR_INIT) => true
-            case _ => false
-        }
-    }
 
     public func toString(): String {
         match (this) {
@@ -86,19 +55,19 @@ protected enum FuncKind <: ToString & Equatable<FuncKind> {
     }
 }
 
-internal enum LiteralKind <: Equatable<LiteralKind> {
+@Derive[Equatable]
+internal enum LiteralKind <: ToString {
     BOOL | RUNE | INT | FLOAT | STRING | UNIT | NULL
 
-    public operator func==(other: LiteralKind): Bool {
-        match ((this, other)) {
-            case (BOOL, BOOL) => true
-            case (RUNE, RUNE) => true
-            case (INT, INT) => true
-            case (FLOAT, FLOAT) => true
-            case (STRING, STRING) => true
-            case (UNIT, UNIT) => true
-            case (NULL, NULL) => true
-            case _ => false
+    public func toString(): String {
+        match (this) {
+            case BOOL => "Bool"
+            case RUNE => "Rune"
+            case INT => "Int"
+            case FLOAT => "Float"
+            case STRING => "String"
+            case UNIT => "Unit"
+            case NULL => "Null"
         }
     }
 }

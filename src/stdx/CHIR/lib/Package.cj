@@ -9,10 +9,12 @@
 package stdx.CHIR.lib
 
 internal import std.collection.*
+import std.deriving.*
 
 const GLOBAL_VAL_PREFIX = "@"
 let g_invalidType = InvalidType()
 
+@Derive[Equatable]
 public enum AccessLevel {
     INTERNAL | PROTECTED | PUBLIC
 }

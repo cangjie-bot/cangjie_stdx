@@ -8,7 +8,10 @@
 
 package stdx.CHIR.lib
 
-protected enum ExprKind {
+import std.deriving.*
+
+@Derive[Equatable]
+protected enum ExprKind <: ToString {
     // terminator
     GOTO | BRANCH | MULTI_BRANCH | EXIT |
     APPLY_WITH_EXCEPTION | INVOKE_WITH_EXCEPTION | INTRINSIC_WITH_EXCEPTION |
@@ -61,12 +64,78 @@ protected enum ExprKind {
             case _ => false
         }
     }
+
+    public func toString(): String {
+        return match (this) {
+            case GOTO => "GOTO"
+            case BRANCH => "BRANCH"
+            case MULTI_BRANCH => "MULTI_BRANCH"
+            case EXIT => "EXIT"
+            case APPLY_WITH_EXCEPTION => "APPLY_WITH_EXCEPTION"
+            case INVOKE_WITH_EXCEPTION => "INVOKE_WITH_EXCEPTION"
+            case INTRINSIC_WITH_EXCEPTION => "INTRINSIC_WITH_EXCEPTION"
+            case RAISE_WITH_EXCEPTION => "RAISE_WITH_EXCEPTION"
+            case SPAWN_WITH_EXCEPTION => "SPAWN_WITH_EXCEPTION"
+            case TYPE_CAST_WITH_EXCEPTION => "TYPE_CAST_WITH_EXCEPTION"
+            case ALLOCATE_WITH_EXCEPTION => "ALLOCATE_WITH_EXCEPTION"
+            case RAW_ARRAY_ALLOCATE_WITH_EXCEPTION => "RAW_ARRAY_ALLOCATE_WITH_EXCEPTION"
+            case NEG => "NEG"
+            case NOT => "NOT"
+            case BIT_NOT => "BIT_NOT"
+            case ADD => "ADD"
+            case SUB => "SUB"
+            case MUL => "MUL"
+            case DIV => "DIV"
+            case MOD => "MOD"
+            case EXP => "EXP"
+            case L_SHIFT => "L_SHIFT"
+            case R_SHIFT => "R_SHIFT"
+            case BIT_AND => "BIT_AND"
+            case BIT_OR => "BIT_OR"
+            case BIT_XOR => "BIT_XOR"
+            case LT => "LT"
+            case GT => "GT"
+            case LE => "LE"
+            case GE => "GE"
+            case EQUAL => "EQUAL"
+            case NOT_EQUAL => "NOT_EQUAL"
+            case AND => "AND"
+            case OR => "OR"
+            case ALLOCATE => "ALLOCATE"
+            case LOAD => "LOAD"
+            case STORE => "STORE"
+            case GET_ELEMENT_REF => "GET_ELEMENT_REF"
+            case STORE_ELEMENT_REF => "STORE_ELEMENT_REF"
+            case FIELD => "FIELD"
+            case RAW_ARRAY_ALLOCATE => "RAW_ARRAY_ALLOCATE"
+            case RAW_ARRAY_LITERAL_INIT => "RAW_ARRAY_LITERAL_INIT"
+            case RAW_ARRAY_INIT_BY_VALUE => "RAW_ARRAY_INIT_BY_VALUE"
+            case VARRAY => "VARRAY"
+            case VARRAY_BUILDER => "VARRAY_BUILDER"
+            case CONSTANT => "CONSTANT"
+            case DEBUG => "DEBUG"
+            case TUPLE => "TUPLE"
+            case INSTANCE_OF => "INSTANCE_OF"
+            case TYPE_CAST => "TYPE_CAST"
+            case GET_EXCEPTION => "GET_EXCEPTION"
+            case SPAWN => "SPAWN"
+            case GET_INSTANTIATE_VALUE => "GET_INSTANTIATE_VALUE"
+            case APPLY => "APPLY"
+            case INVOKE => "INVOKE"
+            case INTRINSIC => "INTRINSIC"
+            case GET_RTTI => "GET_RTTI"
+            case GET_RTTI_STATIC => "GET_RTTI_STATIC"
+            case _ => "UNKNOWN"
+        }
+    }
 }
 
+@Derive[Equatable]
 protected enum OverflowStrategy {
     NA | WRAPPING | THROWING | SATURATING
 }
 
+@Derive[Equatable]
 protected enum IntrinsicKind {
     INOUT
 }
@@ -142,6 +211,12 @@ sealed abstract class Expression <: Base & ToString & Hashable & Equatable<Expre
 public class UnaryExpression <: Expression {
     private let _overflow: OverflowStrategy
 
+    protected prop overflow: OverflowStrategy {
+        get() {
+            return _overflow
+        }
+    }
+
     // TODO: 后面实现
     public func toString(): String {
         String()
@@ -167,6 +242,12 @@ public class UnaryExpression <: Expression {
 
 public class BinaryExpression <: Expression {
     private let _overflow: OverflowStrategy
+
+    protected prop overflow: OverflowStrategy {
+        get() {
+            return _overflow
+        }
+    }
 
     // TODO: 后面实现
     public func toString(): String {
@@ -202,11 +283,11 @@ public class Constant <: Expression {
 }
 
 public class Allocate <: Expression {
-    private let _ty: Type
+    private let _allocatedType: Type
 
-    public prop ty: Type {
+    public prop allocatedType: Type {
         get() {
-            return _ty
+            return _allocatedType
         }
     }
 
@@ -215,16 +296,16 @@ public class Allocate <: Expression {
         String()
     }
 
-    protected init(ty: Type, owner: Block) {
+    protected init(allocatedType: Type, owner: Block) {
         super(ExprKind.ALLOCATE, owner)
-        this._ty = ty
+        this._allocatedType = allocatedType
     }
 
-    protected init(ty: Type, owner: Block, normal: Block, err: Block) {
+    protected init(allocatedType: Type, owner: Block, normal: Block, err: Block) {
         super(ExprKind.ALLOCATE_WITH_EXCEPTION, owner)
         _operands.add(normal)
         _operands.add(err)
-        this._ty = ty
+        this._allocatedType = allocatedType
     }
 }
 

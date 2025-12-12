@@ -9,7 +9,10 @@
 package stdx.CHIR.lib
 import std.sort.*
 
-protected enum TypeKind <: ToString & Equatable<TypeKind> {
+import std.deriving.*
+
+@Derive[Equatable]
+protected enum TypeKind <: ToString {
     INVALID |
     INT8 | INT16 | INT32 | INT64 | INT_NATIVE |
     UINT8 | UINT16 | UINT32 | UINT64 | UINT_NATIVE |
@@ -51,42 +54,6 @@ protected enum TypeKind <: ToString & Equatable<TypeKind> {
             case BOX =>         "Box"
             case THIS =>        "This"
             case FUNC =>        "Func"
-        }
-    }
-
-    public operator func==(other: TypeKind): Bool {
-        match ((this, other)) {
-            case (INT8, INT8) => true
-            case (INT16, INT16) => true
-            case (INT32, INT32) => true
-            case (INT64, INT64) => true
-            case (INT_NATIVE, INT_NATIVE) => true
-            case (UINT8, UINT8) => true
-            case (UINT16, UINT16) => true
-            case (UINT32, UINT32) => true
-            case (UINT64, UINT64) => true
-            case (UINT_NATIVE, UINT_NATIVE) => true
-            case (FLOAT16, FLOAT16) => true
-            case (FLOAT32, FLOAT32) => true
-            case (FLOAT64, FLOAT64) => true
-            case (BOOL, BOOL) => true
-            case (RUNE, RUNE) => true
-            case (UNIT, UNIT) => true
-            case (NOTHING, NOTHING) => true
-            case (CLASS, CLASS) => true
-            case (ENUM, ENUM) => true
-            case (STRUCT, STRUCT) => true
-            case (TUPLE, TUPLE) => true
-            case (CPOINTER, CPOINTER) => true
-            case (CSTRING, CSTRING) => true
-            case (RAW_ARRAY, RAW_ARRAY) => true
-            case (VARRAY, VARRAY) => true
-            case (GENERIC, GENERIC) => true
-            case (REF, REF) => true
-            case (BOX, BOX) => true
-            case (THIS, THIS) => true
-            case (FUNC, FUNC) => true
-            case _ => false
         }
     }
 }
