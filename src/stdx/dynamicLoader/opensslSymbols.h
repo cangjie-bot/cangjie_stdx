@@ -53,6 +53,7 @@ typedef struct DynMsg {
 
 DynMsg* MallocDynMsg(void);
 void FreeDynMsg(DynMsg* dynMsgPtr);
+void* CJLookupOpenSSL(const char* name);
 
 char* DYN_OPENSSL_strdup(const char* str, DynMsg* dynMsg);
 char* DYN_OPENSSL_strndup(const char* str, size_t s, DynMsg* dynMsg);

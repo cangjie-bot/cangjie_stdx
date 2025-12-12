@@ -7,6 +7,7 @@
  */
 
 #include <securec.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -30,6 +31,11 @@
 #include "opensslSymbols.h"
 void* g_singletonHandle = NULL;
 void* g_singletonHandleSsl = NULL;
+static bool g_handleFromDlopen = false;
+/* Provided by staticSymbols.c */
+extern void* CJLookupOpenSSL(const char* name);
+extern void* g_cj_openssl_keep[];
+__attribute__((used)) static void* volatile g_keep_anchor = &g_cj_openssl_keep;
 
 DynMsg* MallocDynMsg(void)
 {
@@ -53,21 +59,45 @@ void FreeDynMsg(DynMsg* dynMsgPtr)
 static void* FindFunction(const char* name)
 {
     void* func = NULL;
-    if (g_singletonHandle == NULL) {
-        return NULL;
-    }
 #ifdef _WIN32
-    func = GetProcAddress(g_singletonHandle, name);
+    /* Windows: prefer already linked symbols first. */
+    if (g_singletonHandle != NULL) {
+        func = GetProcAddress(g_singletonHandle, name);
+    }
     if (func == NULL && g_singletonHandleSsl != NULL) {
         func = GetProcAddress(g_singletonHandleSsl, name);
     }
     if (func == NULL) {
-        return NULL;
+        func = CJLookupOpenSSL(name);
+    }
+    if (func == NULL) {
+        HMODULE self = GetModuleHandle(NULL);
+        if (self != NULL) {
+            func = GetProcAddress(self, name);
+        }
     }
 #else
-    func = dlsym(g_singletonHandle, name);
-    if (func == NULL) {
-        return NULL;
+    /* Prefer already-linked (static) symbols from the main image. */
+    func = dlsym(NULL, name);
+    if (func != NULL) {
+        printf("******** Found OpenSSL symbol %s in main image.\n", name);
+        return func;
+    }
+    /* For fully-static links where dlsym(NULL) cannot see the symbol table. */
+    func = CJLookupOpenSSL(name);
+    if (func != NULL) {
+        printf("++++ Found OpenSSL symbol %s via static map.\n", name);
+        return func;
+    }
+    if (g_singletonHandle == NULL) {
+        g_singletonHandle = dlopen(OPENSSLPATH, RTLD_LAZY | RTLD_GLOBAL);
+        if (g_singletonHandle != NULL) {
+            printf("------- Loaded OpenSSL library from %s.", OPENSSLPATH);
+            g_handleFromDlopen = true;
+        }
+    }
+    if (g_singletonHandle != NULL) {
+        func = dlsym(g_singletonHandle, name);
     }
 #endif
     return func;
@@ -78,8 +108,6 @@ __attribute__((constructor)) void Singleton(void)
 #ifdef _WIN32
     g_singletonHandle = LoadLibraryA(OPENSSLPATH);
     g_singletonHandleSsl = LoadLibraryA(OPENSSLPATHSSL);
-#else
-    g_singletonHandle = dlopen(OPENSSLPATH, RTLD_LAZY | RTLD_GLOBAL);
 #endif
 }
 
@@ -93,7 +121,7 @@ __attribute__((destructor)) void CloseSymbolTable(void)
         (void)FreeLibrary(g_singletonHandleSsl);
     }
 #else
-    if (g_singletonHandle != NULL) {
+    if (g_handleFromDlopen && g_singletonHandle != NULL) {
         (void)dlclose(g_singletonHandle);
     }
 #endif
