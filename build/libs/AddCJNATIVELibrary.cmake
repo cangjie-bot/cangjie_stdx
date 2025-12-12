@@ -372,8 +372,9 @@ make_cangjie_lib(
     FLAGS ${openssl_flags} $<$<BOOL:${MINGW}>:-lws2_32>
     $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
 
-get_target_property(DIGESTFFI_OBJS cangjie-dynamicLoader-opensslFFI SOURCES)
-add_library(stdx.crypto.digest STATIC ${DIGESTFFI_OBJS} ${output_cj_object_dir}/stdx/crypto.digest.o)
+add_library(stdx.crypto.digest STATIC
+    $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
+    ${output_cj_object_dir}/stdx/crypto.digest.o)
 
 set_target_properties(stdx.crypto.digest PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.crypto.digest DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
@@ -398,8 +399,10 @@ make_cangjie_lib(
         $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
 
 get_target_property(KEYSFFI_OBJS stdx.crypto.keysFFI SOURCES)
-get_target_property(OPENSSLFFI_OBJS cangjie-dynamicLoader-opensslFFI SOURCES)
-add_library(stdx.crypto.keys  STATIC ${KEYSFFI_OBJS} ${OPENSSLFFI_OBJS} ${output_cj_object_dir}/stdx/crypto.keys.o)
+add_library(stdx.crypto.keys  STATIC
+    $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
+    ${KEYSFFI_OBJS}
+    ${output_cj_object_dir}/stdx/crypto.keys.o)
 set_target_properties(stdx.crypto.keys PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.crypto.keys DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
@@ -411,8 +414,9 @@ make_cangjie_lib(
     OBJECTS ${output_cj_object_dir}/stdx/crypto.crypto.o
     FLAGS ${openssl_flags} $<$<BOOL:${MINGW}>:-lws2_32>
     $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
-get_target_property(CRYPTOCRYPTOFFI_OBJS cangjie-dynamicLoader-opensslFFI SOURCES)
-add_library(stdx.crypto.crypto STATIC ${CRYPTOCRYPTOFFI_OBJS} ${output_cj_object_dir}/stdx/crypto.crypto.o)
+add_library(stdx.crypto.crypto STATIC
+    $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
+    ${output_cj_object_dir}/stdx/crypto.crypto.o)
 set_target_properties(stdx.crypto.crypto PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.crypto.crypto DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
