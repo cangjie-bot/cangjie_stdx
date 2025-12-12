@@ -358,22 +358,28 @@ private func typeArgsToString(start: String, typeArgs: ArrayList<Type>, end: Str
 }
 
 sealed abstract class CustomType <: Type & Equatable<CustomType> {
-    internal var def: CustomTypeDef
+    private var _def: CustomTypeDef
+
+    public prop def: CustomTypeDef {
+        get() {
+            return _def
+        }
+    }
 
     public func toString(): String {
         return this.kind.toString() + "-" +
-            def.identifierWithoutPrefix + typeArgsToString("<", getInstantiatedTypeArgs(), ">")
+            _def.identifierWithoutPrefix + typeArgsToString("<", getInstantiatedTypeArgs(), ">")
     }
     public func getInstantiatedTypeArgs(): ArrayList<Type> {
         return typeArgs
     }
     internal init(kind: TypeKind, def: CustomTypeDef, genericTypeParams: ArrayList<Type>) {
         super(kind, genericTypeParams)
-        this.def = def
+        this._def = def
     }
     public operator func==(other: CustomType): Bool {
         return this.kind == other.kind &&
-            this.def == other.def &&
+            this._def == other._def &&
             this.typeArgs == other.typeArgs
     }
 }
@@ -412,75 +418,103 @@ public class EnumType <: CustomType & Equatable<EnumType> {
 }
 
 public class FuncType <: Type & Equatable<FuncType> {
-    private let hasVarArg: Bool
-    private let isCFunc: Bool
+    private let _hasVarArg: Bool
+    private let _isCFunc: Bool
 
+    public prop hasVarArg: Bool {
+        get() {
+            return _hasVarArg
+        }
+    }
+    public prop isCFunc: Bool {
+        get() {
+            return _isCFunc
+        }
+    }
+    public prop paramTypes: ArrayList<Type> {
+        get() {
+            return typeArgs[0..(typeArgs.size - 1)]
+        }
+    }
+    public prop returnType: Type {
+        get() {
+            return typeArgs.last.getOrThrow()
+        }
+    }
     public func toString(): String {
-        return typeArgsToString("(", getParamTypes(), ")") + " -> " + getReturnType().toString()
-    }
-    public func getParamTypes(): ArrayList<Type> {
-        return typeArgs[0..(typeArgs.size - 1)]
-    }
-    public func getReturnType(): Type {
-        return typeArgs.last.getOrThrow()
+        return typeArgsToString("(", paramTypes, ")") + " -> " + returnType.toString()
     }
     internal init(paramTypes: ArrayList<Type>, retType: Type, varArg: Bool, cFunc: Bool) {
         super(TypeKind.FUNC, paramTypes)
         typeArgs.add(retType)
-        this.hasVarArg = varArg
-        this.isCFunc = cFunc
+        this._hasVarArg = varArg
+        this._isCFunc = cFunc
         setHashCode()
     }
     public operator func==(other: FuncType): Bool {
-        return this.getParamTypes() == other.getParamTypes() &&
-            this.getReturnType() == other.getReturnType() &&
-            this.hasVarArg == other.hasVarArg &&
-            this.isCFunc == other.isCFunc
+        return this.paramTypes == other.paramTypes &&
+            this.returnType == other.returnType &&
+            this._hasVarArg == other._hasVarArg &&
+            this._isCFunc == other._isCFunc
     }
 }
 
 public class GenericType <: Type & Equatable<GenericType> {
-    private let identifier: String
-    private let srcCodeIdentifier: String
-    private var upperBounds: ArrayList<Type> = ArrayList<Type>()
+    private let _identifier: String
+    private let _srcCodeIdentifier: String
+    private var _upperBounds: ArrayList<Type> = ArrayList<Type>()
 
+    public prop identifier: String {
+        get() {
+            return _identifier
+        }
+    }
+    public prop srcCodeIdentifier: String {
+        get() {
+            return _srcCodeIdentifier
+        }
+    }
+    public mut prop upperBounds: ArrayList<Type> {
+        get() {
+            return _upperBounds
+        }
+        set(v) {
+            for (bound in v) {
+                if (bound.stripAllRefs().IsValueType()) {
+                    throw IllegalArgumentException("Generic type upper bound should NOT be value type!")
+                }
+            }
+            _upperBounds = v
+            sort(_upperBounds,
+                by: { l, r =>
+                    let lstring = l.toString()
+                    let rstring = r.toString()
+                    if (lstring == rstring) {
+                        return Ordering.EQ
+                    } else if (lstring < rstring) {
+                        return Ordering.LT
+                    } else {
+                        return Ordering.GT
+                    }
+                },
+                stable: true,
+                descending: false
+            )
+        }
+    }
     public func toString(): String {
-        this.kind.toString() + "-" + this.identifier
+        this.kind.toString() + "-" + this._identifier
     }
     internal init(identifier: String, srcCodeIdentifier: String) {
         super(TypeKind.GENERIC)
-        this.identifier = identifier
-        this.srcCodeIdentifier = srcCodeIdentifier
+        this._identifier = identifier
+        this._srcCodeIdentifier = srcCodeIdentifier
         setHashCode()
     }
     public operator func==(other: GenericType): Bool {
-        return this.identifier == other.identifier &&
-            this.srcCodeIdentifier == other.srcCodeIdentifier &&
-            this.upperBounds == other.upperBounds
-    }
-    protected func setUpperBounds(bounds: Iterable<Type>) {
-        for (bound in bounds) {
-            if (bound.stripAllRefs().IsValueType()) {
-                throw IllegalArgumentException("Generic type upper bound should NOT be value type!")
-            }
-        }
-        this.upperBounds = collectArrayList<Type>(bounds)
-        sort(this.upperBounds,
-            by: { l, r =>
-                let lstring = l.toString()
-                let rstring = r.toString()
-                if (lstring == rstring) {
-                    return Ordering.EQ
-                } else if (lstring < rstring) {
-                    return Ordering.LT
-                } else {
-                    return Ordering.GT
-                }
-            },
-            stable: true,
-            descending: false
-        )
-        setHashCode()
+        return this._identifier == other.identifier &&
+            this._srcCodeIdentifier == other.srcCodeIdentifier &&
+            this._upperBounds == other.upperBounds
     }
 }
 

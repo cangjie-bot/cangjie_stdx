@@ -9,6 +9,11 @@
 package stdx.CHIR.lib
 
 public class ClassDef <: CustomTypeDef {
+    public prop classType: ClassType {
+        get() {
+            return (_type as ClassType).getOrThrow()
+        }
+    }
     internal init(identifier: String, srcName: String, pkgName: String) {
         super(CustomDefKind.CLASS, identifier, srcName, pkgName)
         this._hashCode = calculateHashCode()

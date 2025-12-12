@@ -9,6 +9,11 @@
 package stdx.CHIR.lib
 
 public class StructDef <: CustomTypeDef {
+    public prop structType: StructType {
+        get() {
+            return (_type as StructType).getOrThrow()
+        }
+    }
     internal init(identifier: String, srcName: String, pkgName: String) {
         super(CustomDefKind.STRUCT, identifier, srcName, pkgName)
         this._hashCode = calculateHashCode()

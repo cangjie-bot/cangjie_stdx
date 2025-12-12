@@ -9,6 +9,11 @@
 package stdx.CHIR.lib
 
 public class EnumDef <: CustomTypeDef {
+    public prop enumType: EnumType {
+        get() {
+            return (_type as EnumType).getOrThrow()
+        }
+    }
     internal init(identifier: String, srcName: String, pkgName: String) {
         super(CustomDefKind.ENUM, identifier, srcName, pkgName)
         this._hashCode = calculateHashCode()

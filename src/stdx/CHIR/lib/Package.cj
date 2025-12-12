@@ -15,8 +15,15 @@ const GLOBAL_VAL_PREFIX = "@"
 let g_invalidType = InvalidType()
 
 @Derive[Equatable]
-public enum AccessLevel {
+public enum AccessLevel <: ToString {
     INTERNAL | PROTECTED | PUBLIC
+    public func toString(): String {
+        return match (this) {
+            case INTERNAL => "INTERNAL"
+            case PROTECTED => "PROTECTED"
+            case PUBLIC => "PUBLIC"
+        }
+    }
 }
 
 public class Package <: ToString {

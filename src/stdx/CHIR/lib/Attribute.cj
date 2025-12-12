@@ -8,9 +8,12 @@
 
 package stdx.CHIR.lib
 
+import std.deriving.*
+
 const ATTR_SIZE: UInt64 = 64
 
-protected enum Attribute <: ToString & Equatable<Attribute> {
+@Derive[Equatable]
+protected enum Attribute <: ToString {
     ATTR_BEGIN |
     STATIC |    ///< Mark whether a member is a static one.
     PUBLIC |    ///< Mark whether a member is a public one.
@@ -105,52 +108,10 @@ protected enum Attribute <: ToString & Equatable<Attribute> {
             case OBJ_C_MIRROR          => "objCMirror"
             case HAS_INITED_FIELD      => "hasInitedField"
             case JAVA_HAS_DEFAULT      => "javaHasDefault"
-            case _                     => "unknown"
+            case ATTR_BEGIN | ATTR_END => "UNKNOWN"
         }
     }
 
-    public operator func==(other: Attribute): Bool {
-        match ((this, other)) {
-            case (STATIC, STATIC)                             => true
-            case (PUBLIC, PUBLIC)                             => true
-            case (PRIVATE, PRIVATE)                           => true
-            case (PROTECTED, PROTECTED)                       => true
-            case (ABSTRACT, ABSTRACT)                         => true
-            case (VIRTUAL, VIRTUAL)                           => true
-            case (OVERRIDE, OVERRIDE)                         => true
-            case (REDEF, REDEF)                               => true
-            case (SEALED, SEALED)                             => true
-            case (FOREIGN, FOREIGN)                           => true
-            case (MUT, MUT)                                   => true
-            case (FINAL, FINAL)                               => true
-            case (OPERATOR, OPERATOR)                         => true
-            case (READONLY, READONLY)                         => true
-            case (CONST, CONST)                               => true
-            case (IMPORTED, IMPORTED)                         => true
-            case (GENERIC_INSTANTIATED, GENERIC_INSTANTIATED) => true
-            case (NO_DEBUG_INFO, NO_DEBUG_INFO)               => true
-            case (GENERIC, GENERIC)                           => true
-            case (INTERNAL, INTERNAL)                         => true
-            case (COMPILER_ADD, COMPILER_ADD)                 => true
-            case (NO_REFLECT_INFO, NO_REFLECT_INFO)           => true
-            case (NO_INLINE, NO_INLINE)                       => true
-            case (NON_RECOMPILE, NON_RECOMPILE)               => true
-            case (UNREACHABLE, UNREACHABLE)                   => true
-            case (NO_SIDE_EFFECT, NO_SIDE_EFFECT)             => true
-            case (COMMON, COMMON)                             => true
-            case (PLATFORM, PLATFORM)                         => true
-            case (SKIP_ANALYSIS, SKIP_ANALYSIS)               => true
-            case (DESERIALIZED, DESERIALIZED)                 => true
-            case (INITIALIZER, INITIALIZER)                   => true
-            case (UNSAFE, UNSAFE)                             => true
-            case (JAVA_MIRROR, JAVA_MIRROR)                   => true
-            case (JAVA_IMPL, JAVA_IMPL)                       => true
-            case (OBJ_C_MIRROR, OBJ_C_MIRROR)                 => true
-            case (HAS_INITED_FIELD, HAS_INITED_FIELD)         => true
-            case (JAVA_HAS_DEFAULT, JAVA_HAS_DEFAULT)         => true
-            case _                                            => false
-        }
-    }
     protected func toUInt64(): UInt64 {
         match (this) {
             case ATTR_BEGIN           => 0  // just a placeholder
@@ -234,7 +195,7 @@ protected enum Attribute <: ToString & Equatable<Attribute> {
             case OBJ_C_MIRROR         => HAS_INITED_FIELD
             case HAS_INITED_FIELD     => JAVA_HAS_DEFAULT
             case JAVA_HAS_DEFAULT     => ATTR_END
-            case _                    => ATTR_END
+            case ATTR_END             => ATTR_END
         }
     }
 }

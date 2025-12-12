@@ -119,25 +119,52 @@ protected enum ExprKind <: ToString {
             case TYPE_CAST => "TYPE_CAST"
             case GET_EXCEPTION => "GET_EXCEPTION"
             case SPAWN => "SPAWN"
+            case LAMBDA => "LAMBDA"
             case GET_INSTANTIATE_VALUE => "GET_INSTANTIATE_VALUE"
             case APPLY => "APPLY"
             case INVOKE => "INVOKE"
             case INTRINSIC => "INTRINSIC"
             case GET_RTTI => "GET_RTTI"
             case GET_RTTI_STATIC => "GET_RTTI_STATIC"
-            case _ => "UNKNOWN"
+
         }
     }
 }
 
 @Derive[Equatable]
-protected enum OverflowStrategy {
+protected enum OverflowStrategy <: ToString {
     NA | WRAPPING | THROWING | SATURATING
+    public func toString(): String {
+        return match (this) {
+            case NA => "NA"
+            case WRAPPING => "WRAPPING"
+            case THROWING => "THROWING"
+            case SATURATING => "SATURATING"
+        }
+    }
 }
 
 @Derive[Equatable]
 protected enum IntrinsicKind {
     INOUT
+}
+
+@Derive[Equatable]
+protected enum SourceExpr <: ToString {
+    IF_EXPR | WHILE_EXPR | DO_WHILE_EXPR | MATCH_EXPR | IF_LET_OR_WHILE_LET | QUEST | BINARY | FOR_IN_EXPR | OTHER
+    public func toString(): String {
+        return match (this) {
+            case IF_EXPR => "IF_EXPR"
+            case WHILE_EXPR => "WHILE_EXPR"
+            case DO_WHILE_EXPR => "DO_WHILE_EXPR"
+            case MATCH_EXPR => "MATCH_EXPR"
+            case IF_LET_OR_WHILE_LET => "IF_LET_OR_WHILE_LET"
+            case QUEST => "QUEST"
+            case BINARY => "BINARY"
+            case FOR_IN_EXPR => "FOR_IN_EXPR"
+            case OTHER => "OTHER"
+        }
+    }
 }
 
 sealed abstract class Expression <: Base & ToString & Hashable & Equatable<Expression> {
@@ -405,6 +432,17 @@ sealed abstract class FuncCall <: Expression {
 }
 
 public class Apply <: FuncCall {
+    private var _isSuperCall: Bool = false
+
+    public mut prop isSuperCall: Bool {
+        get() {
+            return _isSuperCall
+        }
+        set(v) {
+            _isSuperCall = v
+        }
+    }
+
     // TODO: 后面实现
     public func toString(): String {
         String()
@@ -521,6 +559,12 @@ public class TypeCast <: Expression {
     public prop targetTy: Type {
         get() {
             return _targetTy
+        }
+    }
+
+    protected prop overflow: OverflowStrategy {
+        get() {
+            return _overflow
         }
     }
 
@@ -677,9 +721,11 @@ public class Lambda <: Expression {
     private let _srcCodeIdentifier: String
     private let _funcType: FuncType
     private var _parameters = ArrayList<Parameter>()
-    private let isLocalFunc = false
+    private var _isLocalFunc: Bool = false
     private var _genericTypeParams = ArrayList<GenericType>()
     private var _paramDftValHostFunc: ?Lambda = None
+    private var _returnValue: ?LocalVar = None
+    private var _isCompileTimeValue: Bool = false
 
     public prop identifier: String {
         get() {
@@ -699,21 +745,71 @@ public class Lambda <: Expression {
         }
     }
 
-    public prop parameters: ArrayList<Parameter> {
+    public mut prop parameters: ArrayList<Parameter> {
         get() {
             return _parameters
         }
-    }
-
-    public prop genericTypeParams: ArrayList<GenericType> {
-        get() {
-            return _genericTypeParams
+        set(v) {
+            _parameters = v
         }
     }
 
-    public prop paramDftValHostFunc: Lambda {
+    public mut prop genericTypeParams: ArrayList<GenericType> {
+        get() {
+            return _genericTypeParams
+        }
+        set(v) {
+            _genericTypeParams = v
+        }
+    }
+
+    public mut prop paramDftValHostFunc: Lambda {
         get() {
             return _paramDftValHostFunc.getOrThrow()
+        }
+        set(v) {
+            _paramDftValHostFunc = v
+        }
+    }
+
+    public mut prop isLocalFunc: Bool {
+        get() {
+            return _isLocalFunc
+        }
+        set(v) {
+            _isLocalFunc = v
+        }
+    }
+
+    public mut prop returnValue: LocalVar {
+        get() {
+            return _returnValue.getOrThrow()
+        }
+        set(v) {
+            _returnValue = v
+        }
+    }
+
+    public mut prop isCompileTimeValue: Bool {
+        get() {
+            return _isCompileTimeValue
+        }
+        set(v) {
+            _isCompileTimeValue = v
+        }
+    }
+
+    public mut prop body: BlockGroup {
+        get() {
+            return blockGroups[0]
+        }
+        set(v) {
+            if (blockGroups.size == 0) {
+                v.owner = result
+                blockGroups.add(v)
+            } else {
+                throw Exception("Lambda body already set")
+            }
         }
     }
 
@@ -727,6 +823,7 @@ public class Lambda <: Expression {
         this._identifier = identifier
         this._srcCodeIdentifier = srcName
         this._funcType = ty
+        this._isLocalFunc = false
     }
 }
 
@@ -817,6 +914,26 @@ public class GoTo <: Expression {
 }
 
 public class Branch <: Expression {
+    private var _sourceExpr: SourceExpr = SourceExpr.OTHER
+
+    protected mut prop sourceExpr: SourceExpr {
+        get() {
+            return _sourceExpr
+        }
+        set(v) {
+            _sourceExpr = v
+        }
+    }
+    public prop trueTarget: Block {
+        get() {
+            return (operands[1] as Block).getOrThrow()
+        }
+    }
+    public prop falseTarget: Block {
+        get() {
+            return (operands[2] as Block).getOrThrow()
+        }
+    }
     // TODO: 后面实现
     public func toString(): String {
         String()

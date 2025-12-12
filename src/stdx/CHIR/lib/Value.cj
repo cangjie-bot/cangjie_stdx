@@ -144,14 +144,17 @@ sealed abstract class Value <: Base & ToString & Hashable & Equatable<Value> {
 }
 
 public class Block <: Value {
-    private let _owner: BlockGroup
+    private var _owner: BlockGroup
     private var _exprs = ArrayList<Expression>()
     private var _predecessors = ArrayList<Block>()
     private var _exceptions: ?ArrayList<ClassType> = None
 
-    public prop owner: BlockGroup {
+    public mut prop owner: BlockGroup {
         get() {
             return _owner
+        }
+        set(v) {
+            _owner = v
         }
     }
 
@@ -221,9 +224,12 @@ public class BlockGroup <: Value {
         }
     }
 
-    public prop owner: Value {
+    public mut prop owner: Value {
         get() {
             return _owner
+        }
+        set(v) {
+            _owner = v
         }
     }
 
@@ -729,9 +735,12 @@ public class LocalVar <: Value {
 public class MemberVar <: Value {
     private var _owner: CustomTypeDef
 
-    public prop owner: CustomTypeDef {
+    public mut prop owner: CustomTypeDef {
         get() {
             return _owner
+        }
+        set(v) {
+            _owner = v
         }
     }
 
@@ -760,9 +769,12 @@ public class MemberVar <: Value {
 public class Parameter <: Value {
     private var _owner: Value
 
-    public prop owner: Value {
+    public mut prop owner: Value {
         get() {
             return _owner
+        }
+        set(v) {
+            _owner = v
         }
     }
 

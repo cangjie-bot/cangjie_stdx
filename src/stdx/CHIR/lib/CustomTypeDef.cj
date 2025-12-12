@@ -10,8 +10,16 @@ package stdx.CHIR.lib
 import std.deriving.*
 
 @Derive[Equatable]
-protected enum CustomDefKind {
+protected enum CustomDefKind <: ToString {
     CLASS | ENUM | EXTEND | STRUCT
+    public func toString(): String {
+        return match (this) {
+            case CLASS => "CLASS"
+            case ENUM => "ENUM"
+            case EXTEND => "EXTEND"
+            case STRUCT => "STRUCT"
+        }
+    }
 }
 
 sealed abstract class CustomTypeDef <: Base & Equatable<CustomTypeDef> & Hashable {
@@ -19,7 +27,27 @@ sealed abstract class CustomTypeDef <: Base & Equatable<CustomTypeDef> & Hashabl
     private let _identifier: String
     private let _srcCodeIdentifier: String
     private let _packageName: String
+    internal var _type : ?CustomType = None
+    private var _genericDecl : ?CustomTypeDef = None
     internal var _hashCode: Int64 = 0
+
+    public mut prop ty: CustomType {
+        get() {
+            return _type.getOrThrow()
+        }
+        set(v) {
+            _type = v
+        }
+    }
+
+    public mut prop genericDecl: CustomTypeDef {
+        get() {
+            return _genericDecl.getOrThrow()
+        }
+        set(v) {
+            _genericDecl = v
+        }
+    }
 
     public func hashCode(): Int64 {
         return _hashCode
