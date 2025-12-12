@@ -60,10 +60,20 @@ protected enum TypeKind <: ToString {
 
 sealed abstract class Type <: ToString & Hashable & Equatable<Type> {
     // member var
-    internal let kind: TypeKind
-    internal var typeArgs: ArrayList<Type>
+    private let _kind: TypeKind
+    private var _typeArgs: ArrayList<Type>
     private var _hashCode: Int64 = 0
 
+    protected prop kind: TypeKind {
+        get() {
+            return _kind
+        }
+    }
+    public prop typeArgs: ArrayList<Type> {
+        get() {
+            return _typeArgs
+        }
+    }
     public func hashCode(): Int64 {
         _hashCode
     }
@@ -160,12 +170,12 @@ sealed abstract class Type <: ToString & Hashable & Equatable<Type> {
 
     // internal method
     internal init(kind: TypeKind) {
-        this.kind = kind
-        this.typeArgs = ArrayList<Type>()
+        this._kind = kind
+        this._typeArgs = ArrayList<Type>()
     }
     internal init(kind: TypeKind, args: ArrayList<Type>) {
-        this.kind = kind
-        this.typeArgs = args
+        this._kind = kind
+        this._typeArgs = args
     }
     internal func setHashCode(): Unit {
         _hashCode = toString().hashCode()
@@ -446,9 +456,9 @@ public class FuncType <: Type & Equatable<FuncType> {
     }
     internal init(paramTypes: ArrayList<Type>, retType: Type, varArg: Bool, cFunc: Bool) {
         super(TypeKind.FUNC, paramTypes)
-        typeArgs.add(retType)
         this._hasVarArg = varArg
         this._isCFunc = cFunc
+        typeArgs.add(retType)
         setHashCode()
     }
     public operator func==(other: FuncType): Bool {

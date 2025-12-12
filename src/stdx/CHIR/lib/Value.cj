@@ -73,12 +73,17 @@ internal enum LiteralKind <: ToString {
 }
 
 sealed abstract class Value <: Base & ToString & Hashable & Equatable<Value> {
-    internal let kind: ValueKind
-    internal let _type: Type
-    internal var _identifier: String
+    private let _kind: ValueKind
+    private let _type: Type
+    private var _identifier: String
     internal var _hashCode: Int64 = 0
     private var _users = ArrayList<Expression>()
 
+    protected prop kind: ValueKind {
+        get() {
+            return _kind
+        }
+    }
     public prop ty: Type {
         get() {
             return _type
@@ -132,12 +137,12 @@ sealed abstract class Value <: Base & ToString & Hashable & Equatable<Value> {
     protected open func calculateHashCode(): Int64
 
     internal init(kind: ValueKind, identifier: String) {
-        this.kind = kind
+        this._kind = kind
         this._type = g_invalidType
         this._identifier = identifier
     }
     internal init(kind: ValueKind, ty: Type, identifier: String) {
-        this.kind = kind
+        this._kind = kind
         this._type = ty
         this._identifier = identifier
     }
@@ -351,6 +356,7 @@ public class Function <: GlobalSymbol {
     private var _oriLambdaFuncTy: ?Type = None
     private var _oriLambdaGenericTypeParams: ?ArrayList<GenericType> = None
     private var _paramDftValHostFunc: ?Function = None
+    private var _propLocation: ?DebugLocation = None
 
     public prop parameters: ArrayList<Parameter> {
         get() {
@@ -379,6 +385,15 @@ public class Function <: GlobalSymbol {
         }
         set(v) {
             _isCFFIWrapper = v
+        }
+    }
+
+    public mut prop propLocation: ?DebugLocation {
+        get() {
+            return _propLocation
+        }
+        set(v) {
+            _propLocation = v
         }
     }
 

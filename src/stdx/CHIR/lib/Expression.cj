@@ -168,7 +168,7 @@ protected enum SourceExpr <: ToString {
 }
 
 sealed abstract class Expression <: Base & ToString & Hashable & Equatable<Expression> {
-    internal let kind: ExprKind
+    internal let _kind: ExprKind
     internal var _operands: ArrayList<Value>
     internal var _blockGroups = ArrayList<BlockGroup>()
     internal var _owner: Block
@@ -178,6 +178,11 @@ sealed abstract class Expression <: Base & ToString & Hashable & Equatable<Expre
         return _result.getOrThrow().hashCode()
     }
 
+    protected prop kind: ExprKind {
+        get() {
+            return _kind
+        }
+    }
     public operator func==(other: Expression): Bool {
         return this.result == other.result
     }
@@ -223,13 +228,13 @@ sealed abstract class Expression <: Base & ToString & Hashable & Equatable<Expre
     }
 
     protected init(kind: ExprKind, operands: ArrayList<Value>, owner: Block) {
-        this.kind = kind
+        this._kind = kind
         this._operands = operands
         this._owner = owner
     }
 
     protected init(kind: ExprKind, owner: Block) {
-        this.kind = kind
+        this._kind = kind
         this._operands = ArrayList<Value>()
         this._owner = owner
     }
