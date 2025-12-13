@@ -73,6 +73,7 @@ const DEFAULT_WINDOW_SIZE = 65535u32
 
 // default value of concurrent streams
 const DEFAULT_MAX_CONCURRENT_STREAMS = 100u32
+const INITIAL_MAX_CONCURRENT_STREAMS = 1000u32
 // default header list size
 const DEFAULT_MAX_HEADER_LIST_SIZE = 8192u32
 // default body size limit is 2M

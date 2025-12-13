@@ -11,7 +11,7 @@ package stdx.net.http
 import std.net.*
 import std.io.*
 import std.collection.{ArrayList, HashMap}
-import std.sync.{Monitor, AtomicUInt32, AtomicInt64, AtomicBool}
+import std.sync.{Monitor, AtomicUInt32, AtomicInt64, AtomicBool, SyncCounter}
 import std.convert.Parsable
 import std.time.MonoTime
 import stdx.net.tls.common.TlsConnection
@@ -591,6 +591,9 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
     var connect = false
     // whether response with streamEnd has been sent on stream
     var responded = false
+    // in case trailer processed before headers, trailer will be removed because there is no trailer header
+    // use SyncCounter to ensure header processed first
+    var headerSyncCounter = SyncCounter(1)
 
     let arrayPool: ?ArrayPool
 
@@ -617,6 +620,7 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
         this.upgrade = None
         this.connect = false
         this.responded = false
+        this.headerSyncCounter = SyncCounter(1)
     }
 
     public prop clientCertificate: ?Array<Certificate> {
@@ -669,10 +673,6 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
         }
         request._bodySize = sizeOf(request._body)
         request._remoteAddr = stream.server.remoteAddress
-
-        if (let Some(trailers) <- request._trailers) {
-            checkTrailer(request)
-        }
     }
 
     /* see https://www.rfc-editor.org/rfc/rfc9113.html#HttpRequest */
@@ -756,22 +756,26 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
     private func checkAndSetRequestHeaders(toCheck: ArrayList<(String, String)>): Unit {
         for ((name, value) in toCheck) {
             if (name.startsWith(":")) {
+                headerSyncCounter.dec()
                 throw HttpStreamException(ProtocolError,
                     "Malformed request, h2 pseudoHeaders ${name} should procedure headers.")
             }
 
             if (name.hasUpper()) {
+                headerSyncCounter.dec()
                 throw HttpStreamException(ProtocolError, "Malformed request, h2 headers should be lower cases.")
             }
 
             // should not contain connection, proxy-connection, keep-alive, transfer-encoding, upgrade
             if (H2_EXCLUDE_HEADERS.contains(name)) {
+                headerSyncCounter.dec()
                 throw HttpStreamException(ProtocolError, "Malformed request, h2 headers should not contain ${name}.")
             }
 
             // TE header field can exist, value of TE MUST NOT contain any value other than "trailers"
             // te: trailers means client allow server to send trailers
             if (name == "te" && value != "trailers") {
+                headerSyncCounter.dec()
                 throw HttpStreamException(ProtocolError,
                     "Malformed request, te header field must not contain any value other than \"trailers\".")
             }
@@ -779,6 +783,7 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
             // if :authority is set, value of Host must be the same with value of :authority
             if (name == "host") {
                 if (!requestAuthority.isEmpty() && requestAuthority != value) {
+                    headerSyncCounter.dec()
                     throw HttpStreamException(ProtocolError,
                         "Malformed request, value of :authority and host should be the same.")
                 }
@@ -796,6 +801,7 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
 
             if (name == "trailer") {
                 if (!Str(value).splitAllMatch(SYMBOL_COMMA, {v => !TrailerExcludeList.contains(v)})) {
+                    headerSyncCounter.dec()
                     throw HttpStreamException(ProtocolError, "Malformed request, invalid trailer value in header.")
                 }
             }
@@ -805,10 +811,12 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
             try {
                 request.headers.add(name, value) // may throw HttpException
             } catch (e: HttpException) {
+                headerSyncCounter.dec()
                 throw HttpStreamException(ProtocolError, "Malformed request, ${e.message}.")
             }
         }
 
+        headerSyncCounter.dec()
         try {
             if (let Some(headers) <- request._headers) {
                 stream.reqContentLength = checkCl(headers) ?? -1
@@ -835,6 +843,7 @@ class HttpEngineConn2 <: HttpEngineConn & InputStream {
                 trailers.add(k, v) // throw HttpException, if k or v contain invalid elements
             }
             // remove trailers, name of which is absent in header "trailer"
+            headerSyncCounter.waitUntilZero()
             if (let Some(headers) <- request._headers) {
                 checkTrailer(request)
             }

@@ -66,7 +66,7 @@ public class ServerBuilder {
     var _maxRequestBodySize: Int64 = DEFAULT_MAX_BODY_SIZE
 
     var _headerTableSize: UInt32 = 4096
-    var _maxConcurrentStreams: UInt32 = DEFAULT_MAX_CONCURRENT_STREAMS
+    var _maxConcurrentStreams: UInt32 = INITIAL_MAX_CONCURRENT_STREAMS
     var _initialWindowSize: UInt32 = DEFAULT_WINDOW_SIZE
     var _maxFrameSize: UInt32 = MIN_FRAME_SIZE
     var _maxHeaderListSize: UInt32 = DEFAULT_MAX_HEADER_LIST_SIZE

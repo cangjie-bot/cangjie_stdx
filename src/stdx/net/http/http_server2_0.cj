@@ -421,7 +421,7 @@ class HttpServer2 <: ProtocolService {
         }
         let reqCount = AtomicUInt64(0)
         while (!quit.load()) {
-            let stream = requestQueue.receive(timeout: Duration.millisecond * 10) ?? continue
+            let stream = requestQueue.receive() ?? continue
             let connId = ThreadContext.connId
             spawn {
                 ThreadContext.connId = connId

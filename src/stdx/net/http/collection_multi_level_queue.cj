@@ -25,7 +25,6 @@ class SPMCLevelQueue<T> {
     let queues: Array<ClosableNonBlockingQueue<T>>
     let prange: Range<Int64>
 
-    let sendMons: Array<Monitor>
     let sendqSizes: Array<AtomicInt64>
 
     let recvMon: Monitor = Monitor()
@@ -33,7 +32,6 @@ class SPMCLevelQueue<T> {
 
     init(levels: Int64, reverse!: Bool = false) {
         this.levels = levels
-        this.sendMons = Array<Monitor>(levels, {_ => Monitor()})
         this.sendqSizes = Array<AtomicInt64>(levels, {_ => AtomicInt64(0)})
         this.reverse = reverse
         this.prange = match (reverse) {
@@ -52,6 +50,7 @@ class SPMCLevelQueue<T> {
 
         if (queues[priority].enqueue(elem)) {
             size.fetchAdd(1)
+            sendqSizes[priority].fetchAdd(1)
             if (recvqSize.load() == 0) {
                 return true
             }
@@ -71,18 +70,15 @@ class SPMCLevelQueue<T> {
                 return v
             }
 
-            synchronized(recvMon) {
-                if (let Some(v) <- tryReceive()) {
-                    return v
-                }
-                recvqSize.fetchAdd(1)
-                if (bufferEmpty()) {
-                    recvMon.wait(timeout: Duration.millisecond * 10)
-                }
-                recvqSize.fetchAdd(-1)
+            synchronized (recvMon) {
                 if (isClosed()) {
                     return None
                 }
+                recvqSize.fetchAdd(1)
+                if (bufferEmpty()) {
+                    recvMon.wait(timeout: Duration.second)
+                }
+                recvqSize.fetchAdd(-1)
             }
         }
 
@@ -94,51 +90,40 @@ class SPMCLevelQueue<T> {
             return v
         }
 
-        synchronized(recvMon) {
-            if (let Some(v) <- tryReceive()) {
-                return v
-            }
+        synchronized (recvMon) {
             recvqSize.fetchAdd(1)
             if (bufferEmpty()) {
                 recvMon.wait(timeout: timeout)
             }
             recvqSize.fetchAdd(-1)
-            if (isClosed()) {
-                return None
-            }
         }
         tryReceive()
     }
 
     func tryReceive(): ?T {
         for (priority in prange) {
-            if (let Some(v) <- queues[priority].dequeue()) {
-                size.fetchSub(1)
-                return v
+            if (sendqSizes[priority].load() > 0) {
+                if (let Some(v) <- queues[priority].dequeue()) {
+                    sendqSizes[priority].fetchSub(1)
+                    size.fetchSub(1)
+                    return v
+                }
             }
+            
         }
         return None
     }
 
     func close(): Unit {
-        recvMon.lock()
-        for (mon in sendMons) {
-            mon.lock()
-        }
+        synchronized (recvMon) {
+            for (priority in 0..levels) {
+                queues[priority].close()
+                sendqSizes[priority].store(0)
+            }
+            size.store(0)
+            closed.store(true)
 
-        for (que in queues) {
-            que.close()
-        }
-        closed.store(true)
-
-        recvMon.notifyAll()
-        for (mon in sendMons) {
-            mon.notifyAll()
-        }
-
-        recvMon.unlock()
-        for (mon in sendMons) {
-            mon.unlock()
+            recvMon.notifyAll()
         }
     }
 

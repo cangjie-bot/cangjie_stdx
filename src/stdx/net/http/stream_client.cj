@@ -228,7 +228,11 @@ class ClientStream {
                 path += "#${fragment}"
             }
         }
-        headers.add((":authority", host))
+        if (req.url.port.isEmpty()) {
+            headers.add((":authority", req.url.host + ":443"))
+        } else {
+            headers.add((":authority", req.url.host))
+        }
         headers.add((":method", req.method))
         if (req.method != "CONNECT" || isWebsocket) {
             headers.add((":scheme", "https"))
