@@ -51,6 +51,9 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [EnumPattern](./syntax_package_api/syntax_package_classes.md#class-enumpattern) | 表示 `enum` 模式节点。 |
 | [Expr](./syntax_package_api/syntax_package_classes.md#class-expr) | 所有表达式节点的父类，继承自 `SyntaxTreeNode` 节点。 |
 | [ExtendDecl](./syntax_package_api/syntax_package_classes.md#class-extenddecl) | 表示一个扩展声明节点。 |
+| [FeatureId](./syntax_package_api/syntax_package_classes.md#class-featureid) | 一个 feature 标识节点。 |
+| [FeaturesDirective](./syntax_package_api/syntax_package_classes.md#class-featuresdirective) | 一个 features directive 节点。 |
+| [FeaturesSet](./syntax_package_api/syntax_package_classes.md#class-featuresset) | 一个 feature set 节点。 |
 | [ForInExpr](./syntax_package_api/syntax_package_classes.md#class-forinexpr) | 表示 `for-in` 表达式。 |
 | [FuncDecl](./syntax_package_api/syntax_package_classes.md#class-funcdecl) | 表示一个函数声明节点。 |
 | [FuncParam](./syntax_package_api/syntax_package_classes.md#class-funcparam) | 表示函数参数节点，包括非命名参数和命名参数。 |

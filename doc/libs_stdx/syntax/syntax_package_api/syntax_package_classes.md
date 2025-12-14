@@ -2259,12 +2259,200 @@ public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```cangjie
 public func getUpperBoundPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `<:` 的位置（若不存在返回 `None`）。
+
+## class FeatureId
+
+```cangjie
+public init(identifiers: Array<String>, comments!: Array<Comment> = [])
+```
+
+功能：一个 feature 标识节点。
+
+父类型：
+
+- [SyntaxTreeNode](#class-syntaxtreenode)
+
+### prop featureNameIdentifiers
+
+```cangjie
+public prop featureNameIdentifiers: Array<String> 
+```
+
+功能：获取 feature 名称中的标识符。
+
+类型：Array<String>
+
+### func getIdentifierPos()
+
+```cangjie
+public func getIdentifierPos(): Array<CodePositionRange> 
+```
+
+功能：获取 feature 名称中的标识符位置。
+
+类型： Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)>
+
+### func getDotPoses()
+
+```cangjie
+public func getDotPoses(): Array<CodePositionRange>
+```
+
+功能：获取 feature 名称中的 `.` 的位置。
+
+类型：Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)>
+
+### init init(Array<String>, Array<Comment>)
+
+```cangjie
+public init(identifiers: Array<String>, comments!: Array<Comment> = [])
+```
+
+功能：构造一个对象。
+
+参数：
+
+features: Array<String> - feature 名称数组。
+comments!: Array<Comment> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当数组为空或包含空字符串时抛出异常，异常中包含报错提示信息。
+
+## class FeaturesDirective
+
+```cangjie
+public class FeaturesDirective <: SyntaxTreeNode {
+    public init(annotations: Array<Annotation>, set: FeaturesSet, comments!: Array<Comment> = [])
+}
+```
+
+功能：一个 features directive 节点。
+
+父类型：
+
+- [SyntaxTreeNode](#class-syntaxtreenode)
+
+### prop annotations
+
+```cangjie
+public prop annotations: Array<Annotation>
+```
+
+功能：获取当前声明的注解列表。
+
+类型：Array\<[Annotation](#class-annotation)>
+
+### prop featuresSet
+
+```cangjie
+public prop featuresSet: FeaturesSet
+```
+
+功能：获取当前声明的 features set。
+
+类型：[FeaturesSet](#class-featuresset)
+
+### func getFeaturesKeywordPos()
+
+```cangjie
+public func getFeaturesKeywordPos(): CodePositionRange    
+```
+
+功能：获取声明中的关键字 `features` 的位置信息。
+
+类型：[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)
+
+### init(Array<Annotation>, FeaturesSet, Array<Comment>)
+
+```cangjie
+public init(annotations: Array<Annotation>, set: FeaturesSet, comments!: Array<Comment> = [])
+```
+
+功能：构造一个 FeatureId 对象。
+
+参数：
+
+annotations: Array\<[Annotation](#class-annotation)> - 一组在 feature directive 声明节点上的注解。
+set: [FeaturesSet](#class-featuresset) - 一组 features 名称。
+comments!: Array<Comment> - 附加的注释列表，默认为空数组。
+
+异常：
+
+- Exception - 当 featureId 无法构造时抛出异常。
+
+## class FeaturesSet
+
+```cangjie
+public class FeaturesSet <: SyntaxTreeNode {
+    public init(features: Array<FeatureId>, comments!: Array<Comment> = [])
+}
+```
+
+功能：一个 feature set 节点。
+
+父类型：
+
+- [SyntaxTreeNode](#class-syntaxtreenode)
+
+### prop content
+
+```cangjie
+public prop content: Array<FeatureId>
+```
+
+功能：获取 features set 内包含的一组 featureId。
+
+类型：Array\<[FeatureId](#class-featureid)>
+
+### func getLCurlPos()
+
+```cangjie
+public func getLCurlPos(): CodePositionRange 
+```
+
+功能：获取 '{' 的位置信息。
+
+类型：[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)
+
+### func getRCurlPos()
+
+```cangjie
+public func getRCurlPos(): CodePositionRange
+```
+
+功能：获取 '}' 的位置信息。
+
+类型：[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)
+
+### func getCommaPoses()
+
+```cangjie
+public func getCommaPoses(): Array<CodePositionRange>
+```
+
+功能：获取 ',' 的位置信息。
+
+类型： Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)>
+
+### init(Array<FeatureId>, Array<Comment>)
+
+```cangjie
+public init(features: Array<FeatureId>, comments!: Array<Comment> = [])
+```
+
+功能：创建一个 FeaturesSet 对象。
+
+参数：
+
+features: Array<[FeatureId](#class-featuresid)> - 一组定义在 features set 中的 feature id。
+comments!: Array<Comment> - 附加的注释列表，默认为空数组。
 
 ## class ForInExpr
 
@@ -6547,6 +6735,16 @@ public class SourceFile <: SyntaxTreeNode {
 
 - [SyntaxTreeNode](#class-syntaxtreenode)
 
+### prop ftrDirective
+
+```cangjie
+public prop ftrDirective: Option<FeaturesDirective> 
+```
+
+功能：在源码文件节点中找到 [FeaturesDirective](#class-featuresdirective) 节点。
+
+类型： Option<[FeaturesDirective](#class-featuresdirective)>
+
 ### prop importLists
 
 ```cangjie
@@ -6613,7 +6811,7 @@ public init(importLists: Array<ImportList>, name: String, path: String, pkgHeade
 - path: String - 源文件路径。
 - pkgHeader: Option\<[PackageHeader](#class-packageheader)> - 包声明头，可选。
 - topLevelDecls: Array\<[Decl](#class-decl)> - 顶层声明列表。
-- ftrDirective!: Option\<FeaturesDirective> - 特性指令，暂不支持，默认为 `None`。
+- ftrDirective!: Option\<FeaturesDirective> - 特性指令，默认为 `None`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 异常：
