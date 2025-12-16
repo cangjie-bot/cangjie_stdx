@@ -289,11 +289,11 @@ add_and_combine_static_lib(
     LIBRARIES
         $<TARGET_OBJECTS:stdx.net.tlsFFI-objs>
         ${output_cj_object_dir}/stdx/net.tls.o
-        $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
+        $<TARGET_OBJECTS:${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET}>
     DEPENDS
         cangjie${BACKEND_TYPE}Tls
         stdx.net.tlsFFI
-        cangjie-dynamicLoader-opensslFFI)
+        ${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET})
 install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libstdx.net.tls.a
         DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
@@ -519,11 +519,11 @@ add_and_combine_static_lib(
     LIBRARIES
         $<TARGET_OBJECTS:stdx.crypto.x509FFI-objs>
         ${output_cj_object_dir}/stdx/crypto.x509.o
-        $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
+        $<TARGET_OBJECTS:${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET}>
     DEPENDS
         cangjie${BACKEND_TYPE}X509
         stdx.crypto.x509FFI
-        cangjie-dynamicLoader-opensslFFI)
+        ${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET})
 install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libstdx.crypto.x509.a
         DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 

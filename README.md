@@ -205,7 +205,9 @@ explain:
 >
 > - `cjpm.toml` is the configuration file of the Cangjie package management tool CJPM. For details, please refer to the Cangjie Programming Language Tool User Guide.
 > - The configuration method is the same for Windows, Linux, and MacOS.
-> - If you import the static library of `stdx` and use the crypto and net packages, you need to add `-lcrypt32` to the `compile-option` configuration item of `cjpm.toml` under the `Windows` operating system, and `-ldl` under the `Linux` operating system, because they need to rely on system symbols.
+> - If you import the static library of `stdx` and use the crypto and net packages, you need to add `-lcrypt32` to `compile-option` on `Windows`.
+> - On `Linux`, static `stdx` uses an OpenSSL resolver in `auto` mode: it prefers direct linking when OpenSSL symbols are available, and falls back to `dlopen/dlsym` only when needed (add `-ldl` if the fallback is used). When linking OpenSSL statically (`.a`), you may need `--whole-archive` to ensure the archive is actually pulled in; otherwise the fallback may try to load system `libssl/libcrypto`.
+> - When linking OpenSSL statically, place `-lssl -lcrypto` after `stdx` libraries that reference them to avoid “undefined reference” due to static link order.
 
 **Configuration example**：Assuming the development environment is Windows x86_64, import the dynamic binary of `stdx`, then the `cjpm.toml` configuration example is as follows:
 

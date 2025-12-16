@@ -13,19 +13,32 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <openssl/crypto.h>
+#include <openssl/hmac.h>
+#include <openssl/provider.h>
+#include <openssl/rand.h>
+#include <openssl/sha.h>
+#include <openssl/x509v3.h>
 #ifdef _WIN32
 #include <windows.h>
 #define OPENSSLPATH "libcrypto-3-x64.dll"
 #define OPENSSLPATHSSL "libssl-3-x64.dll"
 #elif defined(__APPLE__)
 #include <dlfcn.h>
-#define OPENSSLPATH "libssl.3.dylib"
+#define OPENSSLPATH_CRYPTO "libcrypto.3.dylib"
+#define OPENSSLPATH_SSL "libssl.3.dylib"
+#define OPENSSLPATH_CRYPTO_FALLBACK "libcrypto.dylib"
+#define OPENSSLPATH_SSL_FALLBACK "libssl.dylib"
 #elif defined(__ohos__)
 #include <dlfcn.h>
-#define OPENSSLPATH "libssl_openssl.z.so"
+#define OPENSSLPATH_CRYPTO "libcrypto_openssl.z.so"
+#define OPENSSLPATH_SSL "libssl_openssl.z.so"
 #else
 #include <dlfcn.h>
-#define OPENSSLPATH "libssl.so"
+#define OPENSSLPATH_CRYPTO "libcrypto.so.3"
+#define OPENSSLPATH_SSL "libssl.so.3"
+#define OPENSSLPATH_CRYPTO_FALLBACK "libcrypto.so"
+#define OPENSSLPATH_SSL_FALLBACK "libssl.so"
 #endif
 #include "opensslSymbols.h"
 void* g_singletonHandle = NULL;
@@ -50,14 +63,145 @@ void FreeDynMsg(DynMsg* dynMsgPtr)
     free((void*)dynMsgPtr);
 }
 
+#if defined(CANGJIE_OPENSSL_RESOLVE_AUTO) && (defined(__GNUC__) || defined(__clang__)) && !defined(_MSC_VER)
+#define CANGJIE_OPENSSL_AUTO_WEAK_AVAILABLE 1
+#define CANGJIE_DO_PRAGMA(x) _Pragma(#x)
+#define CANGJIE_PRAGMA_WEAK(sym) CANGJIE_DO_PRAGMA(weak sym)
+#else
+#define CANGJIE_OPENSSL_AUTO_WEAK_AVAILABLE 0
+#define CANGJIE_PRAGMA_WEAK(sym)
+#endif
+
+#ifdef CANGJIE_OPENSSL_RESOLVE_AUTO
+
+/* Allow building without explicitly linking libdl: auto mode only uses dlopen/dlsym as a fallback. */
+#ifndef _WIN32
+CANGJIE_PRAGMA_WEAK(dlopen)
+CANGJIE_PRAGMA_WEAK(dlsym)
+CANGJIE_PRAGMA_WEAK(dlclose)
+#endif
+
+/* Mark selected OpenSSL symbols as weak references so "auto" mode can prefer direct linking
+ * when users link OpenSSL, while still allowing builds that don't link OpenSSL. */
+CANGJIE_PRAGMA_WEAK(CRYPTO_strdup)
+CANGJIE_PRAGMA_WEAK(CRYPTO_strndup)
+CANGJIE_PRAGMA_WEAK(CRYPTO_memdup)
+CANGJIE_PRAGMA_WEAK(CRYPTO_free)
+CANGJIE_PRAGMA_WEAK(CRYPTO_secure_malloc)
+CANGJIE_PRAGMA_WEAK(CRYPTO_secure_zalloc)
+CANGJIE_PRAGMA_WEAK(CRYPTO_secure_free)
+CANGJIE_PRAGMA_WEAK(BN_num_bits)
+CANGJIE_PRAGMA_WEAK(SSL_CTX_ctrl)
+CANGJIE_PRAGMA_WEAK(SSL_ctrl)
+CANGJIE_PRAGMA_WEAK(SSL_CTX_callback_ctrl)
+CANGJIE_PRAGMA_WEAK(BIO_ctrl)
+CANGJIE_PRAGMA_WEAK(BIO_clear_flags)
+CANGJIE_PRAGMA_WEAK(BIO_new)
+CANGJIE_PRAGMA_WEAK(BIO_s_mem)
+
+/* Used by DynPopFree() call sites. */
+CANGJIE_PRAGMA_WEAK(GENERAL_NAME_free)
+CANGJIE_PRAGMA_WEAK(X509_EXTENSION_free)
+
+/* Weak-mark all OpenSSL APIs referenced through defineFunction.inc. */
+#undef DEFINEFUNCTION
+#define DEFINEFUNCTION0(name, errCode, type0) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION1(name, errCode, type0, type1) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION2(name, errCode, type0, type1, type2) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION3(name, errCode, type0, type1, type2, type3) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION4(name, errCode, type0, type1, type2, type3, type4) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION5(name, errCode, type0, type1, type2, type3, type4, type5) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION6(name, errCode, type0, type1, type2, type3, type4, type5, type6) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION7(name, errCode, type0, type1, type2, type3, type4, type5, type6, type7) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTION8(name, errCode, type0, type1, type2, type3, type4, type5, type6, type7, type8) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTIONCB2(name, errCode, type0, type1, type2) CANGJIE_PRAGMA_WEAK(name)
+#define DEFINEFUNCTIONCB3(name, errCode, type0, type1, type2, type3) CANGJIE_PRAGMA_WEAK(name)
+#include "defineFunction.inc"
+#undef DEFINEFUNCTION0
+#undef DEFINEFUNCTION1
+#undef DEFINEFUNCTION2
+#undef DEFINEFUNCTION3
+#undef DEFINEFUNCTION4
+#undef DEFINEFUNCTION5
+#undef DEFINEFUNCTION6
+#undef DEFINEFUNCTION7
+#undef DEFINEFUNCTION8
+#undef DEFINEFUNCTIONCB2
+#undef DEFINEFUNCTIONCB3
+#undef DEFINEFUNCTION
+#endif
+
+#ifndef _WIN32
+static void* TryDlopen(const char* const* candidates, size_t count)
+{
+    if (&dlopen == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < count; i++) {
+        void* handle = dlopen(candidates[i], RTLD_LAZY | RTLD_GLOBAL);
+        if (handle != NULL) {
+            return handle;
+        }
+    }
+    return NULL;
+}
+#endif
+
+static void EnsureLoaded(void)
+{
+    if (g_singletonHandle != NULL || g_singletonHandleSsl != NULL) {
+        return;
+    }
+#ifdef _WIN32
+    g_singletonHandle = LoadLibraryA(OPENSSLPATH);
+    g_singletonHandleSsl = LoadLibraryA(OPENSSLPATHSSL);
+#else
+    const char* const cryptoCandidates[] = {
+#if defined(OPENSSLPATH_CRYPTO_FALLBACK)
+        OPENSSLPATH_CRYPTO,
+        OPENSSLPATH_CRYPTO_FALLBACK,
+#else
+        OPENSSLPATH_CRYPTO,
+#endif
+    };
+    const char* const sslCandidates[] = {
+#if defined(OPENSSLPATH_SSL_FALLBACK)
+        OPENSSLPATH_SSL,
+        OPENSSLPATH_SSL_FALLBACK,
+#else
+        OPENSSLPATH_SSL,
+#endif
+    };
+
+    g_singletonHandle = TryDlopen(cryptoCandidates, sizeof(cryptoCandidates) / sizeof(cryptoCandidates[0]));
+    g_singletonHandleSsl = TryDlopen(sslCandidates, sizeof(sslCandidates) / sizeof(sslCandidates[0]));
+
+    if (g_singletonHandle == NULL) {
+        g_singletonHandle = g_singletonHandleSsl;
+    } else if (g_singletonHandleSsl == NULL) {
+        g_singletonHandleSsl = g_singletonHandle;
+    }
+#endif
+}
+
 static void* FindFunction(const char* name)
 {
     void* func = NULL;
-    if (g_singletonHandle == NULL) {
+#ifndef _WIN32
+    if (&dlsym == NULL) {
+        return NULL;
+    }
+#endif
+    if (g_singletonHandle == NULL && g_singletonHandleSsl == NULL) {
+        EnsureLoaded();
+    }
+    if (g_singletonHandle == NULL && g_singletonHandleSsl == NULL) {
         return NULL;
     }
 #ifdef _WIN32
-    func = GetProcAddress(g_singletonHandle, name);
+    if (g_singletonHandle != NULL) {
+        func = GetProcAddress(g_singletonHandle, name);
+    }
     if (func == NULL && g_singletonHandleSsl != NULL) {
         func = GetProcAddress(g_singletonHandleSsl, name);
     }
@@ -65,7 +209,12 @@ static void* FindFunction(const char* name)
         return NULL;
     }
 #else
-    func = dlsym(g_singletonHandle, name);
+    if (g_singletonHandle != NULL) {
+        func = dlsym(g_singletonHandle, name);
+    }
+    if (func == NULL && g_singletonHandleSsl != NULL) {
+        func = dlsym(g_singletonHandleSsl, name);
+    }
     if (func == NULL) {
         return NULL;
     }
@@ -75,11 +224,13 @@ static void* FindFunction(const char* name)
 
 __attribute__((constructor)) void Singleton(void)
 {
+#ifndef CANGJIE_OPENSSL_RESOLVE_AUTO
 #ifdef _WIN32
     g_singletonHandle = LoadLibraryA(OPENSSLPATH);
     g_singletonHandleSsl = LoadLibraryA(OPENSSLPATHSSL);
 #else
-    g_singletonHandle = dlopen(OPENSSLPATH, RTLD_LAZY | RTLD_GLOBAL);
+    EnsureLoaded();
+#endif
 #endif
 }
 
@@ -93,8 +244,11 @@ __attribute__((destructor)) void CloseSymbolTable(void)
         (void)FreeLibrary(g_singletonHandleSsl);
     }
 #else
-    if (g_singletonHandle != NULL) {
+    if (&dlclose != NULL && g_singletonHandle != NULL) {
         (void)dlclose(g_singletonHandle);
+    }
+    if (&dlclose != NULL && g_singletonHandleSsl != NULL && g_singletonHandleSsl != g_singletonHandle) {
+        (void)dlclose(g_singletonHandleSsl);
     }
 #endif
 }
@@ -108,12 +262,26 @@ __attribute__((destructor)) void CloseSymbolTable(void)
         return errCode;                                                                                                \
     }
 
+#if defined(CANGJIE_OPENSSL_RESOLVE_AUTO)
+#define FINDFUNCTIONI(dynMsg, index, name, errCode)                                                                    \
+    static SSLFunc##index func##index = NULL;                                                                          \
+    if (func##index == NULL) {                                                                                         \
+        if (CANGJIE_OPENSSL_AUTO_WEAK_AVAILABLE) {                                                                     \
+            func##index = (SSLFunc##index)(name);                                                                      \
+        }                                                                                                              \
+        if (func##index == NULL) {                                                                                     \
+            func##index = (SSLFunc##index)(FindFunction(#name));                                                       \
+        }                                                                                                              \
+    }                                                                                                                  \
+    CHECKFUNCTION(dynMsg, index, #name, errCode)
+#else
 #define FINDFUNCTIONI(dynMsg, index, name, errCode)                                                                    \
     static SSLFunc##index func##index = NULL;                                                                          \
     if (func##index == NULL) {                                                                                         \
         func##index = (SSLFunc##index)(FindFunction(#name));                                                           \
     }                                                                                                                  \
     CHECKFUNCTION(dynMsg, index, #name, errCode)
+#endif
 
 #define FINDFUNCTION(dynMsg, name, errCode) FINDFUNCTIONI(dynMsg, , name, errCode)
 
@@ -495,7 +663,21 @@ void DynPopFree(void* extlist, char* funcName, DynMsg* dynMsg)
 {
     typedef void (*SSLFunc0)(void*);
     SSLFunc0 func0 = NULL;
+#if defined(CANGJIE_OPENSSL_RESOLVE_AUTO)
+    if (CANGJIE_OPENSSL_AUTO_WEAK_AVAILABLE) {
+        if (strcmp(funcName, "GENERAL_NAME_free") == 0 && GENERAL_NAME_free != NULL) {
+            func0 = (SSLFunc0)GENERAL_NAME_free;
+        } else if (strcmp(funcName, "X509_EXTENSION_free") == 0 && X509_EXTENSION_free != NULL) {
+            func0 = (SSLFunc0)X509_EXTENSION_free;
+        }
+    }
+    if (func0 == NULL) {
+        func0 = (SSLFunc0)(FindFunction(funcName));
+        CHECKFUNCTION(dynMsg, 0, funcName,)
+    }
+#else
     func0 = (SSLFunc0)(FindFunction(funcName));
     CHECKFUNCTION(dynMsg, 0, funcName,)
+#endif
     DYN_OPENSSL_sk_pop_free(extlist, func0, dynMsg);
 }
