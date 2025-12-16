@@ -2307,16 +2307,6 @@ public init(identifiers: Array<String>, comments!: Array<Comment> = [])
 
 - Exception - 当数组为空或包含空字符串时抛出异常，异常中包含报错提示信息。
 
-### func getIdentifierPos()
-
-```cangjie
-public func getIdentifierPos(): Array<CodePositionRange> 
-```
-
-功能：获取 feature 名称中的标识符位置。
-
-类型： Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)>
-
 ### func getDotPoses()
 
 ```cangjie
@@ -2326,6 +2316,16 @@ public func getDotPoses(): Array<CodePositionRange>
 功能：获取 feature 名称中的 `.` 的位置。
 
 类型：Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)>
+
+### func getIdentifierPos()
+
+```cangjie
+public func getIdentifierPos(): Array<CodePositionRange> 
+```
+
+功能：获取 feature 名称中的标识符位置。
+
+类型： Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)>
 
 ## class FeaturesDirective
 
@@ -2361,16 +2361,6 @@ public prop featuresSet: FeaturesSet
 
 类型：[FeaturesSet](#class-featuresset)
 
-### func getFeaturesKeywordPos()
-
-```cangjie
-public func getFeaturesKeywordPos(): CodePositionRange    
-```
-
-功能：获取声明中的关键字 `features` 的位置信息。
-
-类型：[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)
-
 ### init(Array\<Annotation>, FeaturesSet, Array\<Comment>)
 
 ```cangjie
@@ -2388,6 +2378,16 @@ public init(annotations: Array<Annotation>, set: FeaturesSet, comments!: Array<C
 异常：
 
 - Exception - 当 featureId 无法构造时抛出异常。
+
+### func getFeaturesKeywordPos()
+
+```cangjie
+public func getFeaturesKeywordPos(): CodePositionRange    
+```
+
+功能：获取声明中的关键字 `features` 的位置信息。
+
+类型：[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)
 
 ## class FeaturesSet
 
@@ -2424,7 +2424,7 @@ public init(features: Array<FeatureId>, comments!: Array<Comment> = [])
 参数：
 
 - features: Array\<[FeatureId](#class-featuresid)> - 一组定义在 features set 中的 feature id。
-- comments!: Array\<Comment> - 附加的注释列表，默认为空数组。
+- comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 ### func getLCurlPos()
 
@@ -6745,7 +6745,7 @@ public prop ftrDirective: Option<FeaturesDirective>
 
 功能：在源码文件节点中找到 [FeaturesDirective](#class-featuresdirective) 节点。
 
-类型： Option<[FeaturesDirective](#class-featuresdirective)>
+类型： Option\<[FeaturesDirective](#class-featuresdirective)>
 
 ### prop importLists
 
