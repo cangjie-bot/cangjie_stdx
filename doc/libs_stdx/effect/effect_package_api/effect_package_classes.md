@@ -32,7 +32,7 @@ public open func defaultImpl(): Res
 
 示例：
 以下程序连续使用了多个 effect handler 操作，以展示：每调用一次 `deeper` 函数，所影响（增加）的调用层数。
-默认情况下，一个 default handler 由 `GetDepth.defaultImpl` 提供，它规定在没有真正显性 handler 处理程序的情况下，调用层数为 0。
+`GetDepth` 的默认 handler 由 `GetDepth.defaultImpl` 提供，定义了在没有显式 handler 的情况下，调用层数为 0。
 而 `deeper` 函数使用的每个 handler 程序都会重新执行 `GetDepth` 函数，并将计算的调用层数增加 1，即比该调用 `deeper` 之前更深一层。
 
 
