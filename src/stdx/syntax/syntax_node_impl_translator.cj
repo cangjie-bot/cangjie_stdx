@@ -3677,7 +3677,7 @@ class SyntaxNodeImplTranslator {
             case SyntaxNodeKind.Int32Token => AtomicTypeKind.Int32Type
             case SyntaxNodeKind.Int64Token => AtomicTypeKind.Int64Type
             case SyntaxNodeKind.Int8Token => AtomicTypeKind.Int8Type
-            case SyntaxNodeKind.IntNativeToken => AtomicTypeKind.IntnativeType
+            case SyntaxNodeKind.IntNativeToken => AtomicTypeKind.IntNativeType
             case SyntaxNodeKind.NothingToken => AtomicTypeKind.NothingType
             case SyntaxNodeKind.RuneToken => AtomicTypeKind.RuneType
             case SyntaxNodeKind.UInt16Token => AtomicTypeKind.UInt16Type

@@ -2607,7 +2607,7 @@ class SyntaxNodeImplCreator {
             case AtomicTypeKind.Int16Type => SyntaxNodeKind.Int16Token
             case AtomicTypeKind.Int32Type => SyntaxNodeKind.Int32Token
             case AtomicTypeKind.Int64Type => SyntaxNodeKind.Int64Token
-            case AtomicTypeKind.IntnativeType => SyntaxNodeKind.IntNativeToken
+            case AtomicTypeKind.IntNativeType => SyntaxNodeKind.IntNativeToken
             case AtomicTypeKind.UInt8Type => SyntaxNodeKind.UInt8Token
             case AtomicTypeKind.UInt16Type => SyntaxNodeKind.UInt16Token
             case AtomicTypeKind.UInt32Type => SyntaxNodeKind.UInt32Token
