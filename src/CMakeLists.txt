@@ -11,11 +11,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../build/libs/")
 add_subdirectory(stdx)
 if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
     include(MakeCJNATIVEStdSharedLib)
-    if(TRIPLE STREQUAL "arm-linux-ohos")
-        include(AddCJNATIVELibraryArm32)
-    else()
-        include(AddCJNATIVELibrary)
-    endif()
+    include(AddCJNATIVELibrary)
 endif()
 
 execute_process(
