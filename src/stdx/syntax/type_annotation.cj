@@ -473,16 +473,16 @@ public enum AtomicTypeKind {
     | Int32Type
     | Int64Type
     | Int8Type
-    | IntnativeType
+    | IntNativeType
     | NothingType
     | RuneType
+    | ThisType
     | UInt16Type
     | UInt32Type
     | UInt64Type
     | UInt8Type
     | UIntNativeType
     | UnitType
-    | ThisType
     | ...
 }
 

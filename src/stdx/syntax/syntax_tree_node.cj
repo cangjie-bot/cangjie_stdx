@@ -24,18 +24,18 @@ extend Token {
  */
 sealed abstract class SyntaxTreeNode <: ToString & ToTokens & Hashable & Equatable<SyntaxTreeNode> {
     /**
-     * @brief The parent node of this node.
-     *
-     * This optional field may contain a reference to the parent node in the syntax tree.
-     */
-    public let parentNode: ?SyntaxTreeNode
-
-    /**
      * @brief The position of this node
      *
      * CodePosition range covering the start and end positions of the node in source code
      */
     public let nodePos: CodePositionRange
+
+    /**
+     * @brief The parent node of this node.
+     *
+     * This optional field may contain a reference to the parent node in the syntax tree.
+     */
+    public let parentNode: Option<SyntaxTreeNode>
 
     let nodeImpl: SyntaxNodeImpl
 
@@ -776,9 +776,9 @@ public class Body <: SyntaxTreeNode {
  * @brief Enumeration representing different comment kinds.
  */
 public enum CommentKind {
-    | Line
     | Block
     | Document
+    | Line
     | ...
 }
 
