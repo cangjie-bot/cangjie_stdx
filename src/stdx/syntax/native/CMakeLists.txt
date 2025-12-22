@@ -61,7 +61,7 @@ add_custom_command(
 
 add_custom_target(FLATC_OUTPUTS ALL DEPENDS ${FLATC_CJ_OUTPUT} ${FLATC_CPP_OUTPUT})
 
-# build syntax ffi lib shared
+# build syntax ffi lib using object library for better compatibility
 file(GLOB synatx_ffi_src
     AstApi.cpp
     NodeWriter.cpp
@@ -70,8 +70,25 @@ file(GLOB synatx_ffi_src
     ParserSyntax.cpp
     ParserSyntaxImpl.cpp)
 set(libname stdx.syntaxFFI)
-add_library(${libname} SHARED ${synatx_ffi_src})
-set_target_properties(${libname} PROPERTIES COMPILE_FLAGS "-fPIC")
+
+# Create object library (compile only, no linking)
+add_library(${libname}-objs OBJECT ${synatx_ffi_src})
+set_target_properties(${libname}-objs PROPERTIES COMPILE_FLAGS "-fPIC")
+add_dependencies(${libname}-objs FLATC_OUTPUTS)
+
+# Build static library using C++ linker and link against C++ standard library
+add_library(${libname} STATIC $<TARGET_OBJECTS:${libname}-objs>)
+set_target_properties(${libname} PROPERTIES LINKER_LANGUAGE CXX)
+# Link against C++ standard library
+if(NOT WIN32)
+    if(DARWIN)
+        # Use libc++ on macOS and iOS
+        target_link_libraries(${libname} PUBLIC c++)
+    else()
+        # Use libstdc++ on Linux and Android
+        target_link_libraries(${libname} PUBLIC stdc++)
+    endif()
+endif()
 add_dependencies(${libname} FLATC_OUTPUTS)
 
 set(CANGJIE_INC_DIR)
@@ -98,24 +115,24 @@ else()
     message(FATAL_ERROR "NOT FOUND CJC")
 endif()
 
-target_compile_options(${libname} PRIVATE ${CMAKE_C_COVERAGE_FLAGS})
-target_include_directories(${libname} PRIVATE ${CANGJIE_INC_DIR} ${CMAKE_BINARY_DIR}/include)
+target_compile_options(${libname}-objs PRIVATE ${CMAKE_C_COVERAGE_FLAGS})
+target_include_directories(${libname}-objs PRIVATE ${CANGJIE_INC_DIR} ${CMAKE_BINARY_DIR}/include)
 if(CANGJIE_BUILD_STDLIB_WITH_COVERAGE)
-    target_compile_options(${libname} PUBLIC "-fno-exceptions")
-    target_compile_definitions(${libname} PRIVATE CANGJIE_ENABLE_GCOV)
+    target_compile_options(${libname}-objs PUBLIC "-fno-exceptions")
+    target_compile_definitions(${libname}-objs PRIVATE CANGJIE_ENABLE_GCOV)
 endif()
 
 if(DARWIN)
     if (IOS)
         string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND} output_cj_lib_dir)
         set(AST_LIB_DIR $ENV{CANGJIE_HOME}/runtime/lib/${output_cj_lib_dir})
-        target_link_libraries(${libname} PUBLIC cangjie-link-ast)
         add_library(cangjie-link-ast SHARED IMPORTED)
         set_target_properties(cangjie-link-ast PROPERTIES IMPORTED_LOCATION ${AST_LIB_DIR}/libcangjie-std-ast.dylib)
+        target_link_libraries(${libname} PUBLIC cangjie-link-ast)
     else()
-        target_link_libraries(${libname} PUBLIC cangjie-lsp)
         add_library(cangjie-lsp SHARED IMPORTED)
         set_target_properties(cangjie-lsp PROPERTIES IMPORTED_LOCATION ${LSP_LIB_DIR}/libcangjie-lsp.dylib)
+        target_link_libraries(${libname} PUBLIC cangjie-lsp)
     endif()
 else()
     if (MINGW)
@@ -125,6 +142,5 @@ else()
     endif()
 endif()
 
-# install for dynamic and static lib
+# install for static lib
 install_cangjie_library_ffi(${libname})
-install_cangjie_library_ffi_s(${libname})

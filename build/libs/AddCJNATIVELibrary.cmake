@@ -976,6 +976,10 @@ add_cangjie_library(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
 
+# Define syntaxFFI_flags with C++ standard library link flag
+# Use libc++ on macOS and libstdc++ on other platforms
+set(syntaxFFI_flags $<$<STREQUAL:${CMAKE_SYSTEM_NAME},Darwin>:-lc++> $<$<NOT:$<STREQUAL:${CMAKE_SYSTEM_NAME},Darwin>>:-lstdc++>)
+
 make_cangjie_lib(
     syntax IS_SHARED
     DEPENDS
@@ -989,8 +993,11 @@ make_cangjie_lib(
     )
 
 add_library(stdx.syntax STATIC ${output_cj_object_dir}/stdx/syntax.o)
-target_link_libraries(stdx.syntax stdx.syntaxFFI)
-set_target_properties(stdx.syntax PROPERTIES LINKER_LANGUAGE C)
+# Use C++ linker to properly handle C++ symbols from syntaxFFI
+set_target_properties(stdx.syntax PROPERTIES LINKER_LANGUAGE CXX)
+# Link against syntaxFFI and C++ standard library with consistent signature
+# Always link against stdc++ regardless of platform to ensure C++ symbols are properly resolved
+target_link_libraries(stdx.syntax stdx.syntaxFFI stdc++)
 install(TARGETS stdx.syntax DESTINATION ${output_triple_name}_cjnative/static/stdx)
 
 add_cangjie_library(
