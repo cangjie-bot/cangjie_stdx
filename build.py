@@ -36,21 +36,6 @@ IS_MACOS = platform.system() == "Darwin"
 IS_ARM = platform.uname().processor in ["aarch64", "arm", "arm64"]
 # Wait for the version of aarch64 libcore to be ready.
 MAKE_JOBS = multiprocessing.cpu_count() + 2
-TARGET_DICTIONARY = {
-    "native": None,
-    "ohos-aarch64": "aarch64-linux-ohos",
-    "ohos-arm": "arm-linux-ohos",
-    "ohos-x86_64": "x86_64-linux-ohos",
-    "windows-x86_64": "x86_64-w64-mingw32",
-    "ios-simulator-aarch64": "arm64-apple-ios11-simulator",
-    "ios-aarch64": "arm64-apple-ios11",
-    "android-aarch64": "aarch64-linux-android",
-    "android31-aarch64": "aarch64-linux-android31",
-    "android26-aarch64": "aarch64-linux-android26",
-    "android-x86_64": "x86_64-linux-android",
-    "android31-x86_64": "x86_64-linux-android31",
-    "android26-x86_64": "x86_64-linux-android26"
-}
 
 def resolve_path(path):
     if os.path.isabs(path):
@@ -82,8 +67,6 @@ def generate_cmake_defs(args):
     if args.target:
         if args.target == "aarch64-linux-ohos":
             toolchain_file = "ohos_aarch64_clang_toolchain.cmake"
-        elif args.target == "arm-linux-ohos":
-            toolchain_file = "ohos_arm_clang_toolchain.cmake"
         elif args.target == "x86_64-linux-ohos":
             toolchain_file = "ohos_x86_64_clang_toolchain.cmake"
         elif args.target == "x86_64-w64-mingw32":
@@ -155,7 +138,7 @@ def build(args):
     """build cangjie compiler"""
     LOG.info("begin build...")
 
-    if args.target == "aarch64-linux-ohos" or args.target == "x86_64-linux-ohos" or args.target == "arm-linux-ohos":
+    if args.target == "aarch64-linux-ohos" or args.target == "x86_64-linux-ohos":
         # Frontend supports cross compilation in a general way by asking path to required tools
         # and libraries. However, Runtime supports cross compilation in a speific way, which asks
         # for the root path of OHOS toolchain. Since we asked for a path to tools, the root path of
