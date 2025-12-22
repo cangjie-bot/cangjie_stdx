@@ -185,7 +185,7 @@ public enum AtomicTypeKind {
     | Int32Type
     | Int64Type
     | Int8Type
-    | IntnativeType
+    | IntNativeType
     | NothingType
     | RuneType
     | ThisType
@@ -931,7 +931,7 @@ public enum ModifierKind {
     | Mut
     | Open
     | Operator
-    | OverRide
+    | Override
     | Private
     | Protected
     | Public
@@ -994,10 +994,10 @@ Operator
 
 功能：表示 `operator` 类型的修饰符。
 
-### OverRide
+### Override
 
 ```cangjie
-OverRide
+Override
 ```
 
 功能：表示 `override` 类型的修饰符。
@@ -1058,12 +1058,45 @@ Unsafe
 
 功能：表示 `unsafe` 类型的修饰符。
 
+### operator func !=(ModifierKind)
+
+```cangjie
+operator func !=(rhs: ModifierKind): Bool
+```
+
+功能：判断当前修饰符类型是否与传入的修饰符类型不相等。
+
+参数：
+
+- rhs: ModifierKind - 要比较的修饰符类型。
+
+返回值：
+
+- Bool - 如果两个修饰符类型不相等，则返回 true；否则返回 false。
+
+### operator func ==(ModifierKind)
+
+```cangjie
+operator func ==(rhs: ModifierKind): Bool
+```
+
+功能：判断当前修饰符类型是否与传入的修饰符类型相等。
+
+参数：
+
+- rhs: ModifierKind - 要比较的修饰符类型。
+
+返回值：
+
+- Bool - 如果两个修饰符类型相等，则返回 true；否则返回 false。
+
 ## enum PostActionMode
 
 ```cangjie
 public enum PostActionMode {
     | Continue
     | Stop
+    | ...
 }
 ```
 
@@ -1092,6 +1125,7 @@ public enum PreActionMode {
     | Continue
     | Skip
     | Stop
+    | ...
 }
 ```
 
@@ -1202,6 +1236,7 @@ RangeOp
 public enum StrLiteralPart {
     | LitConstPart(LitConstExpr)
     | StrInterpolation(StrInterpolationContent)
+    | ...
 }
 ```
 

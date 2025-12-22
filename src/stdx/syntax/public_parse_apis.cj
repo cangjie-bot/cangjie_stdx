@@ -48,11 +48,11 @@ func skipRedundancy(text: String) {
  *
  * @throws Exception if there is an issue parsing the text.
  */
-public func parseText(text: String): ParsingResult<SyntaxTreeNode> {
-    let (res, diags) = Parser.parseText(text)
+public func parseText(programText: String): ParsingResult<SyntaxTreeNode> {
+    let (res, diags) = Parser.parseText(programText)
     // If the content of the parsed node is less than that of the input content, 
     // there are multiple input nodes.
-    if (let Some(result) <- res && skipRedundancy(result.toString()).size < skipRedundancy(text).size) {
+    if (let Some(result) <- res && skipRedundancy(result.toString()).size < skipRedundancy(programText).size) {
         throw Exception("parseText function not support parse more than one node.")
     }
     ParsingResult<SyntaxTreeNode>(res, diags)

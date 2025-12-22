@@ -990,11 +990,11 @@ public class ExtendDecl <: Decl {
  */
 public enum FuncKind {
     | Constructor // Functions that are constructors, responsible for initializing objects.
+    | Finalizer // Functions that are finalizers, responsible for performing cleanup operations before an object is garbage collected.
     | Foreign // Functions that are foreign, typically defined in another language.
     | Normal // Standard functions that perform a specific task.
     | Operator // Functions that overload operators for custom behavior.
     | PrimaryConstructor // Functions that are primary constructors, often used in class definitions.
-    | Finalizer // Functions that are finalizers, responsible for performing cleanup operations before an object is garbage collected.
     | ...
 }
 
