@@ -976,6 +976,12 @@ add_cangjie_library(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/actors/macros
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
 
+if(DARWIN)
+    set(syntaxFFI_flags -lc++)
+else()
+    set(syntaxFFI_flags -lstdc++)
+endif()
+
 make_cangjie_lib(
     syntax IS_SHARED
     DEPENDS
