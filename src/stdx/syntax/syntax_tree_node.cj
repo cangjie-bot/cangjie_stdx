@@ -776,9 +776,9 @@ public class Body <: SyntaxTreeNode {
  * @brief Enumeration representing different comment kinds.
  */
 public enum CommentKind {
-    | Line
     | Block
     | Document
+    | Line
     | ...
 }
 

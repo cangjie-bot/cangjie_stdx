@@ -10,8 +10,8 @@ package stdx.syntax
 
 // Diagnostic
 public enum DiagnosticInfo {
-    | Warning(String, String)
     | Error(String, String)
+    | Warning(String, String)
     | ...
 }
 
@@ -27,8 +27,8 @@ public class Diagnostic {
 
 // Parse result
 public class ParsingResult<T> where T <: SyntaxTreeNode {
-    public let node: Option<T>
     public let diags: Array<Diagnostic>
+    public let node: Option<T>
 
     internal init(node: Option<T>, diags: Array<Diagnostic>) {
         this.node = node

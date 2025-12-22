@@ -1973,10 +1973,10 @@ public class LitConstRuneExpr <: LitConstExpr {
  * literal value.
  */
 public enum LitConstStrKind {
-    | StringLiteral
     | JStringLiteral
     | MultiLineString
     | MultiLineRawString
+    | StringLiteral
     | ...
 }
 
