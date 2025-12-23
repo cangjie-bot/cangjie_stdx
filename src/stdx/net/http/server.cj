@@ -629,8 +629,8 @@ public class Server {
                             psRef.store(ps)
                             ps.serve()
                         } catch (e: Exception) {
-                            httpLogWarn(logger, "[Server#serve] failed to serve a client connection, ${e}")
                             conn.close()
+                            httpLogWarn(logger, "[Server#serve] failed to serve a client connection, ${e}")
                         }
                         httpLogDebug(logger, "[Server#serve] serve client connection end")
                     },
@@ -651,9 +651,9 @@ public class Server {
                     }
                 )
             } catch (e: Exception) {
+                conn.close()
                 httpLogWarn(logger,
                     "[conn#${_connId}] [Server#serve] failed to submit task servicing a client connection, ${e}")
-                conn.close()
             }
         }
     }

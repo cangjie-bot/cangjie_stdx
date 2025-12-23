@@ -136,8 +136,8 @@ class HttpServer1 <: ProtocolService {
             quitAndClose()
             return None
         } catch (e: Exception) {
-            httpLogWarn(logger, "[HttpServer1#consumeRequestAndWriteResponse] failed: ${e}")
             quitAndClose()
+            httpLogWarn(logger, "[HttpServer1#consumeRequestAndWriteResponse] failed: ${e}")
             return None
         }
     }
@@ -295,9 +295,13 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
             request.requestLine = line
             return request
         } catch (e: SocketException | ConnectionException | TlsException) {
+            // Failed to read request, close the connection.
+            close()
             // Unable to send 500 response, log only.
             logExceptionAndCancelTimer(e, readTimer, readHeaderTimer)
         } catch (e: Exception) {
+            // Failed to read request, close the connection.
+            close()
             // Log exception and send 500 response.
             logExceptionAndCancelTimer(e, readTimer, readHeaderTimer)
 
@@ -310,15 +314,16 @@ class HttpEngineConn1 <: HttpEngineConn & BodyProviderConn {
             // wait for client to finish sending data in flight, and receive response
             sleep(Duration.second)
         }
-        // Failed to read request, close the connection.
-        close()
         return None
     }
 
     func logExceptionAndCancelTimer(e: Exception, readTimer: HttpTimer, readHeaderTimer: HttpTimer): Unit {
-        httpLogWarn(logger, "[HttpEngineConn1#readRequest] exception: ${e}")
-        readTimer.cancel()
-        readHeaderTimer.cancel()
+        try {
+            httpLogWarn(logger, "[HttpEngineConn1#readRequest] exception: ${e}")
+        } finally {
+            readTimer.cancel()
+            readHeaderTimer.cancel()
+        }
     }
 
     /**
