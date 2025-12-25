@@ -59,6 +59,24 @@ public func toString(): String
 
 - String - 当前 tar 文件头部格式枚举实例的 字符串表示。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let format = TarEntryFormat.Pax
+    println("Tar entry format: ${format}")
+}
+```
+
+运行结果：
+
+```text
+Tar entry format: TarEntryFormat.Pax
+```
+
 ### operator func !=(TarEntryFormat): Bool
 
 ```cangjie
@@ -74,6 +92,30 @@ operator func !=(rhs: TarEntryFormat): Bool
 返回值：
 
 - Bool - 如果两个 tar 文件头部格式枚举实例不相等，则返回 true；否则返回 false。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let format1 = TarEntryFormat.Pax
+    let format2 = TarEntryFormat.Gnu
+    
+    if (format1 != format2) {
+        println("${format1} is not equal to ${format2}")
+    } else {
+        println("${format1} is equal to ${format2}")
+    }
+}
+```
+
+运行结果：
+
+```text
+TarEntryFormat.Pax is not equal to TarEntryFormat.Gnu
+```
 ### operator func ==(TarEntryFormat): Bool
 
 ```cangjie
@@ -89,6 +131,38 @@ operator func ==(rhs: TarEntryFormat): Bool
 返回值：
 
 - Bool - 如果两个 tar 文件头部格式枚举实例相等，则返回 true；否则返回 false。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let format1 = TarEntryFormat.Pax
+    let format2 = TarEntryFormat.Pax
+    let format3 = TarEntryFormat.Gnu
+    
+    if (format1 == format2) {
+        println("${format1} is equal to ${format2}")
+    } else {
+        println("${format1} is not equal to ${format2}")
+    }
+    
+    if (format1 == format3) {
+        println("${format1} is equal to ${format3}")
+    } else {
+        println("${format1} is not equal to ${format3}")
+    }
+}
+```
+
+运行结果：
+
+```text
+TarEntryFormat.Pax is equal to TarEntryFormat.Pax
+TarEntryFormat.Pax is not equal to TarEntryFormat.Gnu
+```
 
 ## enum TarEntryType
 
@@ -282,6 +356,24 @@ public prop flag: UInt8
 
 类型：UInt8
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let fileType = TarEntryType.RegularFile
+    println("Tar entry type flag: ${fileType.flag}")
+}
+```
+
+运行结果：
+
+```text
+Tar entry type flag: 48
+```
+
 ### static func fromFlag(UInt8)
 
 ```cangjie
@@ -298,6 +390,28 @@ public static func fromFlag(flag: UInt8): TarEntryType
 
 - TarEntryType - 对应的条目类型枚举实例。如果无法识别，将返回 `Unknown(flag)`。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let fileType = TarEntryType.fromFlag(48)  // 48 is the flag for RegularFile
+    println("Tar entry type from flag 48: ${fileType}")
+    
+    let unknownType = TarEntryType.fromFlag(99)  // 99 is an unknown flag
+    println("Tar entry type from unknown flag 99: ${unknownType}")
+}
+```
+
+运行结果：
+
+```text
+Tar entry type from flag 48: TarEntryType.RegularFile
+Tar entry type from unknown flag 99: TarEntryType.Unknown(99)
+```
+
 ### func toString(): String
 
 ```cangjie
@@ -309,6 +423,28 @@ public func toString(): String
 返回值：
 
 - String - 当前条目类型枚举实例的字符串表示。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let fileType = TarEntryType.RegularFile
+    println("Tar entry type: ${fileType.toString()}")
+    
+    let dirType = TarEntryType.Directory
+    println("Tar entry type: ${dirType.toString()}")
+}
+```
+
+运行结果：
+
+```text
+Tar entry type: TarEntryType.RegularFile
+Tar entry type: TarEntryType.Directory
+```
 
 ### operator func !=(TarEntryType): Bool
 
@@ -326,6 +462,30 @@ operator func !=(rhs: TarEntryType): Bool
 
 - Bool - 如果两个条目类型枚举实例不相等，则返回 true；否则返回 false。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let fileType = TarEntryType.RegularFile
+    let dirType = TarEntryType.Directory
+    
+    if (fileType != dirType) {
+        println("${fileType} is not equal to ${dirType}")
+    } else {
+        println("${fileType} is equal to ${dirType}")
+    }
+}
+```
+
+运行结果：
+
+```text
+TarEntryType.RegularFile is not equal to TarEntryType.Directory
+```
+
 ### operator func ==(TarEntryType): Bool
 
 ```cangjie
@@ -341,3 +501,35 @@ operator func ==(rhs: TarEntryType): Bool
 返回值：
 
 - Bool - 如果两个条目类型枚举实例相等，则返回 true；否则返回 false。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let fileType1 = TarEntryType.RegularFile
+    let fileType2 = TarEntryType.RegularFile
+    let dirType = TarEntryType.Directory
+    
+    if (fileType1 == fileType2) {
+        println("${fileType1} is equal to ${fileType2}")
+    } else {
+        println("${fileType1} is not equal to ${fileType2}")
+    }
+    
+    if (fileType1 == dirType) {
+        println("${fileType1} is equal to ${dirType}")
+    } else {
+        println("${fileType1} is not equal to ${dirType}")
+    }
+}
+```
+
+运行结果：
+
+```text
+TarEntryType.RegularFile is equal to TarEntryType.RegularFile
+TarEntryType.RegularFile is not equal to TarEntryType.Directory
+```

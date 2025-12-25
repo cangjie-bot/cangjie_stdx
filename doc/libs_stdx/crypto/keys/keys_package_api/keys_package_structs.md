@@ -24,6 +24,21 @@ public init(hash: Digest, mgfHash: Digest, label!: String = "")
 - mgfHash: Digest - 摘要方法，用于设置 MGF1 函数中的摘要方法。
 - label!: String - label 是可选参数，默认为空字符串，可以通过设置 label 来区分不同的加密操作。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.crypto.keys.*
+import stdx.crypto.digest.*
+
+main() {
+    let sha256 = SHA256()
+    let sha512 = SHA512()
+    let oaepOption = OAEPOption(sha256, sha512, label: "test")
+    return 0
+}
+```
+
 ## struct PSSOption
 
 ```cangjie
@@ -49,3 +64,15 @@ public init(saltLen: Int32)
 异常：
 
 - [CryptoException](../../common/crypto_common_package_api/crypto_common_package_exceptions.md#class-cryptoexception) - 随机盐长度小于 0，抛出异常。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.crypto.keys.*
+
+main() {
+    let pssOption = PSSOption(20)
+    return 0
+}
+```
