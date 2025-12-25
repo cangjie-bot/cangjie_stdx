@@ -46,7 +46,7 @@ func archive(srcFileName: Path, tarFileName: Path): Int64 {
     try (outFile: File = File(tarFileName, Write)) {
         var tar = TarWriter(outFile)
 
-        tar.write(srcFileName, srcFileName.fileName)
+        tar.write(path: srcFileName.toString(), entryName: srcFileName.fileName)
         tar.finish()
 
         return outFile.length

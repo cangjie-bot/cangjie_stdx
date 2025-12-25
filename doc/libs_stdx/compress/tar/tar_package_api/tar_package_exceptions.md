@@ -25,3 +25,21 @@ public init(message: String)
 参数：
 
 - message: String - 异常提示信息。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.compress.tar.*
+
+main(): Unit {
+    let exception = TarException("This is a test exception")
+    println("TarException message: ${exception.message}")
+}
+```
+
+运行结果：
+
+```text
+TarException message: This is a test exception
+```
