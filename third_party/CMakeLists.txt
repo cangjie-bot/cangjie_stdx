@@ -27,5 +27,6 @@ endif()
 # Handle third-party dependencies
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
-
-include(Flatbuffer)
+if(NOT CANGJIE_CJPM_BUILD_TYPE)
+    include(Flatbuffer)
+endif()
