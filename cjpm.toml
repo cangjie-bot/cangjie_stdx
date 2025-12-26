@@ -1,0 +1,24 @@
+[package]
+  cjc-version = "0.0.1"
+  name = "stdx"
+  organization = ""
+  description = "nothing here"
+  version = "1.0.0"
+  target-dir = ""
+  script-dir = ""
+  src-dir = "src/stdx"
+  output-type = "static"
+  compile-option = "-Woff=all"
+  link-option = ""
+  package-configuration = {}
+
+[target.x86_64-unknown-linux-gnu]
+  link-option = "-L target/release/stdx -L target/linux_ohos_aarch64_cjnative/static/stdx -L target/linux_x86_64_cjnative/static/stdx -lstdx.encoding.jsonFFI -lstdx.encoding.json.streamFFI -lstdx.compress.zlibFFI -lstdx.compress.tarFFI -rpath=/root/code/myfork/stdx_cjpm/cangjie_stdx/build_temp/build/lib -l:libcangjie-dynamicLoader-opensslFFI.so -lstdx.net.tlsFFI -lstdx.crypto.keysFFI -lstdx.crypto.x509FFI -ldl"
+
+[target.x86_64-w64-mingw32]
+  link-option = "-L ${LOCALAPPDATA}/stdx/target/release/stdx -l:libstdx.encoding.jsonFFI.a -l:libstdx.encoding.json.streamFFI.a -l:libstdx.compress.zlibFFI.a -l:libstdx.compress.tarFFI.a -l:libcangjie-dynamicLoader-opensslFFI.dll -l:libstdx.net.tlsFFI.dll -l:libstdx.crypto.keysFFI.dll -l:libstdx.crypto.x509FFI.dll"
+
+[target.x86_64-linux-ohos]
+  compile-option = "-B \"${DEVECO_CANGJIE_HOME}/build-tools/third_party/llvm/bin\" -B \"${DEVECO_OH_NATIVE_HOME}/sysroot/usr/lib/x86_64-linux-ohos\" -L \"${DEVECO_OH_NATIVE_HOME}/sysroot/usr/lib/x86_64-linux-ohos\" -L \"${DEVECO_OH_NATIVE_HOME}/llvm/lib/clang/15.0.4/lib/x86_64-linux-ohos\" -L \"${DEVECO_OH_NATIVE_HOME}/llvm/lib/x86_64-linux-ohos\" --sysroot \"${DEVECO_OH_NATIVE_HOME}/sysroot\""
+[target.x86_64-linux-ohos.bin-dependencies]
+  path-option = ["${X86_64_OHOS_LIBS}", "${X86_64_OHOS_MACRO_LIBS}", "${X86_64_OHOS_KIT_LIBS}"]
