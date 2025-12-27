@@ -34,8 +34,15 @@ if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
 
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_lib_dir)
     set(CJNATIVE_BACKEND "cjnative")
-    install(FILES ${CMAKE_BINARY_DIR}/lib/lib${libname}.a DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
-    
+    if(DEFINED CANGJIE_CJPM_BUILD_SELF)
+        if(CANGJIE_CJPM_BUILD_SELF)
+            install(FILES ${CMAKE_BINARY_DIR}/lib/lib${libname}.a DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+        else()
+            install(FILES ${CMAKE_BINARY_DIR}/lib/lib${libname}.a DESTINATION "stdx")
+        endif()
+    else()
+        install(FILES ${CMAKE_BINARY_DIR}/lib/lib${libname}.a DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+    endif()
     # x509.ffi compile .so
     set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
     add_library(${libname}-shared SHARED $<TARGET_OBJECTS:${libname}-objs>)
