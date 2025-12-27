@@ -32,6 +32,9 @@ function(make_cangjie_lib target_name)
         "${multiValueArgs}"
         ${ARGN})
 
+    if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+        list(FILTER CANGJIE_LIBRARY_DEPENDS EXCLUDE REGEX "^cangjieCJNATIVE")
+    endif()
     string(CONCAT make_lib_task "make_lib_for_" ${target_name})
 
     set(clang_compiler "${CMAKE_C_COMPILER}")

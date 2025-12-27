@@ -226,7 +226,6 @@ CMAKE_OUTPUT_DIR = os.path.join(CJPM_DIR, "target/release")
 LOG_DIR = os.path.join(BUILD_DIR, "logs")
 LOG_FILE = os.path.join(LOG_DIR, "cangjie.log")
 
-
 IS_WINDOWS = get_platform() == "windows"
 IS_MACOS = get_platform() == "macos"
 IS_ARM = platform.uname().processor in ["arm","aarch64","arm64"]
@@ -443,7 +442,7 @@ def run_cmake_and_build(args):
 
 def build(args):
     LOG.info("CJPM_DIR: " + CJPM_DIR)
-
+    LOG.info("args.build_stage: " + str(args.build_stage))
     if args.build_stage.value == "preBuild":
         clean(args)
         cleanLibs()
@@ -475,8 +474,9 @@ def build(args):
         BUILD_TARGET == "aarch64-linux-ohos" or BUILD_TARGET == "x86_64-linux-ohos"
     ):
         if args.build_stage.value == "preBuild":
+            LOG.info("begin build native stdx")
             run_cmake_and_build(args)
-            
+            LOG.info("end build native stdx")
         args.target = BUILD_TARGET
         if IS_WINDOWS:
             if DEVECO_OH_NATIVE_HOME:
@@ -492,13 +492,13 @@ def build(args):
             return 0
         parts = [CJPM_DIR, "target", args.target, "release", "stdx"]
         target_dir = os.path.join(*(p for p in parts if p is not None))
-        if not extract_libstdx(target_dir):
+        if not extract_libstdx(target_dir, args):
             LOG.info("skip to extract libstdx")
             return 0
 
     run_cmake_and_build(args)
 
-def extract_libstdx(directory):
+def extract_libstdx(directory, args):
     """
     Extract libstdx*.a files
     
