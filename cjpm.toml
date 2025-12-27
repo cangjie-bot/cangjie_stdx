@@ -14,7 +14,7 @@
   target-dir = ""
   script-dir = ""
   src-dir = "src/stdx"
-  output-type = "dynamic"
+  output-type = "static"
   compile-option = "-Woff=all"
   link-option = ""
   package-configuration = {}
