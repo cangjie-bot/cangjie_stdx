@@ -209,7 +209,7 @@ ParseRes* CJ_ParseAnnotationArguments(const uint8_t* tokensBytes)
     return result;
 }
 
-void CJ_CheckAddSpace(const uint8_t* tokBytes, bool* spaceFlag)
+void CJ_CheckAddSpaces(const uint8_t* tokBytes, bool* spaceFlag)
 {
     if (tokBytes == nullptr) {
         return;
