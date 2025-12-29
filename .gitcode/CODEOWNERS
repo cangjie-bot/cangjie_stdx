@@ -17,7 +17,7 @@ OAT.xml @xuanjz
 
 /src/stdx/net/ @ovy
 
-/src/stdx/syntax/ @chuckchen521 @mini-tang
+/src/stdx/syntax/ @mini-tang
 
 #stdx docs
 /doc/ @luojianing
@@ -31,3 +31,4 @@ OAT.xml @xuanjz
 /doc/libs_stdx/logger/ @ChaosJohn @luojianing
 
 /doc/libs_stdx/net/ @ovy @luojianing
+/doc/libs_stdx/syntax/ @mini-tang @luojianing
