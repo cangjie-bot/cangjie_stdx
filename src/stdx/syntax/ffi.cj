@@ -16,7 +16,7 @@ import std.collection.ArrayList
  */
 foreign func CJ_ParseAnnotationArguments(tokensBytes: CPointer<UInt8>): CPointer<ParseRes>
 
-foreign func CJ_CheckAddSpace(tokBytes: CPointer<UInt8>, spaceFlag: CPointer<Bool>): Unit
+foreign func CJ_CheckAddSpaces(tokBytes: CPointer<UInt8>, spaceFlag: CPointer<Bool>): Unit
 
 foreign func CJ_CheckIdentifier(str: CString, useContextualKeyWords: Bool): Bool
 
