@@ -824,7 +824,7 @@ class SyntaxNodeImplCreator {
                 unsafe { LibC.free(tokBytes) }
                 throw IllegalMemoryException("malloc failed!")
             }
-            unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
+            unsafe { CJ_CheckAddSpaces(tokBytes, spaceFlag) }
             let attrArray = unsafe { tokensToImplArray(macroAttrs, tokBytes, spaceFlag) }
             ret.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray))
             ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RSquareToken))
@@ -842,7 +842,7 @@ class SyntaxNodeImplCreator {
                     unsafe { LibC.free(tokBytes) }
                     throw IllegalMemoryException("malloc failed!")
                 }
-                unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
+                unsafe { CJ_CheckAddSpaces(tokBytes, spaceFlag) }
                 let attrArray = unsafe { tokensToImplArray(toks, tokBytes, spaceFlag) }
                 ret.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray))
                 ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
@@ -1140,7 +1140,7 @@ class SyntaxNodeImplCreator {
                 unsafe { LibC.free(tokBytes) }
                 throw IllegalMemoryException("malloc failed!")
             }
-            unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
+            unsafe { CJ_CheckAddSpaces(tokBytes, spaceFlag) }
             let attrArray = unsafe { tokensToImplArray(macroAttrs, tokBytes, spaceFlag) }
             ret.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray))
             ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RSquareToken))
@@ -1158,7 +1158,7 @@ class SyntaxNodeImplCreator {
                     unsafe { LibC.free(tokBytes) }
                     throw IllegalMemoryException("malloc failed!")
                 }
-                unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
+                unsafe { CJ_CheckAddSpaces(tokBytes, spaceFlag) }
                 let attrArray = unsafe { tokensToImplArray(toks, tokBytes, spaceFlag) }
                 ret.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray))
                 ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
@@ -2067,7 +2067,7 @@ class SyntaxNodeImplCreator {
             unsafe { LibC.free(tokBytes) }
             throw IllegalMemoryException("malloc failed!")
         }
-        unsafe { CJ_CheckAddSpace(tokBytes, spaceFlag) }
+        unsafe { CJ_CheckAddSpaces(tokBytes, spaceFlag) }
         try {
             for (i in 0..content.size) {
                 parts.add(builder.buildTokenTerminal(content[i].kind, content[i].value))
@@ -2161,7 +2161,7 @@ class SyntaxNodeImplCreator {
                 LibC.free(tokBytes)
                 throw IllegalMemoryException("malloc failed!")
             }
-            CJ_CheckAddSpace(tokBytes, spaceFlag)
+            CJ_CheckAddSpaces(tokBytes, spaceFlag)
             let attrArray = tokensToImplArray(macroAttrs, tokBytes, spaceFlag)
             parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray))
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RSquareToken))
@@ -2175,7 +2175,7 @@ class SyntaxNodeImplCreator {
                     LibC.free(tokBytes)
                     throw IllegalMemoryException("malloc failed!")
                 }
-                CJ_CheckAddSpace(tokBytes, spaceFlag)
+                CJ_CheckAddSpaces(tokBytes, spaceFlag)
                 let attrArray = tokensToImplArray(toks, tokBytes, spaceFlag)
                 parts.add(builder.buildNonTerminal(SyntaxNodeKind.TokenList, attrArray))
                 parts.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))

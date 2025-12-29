@@ -1016,6 +1016,12 @@ add_cangjie_library(
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
 
 if(NOT CANGJIE_CJPM_BUILD_TYPE)
+    if(DARWIN)
+        set(syntaxFFI_flags -lc++)
+    else()
+        set(syntaxFFI_flags -lstdc++)
+    endif()
+
     make_cangjie_lib(
         syntax IS_SHARED
         DEPENDS
