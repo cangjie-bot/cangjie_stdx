@@ -116,7 +116,7 @@ def get_cwd_macos(pid):
         for line in lines:
             if line.startswith("n"):
                 return line[1:]
-    return None
+    return "/tmp/stdx"
 
 
 def get_cwd_windows(pid, debug=False):
@@ -447,12 +447,10 @@ def build(args):
         clean(args)
         cleanLibs()
     
-    DEVECO_OH_NATIVE_HOME = None
+    DEVECO_OH_NATIVE_HOME = os.environ.get("DEVECO_OH_NATIVE_HOME", "")
     if IS_WINDOWS:
-        DEVECO_OH_NATIVE_HOME = os.environ.get("DEVECO_OH_NATIVE_HOME", "")
-        DEVECO_OH_NATIVE_HOME = DEVECO_OH_NATIVE_HOME.replace("\\", "/")
-
         if DEVECO_OH_NATIVE_HOME:
+            DEVECO_OH_NATIVE_HOME = DEVECO_OH_NATIVE_HOME.replace("\\", "/")
             cmake_path = os.path.join(
                 DEVECO_OH_NATIVE_HOME, "build-tools", "cmake", "bin"
             )
@@ -478,10 +476,9 @@ def build(args):
             run_cmake_and_build(args)
             LOG.info("end build native stdx")
         args.target = BUILD_TARGET
-        if IS_WINDOWS:
-            if DEVECO_OH_NATIVE_HOME:
-                args.target_toolchain = DEVECO_OH_NATIVE_HOME + "/llvm/bin"
-                args.target_sysroot = DEVECO_OH_NATIVE_HOME + "/sysroot"
+        if DEVECO_OH_NATIVE_HOME:
+            args.target_toolchain = DEVECO_OH_NATIVE_HOME + "/llvm/bin"
+            args.target_sysroot = DEVECO_OH_NATIVE_HOME + "/sysroot"
         else:
             args.target_toolchain = os.environ.get("OHOS_TOOLCHAIN_PATH", "")
             args.target_sysroot = os.environ.get("OHOS_SYSROOT_PATH", "")
