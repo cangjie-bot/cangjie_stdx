@@ -11,23 +11,32 @@ package stdx.compress.tar
 import std.time.DateTime
 import std.convert.RadixConvertible
 
+private const OCTAL = 8
+private const CHECKSUM_REAL_MAX = FieldLocation.CHECKSUM.length - 2
+
 extend Int32 {
     func encodeChecksumTo(target: Array<UInt8>): Unit {
-        const OCTAL = 8
-        const CHECKSUM_REAL_MAX = FieldLocation.CHECKSUM.length - 2
-
         if (target.size != FieldLocation.CHECKSUM.length) {
             throw TarException("Checksum target array must be of size ${FieldLocation.CHECKSUM.length} can not be ${target.size}.")
         }
 
-        encodeOcatalTo(target[..CHECKSUM_REAL_MAX])
-        target[CHECKSUM_REAL_MAX] = b'\0'
-        target[CHECKSUM_REAL_MAX + 1] = b' '
+        let s = this.toString(radix: OCTAL)
+        if (s.size > CHECKSUM_REAL_MAX) {
+            throw TarException("Value ${this} too long to encode octal in field of size ${CHECKSUM_REAL_MAX}.")
+        }
+        if (s.size == CHECKSUM_REAL_MAX) {
+            target[0] = b'0'
+            target[1..=CHECKSUM_REAL_MAX] = unsafe { s.rawData() }
+            target[CHECKSUM_REAL_MAX + 1] = b' '
+        } else {
+            target[..CHECKSUM_REAL_MAX - s.size].fill(b'0')
+            target[CHECKSUM_REAL_MAX - s.size..CHECKSUM_REAL_MAX] = unsafe { s.rawData() }
+            target[CHECKSUM_REAL_MAX] = b'\0'
+            target[CHECKSUM_REAL_MAX + 1] = b' '
+        }
     }
 
     func encodeOcatalTo(target: Array<UInt8>): Unit {
-        const OCTAL = 8
-
         var s = this.toString(radix: OCTAL)
         if (s.size > target.size) {
             throw TarException("Value ${this} too long to encode octal in field of size ${target.size}.")
@@ -50,8 +59,6 @@ extend Int32 {
 
 extend Int64 {
     func encodeOcatalTo(target: Array<UInt8>): Unit {
-        const OCTAL = 8
-
         var s = this.toString(radix: OCTAL)
         if (s.size > target.size) {
             throw TarException("Value ${this} too long to encode octal in field of size ${target.size}.")
