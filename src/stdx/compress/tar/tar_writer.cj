@@ -40,7 +40,7 @@ public class TarWriter<T> where T <: OutputStream {
     public func write(path: Path, entryName!: String): Unit {
         let entry = match (this.entryFormat) {
             case TarEntryFormat.V7 => V7TarEntry(path)
-            case TarEntryFormat.Ustar => GnuTarEntry(path)
+            case TarEntryFormat.Ustar => UstarTarEntry(path)
             case TarEntryFormat.Pax => PaxTarEntry(path)
             case TarEntryFormat.Gnu => GnuTarEntry(path)
         }
