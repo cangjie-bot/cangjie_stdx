@@ -14,8 +14,13 @@ import std.env.*
 
 @When[os == "Windows"]
 func getPythonCommand(): String {
-    getPythonCommandFromEnv() ?? (getVariable("DEVECO_OH_NATIVE_HOME") + "/llvm/python3/bin/python3.11.exe") ?? throw Exception(
-        "Could not find 'python3' or 'python' in your system's PATH. Please ensure Python is installed and added to your environment variables!")
+    if (let Some(pyCommand) <- getPythonCommandFromEnv()){
+        return pyCommand
+ 	}
+    if(let Some(devecoPyCommand) <- getVariable("DEVECO_OH_NATIVE_HOME")){
+        return devecoPyCommand + "/llvm/python3/bin/python3.11.exe"
+    }
+    throw Exception("Could not find 'python3' or 'python' in your system's PATH. Please ensure Python is installed and added to your environment variables!")
 }
 
 @When[os != "Windows"]
