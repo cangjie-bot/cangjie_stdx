@@ -16,26 +16,28 @@ class Parser {
     private let impl: ParserImpl
     private let filePath: String
 
-    private init(filePath: String) {
-        impl = ParserImpl(filePath)
+    private init(filePath: String, isCjd!: Bool = false) {
+        impl = ParserImpl(filePath, isCjd)
         this.filePath = filePath
     }
 
-    static func parseFile(filePath: String): (?SourceFile, Array<Diagnostic>) {
+    static func parseFile(filePath: String, isCjd: Bool): (?SourceFile, Array<Diagnostic>) {
         let fileInfo = try {
             let path = canonicalize(filePath)
             FileInfo(path)
         } catch (e: Exception) {
             throw Exception("IOException: ${e.message}")
         }
-        if (fileInfo.path.extensionName != "cj") {
+        if (isCjd && !fileInfo.path.toString().endsWith(".cj.d")) {
+            throw Exception("IOException: The file extension of the source file must be '.cj.d'.")
+        } else if (!isCjd && fileInfo.path.extensionName != "cj") {
             throw Exception("IOException: The file extension of the source file must be 'cj'.")
         } else if (!fileInfo.canRead()) {
             throw Exception("IOException: The file is not readable.")
         } else if (!fileInfo.isRegular()) {
             throw Exception("IOException: The path ${fileInfo.path.toString()} is not a file!")
         }
-        let (node, diags) = Parser(fileInfo.path.toString()).parse()
+        let (node, diags) = Parser(fileInfo.path.toString(), isCjd: isCjd).parse()
         let file: ?SourceFile = if (let Some(root) <- node) {
             root as SourceFile
         } else {
@@ -83,7 +85,7 @@ class Parser {
             if (fileInfo.path.extensionName != "cj") {
                 continue
             }
-            var (file, diags) = parseFile(fileInfo.path.toString())
+            var (file, diags) = parseFile(fileInfo.path.toString(), false)
             diagsList.add(all: diags)
             if (parseFailed) {
                 continue

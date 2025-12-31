@@ -87,7 +87,7 @@ sealed abstract class SyntaxTreeNode <: ToString & ToTokens & Hashable & Equatab
             }
         }
         var token = Token(tokenKind, strVal).addPosition(startPos)
-        token.isSingleQuote = isSingleQuote
+        //token.isSingleQuote = isSingleQuote
         token.delimiterNum = delimiterNum
         return token
     }

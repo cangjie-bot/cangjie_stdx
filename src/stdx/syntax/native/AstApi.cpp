@@ -108,7 +108,7 @@ std::vector<Token> tokensFormatter(const uint8_t* tokensBytes)
 } // namespace
 
 extern "C" {
-ParseRes* CJ_ParseFile(const char* path)
+ParseRes* CJ_ParseFile(const char* path, bool isCjd)
 {
     if (path == nullptr) {
         return nullptr;
@@ -122,7 +122,7 @@ ParseRes* CJ_ParseFile(const char* path)
     std::string failedReason;
     auto content = FileUtil::ReadFileContent(path, failedReason);
     auto fileID = sm.AddSource(filePath, content.value());
-    Parser parser(fileID, content.value(), diag, sm, true);
+    Parser parser(fileID, content.value(), diag, sm, true, isCjd);
     auto file = parser.ParseTopLevel();
     ParseRes* res = createParseResult();
     return getParseResult(res, diag, sm, file.get());

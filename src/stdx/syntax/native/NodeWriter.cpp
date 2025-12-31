@@ -1244,6 +1244,20 @@ flatbuffers::Offset<NodeFormat::MacroInvocation> NodeWriter::MacroInvocationCrea
         isCompileTimeVisible);
 }
 
+flatbuffers::DetachedBuffer NodeWriter::SerializePackage(Package& package, SourceManager& sm)
+{
+    std::vector<flatbuffers::Offset<NodeFormat::File>> files;
+    for (auto& file : package.files) {
+        auto fbFile = SerializeFile(file.get(), &sm);
+        files.push_back(fbFile);
+    }
+    auto filesVec = builder.CreateVector(files);
+    auto name = builder.CreateString(package.fullPackageName);
+    auto isMacroPkg = package.isMacroPackage;
+    builder.Finish(NodeFormat::CreatePackage(builder, filesVec, name, isMacroPkg));
+    return builder.Release();
+}
+
 uint8_t* NodeWriter::ExportNode(SourceManager* sm)
 {
     // Match the nodePtr to Expr or Decl.
@@ -1299,4 +1313,28 @@ uint8_t* NodeWriter::ExportNode(SourceManager* sm)
     }
     (void)std::copy_n(bufferData.begin(), bufferData.size(), rawPtr);
     return rawPtr;
+}
+
+void* SerializePackageToFb(void* package)
+{
+    NodeWriter nw{nullptr};
+    SourceManager sm;
+    auto buffer = nw.SerializePackage(*reinterpret_cast<AST::Package*>(package), sm);
+    flatbuffers::DetachedBuffer* nb = new flatbuffers::DetachedBuffer{std::move(buffer)};
+    return nb;
+}
+void* GetPackage(void* buffer)
+{
+    flatbuffers::DetachedBuffer* nb = reinterpret_cast<flatbuffers::DetachedBuffer*>(buffer);
+    return nb->data();
+}
+size_t GetPackageSize(void* buffer)
+{
+    flatbuffers::DetachedBuffer* nb = reinterpret_cast<flatbuffers::DetachedBuffer*>(buffer);
+    return nb->size();
+}
+void DeleteFb(void* buffer)
+{
+    flatbuffers::DetachedBuffer* nb = reinterpret_cast<flatbuffers::DetachedBuffer*>(buffer);
+    delete nb;
 }

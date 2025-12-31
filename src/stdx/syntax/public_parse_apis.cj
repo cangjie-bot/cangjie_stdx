@@ -19,7 +19,11 @@ import std.collection.HashSet
  * @throws Exception if there is an issue reading the file.
  */
 public func parseFile(filePath: String): ParsingResult<SourceFile> {
-    let (file, diags) = Parser.parseFile(filePath)
+    let (file, diags) = Parser.parseFile(filePath, false)
+    ParsingResult<SourceFile>(file, diags)
+}
+public func parseCjdFile(filePath: String): ParsingResult<SourceFile> {
+    let (file, diags) = Parser.parseFile(filePath, true)
     ParsingResult<SourceFile>(file, diags)
 }
 

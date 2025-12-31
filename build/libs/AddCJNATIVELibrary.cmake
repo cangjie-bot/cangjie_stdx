@@ -1004,3 +1004,45 @@ add_cangjie_library(
     SOURCES ${SYNTAX_SRCS}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
     DEPENDS ${SYNTAX_DEPENDENCIES})
+
+make_cangjie_lib(
+    plugin IS_SHARED
+    DEPENDS cangjie${BACKEND_TYPE}Plugin stdx.syntax stdx.syntaxFFI
+    CANGJIE_STDX_LIB_DEPENDS syntax 
+    FORCE_LINK_ARCHIVES stdx.syntaxFFI
+    CANGJIE_STD_LIB_LINK std-core std-collection std-sync std-ast
+    OBJECTS ${output_cj_object_dir}/stdx/plugin.o)
+
+add_library(stdx.plugin STATIC ${output_cj_object_dir}/stdx/plugin.o)
+set_target_properties(stdx.plugin PROPERTIES LINKER_LANGUAGE C)
+install(TARGETS stdx.plugin DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}/static/stdx)
+
+add_cangjie_library(
+    cangjie${BACKEND_TYPE}Plugin
+    NO_SUB_PKG
+    IS_STDXLIB
+    IS_PACKAGE
+    IS_CJNATIVE_BACKEND
+    PACKAGE_NAME "plugin"
+    MODULE_NAME "stdx"
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/plugin
+    DEPENDS ${PLUGIN_DEPENDENCIES})
+
+make_cangjie_lib(
+    plugin.macros IS_SHARED
+    CANGJIE_STD_LIB_LINK std-core std-collection std-ast
+    OBJECTS ${output_cj_object_dir}/stdx/plugin.macros.o)
+
+add_library(stdx.plugin.macros STATIC ${output_cj_object_dir}/stdx/plugin.macros.o)
+set_target_properties(stdx.plugin.macros PROPERTIES LINKER_LANGUAGE C)
+install(TARGETS stdx.plugin.macros DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}/static/stdx)
+add_cangjie_library(
+    cangjie${BACKEND_TYPE}PluginMacros
+    NO_SUB_PKG
+    IS_STDXLIB
+    IS_PACKAGE
+    IS_CJNATIVE_BACKEND
+    PACKAGE_NAME "plugin.macros"
+    MODULE_NAME "stdx"
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/plugin/macros
+    DEPENDS ${PLUGIN_MACROS_DEPENDENCIES})
