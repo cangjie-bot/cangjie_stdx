@@ -12,7 +12,7 @@ public import std.ast.{Tokens, Token, TokenKind}
 import std.ast.getTokenKind
 import std.collection.{ArrayStack, ArrayList}
 
-foreign func CJ_ParseFile(path: CString): CPointer<ParseRes>
+foreign func CJ_ParseFile(path: CString, isCjd: Bool): CPointer<ParseRes>
 
 foreign func CJ_ParseText(text: CString): CPointer<ParseRes>
 
@@ -30,10 +30,10 @@ func findError(diags: Array<Diagnostic>): String {
 }
 
 class ParserImpl {
-    ParserImpl(private let filePath: String) {}
+    ParserImpl(private let filePath: String, private let isCjd: Bool) {}
 
     func parseFile(): (?SyntaxNodeImpl, Array<Diagnostic>) {
-        let (node, msg) = NodeLoader.load(filePath)
+        let (node, msg) = NodeLoader.load(filePath, isCjd)
         // build impl tree by NodeFormat_Node
         let file: ?SyntaxNodeImpl = if (let Some(root) <- node) {
             FlatbufferNodeTranslator.translate(root)
@@ -145,7 +145,7 @@ private class NodeLoader {
     private let tokens: Tokens
     // read 4 bytes for buffer size
     static const HEADER_SIZE: Int64 = 4
-    private NodeLoader(private let filePath: String, private var diagInfo!: Array<Diagnostic> = []) {
+    private NodeLoader(private let filePath: String, private let isCjd: Bool, private var diagInfo!: Array<Diagnostic> = []) {
         this.text = ""
         this.tokens = Tokens()
     }
@@ -154,6 +154,7 @@ private class NodeLoader {
         this.tokens = Tokens()
         this.filePath = ""
         this.diagInfo = []
+        isCjd = false
     }
 
     private init(tokens!: Tokens) {
@@ -161,10 +162,11 @@ private class NodeLoader {
         this.tokens = tokens
         this.filePath = ""
         this.diagInfo = []
+        isCjd = false
     }
 
-    static func load(filePath: String): (?NodeFormat_Node, Array<Diagnostic>) {
-        let loader = NodeLoader(filePath)
+    static func load(filePath: String, isCjd: Bool): (?NodeFormat_Node, Array<Diagnostic>) {
+        let loader = NodeLoader(filePath, isCjd)
         (unsafe { loader.loadNodeFromFile() }, loader.diagInfo)
     }
 
@@ -205,7 +207,7 @@ private class NodeLoader {
             if (pathPtr.isNull()) {
                 throw Exception("mallocCString failed for file path.")
             }
-            resPtr = CJ_ParseFile(pathPtr)
+            resPtr = CJ_ParseFile(pathPtr, isCjd)
             if (resPtr.isNull()) {
                 throw Exception("the parsing result is empty.")
                 return None
@@ -1174,6 +1176,16 @@ private class FlatbufferNodeTranslator {
         }
         innerComments = Array<Option<NodeFormat_CommentGroup>>()
         builder.buildNonTerminal(SyntaxNodeKind.File, ret.toArray())
+    }
+
+    func transPackage(`package`: NodeFormat_Package): Package {
+        let files = ArrayList<(SyntaxNodeImpl, String)>()
+        for (file in `package`.GetFiles()) {
+            let f = file.getOrThrow()
+            let impl = transFile(f)
+            files.add((impl.getOrThrow(), f.GetFilePath()))
+        }
+        Package(`package`.GetIsMacroPkg(), `package`.GetName(), files.toArray())
     }
 
     private func transFeatureId(ftr: NodeFormat_FeatureId): ?SyntaxNodeImpl {
@@ -5376,4 +5388,14 @@ private class FlatbufferNodeTranslator {
         }
         builder.buildNonTerminal(SyntaxNodeKind.Comment, ret.toArray())
     }
+}
+
+foreign func memcpy_s(dest: CPointer<UInt8>, destSize: UInt64, src: CPointer<UInt8>, count: UInt64): Int32
+// this func is exposed to stdx.plugin
+protected func deserialisePackage(`package`: CPointer<UInt8>, size: UIntNative): Package {
+    let arr = Array<UInt8>(Int64(size)) { _ => 0 }
+    unsafe {
+        memcpy_s(acquireArrayRawData(arr).pointer, UInt64(arr.size), `package`, UInt64(size))
+    }
+    FlatbufferNodeTranslator().transPackage(NodeFormat_Package(arr, 0))
 }
