@@ -54,11 +54,11 @@ main(): Int64 {
 }
 
 public func stagePreBuild(pyCommand: String): Int64 {
-    return execute(pyCommand, "cjpm_build.py", "build", "-t", "release", "--build-stage", "preBuild")
+    return execute(pyCommand, "cjpm_build.py", "build", "--build-stage", "preBuild")
 }
 
 public func stagePostBuild(pyCommand: String): Int64 {
-    return execute(pyCommand, "cjpm_build.py", "build", "-t", "release", "--build-stage", "postBuild")
+    return execute(pyCommand, "cjpm_build.py", "build", "--build-stage", "postBuild")
 }
 
 public func stagePreClean(pyCommand: String): Int64 {

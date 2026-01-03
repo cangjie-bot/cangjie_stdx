@@ -139,9 +139,8 @@ endif()
 string(TOLOWER "${CMAKE_SYSTEM_NAME}" TARGET_OS)
 add_compile_definitions(__${TARGET_OS}__)
 
-if(NOT DEFINED CANGJIE_ZLIB_SOURCE_DIR)
-    set(CANGJIE_ZLIB_SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/zlib)
-endif()
+
+set(CANGJIE_ZLIB_SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/zlib)
 
 
 set(GCC_TOOLCHAIN_FLAG "")

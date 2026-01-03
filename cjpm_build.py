@@ -32,6 +32,8 @@ from pathlib import Path
 from subprocess import DEVNULL, PIPE
 
 BUILD_TARGET = ""
+HAS_DEBUG_FLAG = False
+BUILD_TYPE_CJPM = "release"
 WMIC_PATH = "C:/Windows/System32/wbem/wmic.exe"
 
 def get_platform():
@@ -99,6 +101,26 @@ def extract_target_value(args):
         elif arg.startswith("--target="):
             return arg.split("=", 1)[1]
     return None
+
+
+def check_debug_flag(args):
+    """
+    Check if -g flag exists in command line arguments
+    
+    Args:
+        args (list): Command line arguments list
+        
+    Returns:
+        bool: True if -g flag is present, False otherwise
+    """
+    if not args:
+        return False
+    
+    for arg in args:
+        if arg.lower() == "-g":
+            return True
+    
+    return False
 
 
 def get_cwd_linux(pid):
@@ -201,6 +223,13 @@ def find_ancestor_and_cwd(target_name="cjpm"):
             target_val = extract_target_value(cmdline)
             BUILD_TARGET = target_val
 
+            global HAS_DEBUG_FLAG
+            global BUILD_TYPE_CJPM
+            HAS_DEBUG_FLAG = check_debug_flag(cmdline)
+            if(HAS_DEBUG_FLAG):
+                BUILD_TYPE_CJPM = "debug"
+            else:
+                BUILD_TYPE_CJPM = "release"
             if cwd:
                 return cwd
             else:
@@ -222,7 +251,7 @@ SYNTAX_DIR = os.path.join(STDX_DIR, "src/stdx/syntax")
 FUZZ_DIR = os.path.join(STDX_DIR, "src/stdx/fuzz")
 ASPECTCJ_DIR = os.path.join(STDX_DIR, "src/stdx/aspectCJ")
 CMAKE_BUILD_DIR = os.path.join(BUILD_DIR, "build")
-CMAKE_OUTPUT_DIR = os.path.join(CJPM_DIR, "target/release")
+CMAKE_OUTPUT_DIR = os.path.join(CJPM_DIR, "target/" + BUILD_TYPE_CJPM)
 LOG_DIR = os.path.join(BUILD_DIR, "logs")
 LOG_FILE = os.path.join(LOG_DIR, "cangjie.log")
 
@@ -377,7 +406,7 @@ def generate_cmake_defs(args):
     if CJPM_DIR == STDX_DIR:
         install_prefix = os.path.join(CJPM_DIR, "target")
     else:
-        install_prefix = os.path.join(CJPM_DIR, "target/release")
+        install_prefix = os.path.join(CJPM_DIR, "target/" + BUILD_TYPE_CJPM)
     result = [
         "-DCMAKE_BUILD_TYPE=" + args.build_type.value,
         "-DCMAKE_BUILD_STAGE=" + args.build_stage.value,
@@ -386,7 +415,7 @@ def generate_cmake_defs(args):
         "-DCANGJIE_TARGET_LIB=" + (";".join(args.target_lib) if args.target_lib else ""),
         "-DCANGJIE_TARGET_TOOLCHAIN=" + (args.target_toolchain if args.target_toolchain else ""),
         "-DCANGJIE_INCLUDE=" + (";".join(args.include) if args.include else ""),
-        "-DCANGJIE_CJPM_DIR=" + CJPM_DIR,
+        "-DCANGJIE_CJPM_DIR=" + (CJPM_DIR.replace("\\", "/") if IS_WINDOWS else CJPM_DIR),
         "-DCANGJIE_CJPM_BUILD_SELF=" + ("ON" if CJPM_DIR == STDX_DIR else "OFF"),
         "-DCANGJIE_CJPM_BUILD_TYPE=True",
         "-DCANGJIE_TARGET_SYSROOT=" + (args.target_sysroot if args.target_sysroot else ""),
@@ -441,6 +470,14 @@ def run_cmake_and_build(args):
 
 
 def build(args):
+    global CJPM_DIR
+    
+    if not HAS_DEBUG_FLAG:
+        args.build_type = BuildType.release
+    else:
+        args.build_type = BuildType.debug
+    
+    LOG.info("args: " + str(args))
     LOG.info("CJPM_DIR: " + CJPM_DIR)
     LOG.info("args.build_stage: " + str(args.build_stage))
     if args.build_stage.value == "preBuild":
@@ -485,14 +522,22 @@ def build(args):
     
     LOG.info("begin build py----")
     if args.build_stage.value == "postBuild":
-        if CJPM_DIR != STDX_DIR:
-            return 0
-        parts = [CJPM_DIR, "target", args.target, "release", "stdx"]
-        target_dir = os.path.join(*(p for p in parts if p is not None))
-        if not extract_libstdx(target_dir, args):
-            LOG.info("skip to extract libstdx")
-            return 0
-
+        if not IS_WINDOWS:
+            if CJPM_DIR != STDX_DIR:
+                return 0
+            parts = [CJPM_DIR, "target", args.target, BUILD_TYPE_CJPM, "stdx"]
+            target_dir = os.path.join(*(p for p in parts if p is not None))
+            if not extract_libstdx(target_dir, args):
+                LOG.info("skip to extract libstdx")
+                return 0
+        else:
+            parts = [STDX_DIR, "target", args.target, BUILD_TYPE_CJPM, "stdx"]
+            target_dir = os.path.join(*(p for p in parts if p is not None))
+            if not extract_libstdx(target_dir, args):
+                LOG.info("skip to extract libstdx")
+                return 0
+            CJPM_DIR = STDX_DIR
+    
     run_cmake_and_build(args)
 
 def extract_libstdx(directory, args):
@@ -576,7 +621,6 @@ def main():
         type=BuildType.argparse,
         dest="build_type",
         choices=list(BuildType),
-        required=True,
         help="select target build type",
     )
     build_parser.add_argument(
