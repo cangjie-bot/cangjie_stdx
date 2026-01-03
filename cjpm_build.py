@@ -386,7 +386,7 @@ def generate_cmake_defs(args):
         "-DCANGJIE_TARGET_LIB=" + (";".join(args.target_lib) if args.target_lib else ""),
         "-DCANGJIE_TARGET_TOOLCHAIN=" + (args.target_toolchain if args.target_toolchain else ""),
         "-DCANGJIE_INCLUDE=" + (";".join(args.include) if args.include else ""),
-        "-DCANGJIE_CJPM_DIR=" + CJPM_DIR,
+        "-DCANGJIE_CJPM_DIR=" + (CJPM_DIR.replace("\\", "/") if IS_WINDOWS else CJPM_DIR),
         "-DCANGJIE_CJPM_BUILD_SELF=" + ("ON" if CJPM_DIR == STDX_DIR else "OFF"),
         "-DCANGJIE_CJPM_BUILD_TYPE=True",
         "-DCANGJIE_TARGET_SYSROOT=" + (args.target_sysroot if args.target_sysroot else ""),
@@ -441,6 +441,7 @@ def run_cmake_and_build(args):
 
 
 def build(args):
+    global CJPM_DIR
     LOG.info("CJPM_DIR: " + CJPM_DIR)
     LOG.info("args.build_stage: " + str(args.build_stage))
     if args.build_stage.value == "preBuild":
@@ -485,14 +486,22 @@ def build(args):
     
     LOG.info("begin build py----")
     if args.build_stage.value == "postBuild":
-        if CJPM_DIR != STDX_DIR:
-            return 0
-        parts = [CJPM_DIR, "target", args.target, "release", "stdx"]
-        target_dir = os.path.join(*(p for p in parts if p is not None))
-        if not extract_libstdx(target_dir, args):
-            LOG.info("skip to extract libstdx")
-            return 0
-
+        if not IS_WINDOWS:
+            if CJPM_DIR != STDX_DIR:
+                return 0
+            parts = [CJPM_DIR, "target", args.target, "release", "stdx"]
+            target_dir = os.path.join(*(p for p in parts if p is not None))
+            if not extract_libstdx(target_dir, args):
+                LOG.info("skip to extract libstdx")
+                return 0
+        else:
+            parts = [STDX_DIR, "target", args.target, "release", "stdx"]
+            target_dir = os.path.join(*(p for p in parts if p is not None))
+            if not extract_libstdx(target_dir, args):
+                LOG.info("skip to extract libstdx")
+                return 0
+            CJPM_DIR = STDX_DIR
+    
     run_cmake_and_build(args)
 
 def extract_libstdx(directory, args):
