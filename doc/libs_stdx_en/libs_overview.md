@@ -19,6 +19,27 @@ The extracted directory of the binary package contains two subdirectories: `dyna
 - `dynamic/stdx` contains dynamic artifacts, including dynamic files, cjo, and bc files.
 - `static/stdx` contains static artifacts, including static files, cjo, and bc files.
 
+#### Linking with OpenSSL static libraries
+
+Assume the OpenSSL static libraries are located in `STATIC_OPENSSL_DIR`. Use the following commands.
+<<<<<<< HEAD
+```bash
+# GNU ld64
+cjc -L $STATIC_OPENSSL_DIR --link-option "-Bstatic" --link-option "--whole-archive" -lssl -lcrypto --link-option "--no-whole-archive" --link-option "-Bdynamic" main.cj
+
+# Apple ld64
+cjc -L $STATIC_OPENSSL_DIR --link-option "-force_load" --link-option "$STATIC_OPENSSL_DIR/libssl.a" --link-option "-force_load" --link-option "$STATIC_OPENSSL_DIR/libcrypto.a" main.cj
+=======
+
+```bash
+# GNU ld64
+cjc -L $STATIC_OPENSSL_DIR --link-option -Bstatic --link-option --whole-archive -lssl -lcrypto --link-option --no-whole-archive --link-option -Bdynamic main.cj
+
+# Apple ld64
+cjc -L $STATIC_OPENSSL_DIR --link-option -force_load,$STATIC_OPENSSL_DIR/libssl.a --link-option -force_load,$STATIC_OPENSSL_DIR/libcrypto.a main.cj
+>>>>>>> 6198f21 (feat: add auto OpenSSL resolver for static linking support)
+```
+
 ### Package Dependencies
 
 | Import Library Name                                                            |  Dependent Packages |
