@@ -303,9 +303,9 @@ make_cangjie_lib(
         $<$<BOOL:${MINGW}>:-lws2_32>
         $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
 if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
-    set(tls_depends stdx.net.tlsFFI cangjie-dynamicLoader-opensslFFI)
+    set(tls_depends stdx.net.tlsFFI ${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET})
 else()
-    set(tls_depends cangjie${BACKEND_TYPE}Tls stdx.net.tlsFFI cangjie-dynamicLoader-opensslFFI)
+    set(tls_depends cangjie${BACKEND_TYPE}Tls stdx.net.tlsFFI ${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET})
 endif()
 add_and_combine_static_lib(
     TARGET stdx-net-tls
@@ -313,7 +313,7 @@ add_and_combine_static_lib(
     LIBRARIES
         $<TARGET_OBJECTS:stdx.net.tlsFFI-objs>
         ${output_cj_object_dir}/stdx/net.tls.o
-        $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
+        $<TARGET_OBJECTS:${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET}>
     DEPENDS
         ${tls_depends})
 install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libstdx.net.tls.a
@@ -543,9 +543,9 @@ make_cangjie_lib(
         ${ssl_dependencies} $<$<BOOL:${MINGW}>:-lws2_32>
         $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
 if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
-    set(x509_depends stdx.crypto.x509FFI cangjie-dynamicLoader-opensslFFI)
+    set(x509_depends stdx.crypto.x509FFI ${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET})
 else()
-    set(x509_depends cangjie${BACKEND_TYPE}X509 stdx.crypto.x509FFI cangjie-dynamicLoader-opensslFFI)
+    set(x509_depends cangjie${BACKEND_TYPE}X509 stdx.crypto.x509FFI ${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET})
 endif()
 add_and_combine_static_lib(
     OUTPUT_NAME libstdx.crypto.x509.a
@@ -553,7 +553,7 @@ add_and_combine_static_lib(
     LIBRARIES
         $<TARGET_OBJECTS:stdx.crypto.x509FFI-objs>
         ${output_cj_object_dir}/stdx/crypto.x509.o
-        $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
+        $<TARGET_OBJECTS:${CANGJIE_OPENSSL_FFI_OBJECTS_TARGET}>
     DEPENDS
         ${x509_depends})
 install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libstdx.crypto.x509.a
