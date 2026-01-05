@@ -31,6 +31,26 @@ public static let CBC: OperationMode
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode = OperationMode.CBC
+    println("工作模式: ${mode}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+工作模式: CBC
+```
+
 ### static let CFB
 
 ```cangjie
@@ -40,6 +60,26 @@ public static let CFB: OperationMode
 功能：Cipher FeedBack(密文反馈)工作模式，CFB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CFB")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode = OperationMode.CFB
+    println("工作模式: ${mode}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+工作模式: CFB
+```
 
 ### static let CTR
 
@@ -51,6 +91,26 @@ public static let CTR: OperationMode
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode = OperationMode.CTR
+    println("工作模式: ${mode}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+工作模式: CTR
+```
+
 ### static let ECB
 
 ```cangjie
@@ -60,6 +120,26 @@ public static let ECB: OperationMode
 功能：Electronic CodeBook(单子密码本)工作模式， ECB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("ECB")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode = OperationMode.ECB
+    println("工作模式: ${mode}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+工作模式: ECB
+```
 
 ### static let GCM
 
@@ -71,6 +151,26 @@ public static let GCM: OperationMode
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode = OperationMode.GCM
+    println("工作模式: ${mode}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+工作模式: GCM
+```
+
 ### static let OFB
 
 ```cangjie
@@ -81,6 +181,26 @@ public static let OFB: OperationMode
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode = OperationMode.OFB
+    println("工作模式: ${mode}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+工作模式: OFB
+```
+
 ### let mode
 
 ```cangjie
@@ -90,6 +210,26 @@ public let mode: String
 功能：operation 分组加解密的工作模式，目前支持 ECB、CBC CFB OFB CTR GCM。
 
 类型：String
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode = OperationMode.CBC
+    println("模式字符串: ${mode.mode}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+模式字符串: CBC
+```
 
 ### func toString()
 
@@ -102,6 +242,26 @@ public override func toString(): String
 返回值：
 
 - String - 工作模式字符串。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let modeStr = OperationMode.OFB.toString()
+    println("OFB模式toString: ${modeStr}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+OFB模式toString: OFB
+```
 
 ### operator func !=(OperationMode)
 
@@ -119,6 +279,34 @@ public override operator func !=(other: OperationMode): Bool
 
 - Bool - true 不相同，false 相同。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode1 = OperationMode.CBC
+    let mode2 = OperationMode.ECB
+    let mode3 = OperationMode.CBC
+
+    let isNotEqual1 = mode1 != mode2
+    let isNotEqual2 = mode1 != mode3
+
+    println("CBC != ECB: ${isNotEqual1}")
+    println("CBC != CBC: ${isNotEqual2}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+CBC != ECB: true
+CBC != CBC: false
+```
+
 ### operator func ==(OperationMode)
 
 ```cangjie
@@ -134,6 +322,34 @@ public override operator func ==(other: OperationMode): Bool
 返回值：
 
 - Bool - true 相同，false 不相同。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let mode1 = OperationMode.CBC
+    let mode2 = OperationMode.ECB
+    let mode3 = OperationMode.CBC
+
+    let isEqual1 = mode1 == mode2
+    let isEqual2 = mode1 == mode3
+
+    println("CBC == ECB: ${isEqual1}")
+    println("CBC == CBC: ${isEqual2}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+CBC == ECB: false
+CBC == CBC: true
+```
 
 ## struct PaddingMode
 
@@ -161,6 +377,25 @@ public static let NoPadding: PaddingMode
 
 类型：[PaddingMode](crypto_package_structs.md#struct-paddingmode)
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let padding = PaddingMode.NoPadding
+    println("NoPadding模式的paddingType: ${padding.paddingType}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+NoPadding模式的paddingType: 0
+```
+
 ### static let PKCS7Padding
 
 ```cangjie
@@ -171,6 +406,25 @@ public static let PKCS7Padding: PaddingMode
 
 类型：[PaddingMode](crypto_package_structs.md#struct-paddingmode)
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let padding = PaddingMode.PKCS7Padding
+    println("PKCS7Padding模式的paddingType: ${padding.paddingType}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+PKCS7Padding模式的paddingType: 1
+```
+
 ### let paddingType
 
 ```cangjie
@@ -180,6 +434,25 @@ public let paddingType: Int64
 功能：分组加解密填充方式，目前支持非填充和 pkcs7 填充。
 
 类型：Int64
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let padding = PaddingMode.PKCS7Padding
+    println("PKCS7Padding模式的paddingType: ${padding.paddingType}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+PKCS7Padding模式的paddingType: 1
+```
 
 ### operator func !=(PaddingMode)
 
@@ -197,6 +470,34 @@ public override operator func !=(other: PaddingMode): Bool
 
 - Bool - true 不相同，false 相同。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let padding1 = PaddingMode.NoPadding
+    let padding2 = PaddingMode.PKCS7Padding
+    let padding3 = PaddingMode.NoPadding
+
+    let isNotEqual1 = padding1 != padding2
+    let isNotEqual2 = padding1 != padding3
+
+    println("NoPadding != PKCS7Padding: ${isNotEqual1}")
+    println("NoPadding != NoPadding: ${isNotEqual2}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+NoPadding != PKCS7Padding: true
+NoPadding != NoPadding: false
+```
+
 ### operator func ==(PaddingMode)
 
 ```cangjie
@@ -212,3 +513,31 @@ public override operator func ==(other: PaddingMode): Bool
 返回值：
 
 - Bool - true 相同，false 不相同。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.crypto.crypto.*
+
+main() {
+    let padding1 = PaddingMode.NoPadding
+    let padding2 = PaddingMode.PKCS7Padding
+    let padding3 = PaddingMode.NoPadding
+
+    let isEqual1 = padding1 == padding2
+    let isEqual2 = padding1 == padding3
+
+    println("NoPadding == PKCS7Padding: ${isEqual1}")
+    println("NoPadding == NoPadding: ${isEqual2}")
+
+    return 0
+}
+```
+
+运行结果：
+
+```text
+NoPadding == PKCS7Padding: false
+NoPadding == NoPadding: true
+```
