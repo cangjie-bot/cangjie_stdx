@@ -7,6 +7,7 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 > **注意：**
 >
 > syntax 包需要依赖 `cangjie/tools/lib` 目录下的 `libcangjie-lsp` 动态库。
+> syntax 静态库在 Windows 平台下需要依赖 `libc++` 和 `libunwind` 库。
 
 ## API 列表
 
