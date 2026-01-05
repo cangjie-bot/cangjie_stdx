@@ -28,6 +28,9 @@
 [target.aarch64-apple-darwin]
   link-option = "-L target/release/stdx -L target/debug/stdx -L target/darwin_aarch64_cjnative/static/stdx -L /tmp/stdx/target/release/stdx -lstdx.encoding.jsonFFI -lstdx.encoding.json.streamFFI -lstdx.compress.zlibFFI -lstdx.compress.tarFFI -lcangjie-dynamicLoader-opensslFFI -lstdx.net.tlsFFI -lstdx.crypto.keysFFI -lstdx.crypto.x509FFI -ldl -undefined suppress -flat_namespace -lstdx.fuzz.fuzzFFI"
 
+[target.x86_64-apple-darwin]
+  link-option = "-L target/release/stdx -L target/debug/stdx -L target/darwin_x86_64_cjnative/static/stdx -L /tmp/stdx/target/release/stdx -lstdx.encoding.jsonFFI -lstdx.encoding.json.streamFFI -lstdx.compress.zlibFFI -lstdx.compress.tarFFI -lcangjie-dynamicLoader-opensslFFI -lstdx.net.tlsFFI -lstdx.crypto.keysFFI -lstdx.crypto.x509FFI -ldl -undefined suppress -flat_namespace -lstdx.fuzz.fuzzFFI"
+
 [target.x86_64-w64-mingw32]
   link-option = "-L ${LOCALAPPDATA}/stdx/target/release/stdx -L target/debug/stdx -l:libstdx.encoding.jsonFFI.a -l:libstdx.encoding.json.streamFFI.a -l:libstdx.compress.zlibFFI.a -l:libstdx.compress.tarFFI.a -l:libcangjie-dynamicLoader-opensslFFI.dll -l:libstdx.net.tlsFFI.dll -l:libstdx.crypto.keysFFI.dll -l:libstdx.crypto.x509FFI.dll -lpthread -lws2_32 -lcrypt32"
 
