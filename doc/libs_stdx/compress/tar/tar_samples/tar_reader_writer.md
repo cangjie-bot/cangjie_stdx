@@ -9,10 +9,10 @@ import std.fs.*
 import std.io.*
 
 main() {
-    let originalFile    = Path("./tgz_src.txt")
-    let archiveFile     = Path("./archive.tar")
-    let extractedFile   = Path("./tgz_dst.txt")
-    let size            = 1024 * 1024
+    let originalFile = Path("./tgz_src.txt")
+    let archiveFile = Path("./archive.tar")
+    let extractedFile = Path("./tgz_dst.txt")
+    let size = 1024 * 1024
 
     createFile(originalFile, size)
 
@@ -46,7 +46,7 @@ func archive(srcFileName: Path, tarFileName: Path): Int64 {
     try (outFile: File = File(tarFileName, Write)) {
         var tar = TarWriter(outFile)
 
-        tar.write(srcFileName, srcFileName.fileName)
+        tar.write(srcFileName, entryName: srcFileName.fileName)
         tar.finish()
 
         return outFile.length
@@ -56,9 +56,7 @@ func archive(srcFileName: Path, tarFileName: Path): Int64 {
 
 func extract(tarFileName: Path, destFileName: Path): Int64 {
     var written: Int64 = 0
-    try (inFile: File = File(tarFileName, Read),
-         outFile: File = File(destFileName, Write)) {
-
+    try (inFile: File = File(tarFileName, Read), outFile: File = File(destFileName, Write)) {
         var reader = TarReader(inFile)
         for (entry in reader) {
             if (entry.entryType == TarEntryType.RegularFile) {
@@ -73,7 +71,7 @@ func extract(tarFileName: Path, destFileName: Path): Int64 {
 }
 
 func createFile(file: Path, size: Int64) {
-    File.writeTo(file, Array<Byte>(size, { i => UInt8(i % 256) }))
+    File.writeTo(file, Array<Byte>(size, {i => UInt8(i % 256)}))
 }
 
 func compareFile(fileName1: Path, fileName2: Path): Bool {
