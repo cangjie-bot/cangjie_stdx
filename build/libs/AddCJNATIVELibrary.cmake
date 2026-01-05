@@ -1017,7 +1017,7 @@ add_cangjie_library(
     DEPENDS ${ACTORS_MACROS_DEPENDENCIES})
 
 if(NOT CANGJIE_CJPM_BUILD_TYPE)
-    if(DARWIN)
+    if(DARWIN OR MINGW)
         set(syntaxFFI_flags -lc++)
     elseif(OHOS)
         set(syntaxFFI_flags -l:libc++.a)
