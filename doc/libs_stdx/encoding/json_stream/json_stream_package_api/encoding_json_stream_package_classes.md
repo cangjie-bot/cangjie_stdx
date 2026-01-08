@@ -24,6 +24,40 @@ public init(inputStream: InputStream)
 
 - inputStream: InputStream - 输入的 JSON 数据流。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON数据的输入流 
+    let jsonStr = ##"{"name":"John","age":30}"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 使用构造函数创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 读取数据验证构造函数 
+    reader.startObject()
+    let name = reader.readName()
+    let nameValue = reader.readValue<String>()
+    let age = reader.readName()
+    let ageValue = reader.readValue<Int64>()
+    reader.endObject()
+
+    println("JsonReader构造函数示例: ${name}=${nameValue}, ${age}=${ageValue}")
+}
+```
+
+运行结果：
+
+```text
+JsonReader构造函数示例: name=John, age=30
+```
+
 ### func endArray()
 
 ```cangjie
@@ -36,6 +70,44 @@ public func endArray(): Unit
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON数组的输入流 
+    let jsonStr = ##"[1, "Two", 3.14, true]"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始数组 
+    reader.startArray()
+
+    // 读取数组元素 
+    let first = reader.readValue<Int64>()
+    let second = reader.readValue<String>()
+    let third = reader.readValue<Float64>()
+    let fourth = reader.readValue<Bool>()
+
+    // 结束数组 
+    reader.endArray()
+
+    println("读取到的内容: ${first}, ${second}, ${third}, ${fourth}")
+}
+```
+
+运行结果：
+
+```text
+读取到的内容: 1, Two, 3.140000, true
+```
+
 ### func endObject()
 
 ```cangjie
@@ -47,6 +119,46 @@ public func endObject(): Unit
 异常：
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON对象的输入流 
+    let jsonStr = ##"{"name":"zhangsan","age":25,"city":"Beijing"}"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始对象 
+    reader.startObject()
+
+    // 读取对象属性 
+    let nameKey = reader.readName()
+    let nameValue = reader.readValue<String>()
+    let ageKey = reader.readName()
+    let ageValue = reader.readValue<Int64>()
+    let cityKey = reader.readName()
+    let cityValue = reader.readValue<String>()
+
+    // 结束对象 
+    reader.endObject()
+
+    println("读取到的内容: ${nameKey}=${nameValue}, ${ageKey}=${ageValue}, ${cityKey}=${cityValue}")
+}
+```
+
+运行结果：
+
+```text
+读取到的内容: name=zhangsan, age=25, city=Beijing
+```
 
 ### func peek()
 
@@ -66,6 +178,43 @@ public func peek(): Option<JsonToken>
 
 - IllegalStateException - 如果输入流的下一个字符不在以下范围内：(n, t, f, ", 0~9, -, {, }, [, ])。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON数据的输入流 
+    let jsonStr = ##""Hello, World!""##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 使用peek查看下一个token类型 
+    let tokenOption = reader.peek()
+
+    // 检查token类型 
+    if (let Some(token) <- tokenOption) {
+        match (token) {
+            case JsonToken.JsonString => println("下一个token是字符串类型")
+            case _ => println("下一个token是其他类型")
+        }
+    } else {
+        println("没有更多数据")
+    }
+}
+```
+
+运行结果：
+
+```text
+下一个token是字符串类型
+```
+
 ### func readName()
 
 ```cangjie
@@ -81,6 +230,44 @@ public func readName(): String
 异常：
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON对象的输入流 
+    let jsonStr = ##"{"key1":"value1","key2":5}"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始对象 
+    reader.startObject()
+
+    // 读取名称和值 
+    let firstKey = reader.readName()
+    let firstValue = reader.readValue<String>()
+    let secondKey = reader.readName()
+    let secondValue = reader.readValue<Int64>()
+
+    // 结束对象 
+    reader.endObject()
+
+    println("读取到的内容: ${firstKey}=${firstValue}, ${secondKey}=${secondValue}")
+}
+```
+
+运行结果：
+
+```text
+读取到的内容: key1=value1, key2=5
+```
 
 ### func readValue\<T>() where T <: JsonDeserializable\<T>
 
@@ -107,6 +294,52 @@ public func readValue<T>(): T where T <: JsonDeserializable<T>
 异常：
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含多种类型JSON值的输入流 
+    let jsonStr = ##"["Hello", 123, true, null, 45.67, {"key":"value"}]"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始数组 
+    reader.startArray()
+
+    // 读取不同类型的值 
+    let strValue = reader.readValue<String>()
+    let intValue = reader.readValue<Int64>()
+    let boolValue = reader.readValue<Bool>()
+    let nullValue = reader.readValue<Option<String>>()
+    let floatValue = reader.readValue<Float64>()
+
+    // 数组内对象
+    reader.startObject()
+    let key = reader.readName()
+    let value = reader.readValue<String>()
+    reader.endObject()
+
+    // 结束数组 
+    reader.endArray()
+
+    println(
+        "读取到的内容: 字符串=${strValue}, 整数=${intValue}, 布尔=${boolValue}, 空值=${nullValue}, 浮点=${floatValue}, 对象=${key}=${value}")
+}
+```
+
+运行结果：
+
+```text
+读取到的内容: 字符串=Hello, 整数=123, 布尔=true, 空值=None, 浮点=45.670000, 对象=key=value
+```
 
 ### func readValueBytes()
 
@@ -138,6 +371,48 @@ public func readValueBytes(): Array<Byte>
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON数据的输入流 
+    let jsonStr = ##"{"key1":"value1","key2":"value2"}"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始对象 
+    reader.startObject()
+
+    // 读取原始字节数据，此处 next token 是 name，读取 (name + value) 这一个组合的原始字节数组 
+    let valueBytes = reader.readValueBytes()
+
+    // 跳过一个 name
+    reader.readName()
+    // 读取原始字节数据，此处 next token 是 value，读取 value 原始字节数组
+    let valueBytes1 = reader.readValueBytes()
+
+    // 结束对象 
+    reader.endObject()
+
+    println("第一个读取的字节数组(转字符串表示)=${String.fromUtf8(valueBytes)}")
+    println("第二个读取的字节数组(转字符串表示)=${String.fromUtf8(valueBytes1)}")
+}
+```
+
+运行结果：
+
+```text
+第一个读取的字节数组(转字符串表示)="key1":"value1"
+第二个读取的字节数组(转字符串表示)="value2"
+```
+
 ### func skip()
 
 ```cangjie
@@ -164,6 +439,58 @@ public func skip(): Unit
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON对象的输入流 
+    let jsonStr = ##"[100, {"key1":"value1"}, {"key2":"value2"}, [1, "Two", 3.14, true]]"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始数组
+    reader.startArray()
+
+    // 读取第一个内容 
+    let firstValue = reader.readValue<Int64>()
+
+    // 核心演示：跳过了一个对象
+    reader.skip()
+
+    // 读取第二个对象的name 
+    reader.startObject()
+    let secondValue = reader.readName()
+
+    // 核心演示：跳过了一个value
+    reader.skip()
+
+    // 结束了对象
+    reader.endObject()
+
+    // 核心演示：跳过了一个数组
+    reader.skip()
+
+    // 可以正确执行，如果没有跳过一个数组，这里会报错
+    reader.endArray()
+    println("读取到的第一个内容: ${firstValue}")
+    println("读取到的第二个内容: ${secondValue}")
+}
+```
+
+运行结果：
+
+```text
+读取到的第一个内容: 100
+读取到的第二个内容: key2
+```
+
 ### func startArray()
 
 ```cangjie
@@ -176,6 +503,44 @@ public func startArray(): Unit
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON数组的输入流 
+    let jsonStr = ##"[1, "Two", 3.14, true]"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始数组 
+    reader.startArray()
+
+    // 读取数组元素 
+    let first = reader.readValue<Int64>()
+    let second = reader.readValue<String>()
+    let third = reader.readValue<Float64>()
+    let fourth = reader.readValue<Bool>()
+
+    // 结束数组 
+    reader.endArray()
+
+    println("读取到的内容: ${first}, ${second}, ${third}, ${fourth}")
+}
+```
+
+运行结果：
+
+```text
+读取到的内容: 1, Two, 3.140000, true
+```
+
 ### func startObject()
 
 ```cangjie
@@ -187,6 +552,46 @@ public func startObject(): Unit
 异常：
 
 - IllegalStateException - 如果输入流的 JSON 数据不符合格式，抛出异常。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个包含JSON对象的输入流 
+    let jsonStr = ##"{"name":"zhangsan","age":25,"city":"Beijing"}"##
+    let buffer = ByteBuffer()
+    buffer.write(jsonStr.toArray())
+
+    // 创建JsonReader 
+    let reader = JsonReader(buffer)
+
+    // 开始对象 
+    reader.startObject()
+
+    // 读取对象属性 
+    let nameKey = reader.readName()
+    let nameValue = reader.readValue<String>()
+    let ageKey = reader.readName()
+    let ageValue = reader.readValue<Int64>()
+    let cityKey = reader.readName()
+    let cityValue = reader.readValue<String>()
+
+    // 结束对象 
+    reader.endObject()
+
+    println("读取到的内容: ${nameKey}=${nameValue}, ${ageKey}=${ageValue}, ${cityKey}=${cityValue}")
+}
+```
+
+运行结果：
+
+```text
+读取到的内容: name=zhangsan, age=25, city=Beijing
+```
 
 ## class JsonWriter
 
@@ -219,6 +624,45 @@ public var writeConfig: WriteConfig = WriteConfig.compact
 
 类型：[WriteConfig](./encoding_json_stream_package_structs.md#struct-writeconfig)
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建使用pretty配置的JsonWriter 
+    let buffer = ByteBuffer()
+    let writer = JsonWriter(buffer)
+    var config = WriteConfig.pretty // 使用美化格式
+
+    // 核心演示
+    writer.writeConfig = config
+
+    // 写入简单对象 
+    writer.startObject()
+    writer.writeName("Name").writeValue("zhangsan")
+    writer.writeName("Age").writeValue(18)
+    writer.endObject()
+
+    writer.flush()
+
+    // 打印结果 
+    println("使用pretty配置的JSON输出:\n${String.fromUtf8(buffer.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+使用pretty配置的JSON输出:
+{
+    "Name": "zhangsan",
+    "Age": 18
+}
+```
+
 ### init(OutputStream)
 
 ```cangjie
@@ -230,6 +674,34 @@ public init(out: OutputStream)
 参数：
 
 - out: OutputStream - 目标流
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 使用构造函数创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 使用writeValue写入一些数据 
+    writer.writeValue("Hello, World!")
+    writer.flush()
+
+    println("JsonWriter构造函数示例: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+JsonWriter构造函数示例: "Hello, World!"
+```
 
 ### func endArray()
 
@@ -243,6 +715,42 @@ public func endArray(): Unit
 
 - IllegalStateException - 当前 writer 没有匹配的 startArray 时。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 开始数组 
+    writer.startArray()
+
+    // 写入数组元素 
+    writer.writeValue(1)
+    writer.writeValue("hello world")
+    writer.writeValue(3.14)
+
+    // 结束数组 
+    writer.endArray()
+    writer.flush()
+
+    println("转字符串直观表示: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示: [1,"hello world",3.14]
+```
+
 ### func endObject()
 
 ```cangjie
@@ -255,6 +763,41 @@ public func endObject(): Unit
 
 - IllegalStateException - 当前 writer 的状态不应该结束一个 JSON object 时。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 开始对象 
+    writer.startObject()
+
+    // 写入对象属性 
+    writer.writeName("property1").writeValue("value1")
+    writer.writeName("property2").writeValue(42)
+
+    // 结束对象 
+    writer.endObject()
+    writer.flush()
+
+    println("转字符串直观表示: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示: {"property1":"value1","property2":42}
+```
+
 ### func flush()
 
 ```cangjie
@@ -262,6 +805,28 @@ public func flush(): Unit
 ```
 
 功能：将缓存中的数据写入 out，并且调用 out 的 flush 方法。
+
+示例：
+
+<!-- run -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 写入一些数据 
+    writer.writeValue("test data")
+
+    // 调用flush方法确保数据写入流 
+    writer.flush()
+}
+```
 
 ### func jsonValue(String)
 
@@ -287,6 +852,35 @@ public func jsonValue(value: String): JsonWriter
 
 - IllegalStateException - 当前 writer 的状态不应该写入 value 时。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 使用jsonValue写入原始JSON字符串 
+    writer.jsonValue(##"{"property1":"value1","property2":42}"##)
+
+    writer.flush()
+
+    println("转字符串直观表示: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示: {"property1":"value1","property2":42}
+```
+
 ### func startArray()
 
 ```cangjie
@@ -299,6 +893,42 @@ public func startArray(): Unit
 
 - IllegalStateException - 当前 writer 的状态不应该写入 JSON array 时。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 开始数组 
+    writer.startArray()
+
+    // 写入数组元素 
+    writer.writeValue(1)
+    writer.writeValue("hello world")
+    writer.writeValue(3.14)
+
+    // 结束数组 
+    writer.endArray()
+    writer.flush()
+
+    println("转字符串直观表示: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示: [1,"hello world",3.14]
+```
+
 ### func startObject()
 
 ```cangjie
@@ -310,6 +940,41 @@ public func startObject(): Unit
 异常：
 
 - IllegalStateException - 当前 writer 的状态不应该写入 JSON object 时。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 开始对象 
+    writer.startObject()
+
+    // 写入对象属性 
+    writer.writeName("name").writeValue("zhangsan")
+    writer.writeName("age").writeValue(30)
+
+    // 结束对象 
+    writer.endObject()
+    writer.flush()
+
+    println("转字符串直观表示: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示: {"name":"zhangsan","age":30}
+```
 
 ### func writeName(String)
 
@@ -331,6 +996,41 @@ public func writeName(name: String): JsonWriter
 
 - IllegalStateException - 当前 [JsonWriter](encoding_json_stream_package_classes.md#class-jsonwriter) 的状态不应写入参数 `name` 指定字符串时。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 开始对象 
+    writer.startObject()
+
+    // 使用writeName写入名称 
+    writer.writeName("key").writeValue("value")
+    writer.writeName("count").writeValue(100)
+
+    // 结束对象 
+    writer.endObject()
+    writer.flush()
+
+    println("转字符串直观表示: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示: {"key":"value","count":100}
+```
+
 ### func writeNullValue()
 
 ```cangjie
@@ -346,6 +1046,41 @@ public func writeNullValue(): JsonWriter
 异常：
 
 - IllegalStateException - 当前 writer 的状态不应该写入 value 时
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 开始对象 
+    writer.startObject()
+
+    // 写入名称和null值 
+    writer.writeName("nullField").writeNullValue()
+    writer.writeName("anotherField").writeValue("someValue")
+
+    // 结束对象 
+    writer.endObject()
+    writer.flush()
+
+    println("转字符串直观表示: ${String.fromUtf8(outputStream.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示: {"nullField":null,"anotherField":"someValue"}
+```
 
 ### func writeValue\<T>(T) where T <: JsonSerializable
 
@@ -368,3 +1103,56 @@ json.stream 包已经为基础类型 Int64、UInt64、Float64、Bool、String类
 异常：
 
 - IllegalStateException - 当前 writer 的状态不应该写入 value 时。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import std.io.*
+import stdx.encoding.json.stream.*
+
+main() {
+    // 创建一个输出流 
+    let outputStream = ByteBuffer()
+
+    // 创建JsonWriter 
+    let writer = JsonWriter(outputStream)
+
+    // 使用writeValue写入各种类型的数据 
+    writer.writeValue("Hello")
+    writer.flush()
+
+    println("转字符串直观表示(字符串): ${String.fromUtf8(outputStream.bytes())}")
+
+    // 重新创建流和写入器以写入其他值 
+    let outputStream2 = ByteBuffer()
+    let writer2 = JsonWriter(outputStream2)
+
+    // 写入对象
+    writer2.startObject()
+    writer2.writeName("key")
+    writer2.writeValue("value")
+    writer2.endObject()
+
+    writer2.flush()
+
+    println("转字符串直观表示(对象): ${String.fromUtf8(outputStream2.bytes())}")
+
+    // 写入数组 
+    let outputStream3 = ByteBuffer()
+    let writer3 = JsonWriter(outputStream3)
+
+    writer3.writeValue([1, 2, 3, 4])
+    writer3.flush()
+
+    println("转字符串直观表示(数组): ${String.fromUtf8(outputStream3.bytes())}")
+}
+```
+
+运行结果：
+
+```text
+转字符串直观表示(字符串): "Hello"
+转字符串直观表示(对象): {"key":"value"}
+转字符串直观表示(数组): [1,2,3,4]
+```
