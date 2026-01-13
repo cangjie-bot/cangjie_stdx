@@ -166,7 +166,7 @@ class ValuedTerminal <: Terminal {
 
     protected func getOffset(): Offset {
         var offset = Offset()
-        var strSplit = value.split(NEWLINE)
+        var strSplit = value.replace("\r", "").split("\n")
         if (strSplit.size > 1) {
             offset.line += Int32(strSplit.size) - 1
             offset.column = Int32(strSplit[strSplit.size - 1].toRuneArray().size + 1)
