@@ -5214,6 +5214,8 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, expr1)
                 resetGlobalVariables(ret, innerCmts)
             }
+            println("Current position: Line: ${cursorLine}, Column: ${cursorColumn}")
+            println("RightParen position: Line: ${quoteExpr.GetRightParenPos().line}, Column: ${quoteExpr.GetRightParenPos().column}")
             transBasicTerminal(quoteExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         }
         if (trailCmts.size > 0) {
