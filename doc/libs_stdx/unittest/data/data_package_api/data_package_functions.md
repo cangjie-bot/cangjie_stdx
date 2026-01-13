@@ -108,13 +108,13 @@ class User <: Serializable<User> {
 
 任何实现 [Serializable](../../../serialization/serialization_package_api/serialization_package_interfaces.md#interface-serializable) 的类型都可以用作参数类型，包括默认值：
 
-<!-- compile -->
+<!-- code_no_check -->
 ```cangjie
 @Test[user in json("numbers.json")]
 func test(value: Int64)
 ```
 
-<!-- compile -->
+<!-- code_no_check -->
 ```cangjie
 @Test[user in json("names.json")]
 func test(name: String)
