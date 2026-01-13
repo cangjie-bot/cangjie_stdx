@@ -482,7 +482,7 @@ private class FlatbufferNodeTranslator {
     }
 
     private func moveCursorString(pos: NodeFormat_Position, str: String) {
-        var strSplit = str.split(NEWLINE)
+        var strSplit = str.replace("\r", "").split("\n")
         if (strSplit.size > 1) {
             // The string contains newline characters; first, move the cursor line,
             // and the column position is determined by the last line of the string.
@@ -5214,6 +5214,8 @@ private class FlatbufferNodeTranslator {
                 addChild(ret, expr1)
                 resetGlobalVariables(ret, innerCmts)
             }
+            println("Current position: Line: ${cursorLine}, Column: ${cursorColumn}")
+            println("RightParen position: Line: ${quoteExpr.GetRightParenPos().line}, Column: ${quoteExpr.GetRightParenPos().column}")
             transBasicTerminal(quoteExpr.GetRightParenPos(), SyntaxNodeKind.RParenToken)
         }
         if (trailCmts.size > 0) {
