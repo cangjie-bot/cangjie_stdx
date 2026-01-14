@@ -91,7 +91,7 @@ bool ParserSyntaxImpl::Seeing(const std::vector<TokenKind>& kinds, bool skipNewl
 bool ParserSyntaxImpl::SeeingModifier()
 {
     return (Peek().kind >= TokenKind::STATIC && Peek().kind <= TokenKind::OPERATOR) ||
-        (Peek().kind == TokenKind::CONST) || (Peek().kind == TokenKind::COMMON) || (Peek().kind == TokenKind::PLATFORM);
+        (Peek().kind == TokenKind::CONST) || (Peek().kind == TokenKind::COMMON) || (Peek().kind == TokenKind::SPECIFIC);
 }
 
 bool ParserSyntaxImpl::SeeingMacroCall()
