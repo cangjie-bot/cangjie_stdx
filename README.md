@@ -177,9 +177,9 @@ For integration building, please refer to the [Cangjie SDK Integration Build Gui
 
 ## Instructions for use
 
-`stdx` provides two types of binaries: static and dynamic. Both are used independently and developers can reference them according to actual conditions.
-
 ### Import stdx
+
+`stdx` provides two types of binaries: static and dynamic. Both are used independently and developers can reference them according to actual conditions.
 
 Add the following configuration to the `cjpm.toml` file of the code project:
 
@@ -287,6 +287,9 @@ main () {
     server.serve()
 }
 ```
+### Configure stdx source dependencies
+ 	 
+In addition to integrating stdx binaries, stdx currently supports source code dependency. For detailed usage, see [see Source Code Integration Guidance](./doc/libs_stdx_en/source_code_dependency.md)
 
 ## License
 
