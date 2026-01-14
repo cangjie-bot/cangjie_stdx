@@ -302,7 +302,7 @@ enum SyntaxNodeKind <: ToString {
     | AnnotationToken /* @When */
     | AtExclToken /* @! */
     | CommonToken /* common */
-    | PlatformToken /* platform */
+    | SpecificToken /* specific */
     | HandleToken /* handle */
     | PerformToken /* perform */
     | ResumeToken /* resume */
@@ -493,7 +493,7 @@ enum SyntaxNodeKind <: ToString {
             case AnnotationToken => "AnnotationToken"
             case AtExclToken => "@!"
             case CommonToken => "common"
-            case PlatformToken => "platform"
+            case SpecificToken => "specific"
             case HandleToken => "handle"
             case PerformToken => "perform"
             case ResumeToken => "resume"
@@ -665,7 +665,7 @@ enum SyntaxNodeKind <: ToString {
             case AnnotationToken => TokenKind.ANNOTATION
             case AtExclToken => TokenKind.AT_EXCL
             case CommonToken => TokenKind.COMMON
-            case PlatformToken => TokenKind.PLATFORM
+            case SpecificToken => TokenKind.SPECIFIC
             case HandleToken => TokenKind.HANDLE
             case PerformToken => TokenKind.PERFORM
             case ResumeToken => TokenKind.RESUME
