@@ -21,7 +21,7 @@ add_subdirectory(actors)
 add_subdirectory(string_intern)
 
 message(STATUS "CMAKE_BUILD_STAGE ${CMAKE_BUILD_STAGE}")
-if(NOT CANGJIE_CJPM_BUILD_TYPE)
+if(NOT CANGJIE_CJPM_BUILD_TYPE AND NOT TRIPLE STREQUAL "arm-linux-ohos")
     add_subdirectory(syntax)
 endif()
 

@@ -89,6 +89,7 @@ make_cangjie_lib(
     CANGJIE_STD_LIB_LINK
         std-core
         std-collection
+        std-collection.concurrent
         std-io
         std-math.numeric
         std-math
