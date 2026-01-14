@@ -172,9 +172,9 @@ python3 build.py install
 
 ## 使用指导
 
-`stdx` 提供静态和动态两种二进制 ，两者独立使用，开发者可根据实际情况引用。
-
 ### 导入 stdx
+
+`stdx` 提供静态和动态两种二进制 ，两者独立使用，开发者可根据实际情况引用。
 
 在代码工程的 `cjpm.toml` 文件中增加如下类似配置：
 
@@ -283,6 +283,10 @@ main () {
     server.serve()
 }
 ```
+
+### 配置 stdx 源码依赖
+
+除了集成 stdx 二进制外，stdx 目前支持源码依赖，详细使用见 [源码集成指导](./doc/libs_stdx/source_code_dependency.md)
 
 ## License 许可
 
