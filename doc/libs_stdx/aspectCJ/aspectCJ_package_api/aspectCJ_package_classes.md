@@ -10,6 +10,10 @@ public class InsertAtEntry {
 
 功能：在注解所指定方法的入口，织入对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)。
 
+示例：
+
+参考[InsertAtEntry 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-入口插桩示例)了解具体调用流程。
+
 ### const init(String, String, String, Bool, String, Bool)
 
 ```cangjie
@@ -17,6 +21,10 @@ public const init(packageName!: String, className!: String, methodName!: String,
 ```
 
 功能：创建 [InsertAtEntry](aspectCJ_package_classes.md#class-insertatentry) 对象。
+
+示例：
+
+参考[InsertAtEntry 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-入口插桩示例)了解具体调用流程。
 
 参数：
 
@@ -38,6 +46,10 @@ public class InsertAtExit {
 
 功能：在注解所指定方法的退出点，织入对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)。
 
+示例：
+
+参考[InsertAtExit 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-退出插桩示例)了解具体调用流程。
+
 ### const init(String, String, String, Bool, String, Bool)
 
 ```cangjie
@@ -45,6 +57,10 @@ public const init(packageName!: String, className!: String, methodName!: String,
 ```
 
 功能：创建 [InsertAtExit](aspectCJ_package_classes.md#class-insertatexit) 对象。
+
+示例：
+
+参考[InsertAtExit 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-退出插桩示例)了解具体调用流程。
 
 参数：
 
@@ -65,6 +81,10 @@ public class ReplaceFuncBody {
 
 功能：将注解所指定方法的方法体，替换为对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)。
 
+示例：
+
+参考[ReplaceFuncBody 示例教程](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-替换函数体示例)了解具体调用流程。
+
 ### const init(String, String, String, Bool, Bool)
 
 ```cangjie
@@ -72,6 +92,10 @@ public const init(packageName!: String, className!: String, methodName!: String,
 ```
 
 功能：创建 [ReplaceFuncBody](aspectCJ_package_classes.md#class-replacefuncbody) 对象。
+
+示例：
+
+参考[ReplaceFuncBody 示例教程](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-替换函数体示例)了解具体调用流程。
 
 参数：
 
