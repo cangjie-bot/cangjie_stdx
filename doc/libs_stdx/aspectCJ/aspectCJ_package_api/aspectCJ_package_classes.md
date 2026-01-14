@@ -8,7 +8,7 @@ public class InsertAtEntry {
 }
 ```
 
-功能：在注解所指定方法的入口，织入对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)。
+功能：在注解所指定方法的入口，织入对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)，参考[InsertAtEntry 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-example)了解完整调用方式。
 
 ### const init(String, String, String, Bool, String, Bool)
 
@@ -36,7 +36,7 @@ public class InsertAtExit {
 }
 ```
 
-功能：在注解所指定方法的退出点，织入对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)。
+功能：在注解所指定方法的退出点，织入对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)，参考[InsertAtExit 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-example)了解完整调用方式。
 
 ### const init(String, String, String, Bool, String, Bool)
 
@@ -63,7 +63,7 @@ public class ReplaceFuncBody {
 }
 ```
 
-功能：将注解所指定方法的方法体，替换为对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)。
+功能：将注解所指定方法的方法体，替换为对被注解标注的函数的调用。注解所指定的方法和被注解标注的函数，需满足[规格限制](../aspectCJ_package_overview.md#规格和使用)，参考[ReplaceFuncBody 示例教程](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-example)了解完整调用方式。
 
 ### const init(String, String, String, Bool, Bool)
 
