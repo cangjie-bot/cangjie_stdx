@@ -18,6 +18,8 @@ OAT.xml @xuanjz
 
 /src/stdx/syntax/ @mini-tang
 
+/src/stdx/plugin/ @kkkkkkkbbbbbbb
+
 #stdx docs
 /doc/ @luojianing
 /doc/libs_stdx/chir/ @Mr_Kang_Yi @luojianing
@@ -29,5 +31,5 @@ OAT.xml @xuanjz
 /doc/libs_stdx/logger/ @ChaosJohn @luojianing
 /doc/libs_stdx/net/ @ovy @luojianing
 /doc/libs_stdx/syntax/ @mini-tang @luojianing
-
 /doc/libs_stdx_en/chir/ @Mr_Kang_Yi @luojianing
+/doc/libs_stdx/plugin/ @kkkkkkkbbbbbbb @luojianing

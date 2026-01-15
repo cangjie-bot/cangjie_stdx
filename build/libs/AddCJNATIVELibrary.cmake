@@ -1076,4 +1076,55 @@ if(NOT CANGJIE_CJPM_BUILD_TYPE)
         SOURCES ${SYNTAX_SRCS}
         SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/syntax
         DEPENDS ${SYNTAX_DEPENDENCIES})
+
+    make_cangjie_lib(
+        plugin IS_SHARED
+        DEPENDS cangjie${BACKEND_TYPE}Plugin stdx.syntax stdx.syntaxFFI
+        CANGJIE_STDX_LIB_DEPENDS syntax 
+        FORCE_LINK_ARCHIVES stdx.syntaxFFI
+        CANGJIE_STD_LIB_LINK std-core std-collection std-sync std-ast
+        OBJECTS ${output_cj_object_dir}/stdx/plugin.o
+        FLAGS ${syntaxFFI_flags}
+            $<$<NOT:$<BOOL:${WIN32}>>:-ldl>
+            -lstdx.syntaxFFI
+        )
+    
+    add_library(stdx.plugin STATIC ${output_cj_object_dir}/stdx/plugin.o)
+    set_target_properties(stdx.plugin PROPERTIES LINKER_LANGUAGE C)
+    install(TARGETS stdx.plugin DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}/static/stdx)
+    
+    add_cangjie_library(
+        cangjie${BACKEND_TYPE}Plugin
+        NO_SUB_PKG
+        IS_STDXLIB
+        IS_PACKAGE
+        IS_CJNATIVE_BACKEND
+        PACKAGE_NAME "plugin"
+        MODULE_NAME "stdx"
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/plugin
+        DEPENDS ${PLUGIN_DEPENDENCIES})
+    
+    if(NOT CMAKE_BUILD_STAGE STREQUAL "postBuild")
+        make_cangjie_lib(
+            plugin.macros IS_SHARED IS_MACRO
+            CANGJIE_STD_LIB_LINK std-core std-collection std-ast
+            OBJECTS ${output_cj_object_dir}/stdx/plugin.macros.o)
+    else()
+        string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND} output_stdx_cj_lib_dir)
+        set(output_stdx_cj_lib_dir ${output_stdx_cj_lib_dir}${SANITIZER_SUBPATH})
+        set(plugin_macros_full_name ${CANGJIE_CJPM_DIR}/target/${lowercase_build_type}/stdx/lib-macro_stdx.plugin.macros${CMAKE_SHARED_LIBRARY_SUFFIX})
+        install(FILES ${plugin_macros_full_name} DESTINATION ${output_stdx_cj_lib_dir}/dynamic/stdx)
+        install(FILES ${plugin_macros_full_name} DESTINATION ${output_stdx_cj_lib_dir}/static/stdx)
+    endif()
+
+    add_cangjie_library(
+        cangjie${BACKEND_TYPE}PluginMacros
+        NO_SUB_PKG
+        IS_STDXLIB
+        IS_PACKAGE
+        IS_CJNATIVE_BACKEND
+        PACKAGE_NAME "plugin.macros"
+        MODULE_NAME "stdx"
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/plugin/macros
+        DEPENDS ${PLUGIN_MACROS_DEPENDENCIES})
 endif()
