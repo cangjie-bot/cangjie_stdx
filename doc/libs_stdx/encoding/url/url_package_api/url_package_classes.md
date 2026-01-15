@@ -897,7 +897,7 @@ main() {
 URL created: https://example.com/path
 ```
 
-### static func decode(String): String
+### static func decode(String)
 
 ```cangjie
 static func decode(url: String): String
@@ -942,7 +942,7 @@ main() {
 URL decode: Hello %26 World! %
 ```
 
-### static func decodeComponent(String): String
+### static func decodeComponent(String)
 
 ```cangjie
 static func decodeComponent(component: String): String
@@ -980,7 +980,7 @@ main() {
 URL decodeComponent: Hello & World! %
 ```
 
-### static func encode(String): String
+### static func encode(String)
 
 ```cangjie
 static func encode(url: String): String
@@ -1029,7 +1029,7 @@ main() {
 URL encode: Hello%20&%20World!
 ```
 
-### static func encodeComponent(String): String
+### static func encodeComponent(String)
 
 ```cangjie
 static func encodeComponent(component: String): String
