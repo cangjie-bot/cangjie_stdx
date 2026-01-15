@@ -10,6 +10,10 @@ public class InsertAtEntry {
 
 Function: Weaves a call to the annotated function at the entry point of the method specified by the annotation. Both the annotated method and the target function must comply with the [Specification Constraints](../aspectCJ_package_overview.md#specifications-and-usage).
 
+Example: 
+
+See the [InsertAtEntry example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-example) for the end-to-end workflow.
+
 ### const init(String, String, String, Bool, String, Bool)
 
 ```cangjie
@@ -17,6 +21,10 @@ public const init(packageName!: String, className!: String, methodName!: String,
 ```
 
 Function: Creates an [InsertAtEntry](aspectCJ_package_classes.md#class-insertatentry) object.
+
+Example: 
+
+See the [InsertAtEntry example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-example) for the end-to-end workflow.
 
 Parameters:
 
@@ -37,6 +45,10 @@ public class InsertAtExit {
 
 Function: Weaves a call to the annotated function at the exit point of the method specified by the annotation. Both the annotated method and the target function must comply with the [Specification Constraints](../aspectCJ_package_overview.md#specifications-and-usage).
 
+Example: 
+
+See the [InsertAtExit example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-example) for the end-to-end workflow.
+
 ### const init(String, String, String, Bool, String, Bool)
 
 ```cangjie
@@ -44,6 +56,10 @@ public const init(packageName!: String, className!: String, methodName!: String,
 ```
 
 Function: Creates an [InsertAtExit](aspectCJ_package_classes.md#class-insertatexit) object.
+
+Example: 
+
+See the [InsertAtExit example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-example) for the end-to-end workflow.
 
 Parameters:
 
@@ -64,6 +80,10 @@ public class ReplaceFuncBody {
 
 Function: Replaces the method body specified by the annotation with a call to the annotated function. Both the annotated method and the target function must comply with the [Specification Constraints](../aspectCJ_package_overview.md#specifications-and-usage).
 
+Example: 
+
+See the [ReplaceFuncBody example tutorial](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-example) for the end-to-end workflow.
+
 ### const init(String, String, String, Bool, Bool)
 
 ```cangjie
@@ -71,6 +91,10 @@ public const init(packageName!: String, className!: String, methodName!: String,
 ```
 
 Function: Creates a [ReplaceFuncBody](aspectCJ_package_classes.md#class-replacefuncbody) object.
+
+Example: 
+
+See the [ReplaceFuncBody example tutorial](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-example) for the end-to-end workflow.
 
 Parameters:
 
