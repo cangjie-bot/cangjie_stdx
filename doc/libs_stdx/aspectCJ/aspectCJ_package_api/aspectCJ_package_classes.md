@@ -12,7 +12,7 @@ public class InsertAtEntry {
 
 示例：
 
-参考[InsertAtEntry 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-example)了解具体调用流程。
+参考[InsertAtEntry 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-入口插桩示例)了解具体调用流程。
 
 ### const init(String, String, String, Bool, String, Bool)
 
@@ -24,7 +24,7 @@ public const init(packageName!: String, className!: String, methodName!: String,
 
 示例：
 
-参考[InsertAtEntry 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-example)了解具体调用流程。
+参考[InsertAtEntry 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-入口插桩示例)了解具体调用流程。
 
 参数：
 
@@ -48,7 +48,7 @@ public class InsertAtExit {
 
 示例：
 
-参考[InsertAtExit 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-example)了解具体调用流程。
+参考[InsertAtExit 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-退出插桩示例)了解具体调用流程。
 
 ### const init(String, String, String, Bool, String, Bool)
 
@@ -60,7 +60,7 @@ public const init(packageName!: String, className!: String, methodName!: String,
 
 示例：
 
-参考[InsertAtExit 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-example)了解具体调用流程。
+参考[InsertAtExit 示例教程](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-退出插桩示例)了解具体调用流程。
 
 参数：
 
@@ -83,7 +83,7 @@ public class ReplaceFuncBody {
 
 示例：
 
-参考[ReplaceFuncBody 示例教程](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-example)了解具体调用流程。
+参考[ReplaceFuncBody 示例教程](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-替换函数体示例)了解具体调用流程。
 
 ### const init(String, String, String, Bool, Bool)
 
@@ -95,7 +95,7 @@ public const init(packageName!: String, className!: String, methodName!: String,
 
 示例：
 
-参考[ReplaceFuncBody 示例教程](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-example)了解具体调用流程。
+参考[ReplaceFuncBody 示例教程](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-替换函数体示例)了解具体调用流程。
 
 参数：
 

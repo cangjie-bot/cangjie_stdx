@@ -12,7 +12,7 @@ Function: Weaves a call to the annotated function at the entry point of the meth
 
 Example: 
 
-See the [InsertAtEntry example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-example) for the end-to-end workflow.
+See the [InsertAtEntry example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-entry-instrumentation-example) for the end-to-end workflow.
 
 ### const init(String, String, String, Bool, String, Bool)
 
@@ -24,7 +24,7 @@ Function: Creates an [InsertAtEntry](aspectCJ_package_classes.md#class-insertate
 
 Example: 
 
-See the [InsertAtEntry example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-example) for the end-to-end workflow.
+See the [InsertAtEntry example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatentry-entry-instrumentation-example) for the end-to-end workflow.
 
 Parameters:
 
@@ -47,7 +47,7 @@ Function: Weaves a call to the annotated function at the exit point of the metho
 
 Example: 
 
-See the [InsertAtExit example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-example) for the end-to-end workflow.
+See the [InsertAtExit example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-exit-instrumentation-example) for the end-to-end workflow.
 
 ### const init(String, String, String, Bool, String, Bool)
 
@@ -59,7 +59,7 @@ Function: Creates an [InsertAtExit](aspectCJ_package_classes.md#class-insertatex
 
 Example: 
 
-See the [InsertAtExit example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-example) for the end-to-end workflow.
+See the [InsertAtExit example tutorial](../aspectCJ_samples/aspectCJ_sample.md#insertatexit-exit-instrumentation-example) for the end-to-end workflow.
 
 Parameters:
 
@@ -82,7 +82,7 @@ Function: Replaces the method body specified by the annotation with a call to th
 
 Example: 
 
-See the [ReplaceFuncBody example tutorial](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-example) for the end-to-end workflow.
+See the [ReplaceFuncBody example tutorial](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-function-body-replacement-example) for the end-to-end workflow.
 
 ### const init(String, String, String, Bool, Bool)
 
@@ -94,7 +94,7 @@ Function: Creates a [ReplaceFuncBody](aspectCJ_package_classes.md#class-replacef
 
 Example: 
 
-See the [ReplaceFuncBody example tutorial](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-example) for the end-to-end workflow.
+See the [ReplaceFuncBody example tutorial](../aspectCJ_samples/aspectCJ_sample.md#replacefuncbody-function-body-replacement-example) for the end-to-end workflow.
 
 Parameters:
 
