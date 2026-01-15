@@ -981,6 +981,12 @@ table File {
   feature: FeaturesDirective;
 }
 
+table Package {
+  files: [File];
+  name: string;
+  isMacroPkg: bool;
+}
+
 table FeatureId {
   base: NodeBase;
   identifiers: [string];

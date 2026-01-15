@@ -1176,6 +1176,16 @@ private class FlatbufferNodeTranslator {
         builder.buildNonTerminal(SyntaxNodeKind.File, ret.toArray())
     }
 
+    func transPackage(`package`: NodeFormat_Package): Package {
+        let files = ArrayList<(SyntaxNodeImpl, String)>()
+        for (file in `package`.GetFiles()) {
+            let f = file.getOrThrow()
+            let impl = transFile(f)
+            files.add((impl.getOrThrow(), f.GetFilePath()))
+        }
+        Package(`package`.GetIsMacroPkg(), `package`.GetName(), files.toArray())
+    }
+
     private func transFeatureId(ftr: NodeFormat_FeatureId): ?SyntaxNodeImpl {
         addWhitespaceAndMoveCursorToBegin(ftr.GetBase())
         let ret = ArrayList<SyntaxNodeImpl>()
@@ -5376,4 +5386,14 @@ private class FlatbufferNodeTranslator {
         }
         builder.buildNonTerminal(SyntaxNodeKind.Comment, ret.toArray())
     }
+}
+
+foreign func memcpy_s(dest: CPointer<UInt8>, destSize: UInt64, src: CPointer<UInt8>, count: UInt64): Int32
+// this func is exposed to stdx.plugin
+protected func deserialisePackage(`package`: CPointer<UInt8>, size: UIntNative): Package {
+    let arr = Array<UInt8>(Int64(size)) { _ => 0 }
+    unsafe {
+        memcpy_s(acquireArrayRawData(arr).pointer, UInt64(arr.size), `package`, UInt64(size))
+    }
+    FlatbufferNodeTranslator().transPackage(NodeFormat_Package(arr, 0))
 }
