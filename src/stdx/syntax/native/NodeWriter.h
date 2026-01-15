@@ -89,6 +89,7 @@ public:
     }
     uint8_t* ExportNode(SourceManager* sm); // uint8_t* -> unsafePtr in CangJie
     bool isUnsupported = false;
+    flatbuffers::DetachedBuffer SerializePackage(AST::Package& package, SourceManager& sm);
 private:
     std::vector<uint8_t> bufferData;
     Ptr<AST::Node> nodePtr = nullptr; // nodePtr is the AST node to be serialized
@@ -254,4 +255,11 @@ flatbuffers::Offset<flatbuffers::Vector<flatbuffers::Offset<K>>> NodeWriter::Fla
 }
 
 } // namespace AstWriter
+
+extern "C" {
+    void* SerializePackageToFb(void* package);
+    void* GetPackage(void* buffer);
+    size_t GetPackageSize(void* buffer);
+    void DeleteFb(void* buffer);
+}
 #endif // CANGJIE_NODE_WRITER_H
