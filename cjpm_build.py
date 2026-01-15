@@ -32,6 +32,7 @@ from pathlib import Path
 from subprocess import DEVNULL, PIPE
 
 BUILD_TARGET = ""
+DEVECO_OH_NATIVE_HOME = None
 HAS_DEBUG_FLAG = False
 BUILD_TYPE_CJPM = "release"
 WMIC_PATH = "C:/Windows/System32/wbem/wmic.exe"
@@ -471,6 +472,7 @@ def run_cmake_and_build(args):
 
 def build(args):
     global CJPM_DIR
+    global DEVECO_OH_NATIVE_HOME
     
     if not HAS_DEBUG_FLAG:
         args.build_type = BuildType.release
@@ -480,35 +482,35 @@ def build(args):
     LOG.info("args: " + str(args))
     LOG.info("CJPM_DIR: " + CJPM_DIR)
     LOG.info("args.build_stage: " + str(args.build_stage))
+    DEVECO_OH_NATIVE_HOME = os.environ.get("DEVECO_OH_NATIVE_HOME", "")
+    LOG.info("DEVECO_OH_NATIVE_HOME: " + str(DEVECO_OH_NATIVE_HOME))
     if args.build_stage.value == "preBuild":
         clean(args)
         cleanLibs()
     
-    DEVECO_OH_NATIVE_HOME = os.environ.get("DEVECO_OH_NATIVE_HOME", "")
-    if IS_WINDOWS:
-        if DEVECO_OH_NATIVE_HOME:
+    if DEVECO_OH_NATIVE_HOME:
+        if IS_WINDOWS:
             DEVECO_OH_NATIVE_HOME = DEVECO_OH_NATIVE_HOME.replace("\\", "/")
-            cmake_path = os.path.join(
-                DEVECO_OH_NATIVE_HOME, "build-tools", "cmake", "bin"
-            )
-            custom_paths = [cmake_path]
+        cmake_path = os.path.join(
+            DEVECO_OH_NATIVE_HOME, "build-tools", "cmake", "bin"
+        )
+        custom_paths = [cmake_path]
 
-            current_path = os.environ.get("PATH", "")
+        current_path = os.environ.get("PATH", "")
 
-            if custom_paths:
-                new_paths = ";".join(custom_paths)
-                if current_path:
-                    os.environ["PATH"] = new_paths + ";" + current_path
-                else:
-                    os.environ["PATH"] = new_paths
+        if custom_paths:
+            new_paths = os.pathsep.join(custom_paths)
+            if current_path:
+                os.environ["PATH"] = new_paths + os.pathsep + current_path
+            else:
+                os.environ["PATH"] = new_paths
 
     if args.target:
         args.target = TARGET_DICTIONARY[args.target]
-
     if BUILD_TARGET and (
         BUILD_TARGET == "aarch64-linux-ohos" or BUILD_TARGET == "x86_64-linux-ohos"
     ):
-        if args.build_stage.value == "preBuild":
+        if args.build_stage.value == "preBuild" and not DEVECO_OH_NATIVE_HOME:
             LOG.info("begin build native stdx")
             run_cmake_and_build(args)
             LOG.info("end build native stdx")
@@ -855,7 +857,7 @@ def cleanLibs():
     output_dirs = []
     output_dirs.append(ASPECTCJ_DIR)
     output_dirs.append(SYNTAX_DIR)
-    if IS_WINDOWS:
+    if IS_WINDOWS and not DEVECO_OH_NATIVE_HOME:
         output_dirs.append(FUZZ_DIR)
     for file_path in output_dirs:
         abs_file_path = os.path.join(STDX_DIR, file_path)
