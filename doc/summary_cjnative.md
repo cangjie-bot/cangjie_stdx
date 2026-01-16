@@ -22,6 +22,8 @@
     - [示例教程]()
         - [Deflate 格式数据的压缩和解压](libs_stdx/compress/zlib/zlib_samples/deflate_compress_decompress.md)
         - [Gzip 格式数据的压缩和解压](libs_stdx/compress/zlib/zlib_samples/gzip_compress_decompress.md)
+- [stdx.chir](libs_stdx/chir/chir_package_overview.md)
+    - [类](libs_stdx/chir/chir_package_api/chir_package_classes.md)
 - [stdx.crypto.common](libs_stdx/crypto/common/crypto_common_package_overview.md)
     - [函数](libs_stdx/crypto/common/crypto_common_package_api/crypto_common_package_funcs.md)
     - [接口](libs_stdx/crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md)
