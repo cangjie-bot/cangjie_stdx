@@ -8,6 +8,8 @@
     - [类](libs_stdx/aspectCJ/aspectCJ_package_api/aspectCJ_package_classes.md)
     - [示例教程]()
         - [AOP 开发示例](libs_stdx/aspectCJ/aspectCJ_samples/aspectCJ_sample.md)
+- [stdx.chir](libs_stdx/chir/chir_package_overview.md)
+    - [类](libs_stdx/chir/chir_package_api/chir_package_classes.md)
 - [stdx.compress](libs_stdx/compress/compress_package_overview.md)
     - [类](libs_stdx/compress/compress_package_api/compress_package_classes.md)
 - [stdx.compress.tar](libs_stdx/compress/tar/tar_package_overview.md)
