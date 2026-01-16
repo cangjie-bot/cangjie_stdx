@@ -7,6 +7,8 @@
     - [Classes](libs_stdx_en/aspectCJ/aspectCJ_package_api/aspectCJ_package_classes.md)
     - [Tutorial Examples]()
         - [aspecjCJ Usage](libs_stdx_en/aspectCJ/aspectCJ_samples/aspectCJ_sample.md)
+- [stdx.chir](libs_stdx_en/chir/chir_package_overview.md)
+    - [Classes](libs_stdx_en/chir/chir_package_api/chir_package_classes.md)
 - [stdx.compress](libs_stdx_en/compress/compress_package_overview.md)
     - [Classes](libs_stdx_en/compress/compress_package_api/compress_package_classes.md)
 - [stdx.compress.tar](libs_stdx_en/compress/tar/tar_package_overview.md)
