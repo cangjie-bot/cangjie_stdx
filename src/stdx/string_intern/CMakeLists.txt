@@ -1,0 +1,19 @@
+set(STRING_INTERN_SRCS
+    base_double_linked_list_memory_cache.cj
+    base_memory_cache.cj
+    cache_eviction_type.cj
+    cache_proxy.cj
+    cache.cj
+    concurrent_skiping_link_list.cj
+    fifo_memory_cache.cj
+    i_cache_config.cj
+    i_cache_obj_attr.cj
+    i_cache_obj.cj
+    i_cache.cj
+    i_link_list.cj
+    intern_string_pool.cj
+    intern_string.cj
+    lfu_memory_cache.cj
+    lru_memory_cache.cj
+    wyrand.cj
+    CACHE INTERNAL "")

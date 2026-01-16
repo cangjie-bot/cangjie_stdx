@@ -17,6 +17,7 @@ Architecture Diagram:
 - logger: Provides log printing functions in text format and JSON format.
 - net: Provides network communication and secure transmission functions.
 - serialization: Provides the capability of serialization and deserialization.
+- string_intern: Provides polled caching capability for string objects.
 - unittest: Provides the capability to supply test data in serialized input formats when writing unit test code for Cangjie projects.
 - actors: Provides a concurrent programming model designed to simplify the handling of concurrent tasks.
 - effect: Provides a powerful non-local control operation.
@@ -107,6 +108,7 @@ The following platform and architecture combinations are currently supported:
 │       ├── logger              # Provides log printing functions in text format and JSON format
 │       ├── net                 # Provide network communication and other capabilities
 │       ├── serialization       # Provides serialization and deserialization
+│       ├── string_intern       # Provides polled caching capability for string objects
 │       └─  unittest            # Provides unit testing extension
 │
 ├─ third_party                  # Directory of third-party components

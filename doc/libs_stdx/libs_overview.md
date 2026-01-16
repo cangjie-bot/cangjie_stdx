@@ -38,7 +38,7 @@ stdx 含若干包，提供了丰富的扩展功能：
 | [net.tls.common](./net/tls/common/tls_common_package_overview.md)              | tls.common 包提供了 TLS 相关的抽象接口，用于适配多种 TLS 实现。                                                                                                                       |
 | [serialization](./serialization/serialization_package_overview.md)             | serialization 包提供了序列化和反序列化能力。                                                                                                                                          |
 | [unittest.data](./unittest/data/data_package_overview.md)                      | unittest 模块提供了单元测试扩展能力。                                                                                                                                                 |
-
+| [string_intern](./string_intern/string_intern_package_overview.md)             | string_intern 模块提供字符串内联缓存能力。                                                                                                                                    |
 ## 使用指导
 
 仓颉编程语言扩展库 stdx 二进制包包含静态（static）和 动态 （dynamic） 两部分，请按需引用。
