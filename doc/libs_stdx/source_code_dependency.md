@@ -1,4 +1,4 @@
-# 源码集成使用
+# 扩展库源码集成指南
 
 ## 两种集成方式
 
@@ -29,6 +29,12 @@ stdx 有两种源码集成方式：git 源码依赖和本地源码依赖。
 ## 包范围
 
 目前源码依赖集成的 stdx 不包含 aspectCJ 和 syntax，并且在 Windows 平台上没有 fuzz 包。
+
+## 支持平台
+
+- Linux
+- macOs
+- 交叉编译 OpenHarmony
 
 ## 交叉编译 OpenHarmony
 
