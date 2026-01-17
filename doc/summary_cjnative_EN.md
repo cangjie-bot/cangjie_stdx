@@ -1,4 +1,5 @@
 - [Cangjie Programming Language Extension Libraries Overview](libs_stdx_en/libs_overview.md)
+- [Extension Library Source Code Integration Guide](libs_stdx_en/source_code_dependency.md)
 - [stdx.actors](libs_stdx_en/actors/actors_package_overview.md)
     - [类](libs_stdx_en/actors/actors_package_api/actors_package_classes.md)
 - [stdx.actors.macros](libs_stdx_en/actors/macros/macros_package_overview.md)

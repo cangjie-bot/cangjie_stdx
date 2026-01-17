@@ -139,13 +139,17 @@ Execute the following command to verify whether the installation is successful:
 cjc -v
 ```
 
-#### Build Command
+#### Prepare source code
 
 Download the source code
 
 ```bash
 git clone https://gitcode.com/Cangjie/cangjie_stdx.git
 ```
+
+#### Build Command
+
+##### Method 1
 
 Enter the project directory, and run the following commands:
 
@@ -165,9 +169,17 @@ python3 build.py install
 
 If the compilation is successful, a product directory named target by default will be obtained in the project directory.
 
-### Get More Help Information
-
 For more information, please take a look at the [build.py](build.py) or use `--help`
+
+##### Method 2
+
+Currently, stdx also supports building via cjpm, and the build command is as follows:
+
+```shell
+cjpm build
+```
+
+Building via cjpm has some dependencies, see [dependency list](./doc/libs_stdx_en/source_code_dependency.md#Dependencies).
 
 ### Integration Build Guide
 

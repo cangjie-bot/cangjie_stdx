@@ -1,4 +1,4 @@
-# Source Code Integration
+# Extension Library Source Code Integration Guide
 
 ## Two Integration Methods
 
@@ -29,6 +29,12 @@ After completing the addition of local module dependencies, developers can use s
 ## Package Scope
 
 Currently, the integrated stdx for source code dependencies does not include aspectCJ and syntax, and there is no fuzz package on the Windows platform.
+
+## Supported Platforms
+
+- Linux
+- macOS
+- Cross-compile OpenHarmony
 
 ## Cross-compiling OpenHarmony
 
