@@ -1,4 +1,5 @@
 - [仓颉编程语言扩展库概述](libs_stdx/libs_overview.md)
+- [扩展库源码集成指南](libs_stdx/source_code_dependency.md)
 - [stdx.actors](libs_stdx/actors/actors_package_overview.md)
     - [类](libs_stdx/actors/actors_package_api/actors_package_classes.md)
 - [stdx.actors.macros](libs_stdx/actors/macros/macros_package_overview.md)

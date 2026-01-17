@@ -138,13 +138,17 @@ source <cangjie sdk 路径>
 cjc -v
 ```
 
-#### 构建命令
+#### 准备源码
 
 下载源码
 
 ```bash
 git clone https://gitcode.com/Cangjie/cangjie_stdx.git
 ```
+
+#### 构建命令
+
+##### 方式一
 
 进入工程目录，运行下面构建命令:
 
@@ -162,9 +166,18 @@ python3 build.py install
 
 编译成功会在工程目录中得到默认名称为 target 产物目录。
 
-### 更多构建选项
+更多构建选项请参阅 [build.py](build.py) 或通过 `--help` 选项了解更多编译选项。
 
-请参阅 [build.py](build.py) 或通过 `--help` 选项了解更多编译选项。
+##### 方式二
+
+目前 stdx 也支持通过 cjpm 进行构建，构建命令如下：
+
+```shell
+cjpm build
+```
+
+通过 cjpm 进行构建存在一些依赖，参见[依赖列表](./doc/libs_stdx/source_code_dependency.md#依赖)。
+
 
 ### 集成构建指导
 
