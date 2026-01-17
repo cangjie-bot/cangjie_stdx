@@ -39,6 +39,7 @@ MAKE_JOBS = multiprocessing.cpu_count() + 2
 TARGET_DICTIONARY = {
     "native": None,
     "ohos-aarch64": "aarch64-linux-ohos",
+    "ohos-arm": "arm-linux-ohos",
     "ohos-x86_64": "x86_64-linux-ohos",
     "windows-x86_64": "x86_64-w64-mingw32",
     "ios-simulator-aarch64": "arm64-apple-ios11-simulator",
@@ -333,21 +334,6 @@ class BuildType(Enum):
         except KeyError:
             return s.build_type
 
-<<<<<<< HEAD
-SupportedTarget = [
-    "native",
-    "ohos-arm",
-    "ohos-aarch64",
-    "ohos-x86_64",
-    "windows-x86_64",
-    "ios-simulator-aarch64",
-    "ios-aarch64",
-    "android-aarch64",
-    "android-x86_64"
-]
-
-=======
->>>>>>> b709ee2 (feat: cross-compiling from mac to android 8 (api level 26))
 def main():
     """build entry"""
     parser = argparse.ArgumentParser(description="build stdx project")
