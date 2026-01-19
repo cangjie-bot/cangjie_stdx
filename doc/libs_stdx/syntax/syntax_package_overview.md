@@ -147,7 +147,7 @@ syntax 包主要包含了仓颉源码的语法解析器和仓颉语法树节点�
 | [FuncKind](./syntax_package_api/syntax_package_enums.md#enum-funckind) | 表示声明函数的类型，包括外部函数、普通函数、构造器函数等。|
 | [ImportKind](./syntax_package_api/syntax_package_enums.md#enum-importkind) | 表示引用的类型，包括 `Alias`、`All`、`Multi`、`Single` 等 。|
 | [IncOrDecOpKind](./syntax_package_api/syntax_package_enums.md#enum-incordecopkind) | 表示自增自减表达式的操作符类型，包括 `++` 和 `--` 两种类型。|
-| [LitConstKind](./syntax_package_api/syntax_package_enums.md#enum-litconstkind) | 表示字面量表达式的类型，包括 `BoolLiteral`、`FloatLiteral`、`IntergerLiteral`、`RuneLiteral`、`StringLiteral` 和 `UnitLiteral` 六种类型。|
+| [LitConstKind](./syntax_package_api/syntax_package_enums.md#enum-litconstkind) | 表示字面量表达式的类型，包括 `BoolLiteral`、`FloatLiteral`、`IntegerLiteral`、`RuneLiteral`、`StringLiteral` 和 `UnitLiteral` 六种类型。|
 | [LitConstStrKind](./syntax_package_api/syntax_package_enums.md#enum-litconststrkind) | 表示字符串字面量表达式的类型，包括 `JStringLiteral`、`MultiLineString`、`MultiLineRawString` 和 `StringLiteral` 四种类型。|
 | [MacroExpandInput](./syntax_package_api/syntax_package_enums.md#enum-macroexpandinput) | 表示宏展开的输入形式，区分不同的宏调用语法形式，包括无括号和有括号形式的宏输入。|
 | [ModifierKind](./syntax_package_api/syntax_package_enums.md#enum-modifierkind) | 表示修饰符的类型，包括 `Abstract`、 `Internal`、 `Mut` 等。|

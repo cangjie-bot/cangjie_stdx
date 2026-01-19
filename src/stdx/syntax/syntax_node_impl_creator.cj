@@ -158,7 +158,7 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.Argument, ret.toArray())
     }
 
-    static func createBlockImpl(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
+    static func createBlockImpl(nodes: Array<SyntaxTreeNode>, addNewLine!: Bool = true, comments!: Array<Comment> = []) {
         for (node in nodes) {
             if (node.nodeImpl.kind != SyntaxNodeKind.VarDecl && node.nodeImpl.kind != SyntaxNodeKind.FuncDecl &&
                 !node.nodeImpl.kind.isExpr()) {
@@ -171,11 +171,15 @@ class SyntaxNodeImplCreator {
         addCommentToNode(ret, comments)
 
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
-        ret.add(builder.buildNewline(1))
+        if (addNewLine) {
+            ret.add(builder.buildNewline(1))
+        }
         for (i in 0..nodes.size) {
             ret.add(builder.buildSpace(FORMAT_INDENTATION))
             ret.add(nodes[i].nodeImpl)
-            ret.add(builder.buildNewline(1))
+            if (addNewLine) {
+                ret.add(builder.buildNewline(1))
+            }
         }
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
 
@@ -866,15 +870,17 @@ class SyntaxNodeImplCreator {
 
         ret.add(builder.buildValuedTerminal(SyntaxNodeKind.IdentToken, name))
 
-        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
-        for (i in 0..paramTyAnnotations.size) {
-            ret.add(paramTyAnnotations[i].nodeImpl)
-            if (i < paramTyAnnotations.size - 1) {
-                ret.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
-                ret.add(builder.buildSpace(1))
+        if (!paramTyAnnotations.isEmpty()) {
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
+            for (i in 0..paramTyAnnotations.size) {
+                ret.add(paramTyAnnotations[i].nodeImpl)
+                if (i < paramTyAnnotations.size - 1) {
+                    ret.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
+                    ret.add(builder.buildSpace(1))
+                }
             }
+            ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
         }
-        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RParenToken))
 
         builder.buildNonTerminal(SyntaxNodeKind.EnumConstructor, ret.toArray())
     }
@@ -1178,7 +1184,7 @@ class SyntaxNodeImplCreator {
                 builder.buildValuedTerminal(SyntaxNodeKind.BooleanLiteralToken, value))
             case LitConstKind.FloatLiteral => ret.add(
                 builder.buildValuedTerminal(SyntaxNodeKind.FloatLiteralToken, value))
-            case LitConstKind.IntergerLiteral => ret.add(
+            case LitConstKind.IntegerLiteral => ret.add(
                 builder.buildValuedTerminal(SyntaxNodeKind.IntegerLiteralToken, value))
             case LitConstKind.UnitLiteral =>
                 ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
@@ -1544,7 +1550,7 @@ class SyntaxNodeImplCreator {
         ret.add(tryBlock.nodeImpl)
 
         for (i in 0..catchPatterns.size) {
-            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(1))
             ret.add(builder.buildBasicTerminal(SyntaxNodeKind.CatchToken))
             ret.add(builder.buildSpace(1))
             ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
@@ -1555,7 +1561,7 @@ class SyntaxNodeImplCreator {
         }
 
         if (let Some(finalBlock) <- finallyBlock) {
-            ret.add(builder.buildNewline(1))
+            ret.add(builder.buildSpace(1))
             ret.add(builder.buildBasicTerminal(SyntaxNodeKind.FinallyToken))
             ret.add(builder.buildSpace(1))
             ret.add(finalBlock.nodeImpl)
@@ -1633,6 +1639,7 @@ class SyntaxNodeImplCreator {
             ret.add(builder.buildBasicTerminal(SyntaxNodeKind.ElseToken))
             ret.add(builder.buildSpace(1))
             ret.add(elseIfExpr.nodeImpl)
+            ret.add(builder.buildSpace(1))
         }
 
         if (let Some(elBlock) <- elseBlock) {
@@ -2102,7 +2109,6 @@ class SyntaxNodeImplCreator {
         addCommentToNode(parts, comments)
         parts.add(callee.nodeImpl)
         if (!arguments.isEmpty()) {
-            parts.add(builder.buildSpace(1))
             parts.add(builder.buildBasicTerminal(SyntaxNodeKind.LParenToken))
             for (i in 0..arguments.size) {
                 parts.add(arguments[i].nodeImpl)
@@ -2721,7 +2727,7 @@ class SyntaxNodeImplCreator {
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.CommaToken))
         parts.add(builder.buildSpace(1))
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DollarToken))
-        parts.add(LitConstExpr(LitConstKind.IntergerLiteral, size.toString()).nodeImpl)
+        parts.add(LitConstExpr(LitConstKind.IntegerLiteral, size.toString()).nodeImpl)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.GtToken))
         builder.buildNonTerminal(SyntaxNodeKind.VArrayType, parts.toArray())
     }

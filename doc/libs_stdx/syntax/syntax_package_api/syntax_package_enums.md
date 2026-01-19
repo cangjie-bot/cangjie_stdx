@@ -790,7 +790,7 @@ Incr
 public enum LitConstKind {
     | BoolLiteral
     | FloatLiteral
-    | IntergerLiteral
+    | IntegerLiteral
     | RuneLiteral
     | StringLiteral
     | UnitLiteral
@@ -816,10 +816,10 @@ FloatLiteral
 
 功能：表示浮点数类型字面量，如 `1.0`。
 
-### IntergerLiteral
+### IntegerLiteral
 
 ```cangjie
-IntergerLiteral
+IntegerLiteral
 ```
 
 功能：表示整形字面量，如 `1`。

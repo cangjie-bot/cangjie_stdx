@@ -303,14 +303,9 @@ class SyntaxNodeImplTranslator {
         // BNF: annotationList? FEATURES NL* featuresSet end+
         var featuresKeywordPos = CodePosition()
         var ftrSetPropInfo = PropInfo()
-        let annosPropInfos = ArrayList<PropInfo>()
         let lp = LocalParser(node.children)
-        while (lp.look(SyntaxNodeKind.Annotation)) {
-            let node = lp.consume()
-            if (let Some(annoNode) <- node) {
-                annosPropInfos.add(PropInfo(lp.cur - 1, lp.offset))
-                lp.moveOffset(annoNode)
-            }
+        if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.AnnotationList)) {
+            lp.offset.move(v.offset)
         }
         if (let Some(keyNode) <- lp.consume(kind: SyntaxNodeKind.FeaturesToken)) {
             featuresKeywordPos = startPos + lp.offset
@@ -321,7 +316,7 @@ class SyntaxNodeImplTranslator {
             lp.moveOffset(ftrSetNode)
         }
         let ftrDIrectivePosInfos = FeaturesDirectivePosInfos(featuresKeywordPos)
-        let ftrDirectivePropInfos = FeaturesDirectivePropInfos(annosPropInfos.toArray(), ftrSetPropInfo)
+        let ftrDirectivePropInfos = FeaturesDirectivePropInfos(ftrSetPropInfo)
         FeaturesDirective(node, startPos, parent, ftrDIrectivePosInfos, ftrDirectivePropInfos)
     }
 
@@ -1972,11 +1967,11 @@ class SyntaxNodeImplTranslator {
         let lp = LocalParser(node.children)
         let litNode = lp.consume().getOrThrow()
         var kind: LitConstKind = match (litNode.kind) {
-            case SyntaxNodeKind.IntegerLiteralToken => LitConstKind.IntergerLiteral
+            case SyntaxNodeKind.IntegerLiteralToken => LitConstKind.IntegerLiteral
             case SyntaxNodeKind.FloatLiteralToken => LitConstKind.FloatLiteral
             case SyntaxNodeKind.BooleanLiteralToken => LitConstKind.BoolLiteral
             case _ => throw Exception(
-                "ParseException: This SyntaxNode kind is not interger literal, float literal or bool literal.")
+                "ParseException: This SyntaxNode kind is not integer literal, float literal or bool literal.")
         }
         let rawValue = match (litNode) {
             case vt: ValuedTerminal => vt.value

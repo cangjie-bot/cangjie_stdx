@@ -1849,7 +1849,7 @@ public class LetPattern <: SyntaxTreeNode {
 public enum LitConstKind {
     | BoolLiteral
     | FloatLiteral
-    | IntergerLiteral
+    | IntegerLiteral
     | RuneLiteral
     | StringLiteral
     | UnitLiteral
