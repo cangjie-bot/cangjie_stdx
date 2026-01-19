@@ -8074,7 +8074,7 @@ public init(subPatterns: Array<Pattern>, comments!: Array<Comment> = [])
 
 异常：
 
-- Exception - 当输入的 `subPatterns` 为空时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `subPatterns` 包含的元素个数少于 `2` 时，抛出异常，异常中包含报错提示信息。
 
 ### func getCommasPos()
 
