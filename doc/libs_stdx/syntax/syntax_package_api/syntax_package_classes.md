@@ -672,7 +672,7 @@ public func getOperatorPos(): CodePositionRange
 
 ```cangjie
 public class Block <: SyntaxTreeNode {
-    public init(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
+    public init(nodes: Array<SyntaxTreeNode>, addNewLine!: Bool = true, comments!: Array<Comment> = [])
 }
 ```
 
@@ -692,10 +692,10 @@ public prop nodes: Array<SyntaxTreeNode>
 
 类型：Array\<[SyntaxTreeNode](#class-syntaxtreenode)>
 
-### init(Array\<SyntaxTreeNode>, Array\<Comment>)
+### init(Array\<SyntaxTreeNode>, Bool, Array\<Comment>)
 
 ```cangjie
-public init(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
+public init(nodes: Array<SyntaxTreeNode>, addNewLine!: Bool = true, comments!: Array<Comment> = [])
 ```
 
 功能：构造一个 [Block](#class-block) 对象，表示语法树中的代码块节点。
@@ -703,6 +703,7 @@ public init(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = [])
 参数：
 
 - nodes: Array\<[SyntaxTreeNode](#class-syntaxtreenode)> - 块内的子节点列表。
+- addNewLine!: Bool - 是否添加换行，默认为 `true`。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 异常：
@@ -7046,6 +7047,10 @@ public init(interpolationBlock: Block, comments!: Array<Comment> = [])
 - interpolationBlock: [Block](#class-block) - 插值代码块。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `interpolationBlock` 中存在换行时，抛出异常，异常中包含报错提示信息。
+
 ### func getDollarPos()
 
 ```cangjie
@@ -8074,7 +8079,7 @@ public init(subPatterns: Array<Pattern>, comments!: Array<Comment> = [])
 
 异常：
 
-- Exception - 当输入的 `subPatterns` 为空时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `subPatterns` 包含的元素个数少于 `2` 时，抛出异常，异常中包含报错提示信息。
 
 ### func getCommasPos()
 
