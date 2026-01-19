@@ -7046,6 +7046,10 @@ public init(interpolationBlock: Block, comments!: Array<Comment> = [])
 - interpolationBlock: [Block](#class-block) - 插值代码块。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+异常：
+
+- Exception - 当输入的 `interpolationBlock` 中存在换行时，抛出异常，异常中包含报错提示信息。
+
 ### func getDollarPos()
 
 ```cangjie
@@ -8074,7 +8078,7 @@ public init(subPatterns: Array<Pattern>, comments!: Array<Comment> = [])
 
 异常：
 
-- Exception - 当输入的 `subPatterns` 为空时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `subPatterns` 包含的元素个数少于 `2` 时，抛出异常，异常中包含报错提示信息。
 
 ### func getCommasPos()
 
