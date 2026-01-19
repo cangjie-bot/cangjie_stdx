@@ -975,7 +975,6 @@ main() {
 解码后根证书的通用名称: Some(ISRG Root X1)
 ```
 
-
 ### static func decodeFromPem(String)
 
 ```cangjie

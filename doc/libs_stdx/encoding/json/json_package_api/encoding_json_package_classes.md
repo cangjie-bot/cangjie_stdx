@@ -539,7 +539,7 @@ public func toJsonStringWithoutEscaping(): String
 
 返回值：
 
-- String - 转换后的 JSON 格式字符串。   
+- String - 转换后的 JSON 格式字符串。
 
 示例：
 

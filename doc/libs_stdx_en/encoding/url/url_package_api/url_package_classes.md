@@ -373,14 +373,14 @@ Function: Perform decoding on a URL-encoded (that is, percent-encoded) string to
 > **Warning:**
 >
 > This function decodes all encoded characters. However, some characters are part of the URL syntax, so the following characters will be retained in the output string:
-> 
+>
 > `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
 
 Parameters:
 
 - url: String - The string to be decoded.
 
-Returns: 
+Returns:
 
 - String - The decoded string.
 
@@ -395,8 +395,8 @@ Function: It performs a decoding operation on a URL-encoded (also known as perce
 Parameters:
 
 - component: String - The string to be decoded.
-  
-Returns: 
+
+Returns:
 
 - String - The decoded string.
 
@@ -415,14 +415,14 @@ Function: Perform URL encoding (also referred to as percent-encoding) on regular
 > `0-9` `A-Z` `a-z`
 >
 > `!` `'` `-` `.` `*` `(` `)` `_` `~`
-> 
+>
 > `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
 
 Parameters:
 
 - url: String - The string to be encoded.
 
-Returns: 
+Returns:
 
 - String - The encoded string.
 
@@ -445,8 +445,8 @@ Function: Perform URL encoding (also known as percent-encoding) on regular strin
 Parameters:
 
 - component: String - The string to be encoded.
-  
-Returns: 
+
+Returns:
 
 - String - The encoded string.
 
@@ -488,7 +488,7 @@ Function: Parses a raw URL string into a [URL](url_package_classes.md#class-url)
 
 This function decomposes the [URL](url_package_classes.md#class-url) into components, decodes them, and stores them in respective properties. The rawXXX properties store the original undecoded values.
 
-For usage examples, see [URL parse function usage](./../url_samples/url_parse.md#url-parse-function-usage).
+For usage examples, see [URL parse function usage](../url_samples/url_parse.md#usage-of-the-url-parsing-function-parse).
 
 > **Note:**
 >
