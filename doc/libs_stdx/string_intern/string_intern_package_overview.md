@@ -1,7 +1,7 @@
-# stdx.string_intern  
-  
-## 功能介绍  
-  
+# stdx.string_intern
+
+## 功能介绍
+
 string_intern包提供string对象的池化缓存能力。可以通过代码调用获取到被缓存起来的字符串对象，降低程序运行过程中，由于临时字符串过多导致的内存风险。
 
 本功能需要构建两个全局字符串缓存池：
@@ -17,12 +17,11 @@ string_intern包提供string对象的池化缓存能力。可以通过代码调�
 2. 在运行阶段，用户可以调用String的扩展方法（intern）来使用缓存好的字符串对象。
 
 3. 如果运行阶段用户还会产生无法被编译器识别的字符串，则需要手动开启运行时的字符串缓存，可以通过主动调用String的扩展方法（configInternPool）来开启该功能，并调用intern方法来创建（仅首次调用时）并获取已经缓存起来的字符串对象。
-  
-## API 列表  
-  
-### 接口  
-  
+
+## API 列表
+
+### 接口
+
 | 接口名                                                                                                | 功能                                     |
 | -------------------------------------------------------------------------------------------------- | -------------------------------------- |
 | [Internable](./string_intern_package_api/string_intern_package_interfaces.md#interface-Internable) | 为String扩展intern、configInternPool等函数接口。 |
-  

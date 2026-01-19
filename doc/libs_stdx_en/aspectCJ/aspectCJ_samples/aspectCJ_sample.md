@@ -29,8 +29,8 @@ main() {
 Linux platform compilation commands:
 
 ```shell
-cjc aop_demo1.cj --plugin=libcollect-aspects.so -o main	# First compilation: aspect collection
-cjc aop_demo1.cj --plugin=libwave-aspects.so -o main	# Second compilation: aspect weaving
+cjc aop_demo1.cj --plugin=libcollect-aspects.so -o main # First compilation: aspect collection
+cjc aop_demo1.cj --plugin=libwave-aspects.so -o main # Second compilation: aspect weaving
 ```
 
 Possible execution output:
@@ -71,8 +71,8 @@ main() {
 Linux platform compilation commands:
 
 ```shell
-cjc aop_demo2.cj --plugin=libcollect-aspects.so -o main	# First compilation: aspect collection
-cjc aop_demo2.cj --plugin=libwave-aspects.so -o main	# Second compilation: aspect weaving
+cjc aop_demo2.cj --plugin=libcollect-aspects.so -o main # First compilation: aspect collection
+cjc aop_demo2.cj --plugin=libwave-aspects.so -o main # Second compilation: aspect weaving
 ```
 
 Possible execution output:
@@ -116,8 +116,8 @@ main() {
 Linux platform compilation commands:
 
 ```shell
-cjc aop_demo2.cj --plugin=libcollect-aspects.so -o main	# First compilation: aspect collection
-cjc aop_demo2.cj --plugin=libwave-aspects.so -o main	# Second compilation: aspect weaving
+cjc aop_demo2.cj --plugin=libcollect-aspects.so -o main # First compilation: aspect collection
+cjc aop_demo2.cj --plugin=libwave-aspects.so -o main # Second compilation: aspect weaving
 ```
 
 Possible execution output:

@@ -213,7 +213,6 @@ Exceptions:
 
 - IllegalArgumentException - Thrown when `certChain` is empty.
 
-
 ## class TlsClientSession
 
 ```cangjie
@@ -502,6 +501,7 @@ Parameters:
 Return Value:
 
 - [TlsSocket](tls_package_classes.md#class-tlssocket) - The constructed [TlsSocket](tls_package_classes.md#class-tlssocket) instance.
+
 ### static func server(StreamingSocket, ?TlsServerSession, KeylessTlsServerConfig)
 
 ```cangjie

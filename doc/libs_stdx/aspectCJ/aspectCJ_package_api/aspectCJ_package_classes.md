@@ -27,7 +27,6 @@ public const init(packageName!: String, className!: String, methodName!: String,
 - funcTypeStr!: String - 被织入的函数的类型字符串，不包括空格。对于自定义类型，类型定义所在的包名不可省略，且和类型名之间使用 `.` 分隔。不需要包括隐式的 this 形参的类型。如 "(Int64,std.core.Object)->Unit"；
 - recursive!: Bool - 当被织入的函数是成员函数时，表示是否对子类里的函数 override 版本也做织入；否则该字段应填 false。
 
-
 ## class InsertAtExit
 
 ```cangjie

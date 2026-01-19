@@ -376,14 +376,14 @@ static func decode(url: String): String
 > **注意：**
 >
 > 该函数解码所有被编码的字符，但部分字符是 URL 语法的一部分，所以以下字符将保留在输出字符串中：
-> 
+>
 > `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
 
 参数：
 
 - url: String - 待解码的字符串。
-  
-返回值： 
+
+返回值：
 
 - String - 解码后的字符串。
 
@@ -399,7 +399,7 @@ static func decodeComponent(component: String): String
 
 - component: String - 待解码的字符串。
 
-返回值： 
+返回值：
 
 - String - 解码后的字符串。
 
@@ -418,7 +418,7 @@ static func encode(url: String): String
 > `0-9` `A-Z` `a-z`
 >
 > `!` `'` `-` `.` `*` `(` `)` `_` `~`
-> 
+>
 > `#` `$` `&` `+` `,` `/` `:` `;` `=` `?` `@`
 
 参数：
@@ -448,8 +448,8 @@ static func encodeComponent(component: String): String
 参数：
 
 - component: String - 待编码的字符串。
-  
-返回值： 
+
+返回值：
 
 - String - 编码后的字符串。
 
