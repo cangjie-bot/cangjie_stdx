@@ -1016,7 +1016,7 @@ class FeaturesDirectivePosInfos {
 }
 
 class FeaturesDirectivePropInfos {
-    FeaturesDirectivePropInfos(let annotations: Array<PropInfo>, let featuresSetPropInfo: PropInfo) {}
+    FeaturesDirectivePropInfos(let featuresSetPropInfo: PropInfo) {}
 }
 
 /**
@@ -1067,15 +1067,16 @@ public class FeaturesDirective <: SyntaxTreeNode {
      */
     public prop annotations: Array<Annotation> {
         get() {
-            let annos = ArrayList<Annotation>()
-            for (propInfo in propInfos.annotations) {
-                let curNode = (nodeImpl as NonTerminal).getOrThrow().children[propInfo.index]
-                annos.add(
-                    cast<Annotation>(SyntaxNodeImplTranslator.translate(curNode, startPos + propInfo.offset, this))
-                        .getOrThrow()
-                )
+            var annos = Array<Annotation>()
+            var offset = Offset()
+            let lp = LocalParser((nodeImpl as NonTerminal).getOrThrow().children, offset)
+
+            if (let Some(v) <- lp.lookAndConsume(SyntaxNodeKind.AnnotationList)) {
+                annos = SyntaxNodeImplTranslator.translateList<Annotation>(v,
+                    CodePosition(nodePos.beginLine, nodePos.beginColumn, FileInfos(nodePos.fileName, nodePos.filePath)) +
+                        lp.offset, this)
             }
-            return annos.toArray()
+            return annos
         }
     }
 
