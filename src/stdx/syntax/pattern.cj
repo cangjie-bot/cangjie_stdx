@@ -294,6 +294,7 @@ public class TuplePattern <: Pattern {
 
     /**
      * @brief Initialize node with sub-patterns.
+     * @throws Exception if the input 'subPatterns' contains less than 2 elements.
      */
     public init(subPatterns: Array<Pattern>, comments!: Array<Comment> = []) {
         super(SyntaxNodeImplCreator.createTuplePatternImpl(subPatterns, comments: comments))

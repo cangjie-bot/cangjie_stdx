@@ -637,8 +637,8 @@ public class Block <: SyntaxTreeNode {
     /**
      * @brief Initialize a new Block node.
      */
-    public init(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
-        super(SyntaxNodeImplCreator.createBlockImpl(nodes, comments: comments))
+    public init(nodes: Array<SyntaxTreeNode>, addNewLine!: Bool = true, comments!: Array<Comment> = []) {
+        super(SyntaxNodeImplCreator.createBlockImpl(nodes, addNewLine:addNewLine, comments: comments))
         let startPos = DEFAULT_START_POS
         let curNode = (this.nodeImpl as NonTerminal).getOrThrow()
         let redNode = cast<Block>(SyntaxNodeImplTranslator.translate(curNode, startPos, None)).getOrThrow()
