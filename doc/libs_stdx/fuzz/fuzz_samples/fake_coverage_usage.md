@@ -48,7 +48,7 @@ ERROR: no interesting inputs were found. Is the code instrumented for coverage? 
 
 将上文的 `disableFakeCoverage()` 替换为 `enableFakeCoverage()` 即可继续运行，最终触发 TRAP。
 
-此外，除了使用 Fake Coverage 模式，还可以在测试用例中主动调用待测函数的某些不重要的API来将覆盖率信息传递给 libfuzzer，也能起到让 fuzz 继续下去的作用。
+此外，除了使用 Fake Coverage 模式，还可以在测试用例中主动调用待测函数的某些不重要的 API 来将覆盖率信息传递给 libfuzzer，也能起到让 fuzz 继续下去的作用。
 
 ```cangjie
 // main.cj
@@ -83,6 +83,5 @@ INFO: A corpus is not provided, starting from an empty corpus
 [WARNING]: Detect uncatched exception, maybe caused by bugs, exit now
 An exception has occurred:
 Exception: TRAP!
-...
 ...
 ```

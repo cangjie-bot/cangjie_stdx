@@ -11,32 +11,36 @@ They are similar to exception handling: exceptions can be **thrown** (`throw`) a
 Effect Handlers extend the traditional `try-catch` structure by adding a `handle` clause for processing effects. A `try` expression can contain `catch` blocks for handling exceptions as well as one or more `handle` blocks for handling effects triggered via `perform`. The core components of Effect Handlers are as follows:
 
 * **`Command<T>` Interface:**
-  All effects must inherit from `Command<T>`, where `T` is the type returned when the effect is resumed. The `defaultImpl` method can be overridden to provide default behavior when the effect is not caught by any handler.
+
+    All effects must inherit from `Command<T>`, where `T` is the type returned when the effect is resumed. The `defaultImpl` method can be overridden to provide default behavior when the effect is not caught by any handler.
 
 * **`perform` Expression:**
-  `perform expr` triggers an effect, where `expr` must be an instance of `Command<T>`. If the effect is handled and resumed, the `perform` expression has type `T`.
+
+    `perform expr` triggers an effect, where `expr` must be an instance of `Command<T>`. If the effect is handled and resumed, the `perform` expression has type `T`.
 
 * **`handle` Clause:**
-  A `handle` clause defines the logic to process an effect when it is triggered. At runtime, the nearest matching `handle` clause is selected, and the handler code block is executed. Within a `handle` block, you must use a `resume` expression to continue execution.
 
-  Syntax:
+    A `handle` clause defines the logic to process an effect when it is triggered. At runtime, the nearest matching `handle` clause is selected, and the handler code block is executed. Within a `handle` block, you must use a `resume` expression to continue execution.
 
-  ```cangjie
-  try {
-    ...  
-  } handle (cmd: Command<T>) {
-      // handler logic
-      resume with value
-  }
-  ```
+    Syntax:
 
-  Where:
+    ```cangjie
+    try {
+        ...  
+    } handle (cmd: Command<T>) {
+        // handler logic
+        resume with value
+    }
+    ```
 
-  * `cmd` is bound to the triggered effect object
-  * In `resume with value`, the type of `value` must match `T`
+    Where:
+
+    * `cmd` is bound to the triggered effect object
+    * In `resume with value`, the type of `value` must match `T`
 
 * **`resume` Expression:**
-  `resume with value` resumes execution at the `perform` site and returns `value` as the result of the `perform` expression. `resume throwing exn` throws an exception back to the `perform` site.
+
+    `resume with value` resumes execution at the `perform` site and returns `value` as the result of the `perform` expression. `resume throwing exn` throws an exception back to the `perform` site.
 
 ### Basic Syntax
 

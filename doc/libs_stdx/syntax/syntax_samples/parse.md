@@ -4,7 +4,7 @@
 
 仓颉文件 a.cj 中有如下代码：
 
-<!-- compile --> 
+<!-- compile -->
 ```cangjie
 package a
 
@@ -41,7 +41,7 @@ main(){
 
 文件目录 `user` 下有仓颉文件 file1.cj 和 file2.cj，file1.cj 和 file2.cj 中均包含如下仓颉代码：
 
-<!-- compile --> 
+<!-- compile -->
 ```cangjie
 package a
 
