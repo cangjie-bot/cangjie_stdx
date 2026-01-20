@@ -184,7 +184,7 @@ main() {
 
 > **说明**
 >
-> 目前只支持HMAC-SHA512。
+> 目前只支持 HMAC-SHA512。
 
 ### 调用 HMAC-SHA512 成员函数
 
@@ -223,7 +223,6 @@ main() {
 运行结果：
 
 ```text
-2bafeb53b60a119d38793a886c7744f5027d7eaa3702351e75e4ff9bf255e3ce296bf41f80adda2861e81bd8efc52219df821852d84a17fb625e3965ebf2fdd9
 2bafeb53b60a119d38793a886c7744f5027d7eaa3702351e75e4ff9bf255e3ce296bf41f80adda2861e81bd8efc52219df821852d84a17fb625e3965ebf2fdd9
 true
 ```

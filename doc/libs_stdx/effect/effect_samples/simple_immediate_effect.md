@@ -29,7 +29,7 @@ main() {
 }
 ```
 
-### 执行输出：
+## 执行输出
 
 ```text
 Got random number 42, sending...
