@@ -23,15 +23,15 @@ The `stdx.aspectCJ` package provides annotations for Aspect-Oriented Programming
 - Annotations currently do not support generic functions, nor can they weave into generic functions;
 - Annotations can only be applied to public functions;
 - Annotations can be applied to global functions, supporting:
-  - Weaving into another global function,
-  - Weaving into another instance member function,
-  - Weaving into another static member function;
+    - Weaving into another global function,
+    - Weaving into another instance member function,
+    - Weaving into another static member function;
 - Annotations can be applied to static member functions, supporting:
-  - Weaving into another global function,
-  - Weaving into another instance member function,
-  - Weaving into another static member function;
+    - Weaving into another global function,
+    - Weaving into another instance member function,
+    - Weaving into another static member function;
 - Annotations can be applied to instance member functions, supporting:
-  - Weaving into other instance member functions of the same type.
+    - Weaving into other instance member functions of the same type.
 
 **Global Variable Definition Constraints:**
 
@@ -43,8 +43,8 @@ The `stdx.aspectCJ` package provides annotations for Aspect-Oriented Programming
 - Functions annotated with @ReplaceFuncBody should have the same return type as the function being woven into;
 - If functions annotated with @InsertAtEntry/@InsertAtExit/@ReplaceFuncBody have no parameters, they will always be called without parameters after weaving;
 - If functions annotated with @InsertAtEntry/@InsertAtExit/@ReplaceFuncBody have parameters, their parameter list should match the source parameter list of the function being woven into. Additionally:
-  - Specifically, if the function being woven into is an instance member function, the `this` parameter must be explicitly included in the parameter list;
-  - For functions annotated with @ReplaceFuncBody, an additional parameter must be added. The type of this parameter should match the function being woven into, representing the closure of the original version of the function.
+    - Specifically, if the function being woven into is an instance member function, the `this` parameter must be explicitly included in the parameter list;
+    - For functions annotated with @ReplaceFuncBody, an additional parameter must be added. The type of this parameter should match the function being woven into, representing the closure of the original version of the function.
 
 ### Usage
 

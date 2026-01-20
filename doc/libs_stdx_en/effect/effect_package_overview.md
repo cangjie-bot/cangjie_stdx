@@ -25,25 +25,27 @@ A `try` expression can contain `catch` blocks for handling exceptions as well as
   At runtime, the nearest matching `handle` clause is selected, and the handler code block is executed.
   Within a `handle` block, you must use a `resume` expression to continue execution.
 
-  Syntax:
+    A `handle` clause defines the logic to process an effect when it is triggered. At runtime, the nearest matching `handle` clause is selected, and the handler code block is executed. Within a `handle` block, you must use a `resume` expression to continue execution.
 
-  ```cangjie
-  try {
-    ...  
-  } handle (cmd: Command<T>) {
-      // handler logic
-      resume with value
-  }
-  ```
+    Syntax:
 
-  Where:
+    ```cangjie
+    try {
+        ...  
+    } handle (cmd: Command<T>) {
+        // handler logic
+        resume with value
+    }
+    ```
 
-  * `cmd` is bound to the triggered effect object
-  * In `resume with value`, the type of `value` must match `T`
+    Where:
+
+    * `cmd` is bound to the triggered effect object
+    * In `resume with value`, the type of `value` must match `T`
 
 * **`resume` Expression:**
-  * `resume with value` resumes execution at the `perform` site and returns `value` as the result of the `perform` expression
-  * `resume throwing exn` throws an exception back to the `perform` site
+    * `resume with value` resumes execution at the `perform` site and returns `value` as the result of the `perform` expression
+    * `resume throwing exn` throws an exception back to the `perform` site
 
 ### Basic Syntax
 
@@ -94,7 +96,7 @@ main() {
 
 Output:
 
-```
+```text
 42
 ```
 
@@ -118,7 +120,7 @@ main() {
 
 Output:
 
-```
+```text
 Error from effect
 ```
 
@@ -141,7 +143,7 @@ main() {
 
 Output:
 
-```
+```text
 No handler here
 ```
 

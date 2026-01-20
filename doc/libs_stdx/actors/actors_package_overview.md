@@ -14,7 +14,6 @@ Actor 模型是一种并发编程模型，旨在简化并发任务的处理。
 - Actor 包含一种特殊的成员函数，称为 "接收函数"。当接收函数被调用时，调用请求会被加入到一个队列中，并在该 actor 的线程上按顺序执行。
 - 一旦没有任何引用指向该 actor，且所有的接收函数都已执行完毕，它就可以被系统回收。
 
-
 > **注意：**
 > Actor 模型的第三项特性还没有被语言强制实施，所以 actor 的成员变量还不具备完全的并发安全性。未来，类型系统可以解决这个问题，确保成员变量的并发安全。
 
@@ -134,6 +133,7 @@ spawn {
 
 > **注意：**
 > 目前 actor 的成员变量还不具备完全的并发安全性。例如在以下的例子当中，public 的成员变量还是可以被直接在外部访问与修改：
+>
 > ```cangjie
 > @Actor
 > public class MyActor {
@@ -150,7 +150,6 @@ spawn {
 > ```
 >
 > 未来，一个新的类型系统可以解决这个问题，确保成员变量的并发安全。
-
 
 ### 接收函数的执行顺序
 
@@ -447,4 +446,4 @@ main() {
 |                 类名              |                功能                 |
 | --------------------------------- | ---------------------------------- |
 | [ActorFuture\<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) | 调用接收函数获得，可用于获取其结果。                        |
-| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-actor) | 提供把多个闭包在同一个线程排队执行的功能，通常用户不需要自己使用这个类型。       |
+| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-sequentialdispatcher) | 提供把多个闭包在同一个线程排队执行的功能，通常用户不需要自己使用这个类型。       |
