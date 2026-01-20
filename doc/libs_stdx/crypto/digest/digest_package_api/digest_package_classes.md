@@ -133,7 +133,7 @@ public init(key: Array<Byte>, digest: () -> Digest)
 
 参数：
 
-- key: Array\<Byte> - 密钥，建议该参数不小于所选Hash算法摘要的长度。
+- key: Array\<Byte> - 密钥，建议该参数不小于所选 Hash 算法摘要的长度。
 - digest: () -> Digest - hash 算法。
 
 异常：
@@ -179,7 +179,7 @@ public init(key: Array<Byte>, algorithm: HashType)
 
 参数：
 
-- key: Array\<Byte> - 密钥，建议该参数不小于所选Hash算法摘要的长度。
+- key: Array\<Byte> - 密钥，建议该参数不小于所选 Hash 算法摘要的长度。
 - algorithm: [HashType](digest_package_structs.md#struct-hashtype) - hash 算法。
 
 异常：

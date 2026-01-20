@@ -28,9 +28,9 @@ public static func archive(fromDir!: Path, filter!: (Path) -> Bool, destFile!: P
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
 
 示例：
 
@@ -90,9 +90,9 @@ public static func archive(fromDir!: Path, destFile!: Path, includeBaseDirectory
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
 
 示例：
 
@@ -153,9 +153,9 @@ public static func archive(fromDir!: String, filter!: (String) -> Bool, destFile
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
 
 示例：
 
@@ -217,9 +217,9 @@ public static func archive(fromDir!: String, destFile!: String, includeBaseDirec
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
 
 示例：
 
@@ -282,9 +282,9 @@ public static func archive<T>(fromDir!: Path, destStream!: T, includeBaseDirecto
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
 
 示例：
 
@@ -354,9 +354,9 @@ public static func archive<T>(fromDir!: String, destStream!: T, includeBaseDirec
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 归档时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 压缩时发生错误，抛出异常。
 
 示例：
 
@@ -422,9 +422,9 @@ public static func extract(fromTarGzip!: Path, destDir!: Path, overwrite!: Bool)
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
 
 示例：
 
@@ -498,9 +498,9 @@ public static func extract(fromTarGzip!: String, destDir!: String, overwrite!: B
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
 
 示例：
 
@@ -574,9 +574,9 @@ public static func extract<T>(fromStream!: T, destDir!: Path, overwrite!: Bool):
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
 
 示例：
 
@@ -657,9 +657,9 @@ public static func extract<T>(fromStream!: T, destDir!: String, overwrite!: Bool
 
 异常：
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - 如果 tar 提取时发生错误，抛出异常。
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - 如果 zlib 解压时发生错误，抛出异常。
 
 示例：
 

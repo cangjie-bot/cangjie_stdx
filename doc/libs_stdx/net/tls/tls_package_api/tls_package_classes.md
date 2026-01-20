@@ -81,7 +81,6 @@ public class KeylessTlsServerConfig <: TlsConfig {
 >
 > 暂只支持 ECDHE-RSA-AES256-GCM-SHA384, TLS_AES_256_GCM_SHA384, TLS_CHACHA20_POLY1305_SHA256 三种算法套，其余算法套不保证可用性。
 
-
 父类型：
 
 - [TlsConfig](../common/tls_common_package_api/tls_common_package_interfaces.md#interface-tlsconfig)
@@ -140,8 +139,8 @@ public mut prop dhParameters: ?DHParameters
 public mut prop securityLevel: Int32
 ```
 
-功能：指定服务端的安全级别，默认值为2，可选参数值在 [0,5] 内，参数值含义参见 [openssl-SSL_CTX_set_security_level](https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_security_level.html) 说明。
-功能：指定服务端的安全级别，默认值为2，可选参数值在 0-5 内，参数值含义参见 openssl-SSL_CTX_set_security_level 说明。
+功能：指定服务端的安全级别，默认值为 2，可选参数值在 [0,5] 内，参数值含义参见 [openssl-SSL_CTX_set_security_level](https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_security_level.html) 说明。
+功能：指定服务端的安全级别，默认值为 2，可选参数值在 0-5 内，参数值含义参见 openssl-SSL_CTX_set_security_level 说明。
 
 类型：Int32
 
@@ -254,7 +253,7 @@ public override func toString(): String
 
 返回值：
 
-- String - [TlsClientSession](tls_package_classes.md#class-tlsclientsession)(会话 id 字符串)。
+- String - [TlsClientSession](tls_package_classes.md#class-tlsclientsession)（会话 id 字符串）。
 
 ### operator func !=(TlsClientSession)
 

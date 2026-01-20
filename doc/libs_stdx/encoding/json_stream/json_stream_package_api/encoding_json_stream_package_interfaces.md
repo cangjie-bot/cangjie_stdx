@@ -181,7 +181,7 @@ public static func fromJson(r: JsonReader): DateTime
 
 功能：从 [JsonReader](../json_stream_package_api/encoding_json_stream_package_classes.md#class-jsonreader) 中读取一个 DateTime 实例。
 
-该函数将会把读取到的字符串按照 `RFC3339` 的规范解析，可包含小数秒格式，函数的行为参考DateTime的func parse(String)。
+该函数将会把读取到的字符串按照 `RFC3339` 的规范解析，可包含小数秒格式，函数的行为参考 DateTime 的 func parse(String)。
 
 参数：
 
@@ -1777,7 +1777,7 @@ extend<T> Option<T> <: JsonDeserializable<Option<T>> where T <: JsonDeserializab
 public static func fromJson(r: JsonReader): Option<T>
 ```
 
-功能：从 [JsonReader](../json_stream_package_api/encoding_json_stream_package_classes.md#class-jsonreader) 中读取一个Option。
+功能：从 [JsonReader](../json_stream_package_api/encoding_json_stream_package_classes.md#class-jsonreader) 中读取一个 Option。
 
 参数：
 
@@ -2606,7 +2606,7 @@ extend String <: JsonSerializable
 public func toJson(w: JsonWriter): Unit
 ```
 
-功能：将 String 类型写入参数 `w` 指定的 [JsonWriter](encoding_json_stream_package_classes.md#class-jsonwriter) 实例中。写入的String
+功能：将 String 类型写入参数 `w` 指定的 [JsonWriter](encoding_json_stream_package_classes.md#class-jsonwriter) 实例中。
 
 参数：
 
