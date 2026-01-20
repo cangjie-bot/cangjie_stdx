@@ -448,4 +448,4 @@ main() {
 |                 类名              |                功能                 |
 | --------------------------------- | ---------------------------------- |
 | [ActorFuture\<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) | 调用接收函数获得，可用于获取其结果。                        |
-| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-actor) | 提供把多个闭包在同一个线程排队执行的功能，通常用户不需要自己使用这个类型。       |
+| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-sequentialdispatcher) | 提供把多个闭包在同一个线程排队执行的功能，通常用户不需要自己使用这个类型。       |

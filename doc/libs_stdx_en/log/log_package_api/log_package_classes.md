@@ -651,4 +651,4 @@ Parameters:
 
 Return value:
 
-- [Logger](./log_package_classes.md#class-logger) - Logger
+- [Logger](#class-logger) - Logger

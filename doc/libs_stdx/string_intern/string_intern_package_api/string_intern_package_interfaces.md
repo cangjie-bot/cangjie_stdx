@@ -18,7 +18,7 @@ public interface Internable {
 static func configInternPool(capacity!: Int64, strMaxLength!: Int64): Unit
 ```
 
-功能：配置字符串缓存池的容量和所缓存的字符串的最大长度，如果不配置，调用intern方法时仅返回常量池的字符串对象，而不会缓存新的字符串对象。
+功能：配置字符串缓存池的容量和所缓存的字符串的最大长度，如果不配置，调用 intern 方法时仅返回常量池的字符串对象，而不会缓存新的字符串对象。
 
 参数：
 
@@ -39,11 +39,11 @@ static func intern(array: Array<Byte>): String
 
 参数：
 
-- array: Array\<Byte> - 运行时创建的Byte数组，该数组计划用于创建一个字符串。
+- array: Array\<Byte> - 运行时创建的 Byte 数组，该数组计划用于创建一个字符串。
 
 返回值：
 
-- String - 在缓存池中的字符串对象，该字符串对象的Byte数组表示与入参一致。
+- String - 在缓存池中的字符串对象，该字符串对象的 Byte 数组表示与入参一致。
 
 ### static func intern(String)
 
@@ -79,7 +79,7 @@ extend String <: Internable
 static func configInternPool(capacity!: Int64 = 8192, strMaxLength!: Int64 = 512): Unit
 ```
 
-功能：配置字符串缓存池的容量和所缓存的字符串的最大长度，如果不配置，调用intern方法时仅返回常量池的字符串对象，而不会缓存新的字符串对象。
+功能：配置字符串缓存池的容量和所缓存的字符串的最大长度，如果不配置，调用 intern 方法时仅返回常量池的字符串对象，而不会缓存新的字符串对象。
 
 参数：
 
@@ -112,11 +112,11 @@ static func intern(array: Array<Byte>): String
 
 参数：
 
-- array: Array\<Byte> - 运行时创建的Byte数组，该数组计划用于创建一个字符串。
+- array: Array\<Byte> - 运行时创建的 Byte 数组，该数组计划用于创建一个字符串。
 
 返回值：
 
-- String - 在缓存池中的字符串对象，该字符串对象的Byte数组表示与入参一致。
+- String - 在缓存池中的字符串对象，该字符串对象的 Byte 数组表示与入参一致。
 
 示例：
 

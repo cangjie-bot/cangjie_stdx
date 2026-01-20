@@ -833,7 +833,7 @@ main() {
 public func jsonValue(value: String): JsonWriter
 ```
 
-功能：将符合JSON value规范的原始字符串写入stream。
+功能：将符合 JSON value 规范的原始字符串写入 stream。
 
 > **注意：**
 >
@@ -1089,7 +1089,7 @@ public func writeValue<T>(v: T): JsonWriter where T <: JsonSerializable
 
 功能：将实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable) 接口的类型写入到 Stream 中。该接口会调用泛型 T 的 toJson 方法向输出流中写入数据。
 
-json.stream 包已经为基础类型 Int64、UInt64、Float64、Bool、String类型扩展实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable)， 并且为 Collection 类型 Array、ArrayList和 HashMap 扩展实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable)。
+json.stream 包已经为基础类型 Int64、UInt64、Float64、Bool、String 类型扩展实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable)，并且为 Collection 类型 Array、ArrayList 和 HashMap 扩展实现了 [JsonSerializable](encoding_json_stream_package_interfaces.md#interface-jsonserializable)。
 
 参数：
 
