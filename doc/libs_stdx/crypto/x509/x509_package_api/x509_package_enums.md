@@ -180,7 +180,7 @@ MD5WithRSA
 SHA1WithRSA
 ```
 
-功能：SHA1withRSA签名算法。
+功能：SHA1withRSA 签名算法。
 
 ### SHA256WithRSA
 
