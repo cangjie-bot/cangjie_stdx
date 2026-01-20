@@ -57,13 +57,11 @@ spawn {
 
 Correctly using the Actor model can make concurrent programming simpler and more efficient.
 
-
 ### Actor Declaration
 
 Using the bank account example above, to avoid thread safety issues, we can design an *actor* specifically for handling account operations using the Actor model.
 
 First, we can annotate the `Account` class with the [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-macro) macro to mark it as an actor. Then, we use the [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-macro) macro to mark the deposit, withdraw, and getBalance functions:
-
 
 ```cangjie
 @Actor
@@ -135,6 +133,7 @@ spawn {
 
 > **Note:**
 > Currently, the member variables of an actor do not provide full concurrency safety. For example, in the following case, the public member variables can still be accessed and modified directly from outside:
+>
 > ```cangjie
 > @Actor
 > public class MyActor {
@@ -291,7 +290,6 @@ func bar() {
 
 After the `test()` function returns, since there are no remaining references to the account and no pending receivers (because we awaited the result of `account.deposit(5.0)` inside `test()`), the actor referenced by account and its dedicated execution thread will be reclaimed by the system.
 
-
 ### Priority between Receivers
 
 Users can specify a priority for receivers, allowing higher-priority receivers to be executed before lower-priority ones.
@@ -441,7 +439,6 @@ main() {
 }
 ```
 
-
 ## API List
 
 ### Classes
@@ -449,4 +446,4 @@ main() {
 |                 Class Name              |                Function                 |
 | --------------------------------- | ---------------------------------- |
 | [ActorFuture\<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) | Calling a receiver returns an [ActorFuture\<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) object, which can be used to retrieve its result.                      |
-| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-actor) | Provides the functionality to queue multiple closures for execution on the same thread. Typically, users do not need to use this type directly.          |
+| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-sequentialdispatcher) | Provides the functionality to queue multiple closures for execution on the same thread. Typically, users do not need to use this type directly.          |

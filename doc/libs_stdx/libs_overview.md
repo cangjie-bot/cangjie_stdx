@@ -22,7 +22,7 @@ stdx 含若干包，提供了丰富的扩展功能：
 | [crypto.crypto](./crypto/crypto/crypto_package_overview.md)                    | crypto 包提供安全加密能力。                                                                                                                                                           |
 | [crypto.digest](./crypto/digest/crypto_digest_package_overview.md)             | digest 包提供常用的消息摘要算法。                                                                                                                                                     |
 | [crypto.keys](./crypto/keys/keys_package_overview.md)                          | keys 包提供非对称加密和签名算法。                                                                                                                                                     |
-| [crypto.kit](./crypto/kit/crypto_kit_package_overview.md)                      | crypto.kit 包提供了一套 [CryptoKit](../common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-cryptokit) 的默认实现，提供随机数生成器及解码 DER、PEM 的能力。 |
+| [crypto.kit](./crypto/kit/crypto_kit_package_overview.md)                      | crypto.kit 包提供了一套 [CryptoKit](../libs_stdx/crypto/common/crypto_common_package_api/crypto_common_package_interfaces.md#interface-cryptokit) 的默认实现，提供随机数生成器及解码 DER、PEM 的能力。 |
 | [crypto.x509](./crypto/x509/x509_package_overview.md)                          | x509 包提供处理数字证书功能。                                                                                                                                                         |
 | [effect](./effect/effect_package_overview.md)                                  | `stdx.effect` 包是 Cangjie 中用于使用 Effect Handler 的用户级 API。这是一项实验性功能，需要配合支持该机制的 Cangjie 编译器使用。                                                      |
 | [encoding.base64](./encoding/base64/base64_package_overview.md)                | base 包提供字符串的 Base64 编码及解码。                                                                                                                                               |
@@ -85,7 +85,7 @@ static/stdx 是静态产物，包含静态文件、cjo、bc 文件。
 | import stdx.crypto.digest.*               | stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                                                                                   |
 | import stdx.crypto.keys.*                 | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
 | import stdx.crypto.kit.*                  | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
-| import stdx.crypto.x509.*                 | stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                          |                                                                                                                                                                                                                 |
+| import stdx.crypto.x509.*                 | stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                          |
 | import stdx.effect.*                      | stdx.effect                                                                                                                                                                                                                    |
 | import stdx.encoding.hex.*                | stdx.encoding.hex                                                                                                                                                                                                              |
 | import stdx.encoding.base64.*             | stdx.encoding.base64                                                                                                                                                                                                           |
@@ -149,6 +149,7 @@ cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.effect -l
 CANGJIE_STDX_PATH 是设置的 stdx 路径。
 
 例如在 linux 系统中设置：
+
 ```shell
 export CANGJIE_STDX_PATH=/target/linux_x86_64_cjnative/dynamic/stdx
 ```
@@ -156,6 +157,7 @@ export CANGJIE_STDX_PATH=/target/linux_x86_64_cjnative/dynamic/stdx
 运行前 Linux 操作系统需要在 LD_LIBRARY_PATH 中设置扩展库的路径，Windows 操作系统需要在 PATH 中设置扩展库的路径，macOS 操作系统需要在 DYLD_LIBRARY_PATH 中设置扩展库的路径。
 
 例如在 linux 系统中设置：
+
 ```shell
 export LD_LIBRARY_PATH=/target/linux_x86_64_cjnative/dynamic/stdx:$LD_LIBRARY_PATH
 ```

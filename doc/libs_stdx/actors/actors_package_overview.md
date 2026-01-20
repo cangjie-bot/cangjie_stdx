@@ -14,7 +14,6 @@ Actor 模型是一种并发编程模型，旨在简化并发任务的处理。
 - Actor 包含一种特殊的成员函数，称为 "接收函数"。当接收函数被调用时，调用请求会被加入到一个队列中，并在该 actor 的线程上按顺序执行。
 - 一旦没有任何引用指向该 actor，且所有的接收函数都已执行完毕，它就可以被系统回收。
 
-
 > **注意：**
 > Actor 模型的第三项特性还没有被语言强制实施，所以 actor 的成员变量还不具备完全的并发安全性。未来，类型系统可以解决这个问题，确保成员变量的并发安全。
 
@@ -62,7 +61,7 @@ spawn {
 
 引用上述银行账户的例子，为了避免线程安全问题，我们可以使用 Actor 模型来设计一个专门处理账户操作的 actor。
 
-首先，我们可以使用 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-macro) 注解将 `Account` 类标记为一个 actor。然后，使用 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-macro) 注解来标记 deposit ， withdraw 和 getBalance 函数：
+首先，我们可以使用 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-宏) 注解将 `Account` 类标记为一个 actor。然后，使用 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-宏) 注解来标记 deposit ， withdraw 和 getBalance 函数：
 
 ```cangjie
 @Actor
@@ -92,7 +91,7 @@ public class Account {
 }
 ```
 
-对于 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-macro) 和 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-macro) 的使用规则跟限制，请参考对应的文档。
+对于 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-宏) 和 [@Receiver](./macros/macros_package_api/macros_package_macros.md#receiver-宏) 的使用规则跟限制，请参考对应的文档。
 
 我们可以通过调用该类的构造函数来创建一个 Account 实例，例如：
 
@@ -134,6 +133,7 @@ spawn {
 
 > **注意：**
 > 目前 actor 的成员变量还不具备完全的并发安全性。例如在以下的例子当中，public 的成员变量还是可以被直接在外部访问与修改：
+>
 > ```cangjie
 > @Actor
 > public class MyActor {
@@ -150,7 +150,6 @@ spawn {
 > ```
 >
 > 未来，一个新的类型系统可以解决这个问题，确保成员变量的并发安全。
-
 
 ### 接收函数的执行顺序
 
@@ -295,7 +294,7 @@ func bar() {
 
 用户可以为接收函数指定优先级，从而使高优先级的接收函数有可能在低优先级的接收函数之前执行。
 
-首先，用户需要通过在 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-macro) 宏上加上 `enableReceiverPriority: true` 选项，用于启用 actor 接收函数之间的优先级。例如：
+首先，用户需要通过在 [@Actor](./macros/macros_package_api/macros_package_macros.md#actor-宏) 宏上加上 `enableReceiverPriority: true` 选项，用于启用 actor 接收函数之间的优先级。例如：
 
 ```cangjie
 @Actor[enableReceiverPriority: true]
@@ -447,4 +446,4 @@ main() {
 |                 类名              |                功能                 |
 | --------------------------------- | ---------------------------------- |
 | [ActorFuture\<T>](./actors_package_api/actors_package_classes.md#class-actorfuture) | 调用接收函数获得，可用于获取其结果。                        |
-| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-actor) | 提供把多个闭包在同一个线程排队执行的功能，通常用户不需要自己使用这个类型。       |
+| [SequentialDispatcher](./actors_package_api/actors_package_classes.md#class-sequentialdispatcher) | 提供把多个闭包在同一个线程排队执行的功能，通常用户不需要自己使用这个类型。       |
