@@ -5,6 +5,7 @@
 ASTVisitor 是 SyntaxTreeNode 访问器的基类。
 
 使用方式：
+
 1. 继承 `ASTVisitor` 并重写 `preAction` / `postAction` 或特定 `visit*` 方法；
 2. 调用 `walk(root)` 从任意节点开始遍历；
 3. 通过返回 [PreActionMode](../syntax_package_api/syntax_package_enums.md#enum-preactionmode) 或 [PostActionMode](../syntax_package_api/syntax_package_enums.md#enum-postactionmode) 控制遍历流程。
@@ -65,7 +66,8 @@ main() {
 }
 ```
 
-运行流程： 
+运行流程：
+
 1. `walk(root)` 从根节点开始深度优先遍历；
 2. 每进入一个节点会调用 `preAction`：
    - 如果是 `BinaryExpr`，计数器自增并返回 `CONTINUE` 继续；

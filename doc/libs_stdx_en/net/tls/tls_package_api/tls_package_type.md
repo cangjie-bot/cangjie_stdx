@@ -15,4 +15,3 @@ public type KeylessSignFunc = (hashValue: Array<Byte>) -> Array<Byte>
 ```
 
 Function: Signature callback function type for keyless handshake.
-

@@ -28,9 +28,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
 
 ### static func archive(Path, Path, Bool)
 
@@ -50,9 +50,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
 
 ### static func archive(String, (String) -> Bool, String, Bool)
 
@@ -74,9 +74,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
 
 ### static func archive(String, String, Bool)
 
@@ -96,9 +96,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
 
 ### static func archive\<T>(Path, T, Bool) where T <: OutputStream
 
@@ -122,9 +122,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
 
 ### static func archive\<T>(String, T, Bool) where T <: OutputStream
 
@@ -148,9 +148,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar archiving.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib compression.
 
 ### static func extract(Path, Path, Bool)
 
@@ -170,9 +170,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.
 
 ### static func extract(String, String, Bool)
 
@@ -192,9 +192,9 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.
 
 ### static func extract\<T>(T, Path, Bool) where T <: InputStream
 
@@ -214,9 +214,10 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.
+
 ### static func extract\<T>(T, String, Bool) where T <: InputStream
 
 ```cangjie
@@ -235,7 +236,6 @@ Parameters:
 
 Exceptions:
 
-- [TarException](tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
+- [TarException](../tar/tar_package_api/tar_package_exceptions.md#class-tarexception) - Thrown if an error occurs during tar extraction.
 
-- [ZlibException](zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.
-
+- [ZlibException](../zlib/zlib_package_api/zlib_package_exceptions.md#class-zlibexception) - Thrown if an error occurs during zlib decompression.

@@ -11,32 +11,36 @@ Effect Handlers 是一种强大的非局部控制操作，最初在函数式编�
 Effect Handlers 在语法上扩展了传统的 `try-catch` 结构，增加了用于处理 effect 的 `handle` 子句。一个 `try` 表达式除了可以包含 `catch` 块来处理异常外，还可以包含一个或多个 `handle` 块来处理通过 `perform` 触发的 effect。Effect Handlers 有以下核心结构：
 
 - **`Command<T>` 接口：**
-所有 effect 都必须继承 `Command<T>`，`T` 是该 effect 恢复执行时返回的类型。可以通过重写 `defaultImpl` 方法提供默认行为（未被任何 handler 捕获时调用）。
+
+    所有 effect 都必须继承 `Command<T>`，`T` 是该 effect 恢复执行时返回的类型。可以通过重写 `defaultImpl` 方法提供默认行为（未被任何 handler 捕获时调用）。
 
 - **`perform` 表达式：**
-`perform expr` 会触发一个 effect，其中 `expr` 必须是 `Command<T>` 的实例。如果被 handler 恢复，`perform` 表达式的值类型为 `T`。
+
+    `perform expr` 会触发一个 effect，其中 `expr` 必须是 `Command<T>` 的实例。如果被 handler 恢复，`perform` 表达式的值类型为 `T`。
 
 - **`handle` 子句：**
-handle 子句用于定义 effect 被触发时的处理逻辑。运行时会匹配最近的 handle 子句并进入处理代码块。在 handle 中，需要调用 resume 表达式来恢复执行。
+
+    handle 子句用于定义 effect 被触发时的处理逻辑。运行时会匹配最近的 handle 子句并进入处理代码块。在 handle 中，需要调用 resume 表达式来恢复执行。
 
     语法：
 
-  ```cangjie
-  try{
-    ...  
-  } handle (cmd: Command<T>) {
-      // 处理逻辑
-      resume with value
-  }
-  ```
+    ```cangjie
+    try{
+        ...  
+    } handle (cmd: Command<T>) {
+        // 处理逻辑
+        resume with value
+    }
+    ```
 
-  其中：
+    其中：
 
-  - `cmd` 绑定到触发的 effect 对象
-  - `with value` 的 `value` 类型必须与 `T` 相同
+    - `cmd` 绑定到触发的 effect 对象
+    - `with value` 的 `value` 类型必须与 `T` 相同
 
 - **`resume` 表达式：**
-`resume with value` 会将执行流程恢复到 `perform` 处，并返回 `value` 作为该 `perform` 表达式的结果，也可以用 `resume throwing exn` 抛出异常。
+
+    `resume with value` 会将执行流程恢复到 `perform` 处，并返回 `value` 作为该 `perform` 表达式的结果，也可以用 `resume throwing exn` 抛出异常。
 
 ### 基本语法
 

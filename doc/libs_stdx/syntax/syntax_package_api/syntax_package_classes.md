@@ -13,6 +13,7 @@ public class Annotation <: SyntaxTreeNode {
 一个 [Annotation](#class-annotation) 节点：`@CallingConv[xxx]`, `@Attribute[xxx]`, `@When[condition]`等。
 
 父类型：
+
 - [SyntaxTreeNode](#class-syntaxtreenode)
 
 ### prop arguments
@@ -36,13 +37,13 @@ public prop identifier: String
 类型：String
 
 ### prop opKind
- 
+
 ```cangjie
 public prop opKind: AtOpKind
 ```
- 
+
 功能：获取 [Annotation](#class-annotation) 节点的操作符，如 `@CallingConv[xxx]` 中的 `@`。
- 
+
 类型：[AtOpKind](syntax_package_enums.md#enum-atopkind)
 
 ### init(Array\<Argument>, String, AtOpKind, Array\<Comment>)
@@ -102,16 +103,14 @@ annotation: @MyAnnotation[a1: 123]
 ```
 
 ### func getAtOpPos()
- 
+
 ```cangjie
 public func getAtOpPos(): CodePositionRange
 ```
- 
+
 功能：获取 [Annotation](#class-annotation) 节点中操作符 `@` 或 `@!` 的位置。
- 
+
 返回值：
- 
-- [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回操作符 `@` 或 `@!` 的位置
 
 示例：
 
@@ -206,6 +205,7 @@ annotation.getCommasPos()[0]: 1:20-1:21
 annotation.getCommasPos()[1]: 1:27-1:28
 ```
 
+>>>>>>>
 ### func getIdentifierPos()
 
 ```cangjie
@@ -257,6 +257,7 @@ main(): Unit {
 annotation.getIdentifierPos(): 1:2-1:14
 ```
 
+>>>>>>>
 ### func getLSquarePos()
 
 ```cangjie
@@ -309,6 +310,7 @@ main(): Unit {
 annotation.getLSquarePos(): 1:14-1:15
 ```
 
+>>>>>>>
 ### func getRSquarePos()
 
 ```cangjie
@@ -361,6 +363,7 @@ main(): Unit {
 annotation.getRSquarePos(): 1:22-1:23
 ```
 
+>>>>>>>
 ## class Argument
 
 ```cangjie
@@ -1150,6 +1153,7 @@ public func walk(startPoint: SyntaxTreeNode, detach!: Bool = false): SyntaxTreeN
 > - 若 `detach` 为 `true`，遍历后产生一颗独立的新树，新树的父节点为空；若 `detach` 为 `false`，会向上刷新父节点中的内容。
 
 参数：
+
 - startPoint: [SyntaxTreeNode](#class-syntaxtreenode) - 起始节点，可以是任意语法树节点或整包节点。
 - detach!: Bool - 是否断开与父节点的关联，默认为 `false`。
 
@@ -1222,7 +1226,7 @@ public open class ASTVisitor {}
 public open func postAction(node: SyntaxTreeNode): PostActionMode
 ```
 
-功能：在离开节点后执行的钩子函数，用于决定是否继续或停止遍历, 当 `preAction` 停止时， `postAction` 也会立即停止。
+功能：在离开节点后执行的钩子函数，用于决定是否继续或停止遍历，当 `preAction` 停止时， `postAction` 也会立即停止。
 
 参数：
 
@@ -1695,6 +1699,8 @@ main(): Unit {
 ```text
 block.getLCurlPos(): 1:1-1:2
 ```
+
+>>>>>>>
 ### func getRCurlPos()
 
 ```cangjie
@@ -1801,15 +1807,15 @@ body: {
 ```
 
 ### func getLCurlPos()
- 
+
 ```cangjie
 public func getLCurlPos(): CodePositionRange
 ```
- 
+
 功能：获取 [Body](#class-body) 节点中 `{` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `{` 的位置。
 
 示例：
@@ -1844,15 +1850,15 @@ body.getLCurlPos(): 1:1-1:2
 ```
 
 ### func getRCurlPos()
- 
+
 ```cangjie
  public func getRCurlPos(): CodePositionRange
 ```
- 
+
 功能：获取 [Body](#class-body) 节点中 `}` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `}` 的位置。
 
 示例：
@@ -2464,15 +2470,15 @@ public class A<T> <: I1 where T<:I1 {
 ```
 
 ### func getClassKeyWordPos()
- 
+
 ```cangjie
 public func getClassKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ClassDecl](#class-classdecl) 节点中 `class` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `class` 关键字 的位置。
 
 示例：
@@ -2521,15 +2527,15 @@ classDecl.getClassKeyWordPos(): 1:1-1:6
 ```
 
 ### func getGenericParamsCommasPos()
- 
+
 ```cangjie
 public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [ClassDecl](#class-classdecl) 节点中泛型参数中 `,` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数中 `,` 的位置。
 
 示例：
@@ -2585,11 +2591,11 @@ classDecl.getGenericParamsCommasPos()[1]: 1:13-1:14
 ```cangjie
 public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [ClassDecl](#class-classdecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `<` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -2640,15 +2646,15 @@ classDecl.getGenericParamsLAnglePos(): 1:8-1:9
 ```
 
 ### func getGenericParamsRAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [ClassDecl](#class-classdecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `>` 的位置（若不存在返回 `None`）
 
 示例：
@@ -2699,15 +2705,15 @@ classDecl.getGenericParamsRAnglePos(): 1:10-1:11
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ClassDecl](#class-classdecl) 节点中标识符的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回标识符的位置。
 
 示例：
@@ -2756,15 +2762,15 @@ classDecl.getIdentifierPos(): 1:7-1:8
 ```
 
 ### func getSuperTyAnnotationsBitAndsPos()
- 
+
 ```cangjie
 public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [ClassDecl](#class-classdecl) 节点中父类型中 `&` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回父类型中 `&` 的位置。
 
 示例：
@@ -2820,15 +2826,15 @@ classDecl.getSuperTyAnnotationsBitAndsPos()[1]: 1:23-1:24
 ```
 
 ### func getUpperBoundPos()
- 
+
 ```cangjie
 public func getUpperBoundPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [ClassDecl](#class-classdecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `<:` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -3263,15 +3269,15 @@ conjunctionCondition: x == y && a > b
 ```
 
 ### func getAndsPos()
- 
+
 ```cangjie
 public func getAndsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [ConjunctionCondition](#class-conjunctioncondition) 节点中 `&&` 的位置序列。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `&&` 的位置序列。
 
 示例：
@@ -3553,15 +3559,15 @@ disjunctionCondition: x == y || a == b
 ```
 
 ### func getOrsPos()
- 
+
 ```cangjie
 public func getOrsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [DisjunctionCondition](#class-disjunctioncondition) 节点中 `||` 的位置序列。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `||` 的位置序列。
 
 示例：
@@ -3675,15 +3681,15 @@ doWhileExpr: do {
 ```
 
 ### func getCondLParenPos()
- 
+
 ```cangjie
 public func getCondLParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中条件的 `(` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回条件的 `(` 的位置。
 
 示例：
@@ -3715,15 +3721,15 @@ doWhileExpr.getCondLParenPos(): 2:9-2:10
 ```
 
 ### func getCondRParenPos()
- 
+
 ```cangjie
 public func getCondRParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中条件的 `)` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回条件的 `)` 的位置。
 
 示例：
@@ -3755,15 +3761,15 @@ doWhileExpr.getCondRParenPos(): 2:15-2:16
 ```
 
 ### func getDoKeyWordPos()
- 
+
 ```cangjie
 public func getDoKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中 `do` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `do` 关键字的位置。
 
 示例：
@@ -3795,15 +3801,15 @@ doWhileExpr.getDoKeyWordPos(): 1:1-1:3
 ```
 
 ### func getWhileKeyWordPos()
- 
+
 ```cangjie
 public func getWhileKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [DoWhileExpr](#class-dowhileexpr) 节点中 `while` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `while` 关键字的位置。
 
 示例：
@@ -3926,15 +3932,15 @@ EnumA(I1)
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中标识符的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回标识符的位置。
 
 示例：
@@ -3960,15 +3966,15 @@ enumConstructor.getIdentifierPos(): 1:1-1:6
 ```
 
 ### func getParamsCommasPos()
- 
+
 ```cangjie
 public func getParamsCommasPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中参数间的 `,` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回参数间的 `,` 的位置。
 
 示例：
@@ -3997,15 +4003,15 @@ enumConstructor.getParamsCommasPos()[0]: 1:9-1:10
 ```
 
 ### func getParamsLParenPos()
- 
+
 ```cangjie
 public func getParamsLParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中参数的 `(` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回参数的 `(` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -4033,15 +4039,15 @@ enumConstructor.getParamsLParenPos(): 1:6-1:7
 ```
 
 ### func getParamsRParenPos()
- 
+
 ```cangjie
 public func getParamsRParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumConstructor](#class-enumconstructor) 节点中参数的 `)` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回参数的 `)` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -4226,15 +4232,15 @@ enumDecl: enum A<T> <: I1 where T<:I1 {
 ```
 
 ### func getCaseSeparatorsPos()
- 
+
 ```cangjie
 public func getCaseSeparatorsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `|` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `|` 的位置。
 
 示例：
@@ -4264,15 +4270,15 @@ enumDecl.getCaseSeparatorsPos()[1]: 3:5-3:6
 ```
 
 ### func getEnumKeyWordPos()
- 
+
 ```cangjie
 public func getEnumKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `enum` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `enum` 关键字的位置。
 
 示例：
@@ -4299,15 +4305,15 @@ enumDecl.getEnumKeyWordPos(): 1:1-1:5
 ```
 
 ### func getGenericParamsCommasPos()
- 
+
 ```cangjie
 public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点中泛型参数中 `,` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数中 `,` 的位置。
 
 示例：
@@ -4337,15 +4343,15 @@ enumDecl.getGenericParamsCommasPos()[0]: 1:14-1:15
 ```
 
 ### func getGenericParamsLAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `<` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -4374,15 +4380,15 @@ enumDecl.getGenericParamsLAnglePos(): 1:12-1:13
 ```
 
 ### func getGenericParamsRAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `>` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -4411,15 +4417,15 @@ enumDecl.getGenericParamsRAnglePos(): 1:14-1:15
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点中标识符的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回标识符的位置。
 
 示例：
@@ -4446,7 +4452,7 @@ enumDecl.getIdentifierPos(): 1:6-1:12
 ```
 
 ### func getNonExhaustiveTripleDotPos()
- 
+
 ```cangjie
 public func getNonExhaustiveTripleDotPos(): Option<CodePositionRange>
 ```
@@ -4454,7 +4460,7 @@ public func getNonExhaustiveTripleDotPos(): Option<CodePositionRange>
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `...` 的位置（若不存在返回 `None`）。
 
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `...` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -4482,15 +4488,15 @@ enumDecl.getNonExhaustiveTripleDotPos(): 3:7-3:10
 ```
 
 ### func getSuperTyAnnotationsBitAndsPos()
- 
+
 ```cangjie
 public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点的父类型中 `&` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回父类型中 `&` 的位置。
 
 示例：
@@ -4520,15 +4526,15 @@ enumDecl.getSuperTyAnnotationsBitAndsPos()[0]: 1:19-1:20
 ```
 
 ### func getUpperBoundPos()
- 
+
 ```cangjie
 public func getUpperBoundPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [EnumDecl](#class-enumdecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回父类型中 `&` 的位置。
 
 示例：
@@ -4727,6 +4733,7 @@ main(): Unit {
 enumPattern.getDotPos(): 1:3-1:4
 ```
 
+>>>>>>>
 ### func getLParenPos()
 
 ```cangjie
@@ -4954,15 +4961,15 @@ extend<T> C1 <: I1 where T<:I1 {
 ```
 
 ### func getExtendKeyWordPos()
- 
+
 ```cangjie
 public func getExtendKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中 `extend` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `extend` 关键字的位置。
 
 示例：
@@ -5011,15 +5018,15 @@ extendDecl.getExtendKeyWordPos(): 1:1-1:7
 ```
 
 ### func getGenericParamsCommasPos()
- 
+
 ```cangjie
 public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中泛型参数中 `,` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数中 `,` 的位置。
 
 示例：
@@ -5071,15 +5078,15 @@ extendDecl.getGenericParamsCommasPos()[1]: 1:12-1:13
 ```
 
 ### func getGenericParamsLAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数中 `<` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -5130,15 +5137,15 @@ extendDecl.getGenericParamsLAnglePos(): 1:7-1:8
 ```
 
 ### func getGenericParamsRAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数中 `>` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -5189,15 +5196,15 @@ extendDecl.getGenericParamsRAnglePos(): 1:9-1:10
 ```
 
 ### func getSuperTyAnnotationsBitAndsPos()
- 
+
 ```cangjie
 public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [ExtendDecl](#class-extenddecl) 节点中父类型中 `&` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回父类型中 `&` 的位置。
 
 示例：
@@ -5253,7 +5260,7 @@ extendDecl.getSuperTyAnnotationsBitAndsPos()[1]: 1:25-1:26
 ```
 
 ### func getUpperBoundPos()
- 
+
 ```cangjie
 public func getUpperBoundPos(): Option<CodePositionRange>
 ```
@@ -5629,7 +5636,7 @@ public init(features: Array<FeatureId>, comments!: Array<Comment> = [])
 
 参数：
 
-- features: Array\<[FeatureId](#class-featuresid)> - 一组定义在 features set 中的 feature id。
+- features: Array\<[FeatureId](#class-featureid)> - 一组定义在 features set 中的 feature id。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
 示例：
@@ -5893,15 +5900,15 @@ forInExpr: for (x in 10 where x != 5) {
 ```
 
 ### func getForKeyWordPos()
- 
+
 ```cangjie
 public func getForKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ForInExpr](#class-forinexpr) 节点中 `for` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `for` 关键字的位置。
 
 示例：
@@ -5927,15 +5934,15 @@ forInExpr.getForKeyWordPos(): 1:1-1:4
 ```
 
 ### func getInKeyWordPos()
- 
+
 ```cangjie
 public func getInKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ForInExpr](#class-forinexpr) 节点中 `in` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `in` 关键字的位置。
 
 示例：
@@ -5961,15 +5968,15 @@ forInExpr.getInKeyWordPos(): 1:8-1:10
 ```
 
 ### func getLParenPos()
- 
+
 ```cangjie
 public func getLParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ForInExpr](#class-forinexpr) 节点中的 `(` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `(` 的位置。
 
 示例：
@@ -5995,15 +6002,15 @@ forInExpr.getLParenPos(): 1:5-1:6
 ```
 
 ### func getRParenPos()
- 
+
 ```cangjie
 public func getRParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ForInExpr](#class-forinexpr) 节点中的 `)` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `)` 的位置。
 
 示例：
@@ -6029,15 +6036,15 @@ forInExpr.getRParenPos(): 1:13-1:14
 ```
 
 ### func getWhereKeyWordPos()
- 
+
 ```cangjie
 public func getWhereKeyWordPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [ForInExpr](#class-forinexpr) 节点中 `where` 关键字的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `where` 关键字的位置（若不存在返回 `None`）。
 
 示例：
@@ -6275,17 +6282,18 @@ main(): Unit {
 funcDecl.getFuncKeyWordPos(): 1:1-1:5
 ```
 
+>>>>>>>
 ### func getFuncKindKeyWordPos()
 
 ```cangjie
 public func getFuncKindKeyWordPos(): Option<CodePositionRange>
 ```
 
-功能：获取 [FuncDecl](#class-funcdecl) 节点中FuncKind 关键字的位置。
+功能：获取 [FuncDecl](#class-funcdecl) 节点中 FuncKind 关键字的位置。
 
 返回值：
 
-- Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回FuncKind 关键字的位置。
+- Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 FuncKind 关键字的位置。
 
 > **注意：**
 >
@@ -6370,6 +6378,7 @@ funcDecl.getGenericParamsCommasPos()[0]: 1:11-1:12
 funcDecl.getGenericParamsCommasPos()[1]: 1:14-1:15
 ```
 
+>>>>>>>
 ### func getGenericParamsLAnglePos()
 
 ```cangjie
@@ -6547,6 +6556,7 @@ main(): Unit {
 funcDecl.getRetTyAnnotationColonPos(): 1:11-1:12
 ```
 
+>>>>>>>
 ## class FuncParam
 
 ```cangjie
@@ -6707,6 +6717,7 @@ main(): Unit {
 funcParam.getAssignPos(): 1:15-1:16
 ```
 
+>>>>>>>
 ### func getIdentifierPos()
 
 ```cangjie
@@ -6741,6 +6752,7 @@ main(): Unit {
 funcParam.getIdentifierPos(): 1:5-1:6
 ```
 
+>>>>>>>
 ### func getNotPos()
 
 ```cangjie
@@ -6867,7 +6879,7 @@ public class FuncType <: TypeAnnotation {
 public prop labels: Array<String>
 ```
 
-功能：获取 [FuncType](#class-functype) 节点中的类型参数名，例如 `(name: String, age: Int64) -> Unit` 中的 `name` 和 `age `。
+功能：获取 [FuncType](#class-functype) 节点中的类型参数名，例如 `(name: String, age: Int64) -> Unit` 中的 `name` 和 `age`。
 
 类型：Array\<String>
 
@@ -7317,6 +7329,7 @@ main(): Unit {
 genericConstraint.getBitAndsPos()[0]: 1:11-1:12
 ```
 
+>>>>>>>
 ### func getUpperBoundPos()
 
 ```cangjie
@@ -7689,15 +7702,15 @@ ifExpr: if (x) {
 ```
 
 ### func getCondLParenPos()
- 
+
 ```cangjie
 public func getCondLParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [IfExpr](#class-ifexpr) 节点中条件的 `(` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回条件的 `(` 的位置。
 
 示例：
@@ -7729,15 +7742,15 @@ ifExpr.getCondLParenPos(): 1:4-1:5
 ```
 
 ### func getCondRParenPos()
- 
+
 ```cangjie
 public func getCondRParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [IfExpr](#class-ifexpr) 节点中条件的 `)` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回条件的 `)` 的位置。
 
 示例：
@@ -7769,15 +7782,15 @@ ifExpr.getCondRParenPos(): 1:6-1:7
 ```
 
 ### func getElseKeyWordPos()
- 
+
 ```cangjie
 public func getElseKeyWordPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [IfExpr](#class-ifexpr) 节点中 `else` 关键字的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `else` 关键字的位置（若不存在返回 `None`）。
 
 示例：
@@ -7813,15 +7826,15 @@ ifExpr.getElseKeyWordPos(): 3:3-3:7
 ```
 
 ### func getIfKeyWordPos()
- 
+
 ```cangjie
 public func getIfKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [IfExpr](#class-ifexpr) 节点中 `if` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `if` 关键字的位置。
 
 示例：
@@ -7939,11 +7952,11 @@ importAlias: pkg.a as p
 ```
 
 ### func getAliasNamePos()
- 
+
 ```cangjie
 public func getAliasNamePos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportAlias](#class-importalias) 中包的别名的位置。
 
 返回值：
@@ -7973,11 +7986,11 @@ importAlias.getAliasNamePos(): 1:10-1:11
 ```
 
 ### func getAsPos()
- 
+
 ```cangjie
 public func getAsPos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportAlias](#class-importalias) 中 `as` 关键字的位置。
 
 返回值：
@@ -8007,11 +8020,11 @@ importAlias.getAsPos(): 1:7-1:9
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportAlias](#class-importalias) 中原始包名的位置。
 
 返回值：
@@ -8093,11 +8106,11 @@ importAll: pkg.*
 ```
 
 ### func getMulPos()
- 
+
 ```cangjie
 public func getMulPos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportAll](#class-importall) 中 `*` 的位置。
 
 返回值：
@@ -8149,11 +8162,11 @@ public prop prefixes: Array<String>
 类型：Array\<String>
 
 ### func getDotsPos()
- 
+
 ```cangjie
 public func getDotsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取当前 [ImportContent](#class-importcontent) 中所有 `.` 分隔符的位置。
 
 返回值：
@@ -8186,7 +8199,7 @@ importSingle.getDotsPos()[1]: 1:6-1:7
 ```
 
 ### func getPrefixesPos()
- 
+
 ```cangjie
 public func getPrefixesPos(): Array<CodePositionRange>
 ```
@@ -8316,11 +8329,11 @@ importList: public import pkg.a
 ```
 
 ### func getImportKeyWordPos()
- 
+
 ```cangjie
 public func getImportKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportList](#class-importlist) 中 `import` 关键字的位置。
 
 返回值：
@@ -8459,11 +8472,11 @@ importMulti.getCommasPos()[0]: 1:7-1:8
 ```
 
 ### func getLCurlPos()
- 
+
 ```cangjie
 public func getLCurlPos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportMulti](#class-importmulti) 中 `{` 的位置。
 
 返回值：
@@ -8494,11 +8507,11 @@ importMulti.getLCurlPos(): 1:5-1:6
 ```
 
 ### func getRCurlPos()
- 
+
 ```cangjie
 public func getRCurlPos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportMulti](#class-importmulti) 中 `}` 的位置。
 
 返回值：
@@ -8600,11 +8613,11 @@ importSingle: pkg.a
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取当前 [ImportSingle](#class-importsingle) 中具体包名的位置。
 
 返回值：
@@ -8886,15 +8899,15 @@ interfaceDecl: interface foo<T> <: I1 where T<:I1 {
 ```
 
 ### func getGenericParamsCommasPos()
- 
+
 ```cangjie
 public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中泛型参数中 `,` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数中 `,` 的位置。
 
 示例：
@@ -8927,15 +8940,15 @@ interfaceDecl.getGenericParamsCommasPos()[1]: 1:27-1:28
 ```
 
 ### func getGenericParamsLAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `<` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -8964,15 +8977,15 @@ interfaceDecl.getGenericParamsLAnglePos(): 1:22-1:23
 ```
 
 ### func getGenericParamsRAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `>` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -9001,15 +9014,15 @@ interfaceDecl.getGenericParamsRAnglePos(): 1:24-1:25
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中标识符的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回标识符的位置。
 
 示例：
@@ -9038,15 +9051,15 @@ interfaceDecl.getIdentifierPos(): 1:11-1:22
 ```
 
 ### func getInterfaceKeyWordPos()
- 
+
 ```cangjie
 public func getInterfaceKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中 `interface` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `interface` 关键字的位置。
 
 示例：
@@ -9075,15 +9088,15 @@ interfaceDecl.getInterfaceKeyWordPos(): 1:1-1:10
 ```
 
 ### func getSuperTyAnnotationsBitAndsPos()
- 
+
 ```cangjie
 public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中父类型中 `&` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回父类型中 `&` 的位置。
 
 示例：
@@ -9115,15 +9128,15 @@ interfaceDecl.getSuperTyAnnotationsBitAndsPos()[0]: 1:29-1:30
 ```
 
 ### func getUpperBoundPos()
- 
+
 ```cangjie
 public func getUpperBoundPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [InterfaceDecl](#class-interfacedecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `<:` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -9610,6 +9623,7 @@ main(): Unit {
 lambdaParam.getTypeAnnotationColonPos(): 1:2-1:3
 ```
 
+>>>>>>>
 ## class LetPattern
 
 ```cangjie
@@ -9694,15 +9708,15 @@ letPattern: let x <- y
 ```
 
 ### func getBackArrowPos()
- 
+
 ```cangjie
 public func getBackArrowPos(): CodePositionRange
 ```
- 
+
 功能：获取 [LetPattern](#class-letpattern) 节点中 `<-` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `<-` 的位置。
 
 示例：
@@ -9734,15 +9748,15 @@ letPattern.getBackArrowPos(): 1:7-1:9
 ```
 
 ### func getBitOrsPos()
- 
+
 ```cangjie
 public func getBitOrsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [LetPattern](#class-letpattern) 节点中 `|` 的位置序列。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `|` 的位置序列。
 
 示例：
@@ -9781,11 +9795,11 @@ letPattern.getBitOrsPos()[1]: 1:13-1:14
 ```
 
 ### func getLetKeyWordPos()
- 
+
 ```cangjie
 public func getLetKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [LetPattern](#class-letpattern) 节点中 `let` 关键字的位置。
 
 返回值：
@@ -9872,7 +9886,7 @@ public init(kind: LitConstKind, rawValue: String, comments!: Array<Comment> = []
 
 异常：
 
-- Exception - 当 `kind` 为 [RuneLiteral](syntax_package_enums.md#runeliteral) 或 [StringLiteral](syntax_package_enums.md#stringliteral)时，或 `rawValue` 无法用于构建对应类型字面量时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `kind` 为 [RuneLiteral](syntax_package_enums.md#runeliteral) 或 [StringLiteral](syntax_package_enums.md#stringliteral) 时，或 `rawValue` 无法用于构建对应类型字面量时，抛出异常，异常中包含报错提示信息。
 
 > **注意：**
 >
@@ -10114,11 +10128,11 @@ litConstStrExpr: 'abc'
 ```
 
 ### func hasInterpolation()
- 
+
 ```cangjie
 public func hasInterpolation(): Bool
 ```
- 
+
 功能：表示当前 [LitConstStrExpr](#class-litconststrexpr) 是否存在插值。
 
 返回值：
@@ -10266,15 +10280,15 @@ macroDecl: macro foo(): Int64 {
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取 [MacroDecl](#class-macrodecl) 节点中标识符的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回标识符的位置。
 
 示例：
@@ -10302,15 +10316,15 @@ macroDecl.getIdentifierPos(): 1:7-1:10
 ```
 
 ### func getMacroKeyWordPos()
- 
+
 ```cangjie
 public func getMacroKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [MacroDecl](#class-macrodecl) 节点中 `macro` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `macro` 关键字的位置。
 
 示例：
@@ -10338,15 +10352,15 @@ macroDecl.getMacroKeyWordPos(): 1:1-1:6
 ```
 
 ### func getRetTyAnnotationColonPos()
- 
+
 ```cangjie
 public func getRetTyAnnotationColonPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroDecl](#class-macrodecl) 节点中返回类型的冒号的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回返回类型的冒号的位置（若不存在返回 `None`）。
 
 示例：
@@ -10487,15 +10501,15 @@ EnumA(Int64)
 ```
 
 ### func getAtPos()
- 
+
 ```cangjie
 public func getAtPos(): CodePositionRange
 ```
- 
+
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `@` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `@` 的位置。
 
 示例：
@@ -10543,15 +10557,15 @@ macroExpandDecl.getAtPos(): 1:1-1:2
 ```
 
 ### func getLParenPos()
- 
+
 ```cangjie
 public func getLParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `(` 的位置。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `(` 的位置。
 
 示例：
@@ -10603,15 +10617,15 @@ macroExpandDecl.getLParenPos(): None
 ```
 
 ### func getLSquarePos()
- 
+
 ```cangjie
 public func getLSquarePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `[` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `[` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -10660,15 +10674,15 @@ macroExpandDecl.getLSquarePos(): 1:11-1:12
 ```
 
 ### func getRParenPos()
- 
+
 ```cangjie
 public func getRParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `)` 的位置。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `)` 的位置。
 
 示例：
@@ -10720,15 +10734,15 @@ macroExpandDecl.getRParenPos(): None
 ```
 
 ### func getRSquarePos()
- 
+
 ```cangjie
 public func getRSquarePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandDecl](#class-macroexpanddecl) 节点中 `]` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `]` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -10884,15 +10898,15 @@ macroExpandExpr: @testMacro[123](1 + 1)
 ```
 
 ### func getAtPos()
- 
+
 ```cangjie
 public func getAtPos(): CodePositionRange
 ```
- 
+
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `@` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `@` 的位置。
 
 示例：
@@ -10934,15 +10948,15 @@ macroExpandExpr.getAtPos(): 1:1-1:2
 ```
 
 ### func getLParenPos()
- 
+
 ```cangjie
 public func getLParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `(` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `(` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -10985,15 +10999,15 @@ macroExpandExpr.getLParenPos(): 1:16-1:17
 ```
 
 ### func getLSquarePos()
- 
+
 ```cangjie
 public func getLSquarePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `[` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `[` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -11036,15 +11050,15 @@ macroExpandExpr.getLSquarePos(): 1:11-1:12
 ```
 
 ### func getRParenPos()
- 
+
 ```cangjie
 public func getRParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `)` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `)` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -11087,15 +11101,15 @@ macroExpandExpr.getRParenPos(): 1:22-1:23
 ```
 
 ### func getRSquarePos()
- 
+
 ```cangjie
 public func getRSquarePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandExpr](#class-macroexpandexpr) 节点中 `]` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `]` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -11248,15 +11262,15 @@ macroExpandParam: @testMacro[123](a: Int64)
 ```
 
 ### func getAtPos()
- 
+
 ```cangjie
 public func getAtPos(): CodePositionRange
 ```
- 
+
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `@` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `@` 的位置。
 
 示例：
@@ -11298,15 +11312,15 @@ macroExpandParam.getAtPos(): 1:1-1:2
 ```
 
 ### func getLParenPos()
- 
+
 ```cangjie
 public func getLParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `(` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `(` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -11348,20 +11362,21 @@ macroExpandParam.getLParenPos(): 1:16-1:17
 ```
 
 ### func getLSquarePos()
- 
+
 ```cangjie
 public func getLSquarePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `[` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `[` 的位置（若不存在返回 `None`）。
 
 示例：
 
 <!-- verify -->
+
 ```cangjie
 import stdx.syntax.*
 
@@ -11398,15 +11413,15 @@ macroExpandParam.getLSquarePos(): 1:11-1:12
 ```
 
 ### func getRParenPos()
- 
+
 ```cangjie
 public func getRParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `)` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `)` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -11448,15 +11463,15 @@ macroExpandParam.getRParenPos(): 1:25-1:26
 ```
 
 ### func getRSquarePos()
- 
+
 ```cangjie
 public func getRSquarePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [MacroExpandParam](#class-macroexpandparam) 节点中 `]` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `]` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -13009,15 +13024,15 @@ packageHeader.getPackageKeyWordPos(): 1:1-1:8
 ```
 
 ### func getPackageName()
- 
+
 ```cangjie
 public func getPackageName(): String
 ```
- 
+
 功能：获取 [PackageHeader](#class-packageheader) 节点中的包名。
- 
+
 返回值：
- 
+
 - String - 返回包名。
 
 示例：
@@ -13044,15 +13059,15 @@ packageHeader.getPackageName(): syntax
 ```
 
 ### func getParentPackageName()
- 
+
 ```cangjie
 public func getParentPackageName(): String
 ```
- 
+
 功能：获取 [PackageHeader](#class-packageheader) 节点中所有父包的包名。
- 
+
 返回值：
- 
+
 - String - 返回所有父包的包名。
 
 示例：
@@ -13078,7 +13093,7 @@ main(): Unit {
 packageHeader.getParentPackageName(): std
 ```
 
-## class Parameter 
+## class Parameter
 
 ```cangjie
 sealed abstract class Parameter <: Decl {}
@@ -13105,13 +13120,13 @@ public class ParameterList <: SyntaxTreeNode {
 - [SyntaxTreeNode](#class-syntaxtreenode)
 
 ### prop params
- 
+
 ```cangjie
 public prop params: Array<Parameter>
 ```
- 
+
 功能：获取全部参数。
- 
+
 类型：Array\<[Parameter](#class-parameter)>
 
 ### init(Array\<Parameter>, Bool, Array\<Comment>)
@@ -13402,15 +13417,15 @@ parenCondition: (x == y || a == b)
 ```
 
 ### func getLParenPos()
- 
+
 ```cangjie
 public func getLParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ParenCondition](#class-parencondition) 节点中的 `(` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `(` 的位置。
 
 示例：
@@ -13453,16 +13468,14 @@ parenCondition.getLParenPos(): 1:1-1:2
 ```
 
 ### func getRParenPos()
- 
+
 ```cangjie
 public func getRParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [ParenCondition](#class-parencondition) 节点中的 `)` 的位置。
- 
+
 返回值：
- 
-- [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `)` 的位置。
 
 示例：
 
@@ -14083,15 +14096,15 @@ propDecl: prop x: Int64 {
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取 [PropDecl](#class-propdecl) 节点中标识符的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回标识符的位置。
 
 示例：
@@ -14118,15 +14131,15 @@ propDecl.getIdentifierPos(): 1:6-1:7
 ```
 
 ### func getLCurlPos()
- 
+
 ```cangjie
 public func getLCurlPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [PropDecl](#class-propdecl) 节点中 `{` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `{` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -14154,15 +14167,15 @@ propDecl.getLCurlPos(): 1:15-1:16
 ```
 
 ### func getPropKeyWordPos()
- 
+
 ```cangjie
 public func getPropKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [PropDecl](#class-propdecl) 节点中 `prop` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `prop` 关键字的位置。
 
 示例：
@@ -14189,15 +14202,15 @@ propDecl.getPropKeyWordPos(): 1:1-1:5
 ```
 
 ### func getRCurlPos()
- 
+
 ```cangjie
 public func getRCurlPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [PropDecl](#class-propdecl) 节点中 `}` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `}` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -14225,15 +14238,15 @@ propDecl.getRCurlPos(): 5:1-5:2
 ```
 
 ### func getTyAnnotationColonPos()
- 
+
 ```cangjie
 public func getTyAnnotationColonPos(): CodePositionRange
 ```
- 
+
 功能：获取 [PropDecl](#class-propdecl) 节点中返回类型前的 `:` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回返回类型前的 `:` 的位置。
 
 示例：
@@ -14290,7 +14303,7 @@ public prop block: Block
 public prop identifier: Option<String>
 ```
 
-功能：若为 `setter` 方法，则获取当前方法的输入参数，否则返回None。
+功能：若为 `setter` 方法，则获取当前方法的输入参数，否则返回 None。
 
 类型：Option\<String>
 
@@ -14370,15 +14383,15 @@ propSetter: set(v) {
 ```
 
 ### func getGetKeyWordPos()
- 
+
 ```cangjie
 public func getGetKeyWordPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `get` 关键字的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `get` 关键字的位置（若不存在返回 `None`）。
 
 示例：
@@ -14427,15 +14440,15 @@ propGetter.getGetKeyWordPos(): 1:1-1:4
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中标识符的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回标识符的位置（若不存在返回 `None`）。
 
 示例：
@@ -14484,15 +14497,15 @@ propSetter.getIdentifierPos(): 1:5-1:6
 ```
 
 ### func getLParenPos()
- 
+
 ```cangjie
 public func getLParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `(` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `(` 的位置。
 
 示例：
@@ -14540,15 +14553,15 @@ propSetter.getLParenPos(): 1:4-1:5
 ```
 
 ### func getRParenPos()
- 
+
 ```cangjie
 public func getRParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `)` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `)` 的位置。
 
 示例：
@@ -14596,15 +14609,15 @@ propSetter.getRParenPos(): 1:6-1:7
 ```
 
 ### func getSetKeyWordPos()
- 
+
 ```cangjie
 public func getSetKeyWordPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [PropGetterOrSetter](#class-propgetterorsetter) 节点中 `set` 关键字的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `set` 关键字的位置（若不存在返回 `None`）。
 
 示例：
@@ -15683,15 +15696,15 @@ spawnExpr: spawn (context) {  => 3.14 }
 ```
 
 ### func getSpawnKeyWordPos()
- 
+
 ```cangjie
 public func getSpawnKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [SpawnExpr](#class-spawnexpr) 节点中 `spawn` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `spawn` 关键字的位置。
 
 示例：
@@ -15734,15 +15747,15 @@ spawnExpr.getSpawnKeyWordPos(): 1:1-1:6
 ```
 
 ### func getThreadContextLParenPos()
- 
+
 ```cangjie
 public func getThreadContextLParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [SpawnExpr](#class-spawnexpr) 节点中线程上下文的 `(` 的位置。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `return` 关键字的位置。
 
 示例：
@@ -15786,15 +15799,15 @@ spawnExpr.getThreadContextLParenPos(): 1:7-1:8
 ```
 
 ### func getThreadContextRParenPos()
- 
+
 ```cangjie
 public func getThreadContextRParenPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [SpawnExpr](#class-spawnexpr) 节点中线程上下文的 `)` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回线程上下文的 `)` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -15911,15 +15924,15 @@ staticInit: static init() {
 ```
 
 ### func getInitKeyWordPos()
- 
+
 ```cangjie
 public func getInitKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [StaticInit](#class-staticinit) 节点中 `init` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `init` 关键字的位置。
 
 示例：
@@ -15959,15 +15972,15 @@ staticInit.getInitKeyWordPos(): 1:8-1:12
 ```
 
 ### func getParamsLParenPos()
- 
+
 ```cangjie
 public func getParamsLParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [StaticInit](#class-staticinit) 节点中参数左括号的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回参数左括号的位置。
 
 示例：
@@ -16007,15 +16020,15 @@ staticInit.getParamsLParenPos(): 1:12-1:13
 ```
 
 ### func getParamsRParenPos()
- 
+
 ```cangjie
 public func getParamsRParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [StaticInit](#class-staticinit) 节点中参数右括号的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回参数右括号的位置。
 
 示例：
@@ -16055,15 +16068,15 @@ staticInit.getParamsRParenPos(): 1:13-1:14
 ```
 
 ### func getStaticKeyWordPos()
- 
+
 ```cangjie
 public func getStaticKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [StaticInit](#class-staticinit) 节点中 `static` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `static` 关键字的位置。
 
 示例：
@@ -16298,15 +16311,15 @@ public struct A<T> <: I1 where T<:I1 {
 ```
 
 ### func getGenericParamsCommasPos()
- 
+
 ```cangjie
 public func getGenericParamsCommasPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [StructDecl](#class-structdecl) 节点中泛型参数中 `,` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数中 `,` 的位置。
 
 示例：
@@ -16363,15 +16376,15 @@ structDecl.getGenericParamsCommasPos()[0]: 2:18-2:19
 ```
 
 ### func getGenericParamsLAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsLAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [StructDecl](#class-structdecl) 节点中泛型参数的 `<` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `<` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -16427,15 +16440,15 @@ structDecl.getGenericParamsLAnglePos(): 2:16-2:17
 ```
 
 ### func getGenericParamsRAnglePos()
- 
+
 ```cangjie
 public func getGenericParamsRAnglePos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [StructDecl](#class-structdecl) 节点中泛型参数的 `>` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回泛型参数的 `>` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -16491,15 +16504,15 @@ structDecl.getGenericParamsRAnglePos(): 2:18-2:19
 ```
 
 ### func getIdentifierPos()
- 
+
 ```cangjie
 public func getIdentifierPos(): CodePositionRange
 ```
- 
+
 功能：获取 [StructDecl](#class-structdecl) 节点中标识符的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回泛型参数的 `<` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -16554,15 +16567,15 @@ structDecl.getIdentifierPos(): 2:15-2:16
 ```
 
 ### func getStructKeyWordPos()
- 
+
 ```cangjie
 public func getStructKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [StructDecl](#class-structdecl) 节点中 `struct` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `struct` 关键字的位置。
 
 示例：
@@ -16617,15 +16630,15 @@ structDecl.getStructKeyWordPos(): 2:8-2:14
 ```
 
 ### func getSuperTyAnnotationsBitAndsPos()
- 
+
 ```cangjie
 public func getSuperTyAnnotationsBitAndsPos(): Array<CodePositionRange>
 ```
- 
+
 功能：获取 [StructDecl](#class-structdecl) 节点中父类型中 `&` 的位置。
- 
+
 返回值：
- 
+
 - Array\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回父类型中 `&` 的位置。
 
 示例：
@@ -16682,15 +16695,15 @@ structDecl.getSuperTyAnnotationsBitAndsPos()[0]: 2:26-2:27
 ```
 
 ### func getUpperBoundPos()
- 
+
 ```cangjie
 public func getUpperBoundPos(): Option<CodePositionRange>
 ```
- 
+
 功能：获取 [StructDecl](#class-structdecl) 节点中 `<:` 的位置（若不存在返回 `None`）。
- 
+
 返回值：
- 
+
 - Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 `<:` 的位置（若不存在返回 `None`）。
 
 示例：
@@ -17275,15 +17288,15 @@ synchronizedExpr: synchronized (mtx) {
 ```
 
 ### func getLParenPos()
- 
+
 ```cangjie
 public func getLParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [SynchronizedExpr](#class-synchronizedexpr) 节点中 `(` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `(` 的位置。
 
 示例：
@@ -17327,15 +17340,15 @@ synchronizedExpr.getLParenPos(): 1:14-1:15
 ```
 
 ### func getRParenPos()
- 
+
 ```cangjie
 public func getRParenPos(): CodePositionRange
 ```
- 
+
 功能：获取 [SynchronizedExpr](#class-synchronizedexpr) 节点中 `)` 的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `)` 的位置。
 
 示例：
@@ -17379,15 +17392,15 @@ synchronizedExpr.getRParenPos(): 1:18-1:19
 ```
 
 ### func getSynchronizedKeyWordPos()
- 
+
 ```cangjie
 public func getSynchronizedKeyWordPos(): CodePositionRange
 ```
- 
+
 功能：获取 [SynchronizedExpr](#class-synchronizedexpr) 节点中 `synchronized` 关键字的位置。
- 
+
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `synchronized` 关键字的位置。
 
 示例：
@@ -17460,7 +17473,7 @@ public let nodePos: CodePositionRange
 
 > **注意：**
 >
-> [Package](#class-package) 节点的起始和结束行列号均为0，文件信息为空。
+> [Package](#class-package) 节点的起始和结束行列号均为 0，文件信息为空。
 
 类型：[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)
 
@@ -19052,7 +19065,7 @@ public prop elements: Array<TypeAnnotation>
 public prop labels: Array<String>
 ```
 
-功能：获取 [TupleType](#class-tupletype) 节点中的类型参数名，例如 `(name: String, age: Int64)` 中的 `name` 和 `age `。
+功能：获取 [TupleType](#class-tupletype) 节点中的类型参数名，例如 `(name: String, age: Int64)` 中的 `name` 和 `age`。
 
 类型：Array\<String>
 
@@ -19795,7 +19808,7 @@ public init(subPattern: Pattern, patternType: TypeAnnotation, comments!: Array<C
 
 异常：
 
-- Exception - 当输入的 `subPattern` 不为 [WildcardPattern](#class-wildcardpattern) 或 [VarPattern](#class-varpattern)时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `subPattern` 不为 [WildcardPattern](#class-wildcardpattern) 或 [VarPattern](#class-varpattern) 时，抛出异常，异常中包含报错提示信息。
 
 示例：
 
@@ -20117,7 +20130,7 @@ public class VarDecl <: Decl {
 
 功能：表示变量声明节点。
 
-一个 [VarDecl](#class-vardecl) 节点: `var a: String`，`var b: Int64 = 1` 等。
+一个 [VarDecl](#class-vardecl) 节点：`var a: String`，`var b: Int64 = 1` 等。
 
 父类型：
 
@@ -21067,7 +21080,7 @@ whileExpr: while (x) {
 ```
 
 ### func getCondLParenPos()
- 
+
 ```cangjie
 public func getCondLParenPos(): CodePositionRange
 ```
@@ -21139,7 +21152,7 @@ whileExpr.getCondRParenPos(): 1:9-1:10
 ```
 
 ### func getWhileKeyWordPos()
- 
+
 ```cangjie
 public func getWhileKeyWordPos(): CodePositionRange
 ```
@@ -21147,7 +21160,7 @@ public func getWhileKeyWordPos(): CodePositionRange
 功能：获取 [WhileExpr](#class-whileexpr) 节点中 `while` 关键字的位置。
 
 返回值：
- 
+
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `while` 关键字的位置。
 
 示例：

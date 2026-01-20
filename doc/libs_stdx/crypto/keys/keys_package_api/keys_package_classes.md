@@ -201,7 +201,7 @@ main() {
 public static func decodeFromPem(text: String, password!: ?String): ECDSAPrivateKey
 ```
 
-功能：将私钥从PEM 格式解码。
+功能：将私钥从 PEM 格式解码。
 
 参数：
 
@@ -1655,7 +1655,7 @@ public class RSAPrivateKey <: PrivateKey{
 public init(bits: Int32)
 ```
 
-功能：init 初始化生成私钥，公钥指数默认值为 65537，业界推荐。公钥指数e的大小直接影响了RSA算法的安全性和加密效率。通常情况下，e的值越小，加密速度越快，但安全性越低。
+功能：init 初始化生成私钥，公钥指数默认值为 65537，业界推荐。公钥指数 e 的大小直接影响了 RSA 算法的安全性和加密效率。通常情况下，e 的值越小，加密速度越快，但安全性越低。
 
 参数：
 
@@ -2260,7 +2260,7 @@ public init(pri: RSAPrivateKey)
 
 参数：
 
-- pri: [RSAPrivateKey](keys_package_classes.md#class-rsaprivatekey) - RSA私钥。
+- pri: [RSAPrivateKey](keys_package_classes.md#class-rsaprivatekey) - RSA 私钥。
 
 异常：
 
@@ -2344,7 +2344,7 @@ main() {
 public static func decodeFromPem(text: String): RSAPublicKey
 ```
 
-功能：将公钥从PEM 格式解码。
+功能：将公钥从 PEM 格式解码。
 
 参数：
 
@@ -3273,7 +3273,7 @@ main() {
 public static func decodeFromPem(text: String): SM2PublicKey
 ```
 
-功能：将公钥从PEM 格式解码。
+功能：将公钥从 PEM 格式解码。
 
 参数：
 
