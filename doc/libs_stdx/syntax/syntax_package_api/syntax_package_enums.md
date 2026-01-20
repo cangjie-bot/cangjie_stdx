@@ -215,7 +215,7 @@ BoolType
 Float16Type
 ```
 
-功能：表示16位浮点数基本类型。
+功能：表示 16 位浮点数基本类型。
 
 ### Float32Type
 
@@ -223,7 +223,7 @@ Float16Type
 Float32Type
 ```
 
-功能：表示32位浮点数基本类型。
+功能：表示 32 位浮点数基本类型。
 
 ### Float64Type
 
@@ -231,7 +231,7 @@ Float32Type
 Float64Type
 ```
 
-功能：表示64位浮点数基本类型。
+功能：表示 64 位浮点数基本类型。
 
 ### Int16Type
 
@@ -239,7 +239,7 @@ Float64Type
 Int16Type
 ```
 
-功能：表示16位有符号整数基本类型。
+功能：表示 16 位有符号整数基本类型。
 
 ### Int32Type
 
@@ -247,7 +247,7 @@ Int16Type
 Int32Type
 ```
 
-功能：表示32位有符号整数基本类型。
+功能：表示 32 位有符号整数基本类型。
 
 ### Int64Type
 
@@ -255,7 +255,7 @@ Int32Type
 Int64Type
 ```
 
-功能：表示64位有符号整数基本类型。
+功能：表示 64 位有符号整数基本类型。
 
 ### Int8Type
 
@@ -263,7 +263,7 @@ Int64Type
 Int8Type
 ```
 
-功能：表示8位有符号整数基本类型。
+功能：表示 8 位有符号整数基本类型。
 
 ### IntNativeType
 
@@ -303,7 +303,7 @@ ThisType
 UInt16Type
 ```
 
-功能：表示16位无符号整数基本类型。
+功能：表示 16 位无符号整数基本类型。
 
 ### UInt32Type
 
@@ -311,7 +311,7 @@ UInt16Type
 UInt32Type
 ```
 
-功能：表示32位无符号整数基本类型。
+功能：表示 32 位无符号整数基本类型。
 
 ### UInt64Type
 
@@ -319,7 +319,7 @@ UInt32Type
 UInt64Type
 ```
 
-功能：表示64位无符号整数基本类型。
+功能：表示 64 位无符号整数基本类型。
 
 ### UInt8Type
 
@@ -327,7 +327,7 @@ UInt64Type
 UInt8Type
 ```
 
-功能：表示8位无符号整数基本类型。
+功能：表示 8 位无符号整数基本类型。
 
 ### UIntNativeType
 
@@ -346,7 +346,7 @@ UnitType
 功能：表示 `Unit` 类型。
 
 ## enum AtOpKind
- 
+
 ```cangjie
 public enum AtOpKind {
     | At
@@ -354,23 +354,23 @@ public enum AtOpKind {
     | ...
 }
 ```
- 
+
 功能：表示注解的操作符类型。
- 
+
 ### At
- 
+
 ```cangjie
 At
 ```
- 
+
 功能：表示 `@` 类型的注解操作符。
- 
+
 ### AtExcl
- 
+
 ```cangjie
 AtExcl
 ```
- 
+
 功能：表示 `@!` 类型的注解操作符。
 
 ## enum BinaryOpKind

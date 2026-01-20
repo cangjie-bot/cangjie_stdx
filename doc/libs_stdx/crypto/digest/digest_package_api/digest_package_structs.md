@@ -6,7 +6,7 @@
 public struct HashType <: ToString & Equatable<HashType>
 ```
 
-功能：此类为 Hash 算法类别结构体，[MD5](digest_package_classes.md#class-md5)、[SHA1](digest_package_classes.md#class-sha1)、[SHA224](digest_package_classes.md#class-sha224)、[SHA256](digest_package_classes.md#class-sha256)、[SHA384](digest_package_classes.md#class-sha384)、[SHA512](digest_package_classes.md#class-sha512)均为常用摘要算法。
+功能：此类为 Hash 算法类别结构体，[MD5](digest_package_classes.md#class-md5)、[SHA1](digest_package_classes.md#class-sha1)、[SHA224](digest_package_classes.md#class-sha224)、[SHA256](digest_package_classes.md#class-sha256)、[SHA384](digest_package_classes.md#class-sha384)、[SHA512](digest_package_classes.md#class-sha512) 均为常用摘要算法。
 
 父类型：
 

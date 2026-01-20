@@ -27,7 +27,7 @@ public struct OperationMode <: ToString & Equatable<OperationMode> {
 public static let CBC: OperationMode
 ```
 
-功能：Cipher Block Chaining(密码分组链接)工作模式，CBC 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CBC")。
+功能：Cipher Block Chaining（密码分组链接）工作模式，CBC 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CBC")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
@@ -56,7 +56,7 @@ main() {
 public static let CFB: OperationMode
 ```
 
-功能：Cipher FeedBack(密文反馈)工作模式，CFB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CFB")。
+功能：Cipher FeedBack（密文反馈）工作模式，CFB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CFB")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
@@ -85,7 +85,7 @@ main() {
 public static let CTR: OperationMode
 ```
 
-功能：CounTeR(计数器)工作模式，CTR 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CTR")。
+功能：CounTeR（计数器）工作模式，CTR 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("CTR")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
@@ -114,7 +114,7 @@ main() {
 public static let ECB: OperationMode
 ```
 
-功能：Electronic CodeBook(单子密码本)工作模式， ECB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("ECB")。
+功能：Electronic CodeBook（单子密码本）工作模式， ECB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("ECB")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
@@ -143,7 +143,7 @@ main() {
 public static let GCM: OperationMode
 ```
 
-功能：Galois Counter(伽罗瓦计数器)工作模式，GCM 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("GCM")。
+功能：Galois Counter（伽罗瓦计数器）工作模式，GCM 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("GCM")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
@@ -172,7 +172,7 @@ main() {
 public static let OFB: OperationMode
 ```
 
-功能：Output FeedBack(输出反馈)工作模式，OFB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("OFB")。
+功能：Output FeedBack（输出反馈）工作模式，OFB 初始值是 [OperationMode](crypto_package_structs.md#struct-operationmode)("OFB")。
 
 类型：[OperationMode](crypto_package_structs.md#struct-operationmode)
 
@@ -392,7 +392,7 @@ NoPadding模式的paddingType: 0
 public static let PKCS7Padding: PaddingMode
 ```
 
-功能：采用PKCS7协议填充，PKCS7Padding 初始值是 [PaddingMode](crypto_package_structs.md#struct-paddingmode)(1)。
+功能：采用 PKCS7 协议填充，PKCS7Padding 初始值是 [PaddingMode](crypto_package_structs.md#struct-paddingmode)(1)。
 
 类型：[PaddingMode](crypto_package_structs.md#struct-paddingmode)
 
