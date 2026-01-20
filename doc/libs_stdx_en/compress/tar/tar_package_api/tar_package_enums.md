@@ -74,6 +74,7 @@ Parameters:
 Return value:
 
 - Bool - Returns true if the two tar file header format enum instances are not equal; otherwise, returns false.
+
 ### operator func ==(TarEntryFormat): Bool
 
 ```cangjie
@@ -341,4 +342,3 @@ Parameters:
 Return value:
 
 - Bool - Returns true if the two entry type enum instances are equal; otherwise, returns false.
-
