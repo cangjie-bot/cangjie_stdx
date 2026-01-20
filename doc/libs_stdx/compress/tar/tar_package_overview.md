@@ -18,15 +18,15 @@ compress.tar 提供了归档和读取功能。
 
 |                 类名              |                功能                 |
 | --------------------------------- | ---------------------------------- |
-| [Tar](./tar_package_api/tar_package_readerwriter.md#class-tar) |  tar 文件操作类。      |
-| [TarEntry](./tar_package_api/tar_package_entry.md#class-tarentry) | 表示 tar 文件条目。      |
-| [V7TarEntry](./tar_package_api/tar_package_entry.md#class-v7tarentry) | 表示 V7 tar 文件条目。      |
-| [PosixTarEntry](./tar_package_api/tar_package_entry.md#class-posixtarentry) | 表示 Posix tar 文件条目。      |
-| [UstarTarEntry](./tar_package_api/tar_package_entry.md#class-ustartarentry) | 表示 USTAR tar 文件条目。      |
-| [GnuTarEntry](./tar_package_api/tar_package_entry.md#class-gnutarentry) | 表示 GNU tar 文件条目。      |
-| [PaxTarEntry](./tar_package_api/tar_package_entry.md#class-paxtarentry) | 表示 Pax tar 文件条目。      |
-| [TarReader](./tar_package_api/tar_package_readerwriter.md#class-tarreader) | 用于读取 tar 文件的读取器。      |
-| [TarWriter](./tar_package_api/tar_package_readerwriter.md#class-tarwriter) | 用于写入 tar 文件的写入器。      |
+| [Tar](./tar_package_api/tar_package_classes.md#class-tar) |  tar 文件操作类。      |
+| [TarEntry](./tar_package_api/tar_package_classes.md#class-tarentry) | 表示 tar 文件条目。      |
+| [V7TarEntry](./tar_package_api/tar_package_classes.md#class-v7tarentry) | 表示 V7 tar 文件条目。      |
+| [PosixTarEntry](./tar_package_api/tar_package_classes.md#class-posixtarentry) | 表示 Posix tar 文件条目。      |
+| [UstarTarEntry](./tar_package_api/tar_package_classes.md#class-ustartarentry) | 表示 USTAR tar 文件条目。      |
+| [GnuTarEntry](./tar_package_api/tar_package_classes.md#class-gnutarentry) | 表示 GNU tar 文件条目。      |
+| [PaxTarEntry](./tar_package_api/tar_package_classes.md#class-paxtarentry) | 表示 Pax tar 文件条目。      |
+| [TarReader](./tar_package_api/tar_package_classes.md#class-tarreader) | 用于读取 tar 文件的读取器。      |
+| [TarWriter](./tar_package_api/tar_package_classes.md#class-tarwriter) | 用于写入 tar 文件的写入器。      |
 
 ### 枚举
 

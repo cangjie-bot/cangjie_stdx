@@ -8,7 +8,7 @@ public class ConnectionException <: IOException {
 }
 ```
 
-功能：Http 的tcp连接异常类。
+功能：Http 的 tcp 连接异常类。
 
 父类型：
 

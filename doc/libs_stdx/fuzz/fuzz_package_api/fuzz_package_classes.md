@@ -1196,7 +1196,6 @@ public static func wrap(dp: FuzzDataProvider): DebugDataProvider
 
 - [DebugDataProvider](fuzz_package_classes.md#class-debugdataprovider) - 类型实例。
 
-
 示例：
 
 <!-- verify -->
