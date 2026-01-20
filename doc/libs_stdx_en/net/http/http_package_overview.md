@@ -62,6 +62,7 @@ Users upgrade from an HTTP/1.1 or HTTP/2 Client instance to WebSocket protocol v
 In a server-side handler, users upgrade from HTTP/1.1 or HTTP/2 to WebSocket protocol via WebSocket.upgradeFromServer, then communicate using the returned WebSocket instance.
 
 Per protocol:
+
 - In HTTP/1.1, the upgraded WebSocket connection is established over a TCP/TLS connection.
 - In HTTP/2, the upgraded WebSocket connection is established over a stream within an HTTP/2 connection.
 - In HTTP/1.1, closing terminates the TCP/TLS connection.
