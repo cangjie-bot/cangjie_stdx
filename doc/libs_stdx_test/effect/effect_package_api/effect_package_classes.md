@@ -73,4 +73,4 @@ Depth: 0
 ```
 
 这段代码里首先对 `defaultImpl` 进行了重载，其始终返回一个值，便意味着该程序永远不会抛出 `UnhandledCommandException` 异常。
-这个程序的行为与将 `main` 函数的主体包裹在handler程序 `try {... } handle(_: GetDepth) { resume with 0 }` 中的效果等价。
+这个程序的行为与将 `main` 函数的主体包裹在 handler 程序 `try {... } handle(_: GetDepth) { resume with 0 }` 中的效果等价。

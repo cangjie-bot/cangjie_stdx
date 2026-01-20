@@ -515,7 +515,7 @@ public open class ASTVisitor {}
 public open func postAction(node: SyntaxTreeNode): PostActionMode
 ```
 
-功能：在离开节点后执行的钩子函数，用于决定是否继续或停止遍历, 当 `preAction` 停止时， `postAction` 也会立即停止。
+功能：在离开节点后执行的钩子函数，用于决定是否继续或停止遍历，当 `preAction` 停止时， `postAction` 也会立即停止。
 
 参数：
 
@@ -2732,11 +2732,11 @@ public func getFuncKeyWordPos(): Option<CodePositionRange>
 public func getFuncKindKeyWordPos(): Option<CodePositionRange>
 ```
 
-功能：获取 [FuncDecl](#class-funcdecl) 节点中FuncKind 关键字的位置。
+功能：获取 [FuncDecl](#class-funcdecl) 节点中 FuncKind 关键字的位置。
 
 返回值：
 
-- Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回FuncKind 关键字的位置。
+- Option\<[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)> - 返回 FuncKind 关键字的位置。
 
 > **注意：**
 >
@@ -4389,7 +4389,7 @@ public init(kind: LitConstKind, rawValue: String, comments!: Array<Comment> = []
 
 异常：
 
-- Exception - 当 `kind` 为 [RuneLiteral](syntax_package_enums.md#runeliteral) 或 [StringLiteral](syntax_package_enums.md#stringliteral)时，或 `rawValue` 无法用于构建对应类型字面量时，抛出异常，异常中包含报错提示信息。
+- Exception - 当 `kind` 为 [RuneLiteral](syntax_package_enums.md#runeliteral) 或 [StringLiteral](syntax_package_enums.md#stringliteral) 时，或 `rawValue` 无法用于构建对应类型字面量时，抛出异常，异常中包含报错提示信息。
 
 > **注意：**
 >
@@ -6287,7 +6287,7 @@ public prop block: Block
 public prop identifier: Option<String>
 ```
 
-功能：若为 `setter` 方法，则获取当前方法的输入参数，否则返回None。
+功能：若为 `setter` 方法，则获取当前方法的输入参数，否则返回 None。
 
 类型：Option\<String>
 
@@ -7521,7 +7521,7 @@ public let nodePos: CodePositionRange
 
 > **注意：**
 >
-> [Package](#class-package) 节点的起始和结束行列号均为0，文件信息为空。
+> [Package](#class-package) 节点的起始和结束行列号均为 0，文件信息为空。
 
 类型：[CodePositionRange](syntax_package_structs.md#struct-codepositionrange)
 
@@ -8450,7 +8450,7 @@ public init(subPattern: Pattern, patternType: TypeAnnotation, comments!: Array<C
 
 异常：
 
-- Exception - 当输入的 `subPattern` 不为 [WildcardPattern](#class-wildcardpattern) 或 [VarPattern](#class-varpattern)时，抛出异常，异常中包含报错提示信息。
+- Exception - 当输入的 `subPattern` 不为 [WildcardPattern](#class-wildcardpattern) 或 [VarPattern](#class-varpattern) 时，抛出异常，异常中包含报错提示信息。
 
 ### func getColonPos()
 
@@ -8589,7 +8589,7 @@ public class VarDecl <: Decl {
 
 功能：表示变量声明节点。
 
-一个 [VarDecl](#class-vardecl) 节点: `var a: String`，`var b: Int64 = 1` 等。
+一个 [VarDecl](#class-vardecl) 节点：`var a: String`，`var b: Int64 = 1` 等。
 
 父类型：
 

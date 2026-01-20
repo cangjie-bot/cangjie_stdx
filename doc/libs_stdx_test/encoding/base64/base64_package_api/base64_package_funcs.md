@@ -43,7 +43,6 @@ main() {
 转成字符串: Hello World!
 ```
 
-
 ## func toBase64String(Array\<Byte>)
 
 ```cangjie

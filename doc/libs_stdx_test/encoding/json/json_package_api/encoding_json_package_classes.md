@@ -731,7 +731,6 @@ public operator func [](index: Int64): JsonValue
 
 - [JsonException](encoding_json_package_exceptions.md#class-jsonexception) - 如果 index 不是 [JsonArray](encoding_json_package_classes.md#class-jsonarray) 的有效索引，抛出异常。
 
-
 示例：
 
 <!-- verify -->
