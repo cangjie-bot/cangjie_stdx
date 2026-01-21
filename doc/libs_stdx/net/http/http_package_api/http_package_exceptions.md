@@ -26,6 +26,28 @@ public init(message: String)
 
 - message: String - 异常提示信息。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    try {
+        // 重点：ConnectionException
+        throw ConnectionException("connect failed")
+    } catch (e: ConnectionException) {
+        println("message = ${e.message}")
+    }
+}
+```
+
+运行结果：
+
+```text
+message = connect failed
+```
+
 ## class CoroutinePoolRejectException
 
 ```cangjie
@@ -52,6 +74,28 @@ public init(message: String)
 
 - message: String - 异常提示信息。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    try {
+        // 重点：CoroutinePoolRejectException
+        throw CoroutinePoolRejectException("pool rejected")
+    } catch (e: CoroutinePoolRejectException) {
+        println("message = ${e.message}")
+    }
+}
+```
+
+运行结果：
+
+```text
+message = pool rejected
+```
+
 ## class HttpException
 
 ```cangjie
@@ -77,6 +121,28 @@ public init(message: String)
 参数：
 
 - message: String - 异常提示信息。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    try {
+        // 重点：HttpException
+        throw HttpException("bad request")
+    } catch (e: HttpException) {
+        println("message = ${e.message}")
+    }
+}
+```
+
+运行结果：
+
+```text
+message = bad request
+```
 
 ## class HttpStatusException
 
@@ -105,6 +171,29 @@ public init(statusCode: UInt16, message: String)
 - statusCode: UInt16 - 状态码。
 - message: String - 异常提示信息。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    try {
+        // 重点：HttpStatusException
+        throw HttpStatusException(404, "not found")
+    } catch (e: HttpStatusException) {
+        // statusCode 在实现中为非 public 字段，此处只演示 message
+        println("message = ${e.message}")
+    }
+}
+```
+
+运行结果：
+
+```text
+message = not found
+```
+
 ## class HttpTimeoutException
 
 ```cangjie
@@ -131,6 +220,28 @@ public init(message: String)
 
 - message: String - 异常提示信息。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    try {
+        // 重点：HttpTimeoutException
+        throw HttpTimeoutException("read timeout")
+    } catch (e: HttpTimeoutException) {
+        println("message = ${e.message}")
+    }
+}
+```
+
+运行结果：
+
+```text
+message = read timeout
+```
+
 ## class WebSocketException
 
 ```cangjie
@@ -156,3 +267,25 @@ public init(message: String)
 参数：
 
 - message: String - 异常提示信息。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    try {
+        // 重点：WebSocketException
+        throw WebSocketException("ws error")
+    } catch (e: WebSocketException) {
+        println("message = ${e.message}")
+    }
+}
+```
+
+运行结果：
+
+```text
+message = ws error
+```
