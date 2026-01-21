@@ -89,6 +89,26 @@ public override func toString(): String
 
 - String - Http 协议版本字符串。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let protocol = Protocol.HTTP1_1
+    let protocolStr = protocol.toString()
+    println("协议版本字符串: ${protocolStr}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+协议版本字符串: HTTP/1.1
+```
+
 ### operator func != (Protocol)
 
 ```cangjie
@@ -105,6 +125,27 @@ public override operator func !=(that: Protocol): Bool
 
 - Bool - 当前实例与 `that` 不等，返回 `true`；否则返回 `false`。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let protocol1 = Protocol.HTTP1_1
+    let protocol2 = Protocol.HTTP2_0
+    let isNotEqual = protocol1 != protocol2
+    println("协议是否不相等: ${isNotEqual}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+协议是否不相等: true
+```
+
 ### operator func == (Protocol)
 
 ```cangjie
@@ -120,6 +161,27 @@ public override operator func ==(that: Protocol): Bool
 返回值：
 
 - Bool - 当前实例与 `that` 相等，返回 `true`；否则返回 `false`。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let protocol1 = Protocol.HTTP1_1
+    let protocol2 = Protocol.HTTP1_1
+    let isEqual = protocol1 == protocol2
+    println("协议是否相等: ${isEqual}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+协议是否相等: true
+```
 
 ## enum WebSocketFrameType
 
@@ -210,6 +272,26 @@ public override func toString(): String
 
 - String - [WebSocket](http_package_classes.md#class-websocket) 帧类型字符串。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let frameType = WebSocketFrameType.TextWebFrame
+    let frameTypeStr = frameType.toString()
+    println("WebSocket帧类型字符串: ${frameTypeStr}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+WebSocket帧类型字符串: TextWebFrame
+```
+
 ### operator func != (WebSocketFrameType)
 
 ```cangjie
@@ -226,6 +308,27 @@ public override operator func !=(that: WebSocketFrameType): Bool
 
 - Bool - 当前实例与 `that` 不等返回 `true`，否则返回 `false`。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let frameType1 = WebSocketFrameType.TextWebFrame
+    let frameType2 = WebSocketFrameType.BinaryWebFrame
+    let isNotEqual = frameType1 != frameType2
+    println("WebSocket帧类型是否不相等: ${isNotEqual}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+WebSocket帧类型是否不相等: true
+```
+
 ### operator func == (WebSocketFrameType)
 
 ```cangjie
@@ -241,3 +344,24 @@ public override operator func ==(that: WebSocketFrameType): Bool
 返回值：
 
 - Bool - 当前实例与 `that` 相等返回 `true`，否则返回 `false`。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let frameType1 = WebSocketFrameType.TextWebFrame
+    let frameType2 = WebSocketFrameType.TextWebFrame
+    let isEqual = frameType1 == frameType2
+    println("WebSocket帧类型是否相等: ${isEqual}")
+    return 0
+}
+```
+
+运行结果：
+
+```text
+WebSocket帧类型是否相等: true
+```
