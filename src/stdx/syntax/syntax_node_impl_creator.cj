@@ -158,7 +158,7 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.Argument, ret.toArray())
     }
 
-    static func createBlockImpl(nodes: Array<SyntaxTreeNode>, comments!: Array<Comment> = []) {
+    static func createBlockImpl(nodes: Array<SyntaxTreeNode>, addNewLine!: Bool = true, comments!: Array<Comment> = []) {
         for (node in nodes) {
             if (node.nodeImpl.kind != SyntaxNodeKind.VarDecl && node.nodeImpl.kind != SyntaxNodeKind.FuncDecl &&
                 !node.nodeImpl.kind.isExpr()) {
@@ -171,11 +171,21 @@ class SyntaxNodeImplCreator {
         addCommentToNode(ret, comments)
 
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
-        ret.add(builder.buildNewline(1))
-        for (i in 0..nodes.size) {
-            ret.add(builder.buildSpace(FORMAT_INDENTATION))
-            ret.add(nodes[i].nodeImpl)
+        if (addNewLine) {
             ret.add(builder.buildNewline(1))
+        }
+        for (i in 0..nodes.size) {
+            if (addNewLine) {
+                ret.add(builder.buildSpace(FORMAT_INDENTATION))
+                ret.add(nodes[i].nodeImpl)
+                ret.add(builder.buildNewline(1))
+            } else {
+                ret.add(nodes[i].nodeImpl)
+                if (i < nodes.size -1) {
+                    ret.add(builder.buildBasicTerminal(SyntaxNodeKind.SemiToken))
+                    ret.add(builder.buildSpace(1))
+                }
+            }
         }
         ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
 
@@ -2507,8 +2517,18 @@ class SyntaxNodeImplCreator {
         parts.add(expr.nodeImpl)
         builder.buildNonTerminal(SyntaxNodeKind.LetPattern, parts.toArray())
     }
+    
+    static func checkInterpolationBlock(interpolationBlock: Block) {
+        return interpolationBlock.toString().contains("\n")
+    }
 
+    /**
+    * @throws Exception if the input 'interpolationBlock' contains NewLines.
+    */
     static func createStrInterpolationContentImpl(interpolationBlock: Block, comments!: Array<Comment> = []) {
+        if (checkInterpolationBlock(interpolationBlock)) {
+            throw Exception("InitException: The input 'interpolationBlock' cannot contain NewLines for 'StrInterpolationContent' init.")
+        }
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(parts, comments)
