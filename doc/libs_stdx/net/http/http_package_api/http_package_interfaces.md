@@ -43,6 +43,50 @@ prop isHttp: Bool
 
 类型：Bool
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.encoding.url.*
+import std.collection.*
+
+main() {
+    let jarHttp = CookieJar.createDefaultCookieJar(ArrayList<String>(), true)
+    let jarNonHttp = CookieJar.createDefaultCookieJar(ArrayList<String>(), false)
+
+    println("jarHttp.isHttp = ${jarHttp.isHttp}")
+    println("jarNonHttp.isHttp = ${jarNonHttp.isHttp}")
+
+    // 用 storeCookies 的行为验证 isHttp 的作用
+    let uHttp = URL.parse("http://example.com/")
+    let uWs = URL.parse("ws://example.com/")
+    let cookies = ArrayList<Cookie>()
+    cookies.add(Cookie("sid", "1"))
+
+    jarHttp.storeCookies(uHttp, cookies)
+    jarHttp.storeCookies(uWs, cookies) // 非 http scheme，应忽略
+    jarNonHttp.storeCookies(uWs, cookies)
+    jarNonHttp.storeCookies(uHttp, cookies) // http scheme，应忽略
+
+    println("jarHttp@http = ${CookieJar.toCookieString(jarHttp.getCookies(uHttp))}")
+    println("jarHttp@ws = ${CookieJar.toCookieString(jarHttp.getCookies(uWs))}")
+    println("jarNonHttp@ws = ${CookieJar.toCookieString(jarNonHttp.getCookies(uWs))}")
+    println("jarNonHttp@http = ${CookieJar.toCookieString(jarNonHttp.getCookies(uHttp))}")
+}
+```
+
+运行结果：
+
+```text
+jarHttp.isHttp = true
+jarNonHttp.isHttp = false
+jarHttp@http = sid=1
+jarHttp@ws = 
+jarNonHttp@ws = sid=1
+jarNonHttp@http = 
+```
+
 ### prop rejectPublicSuffixes
 
 ```cangjie
@@ -56,6 +100,42 @@ prop rejectPublicSuffixes: ArrayList<String>
 > 如果该 [Cookie](http_package_classes.md#class-cookie) 来自于与 domain 相同的 host，黑名单就不会生效。
 
 类型：ArrayList\<String>
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.encoding.url.*
+import std.collection.*
+
+main() {
+    let rejects = ArrayList<String>()
+    rejects.add("com")
+    let jar = CookieJar.createDefaultCookieJar(rejects, true)
+
+    // 当前属性：rejectPublicSuffixes
+    println("rejects.size = ${jar.rejectPublicSuffixes.size}")
+
+    // domain = "com" 属于 public suffix 黑名单，将被拒绝
+    let url = URL.parse("http://sub.example.com/")
+    let cookies = ArrayList<Cookie>()
+    cookies.add(Cookie("ps", "1", domain: "com", path: "/"))
+    jar.storeCookies(url, cookies)
+
+    let got = jar.getCookies(url)
+    println("stored.count = ${got.size}")
+    println("stored.cookie = ${CookieJar.toCookieString(got)}")
+}
+```
+
+运行结果：
+
+```text
+rejects.size = 1
+stored.count = 0
+stored.cookie = 
+```
 
 ### static func createDefaultCookieJar(ArrayList\<String>, Bool)
 
@@ -76,6 +156,33 @@ static func createDefaultCookieJar(rejectPublicSuffixes: ArrayList<String>, isHt
 
 - [CookieJar](http_package_interfaces.md#interface-cookiejar) - 默认的 [CookieJar](http_package_interfaces.md#interface-cookiejar) 实例。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import std.collection.*
+
+main() {
+    // 重点函数：CookieJar.createDefaultCookieJar
+    let rejects = ArrayList<String>()
+    rejects.add("invalid")
+    let jar = CookieJar.createDefaultCookieJar(rejects, true)
+
+    println("isHttp = ${jar.isHttp}")
+    println("rejects.size = ${jar.rejectPublicSuffixes.size}")
+    println("rejects[0] = ${jar.rejectPublicSuffixes[0]}")
+}
+```
+
+运行结果：
+
+```text
+isHttp = true
+rejects.size = 1
+rejects[0] = invalid
+```
+
 ### static func parseSetCookieHeader(HttpResponse)
 
 ```cangjie
@@ -93,6 +200,35 @@ static func parseSetCookieHeader(response: HttpResponse): ArrayList<Cookie>
 返回值：
 
 - ArrayList\<[Cookie](http_package_classes.md#class-cookie)> - 从 response 中解析出的 ArrayList\<[Cookie](http_package_classes.md#class-cookie)> 数组。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    // 重点函数：CookieJar.parseSetCookieHeader
+    let req = HttpRequestBuilder().url("http://example.com/").build()
+    let resp = HttpResponseBuilder()
+        .status(200)
+        .request(req)
+        .header("Set-Cookie", "a=1")
+        .header("Set-Cookie", "b=2; Path=/")
+        .build()
+
+    let cookies = CookieJar.parseSetCookieHeader(resp)
+    println("count = ${cookies.size}")
+    println("cookie = ${CookieJar.toCookieString(cookies)}")
+}
+```
+
+运行结果：
+
+```text
+count = 2
+cookie = a=1; b=2
+```
 
 ### static func toCookieString(ArrayList\<Cookie>)
 
@@ -112,6 +248,28 @@ static func toCookieString(cookies: ArrayList<Cookie>): String
 
 - String - 用于 [Cookie](http_package_classes.md#class-cookie) header 的字符串。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import std.collection.*
+
+main() {
+    // 重点函数：CookieJar.toCookieString
+    let cookies = ArrayList<Cookie>()
+    cookies.add(Cookie("a", "1"))
+    cookies.add(Cookie("b", "2"))
+    println("cookie = ${CookieJar.toCookieString(cookies)}")
+}
+```
+
+运行结果：
+
+```text
+cookie = a=1; b=2
+```
+
 ### func clear()
 
 ```cangjie
@@ -121,6 +279,36 @@ func clear(): Unit
 功能：清除全部 [Cookie](http_package_classes.md#class-cookie)。
 
 默认实现 CookieJarImpl 会清除 [CookieJar](http_package_interfaces.md#interface-cookiejar) 中的所有 [Cookie](http_package_classes.md#class-cookie)。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.encoding.url.*
+import std.collection.*
+
+main() {
+    let jar = CookieJar.createDefaultCookieJar(ArrayList<String>(), true)
+    let url = URL.parse("http://example.com/")
+
+    let cookies = ArrayList<Cookie>()
+    cookies.add(Cookie("x", "1"))
+    jar.storeCookies(url, cookies)
+
+    println("before = ${CookieJar.toCookieString(jar.getCookies(url))}")
+    // 重点函数：clear
+    jar.clear()
+    println("after = ${CookieJar.toCookieString(jar.getCookies(url))}")
+}
+```
+
+运行结果：
+
+```text
+before = x=1
+after = 
+```
 
 ### func getCookies(URL)
 
@@ -139,6 +327,36 @@ func getCookies(url: URL): ArrayList<Cookie>
 返回值：
 
 - ArrayList\<[Cookie](http_package_classes.md#class-cookie)> - [CookieJar](http_package_interfaces.md#interface-cookiejar) 中存储的对应此 url 的 ArrayList\<[Cookie](http_package_classes.md#class-cookie)>。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.encoding.url.*
+import std.collection.*
+
+main() {
+    let jar = CookieJar.createDefaultCookieJar(ArrayList<String>(), true)
+    let url = URL.parse("http://example.com/")
+
+    let cookies = ArrayList<Cookie>()
+    cookies.add(Cookie("k", "v"))
+    jar.storeCookies(url, cookies)
+
+    // 重点函数：getCookies
+    let got = jar.getCookies(url)
+    println("count = ${got.size}")
+    println("cookie = ${CookieJar.toCookieString(got)}")
+}
+```
+
+运行结果：
+
+```text
+count = 1
+cookie = k=v
+```
 
 ### func removeCookies(String)
 
@@ -160,6 +378,36 @@ func removeCookies(domain: String): Unit
 
 - IllegalArgumentException - 如果传入的 domain 为空字符串或者非法，则抛出该异常，合法的 domain 规则见 [Cookie](http_package_classes.md#class-cookie) 的参数文档。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.encoding.url.*
+import std.collection.*
+
+main() {
+    let jar = CookieJar.createDefaultCookieJar(ArrayList<String>(), true)
+    let url = URL.parse("http://example.com/")
+
+    let cookies = ArrayList<Cookie>()
+    cookies.add(Cookie("x", "1"))
+    jar.storeCookies(url, cookies)
+
+    println("before = ${CookieJar.toCookieString(jar.getCookies(url))}")
+    // 重点函数：removeCookies
+    jar.removeCookies("example.com")
+    println("after = ${CookieJar.toCookieString(jar.getCookies(url))}")
+}
+```
+
+运行结果：
+
+```text
+before = x=1
+after = 
+```
+
 ### func storeCookies(URL, ArrayList\<Cookie>)
 
 ```cangjie
@@ -180,6 +428,33 @@ func storeCookies(url: URL, cookies: ArrayList<Cookie>): Unit
 
 - url: [URL](../../../encoding/url/url_package_api/url_package_classes.md#class-url) - 产生该 [Cookie](http_package_classes.md#class-cookie) 的 url。
 - cookies: ArrayList\<[Cookie](http_package_classes.md#class-cookie)> - 需要存储的 ArrayList\<[Cookie](http_package_classes.md#class-cookie)>。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.encoding.url.*
+import std.collection.*
+
+main() {
+    let jar = CookieJar.createDefaultCookieJar(ArrayList<String>(), true)
+    let url = URL.parse("http://example.com/")
+
+    // 重点函数：storeCookies
+    let cookies = ArrayList<Cookie>()
+    cookies.add(Cookie("sid", "abc"))
+    jar.storeCookies(url, cookies)
+
+    println("stored = ${CookieJar.toCookieString(jar.getCookies(url))}")
+}
+```
+
+运行结果：
+
+```text
+stored = sid=abc
+```
 
 ## interface HttpRequestDistributor
 
@@ -215,6 +490,36 @@ func distribute(path: String): HttpRequestHandler
 
 - [HttpRequestHandler](http_package_interfaces.md#interface-httprequesthandler) - 返回请求处理器。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let d: HttpRequestDistributor = ServerBuilder().addr("127.0.0.1").port(0).build().distributor
+
+    // 先注册一个 handler，再用 distribute 按 path 取回。
+    d.register("/a", FuncHandler({ _ => }))
+
+    let h1 = d.distribute("/a")
+    let isFunc = (h1 as FuncHandler).isSome()
+
+    let h2 = d.distribute("/missing")
+    let isNotFound = (h2 as NotFoundHandler).isSome()
+
+    println("isFuncHandler = ${isFunc}")
+    println("isNotFoundHandler = ${isNotFound}")
+}
+```
+
+运行结果：
+
+```text
+isFuncHandler = true
+isNotFoundHandler = true
+```
+
 ### func register(String, (HttpContext) -> Unit)
 
 ```cangjie
@@ -232,6 +537,29 @@ func register(path: String, handler: (HttpContext) -> Unit): Unit
 
 - [HttpException](http_package_exceptions.md#class-httpexception) - 请求路径已注册请求处理器。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    let d: HttpRequestDistributor = ServerBuilder().addr("127.0.0.1").port(0).build().distributor
+
+    // 重点函数：register(path, (HttpContext) -> Unit)
+    d.register("/b", { _ => })
+
+    let h = d.distribute("/b")
+    println("isFuncHandler = ${(h as FuncHandler).isSome()}")
+}
+```
+
+运行结果：
+
+```text
+isFuncHandler = true
+```
+
 ### func register(String, HttpRequestHandler)
 
 ```cangjie
@@ -248,6 +576,35 @@ func register(path: String, handler: HttpRequestHandler): Unit
 异常：
 
 - [HttpException](http_package_exceptions.md#class-httpexception) - 请求路径已注册请求处理器。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+class MyHandler <: HttpRequestHandler {
+    public func handle(ctx: HttpContext): Unit {
+        // 示例中不实际处理 ctx
+    }
+}
+
+main() {
+    let d: HttpRequestDistributor = ServerBuilder().addr("127.0.0.1").port(0).build().distributor
+
+    // 重点函数：register(path, HttpRequestHandler)
+    d.register("/c", MyHandler())
+
+    let h = d.distribute("/c")
+    println("isMyHandler = ${(h as MyHandler).isSome()}")
+}
+```
+
+运行结果：
+
+```text
+isMyHandler = true
+```
 
 ## interface HttpRequestHandler
 
@@ -279,6 +636,61 @@ func handle(ctx: HttpContext): Unit
 
 - ctx: [HttpContext](http_package_classes.md#class-httpcontext) - Http 请求上下文。
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.net.tcp.*
+import stdx.log.*
+import std.concurrent.*
+
+class HelloHandler <: HttpRequestHandler {
+    public func handle(ctx: HttpContext): Unit {
+        println("handle: method=${ctx.request.method}, path=${ctx.request.url.path}")
+        ctx.responseBuilder.status(200).body("OK")
+    }
+}
+
+main() {
+    let addr = "127.0.0.1"
+    let port: UInt16 = 18142
+
+    let ready = SyncCounter(1)
+
+    let d = DirectDistributor()
+    d.register("/hello", HelloHandler())
+
+    let server = ServerBuilder()
+        .addr(addr)
+        .port(port)
+        .logger(NoopLogger())
+        .distributor(d)
+        .afterBind({ _, _ => ready.countDown() })
+        .build()
+
+    spawn {
+        server.serve()
+    }
+
+    ready.wait()
+
+    let client = HttpClientBuilder().build()
+    let resp = client.get("http://${addr}:${port}/hello")
+
+    println("status = ${resp.status}")
+
+    server.close()
+}
+```
+
+运行结果：
+
+```text
+handle: method=GET, path=/hello
+status = 200
+```
+
 ## interface ProtocolServiceFactory
 
 ```cangjie
@@ -307,3 +719,53 @@ func create(protocol: Protocol, socket: StreamingSocket): ProtocolService
 返回值：
 
 - ProtocolService - 协议服务实例。
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import stdx.net.tcp.*
+import std.net.*
+
+class MyService <: ProtocolService {
+    protected func serve(): Unit {}
+}
+
+class MyFactory <: ProtocolServiceFactory {
+    public func create(protocol: Protocol, socket: StreamingSocket): ProtocolService {
+        // 示例：当前参数 protocol/socket 均可用
+        println("protocol = ${protocol}")
+        socket.close()
+        return MyService()
+    }
+}
+
+main() {
+    let addr = "127.0.0.1"
+    let port: UInt16 = 18143
+
+    let server = TcpServerSocket.bind(IPSocketAddress(addr, port))
+
+    spawn {
+        let client = TcpSocket.connect(IPSocketAddress(addr, port))
+        client.close()
+    }
+
+    let socket = server.accept()
+
+    let f: ProtocolServiceFactory = MyFactory()
+    let svc = f.create(HTTP1_1, socket)
+
+    println("service.isMyService = ${(svc as MyService).isSome()}")
+
+    server.close()
+}
+```
+
+运行结果：
+
+```text
+protocol = HTTP/1.1
+service.isMyService = true
+```
