@@ -170,13 +170,17 @@ python3 build.py install
 
 ##### 方式二
 
-目前 stdx 也支持通过 cjpm 进行构建，构建命令如下：
+目前 stdx (dev 分支) 也支持通过 cjpm 进行构建，构建命令如下：
 
 ```shell
 cjpm build
 ```
 
+CJPM 的详细使用可以参考 [CJPM 文档](https://gitcode.com/Cangjie/cangjie_docs/blob/main/docs/tools/source_zh_cn/cmd-tools/cjpm_manual.md)
+
 通过 cjpm 进行构建存在一些依赖，参见[依赖列表](./doc/libs_stdx/source_code_dependency.md#依赖)。
+
+目前通过 cjpm build 的 stdx 二进制包不包含 aspectCJ 和 syntax，并且在 Windows 平台上没有 fuzz 包。
 
 ### 集成构建指导
 

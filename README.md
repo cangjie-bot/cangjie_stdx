@@ -175,13 +175,17 @@ For more information, please take a look at the [build.py](build.py) or use `--h
 
 ##### Method 2
 
-Currently, stdx also supports building via cjpm, and the build command is as follows:
+Currently, stdx (dev branch) also supports building via cjpm, and the build command is as follows:
 
 ```shell
 cjpm build
 ```
 
+For detailed usage of CJPM, refer to [CJPM Documentation](https://gitcode.com/Cangjie/cangjie_docs/blob/main/docs/tools/source_en/cmd-tools/cjpm_manual.md)
+
 Building via cjpm has some dependencies, see [dependency list](./doc/libs_stdx_en/source_code_dependency.md#Dependencies).
+
+Currently, the stdx binary packages built via cjpm do not include aspectCJ and syntax, and there are no fuzz packages on the Windows platform.
 
 ### Integration Build Guide
 
