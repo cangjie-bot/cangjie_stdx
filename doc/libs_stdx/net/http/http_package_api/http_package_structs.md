@@ -771,6 +771,25 @@ public let capacity: Int64
 
 类型：Int64
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    // 重点演示：读取 ServicePoolConfig.capacity
+    let cfg = ServicePoolConfig(capacity: 100, queueCapacity: 200, preheat: 10)
+    println("capacity = ${cfg.capacity}")
+}
+```
+
+运行结果：
+
+```text
+capacity = 100
+```
+
 ### let preheat
 
 ```cangjie
@@ -781,6 +800,25 @@ public let preheat: Int64
 
 类型：Int64
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    // 重点演示：读取 ServicePoolConfig.preheat
+    let cfg = ServicePoolConfig(capacity: 100, queueCapacity: 200, preheat: 10)
+    println("preheat = ${cfg.preheat}")
+}
+```
+
+运行结果：
+
+```text
+preheat = 10
+```
+
 ### let queueCapacity
 
 ```cangjie
@@ -790,6 +828,25 @@ public let queueCapacity: Int64
 功能：获取缓冲区等待任务的最大数量。
 
 类型：Int64
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    // 重点演示：读取 ServicePoolConfig.queueCapacity
+    let cfg = ServicePoolConfig(capacity: 100, queueCapacity: 200, preheat: 10)
+    println("queueCapacity = ${cfg.queueCapacity}")
+}
+```
+
+运行结果：
+
+```text
+queueCapacity = 200
+```
 
 ### init(Int64, Int64, Int64)
 
@@ -831,6 +888,38 @@ public mut prop keepAliveConfig: SocketKeepAliveConfig
 
 类型：SocketKeepAliveConfig
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+import std.net.*
+
+main() {
+    var tc = TransportConfig()
+
+    // 设置并读取 TransportConfig.keepAliveConfig
+    tc.keepAliveConfig = SocketKeepAliveConfig(
+        idle: Duration.second * 1,
+        interval: Duration.second * 2,
+        count: 3
+    )
+
+    let k = tc.keepAliveConfig
+    println("idle==1s: ${k.idle == Duration.second * 1}")
+    println("interval==2s: ${k.interval == Duration.second * 2}")
+    println("count: ${k.count}")
+}
+```
+
+运行结果：
+
+```text
+idle==1s: true
+interval==2s: true
+count: 3
+```
+
 ### prop readBufferSize
 
 ```cangjie
@@ -845,6 +934,37 @@ public mut prop readBufferSize: ?Int64
 
 类型：?Int64
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    var tc = TransportConfig()
+
+    // 读取默认 TransportConfig.readBufferSize
+    match (tc.readBufferSize) {
+        case Some(v) => println("default = ${v}")
+        case None => println("default = None")
+    }
+
+    // 设置并读取 TransportConfig.readBufferSize
+    tc.readBufferSize = Some(4096)
+    match (tc.readBufferSize) {
+        case Some(v) => println("readBufferSize = ${v}")
+        case None => println("readBufferSize = None")
+    }
+}
+```
+
+运行结果：
+
+```text
+default = None
+readBufferSize = 4096
+```
+
 ### prop readTimeout
 
 ```cangjie
@@ -854,6 +974,31 @@ public mut prop readTimeout: Duration
 功能：设定和读取传输层连接的读超时时间，如果设置的时间小于 0 将置为 0，默认值为 Duration.Max。
 
 类型：Duration
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    var tc = TransportConfig()
+
+    // 读取默认 TransportConfig.readTimeout
+    println("defaultIsMax = ${tc.readTimeout == Duration.Max}")
+
+    // 设置并读取 TransportConfig.readTimeout
+    tc.readTimeout = Duration.second * 3
+    println("readTimeout==3s = ${tc.readTimeout == Duration.second * 3}")
+}
+```
+
+运行结果：
+
+```text
+defaultIsMax = true
+readTimeout==3s = true
+```
 
 ### prop writeBufferSize
 
@@ -869,6 +1014,37 @@ public mut prop writeBufferSize: ?Int64
 
 类型：?Int64
 
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    var tc = TransportConfig()
+
+    // 读取默认 TransportConfig.writeBufferSize
+    match (tc.writeBufferSize) {
+        case Some(v) => println("default = ${v}")
+        case None => println("default = None")
+    }
+
+    // 设置并读取 TransportConfig.writeBufferSize
+    tc.writeBufferSize = Some(8192)
+    match (tc.writeBufferSize) {
+        case Some(v) => println("writeBufferSize = ${v}")
+        case None => println("writeBufferSize = None")
+    }
+}
+```
+
+运行结果：
+
+```text
+default = None
+writeBufferSize = 8192
+```
+
 ### prop writeTimeout
 
 ```cangjie
@@ -878,3 +1054,28 @@ public mut prop writeTimeout: Duration
 功能：设定和读取传输层连接的写超时时间，如果设置的时间小于 0 将置为 0，默认值为 Duration.Max。
 
 类型：Duration
+
+示例：
+
+<!-- run -->
+```cangjie
+import stdx.net.http.*
+
+main() {
+    var tc = TransportConfig()
+
+    // 读取默认 TransportConfig.writeTimeout
+    println("defaultIsMax = ${tc.writeTimeout == Duration.Max}")
+
+    // 设置并读取 TransportConfig.writeTimeout
+    tc.writeTimeout = Duration.second * 5
+    println("writeTimeout==5s = ${tc.writeTimeout == Duration.second * 5}")
+}
+```
+
+运行结果：
+
+```text
+defaultIsMax = true
+writeTimeout==5s = true
+```
