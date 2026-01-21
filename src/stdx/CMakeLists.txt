@@ -23,6 +23,7 @@ add_subdirectory(string_intern)
 message(STATUS "CMAKE_BUILD_STAGE ${CMAKE_BUILD_STAGE}")
 if(NOT CANGJIE_CJPM_BUILD_TYPE)
     add_subdirectory(syntax)
+    add_subdirectory(semantic)
 endif()
 
 if(CANGJIE_CODEGEN_CJNATIVE_BACKEND AND "$ENV{NO_ASPECTCJ}" STREQUAL "" AND NOT CANGJIE_CJPM_BUILD_TYPE)
