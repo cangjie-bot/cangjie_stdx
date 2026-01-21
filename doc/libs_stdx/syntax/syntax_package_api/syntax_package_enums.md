@@ -1074,6 +1074,29 @@ public operator func !=(rhs: ModifierKind): Bool
 
 - Bool - 如果两个修饰符类型不相等，则返回 `true`；否则返回 `false`。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.syntax.*
+
+main() {
+    // 创建 ModifierKind
+    let publicKind = ModifierKind.Public
+    let internalKind = ModifierKind.Internal
+
+    println("publicKind == publicKind: ${publicKind == publicKind}")
+    println("publicKind == internalKind: ${publicKind == internalKind}")
+}
+```
+
+运行结果：
+
+```text
+publicKind == publicKind: true
+publicKind == internalKind: false
+```
+
 ### operator func ==(ModifierKind)
 
 ```cangjie
@@ -1089,6 +1112,29 @@ public operator func ==(rhs: ModifierKind): Bool
 返回值：
 
 - Bool - 如果两个修饰符类型相等，则返回 `true`；否则返回 `false`。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.syntax.*
+
+main() {
+    // 创建 ModifierKind
+    let publicKind = ModifierKind.Public
+    let internalKind = ModifierKind.Internal
+
+    println("publicKind != publicKind: ${publicKind != publicKind}")
+    println("publicKind != internalKind: ${publicKind != internalKind}")
+}
+```
+
+运行结果：
+
+```text
+publicKind != publicKind: false
+publicKind != internalKind: true
+```
 
 ## enum PostActionMode
 
