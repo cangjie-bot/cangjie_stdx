@@ -3,7 +3,7 @@
 - [stdx.actors](libs_stdx_en/actors/actors_package_overview.md)
     - [类](libs_stdx_en/actors/actors_package_api/actors_package_classes.md)
 - [stdx.actors.macros](libs_stdx_en/actors/macros/macros_package_overview.md)
-    - [宏](libs_stdx_en/actors/macros/macros_package_api/macros_package_macros.md)
+    - [Macros](libs_stdx_en/actors/macros/macros_package_api/macros_package_macros.md)
 - [stdx.aspectCJ](libs_stdx_en/aspectCJ/aspectCJ_package_overview.md)
     - [Classes](libs_stdx_en/aspectCJ/aspectCJ_package_api/aspectCJ_package_classes.md)
     - [Tutorial Examples]()

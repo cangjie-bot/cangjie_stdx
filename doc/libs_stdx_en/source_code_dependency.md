@@ -17,7 +17,7 @@ In the directory where project's cjpm.toml file is located, execute the `cjpm up
 
 ### local Source Code Dependency
 
-If developers do not wish to depend on this repository via git, developers can directly download the full source code of this repository (including the cjpm.toml configuration file of this repository), and then add a local module dependency in the project's cjpm.toml file.
+If developers do not wish to depend on this repository via git, Developers can directly download the full source code of this repository branch (including the cjpm.toml configuration file of this repository), and then add a local module dependency in the project's cjpm.toml file.
 
 ```toml
 [dependencies]
@@ -34,6 +34,7 @@ Currently, the integrated stdx for source code dependencies does not include asp
 
 - Linux
 - macOS
+- Windows
 - Cross-compile OpenHarmony
 
 ## Cross-compiling OpenHarmony
@@ -45,6 +46,8 @@ Cross-compiling OpenHarmony on Linux and macOS platforms requires configuring en
 2. OHOS_SYSROOT_PATH (OpenHarmony system header directory, e.g., /opt/buildtools/ohos_root/out/sdk/obj/third_party/musl/sysroot)
 
 DevEco Studio comes with its own OpenHarmony toolchain, so there is no need to set the environment variables above.
+
+Cross-compilation command: cjpm build --target aarch64-linux-ohos or cjpm build --target x86_64-linux-ohos
 
 > **Note**:
 >
@@ -61,6 +64,6 @@ Since stdx needs to pull and compile external open-source C libraries, and there
 - python: > 3.7
 - cmake: >= 3.16.5 且 < 4
 - ninja: >1.10
-- openssl: >= 3
+- openssl: >= 3 (The environment variable OPENSSL_ROOT_DIR needs to be configured to point to the root directory of the OpenSSL installation)
 - clang: >= 15.0.4 且 < 16 (Linux or macOS)
 - mingw-w64 (Windows) [Download link](https://github.com/niXman/mingw-builds-binaries/releases/download/12.2.0-rt_v10-rev2/x86_64-12.2.0-release-posix-seh-msvcrt-rt_v10-rev2.7z)

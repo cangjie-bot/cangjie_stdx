@@ -17,7 +17,7 @@ stdx 有两种源码集成方式：git 源码依赖和本地源码依赖。
 
 ### 本地源码依赖
 
-如果不希望通过 git 依赖本仓，开发者可以直接下载本仓库的全量源码（包括本仓库的 cjpm.toml 配置文件），然后在工程的 cjpm.toml 文件中添加本地模块依赖。
+如果不希望通过 git 依赖本仓，开发者可以直接下载本仓库分支的全量源码（包括本仓库的 cjpm.toml 配置文件），然后在工程的 cjpm.toml 文件中添加本地模块依赖。
 
 ```toml
 [dependencies]
@@ -34,6 +34,7 @@ stdx 有两种源码集成方式：git 源码依赖和本地源码依赖。
 
 - Linux
 - macOs
+- Windows
 - 交叉编译 OpenHarmony
 
 ## 交叉编译 OpenHarmony
@@ -45,6 +46,8 @@ Linux 和 macOS 平台交叉编译 OpenHarmony 需要配置交叉编译工具链
 2. OHOS_SYSROOT_PATH (OpenHarmony 系统头文件目录，如 /opt/buildtools/ohos_root/out/sdk/obj/third_party/musl/sysroot)
 
 DevEco Studio 自带 OpenHarmony 交叉编译工具链，无需设置上面的环境变量。
+
+交叉编译命令：cjpm build --target aarch64-linux-ohos 或者 cjpm build --target x86_64-linux-ohos
 
 > **注意**：
 >
@@ -61,6 +64,6 @@ DevEco Studio 自带 OpenHarmony 交叉编译工具链，无需设置上面的�
 - python: > 3.7
 - cmake: >= 3.16.5 且 < 4
 - ninja: >1.10
-- openssl: >= 3
+- openssl: >= 3 （需要配置环境变量 OPENSSL_ROOT_DIR，指向 OpenSSL 安装的根目录）
 - clang: >= 15.0.4 且 < 16 (Linux or macOS)
 - mingw-w64 (Windows) [下载地址](https://github.com/niXman/mingw-builds-binaries/releases/download/12.2.0-rt_v10-rev2/x86_64-12.2.0-release-posix-seh-msvcrt-rt_v10-rev2.7z) 
