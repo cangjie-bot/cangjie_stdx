@@ -201,7 +201,6 @@ Exceptions:
 
 - IllegalArgumentException - Thrown when `certChain` is empty.
 
-
 ## class TlsClientSession
 
 ```cangjie

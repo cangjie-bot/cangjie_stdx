@@ -369,4 +369,3 @@ Function: Retrieves the `name` field.
 Return Value:
 
 - String - The retrieved `name` field, of type String.
-```

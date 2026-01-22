@@ -251,7 +251,7 @@ public open func withAttrs(attrs: Array<Attr>): Logger
 
 返回值：
 
-- [Logger](log_package_classes.md#class-logger) - [Logger](log_package_classes.md#class-logger) 类的对象实例。
+- [Logger](#class-logger) - [Logger](#class-logger) 类的对象实例。
 
 ## class LogRecord
 
@@ -263,7 +263,7 @@ public class LogRecord {
 
 功能：日志消息的“负载”。
 
-记录结构作为参数传递给 [Logger](log_package_classes.md#class-logger) 类的 [log](log_package_classes.md#func-loglogrecord)方法。日志提供者处理这些结构以显示日志消息。记录是由日志对象自动创建，因此日志用户看不到。
+记录结构作为参数传递给 [Logger](#class-logger) 类的 [log](log_package_classes.md#func-loglogrecord)方法。日志提供者处理这些结构以显示日志消息。记录是由日志对象自动创建，因此日志用户看不到。
 
 ### init(DateTime, LogLevel, String, Array\<Attr>)
 
@@ -557,7 +557,7 @@ public class NoopLogger <: Logger {
 }
 ```
 
-功能：[Logger](log_package_classes.md#class-logger) 的 NO-OP（无操作）实现，会丢弃所有的日志。
+功能：[Logger](#class-logger) 的 NO-OP（无操作）实现，会丢弃所有的日志。
 
 父类型：
 
@@ -655,4 +655,4 @@ public func withAttrs(attrs: Array<Attr>): Logger
 
 返回值：
 
-- [Logger](./log_package_classes.md#class-logger) - Logger
+- [Logger](#class-logger) - Logger
