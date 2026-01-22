@@ -2508,12 +2508,28 @@ class SyntaxNodeImplCreator {
         builder.buildNonTerminal(SyntaxNodeKind.LetPattern, parts.toArray())
     }
 
+    static func modifyInterpolationBlock(interpolationBlock: Block) {
+        let builder = SyntaxNodeBuilder()
+        let ret = ArrayList<SyntaxNodeImpl>()
+
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.LCurlToken))
+        for (i in 0..interpolationBlock.nodes.size) {
+            ret.add(interpolationBlock.nodes[i].nodeImpl)
+            if (i < interpolationBlock.nodes.size - 1) {
+                ret.add(builder.buildBasicTerminal(SyntaxNodeKind.SemiToken))
+                ret.add(builder.buildSpace(1))
+            }
+        }
+        ret.add(builder.buildBasicTerminal(SyntaxNodeKind.RCurlToken))
+        builder.buildNonTerminal(SyntaxNodeKind.Block, ret.toArray())
+    }
+
     static func createStrInterpolationContentImpl(interpolationBlock: Block, comments!: Array<Comment> = []) {
         let builder = SyntaxNodeBuilder()
         let parts = ArrayList<SyntaxNodeImpl>()
         addCommentToNode(parts, comments)
         parts.add(builder.buildBasicTerminal(SyntaxNodeKind.DollarToken))
-        parts.add(interpolationBlock.nodeImpl)
+        parts.add(modifyInterpolationBlock(interpolationBlock))
         builder.buildNonTerminal(SyntaxNodeKind.InterpolationExpr, parts.toArray())
     }
 
