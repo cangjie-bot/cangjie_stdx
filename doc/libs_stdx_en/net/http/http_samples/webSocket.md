@@ -5,8 +5,8 @@ Example:
 <!-- verify -->
 ```cangjie
 import stdx.net.http.*
+import stdx.crypto.kit.*
 import stdx.encoding.url.*
-import std.time.*
 import std.sync.*
 import std.collection.*
 import stdx.log.*
