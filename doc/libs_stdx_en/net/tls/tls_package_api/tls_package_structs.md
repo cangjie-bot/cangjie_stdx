@@ -455,4 +455,3 @@ Parameters:
 Return Value:
 
 - Bool - Returns `true` if session objects are identical; otherwise, returns `false`.
-```

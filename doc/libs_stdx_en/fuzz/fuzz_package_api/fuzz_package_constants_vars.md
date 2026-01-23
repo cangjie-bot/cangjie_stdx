@@ -6,6 +6,6 @@
 public let FUZZ_VERSION: String = "1.0.0"
 ```
 
-Function: Fuzz version.  
+Function: Fuzz version.
 
 Type: String

@@ -128,7 +128,7 @@ public prop maxFrameSize: UInt32
 public prop maxHeaderListSize: UInt32
 ```
 
-功能：获取客户端支持的 HTTP/2 最大头部（Header）大小。这个大小指的是响应头部中所有头部字段（Header Field）的最大允许长度之和，其中包括所有字段名称（name）的长度、字段值（value）的长度以及每个字段自动添加的伪头开销（通常每个字段会有32字节的开销，这包括了 HTTP/2 协议本身为头部字段添加的伪头部信息）。默认情况下，这个最大长度被设置为 UInt32.Max。
+功能：获取客户端支持的 HTTP/2 最大头部（Header）大小。这个大小指的是响应头部中所有头部字段（Header Field）的最大允许长度之和，其中包括所有字段名称（name）的长度、字段值（value）的长度以及每个字段自动添加的伪头开销（通常每个字段会有 32 字节的开销，这包括了 HTTP/2 协议本身为头部字段添加的伪头部信息）。默认情况下，这个最大长度被设置为 UInt32.Max。
 
 类型：UInt32
 
@@ -440,10 +440,10 @@ public func send(req: HttpRequest): HttpResponse
 
 功能：通用请求函数，发送 [HttpRequest](http_package_classes.md#class-httprequest) 到 url 中的服务器，接收 [HttpResponse](http_package_classes.md#class-httpresponse)。
 
-> **注意:**
+> **注意：**
 >
-> - 对于 HTTP/1.1，如果请求中有 body 要发，那么需要保证 Content-Length 和 Transfer-Encoding: chunked 必有且只有一个，以 chunked 形式发时，每段 chunk 最大为 8192 字节；如果用户发送的 body 为自己实现的 InputStream 类，则需要自己保证 Content-Length和 Transfer-Encoding: chunked 设置且只设置了一个；如果用户采用默认的 body 发送，Content-Length 和 Transfer-Encoding: chunked 都缺失时，我们会为其补上 Content-Length header，值为 body.size；
-> - 用户如果设置了 Content-Length，则需要保证其正确性：如果所发 body 的内容大于等于 Content-Length 的值，我们会发送长度为 Content-Length 值的数据；如果所发 body 的内容小于 Content-Length 的值，此时如果 body 是默认的 body，则会抛出 [HttpException](http_package_exceptions.md#class-httpexception)，如果 body是用户自己实现的 InputStream 类，其行为便无法保证（可能会造成服务器端的读 request 超时或者客户端的收 response 超时）；
+> - 对于 HTTP/1.1，如果请求中有 body 要发，那么需要保证 Content-Length 和 Transfer-Encoding: chunked 必有且只有一个，以 chunked 形式发时，每段 chunk 最大为 8192 字节；如果用户发送的 body 为自己实现的 InputStream 类，则需要自己保证 Content-Length 和 Transfer-Encoding: chunked 设置且只设置了一个；如果用户采用默认的 body 发送，Content-Length 和 Transfer-Encoding: chunked 都缺失时，我们会为其补上 Content-Length header，值为 body.size；
+> - 用户如果设置了 Content-Length，则需要保证其正确性：如果所发 body 的内容大于等于 Content-Length 的值，我们会发送长度为 Content-Length 值的数据；如果所发 body 的内容小于 Content-Length 的值，此时如果 body 是默认的 body，则会抛出 [HttpException](http_package_exceptions.md#class-httpexception)，如果 body 是用户自己实现的 InputStream 类，其行为便无法保证（可能会造成服务器端的读 request 超时或者客户端的收 response 超时）；
 > - 升级函数通过 [WebSocket](http_package_classes.md#class-websocket) 的 upgradeFromClient 或 [Client](http_package_classes.md#class-client) 的 [upgrade](http_package_funcs.md#func-upgradehttpcontext) 接口发出，调用 client 的其他函数发送 [upgrade](http_package_funcs.md#func-upgradehttpcontext) 请求会抛出异常；
 > - 协议规定 TRACE 请求无法携带内容，故用户发送带有 body 的 TRACE 请求时会抛出异常；
 > - HTTP/1.1 默认对同一个服务器的连接数不超过 10 个。response 的 body 需要用户调用 `body.read(buf: Array<Byte>)` 函数去读。body 被读完后，连接才能被客户端对象复用，否则请求相同的服务器也会新建连接。新建连接时如果连接数超出限制则会抛出 [HttpException](http_package_exceptions.md#class-httpexception)；
@@ -480,9 +480,9 @@ public func upgrade(req: HttpRequest): (HttpResponse, ?StreamingSocket)
 > **说明：**
 >
 > - 服务器返回 101 表示升级成功，获取到了 StreamingSocket；
-> - 必选请求头:
+> - 必选请求头：
 >     - Upgrade:  protocol-name ["/" protocol-version]；
->     - Connection: Upgrade (在请求头包含 Upgrade 字段时会自动添加)；
+>     - Connection: Upgrade（在请求头包含 Upgrade 字段时会自动添加）；
 > - 不支持 HTTP/1.0、HTTP/2；
 > - 不支持 HTTP/1.1 CONNECT 方法的 [HttpRequest](http_package_classes.md#class-httprequest)。
 
@@ -533,7 +533,7 @@ public init()
 public func autoRedirect(auto: Bool): ClientBuilder
 ```
 
-功能：配置客户端是否会自动进行重定向。重定向会请求 Location 头的资源，协议规定，Location 只能包含一个 URI 引用Location = URI-reference，详见 [RFC 9110 10.2.2.](https://httpwg.org/specs/rfc9110.html#rfc.section.10.2.2)。304 状态码默认不重定向。
+功能：配置客户端是否会自动进行重定向。重定向会请求 Location 头的资源，协议规定，Location 只能包含一个 URI 引用 Location = URI-reference，详见 [RFC 9110 10.2.2.](https://httpwg.org/specs/rfc9110.html#rfc.section.10.2.2)。304 状态码默认不重定向。
 
 参数：
 
@@ -1165,11 +1165,11 @@ public prop responseBuilder: HttpResponseBuilder
 public func isClosed(): Bool
 ```
 
-功能：使用 HTTP/1.1协议时，判断 socket 是否已关闭；使用 HTTP/2 协议时，判断 HTTP/2 流是否已关闭。
+功能：使用 HTTP/1.1 协议时，判断 socket 是否已关闭；使用 HTTP/2 协议时，判断 HTTP/2 流是否已关闭。
 
 返回值：
 
-- Bool - 如果 HTTP/1.1 的 socket 或 HTTP/2 的流已关闭，返回true，否则返回 false。
+- Bool - 如果 HTTP/1.1 的 socket 或 HTTP/2 的流已关闭，返回 true，否则返回 false。
 
 ## class HttpHeaders
 
@@ -1186,7 +1186,7 @@ public class HttpHeaders <: Iterable<(String, Collection<String>)>
 > - field-value 由 vchar，SP 和 HTAB 组成，vchar 表示可见的 US-ASCII 字符，不得包含前后空格，不得为空值。
 > - 详见 [rfc 9110](https://www.rfc-editor.org/rfc/rfc9110.html#name-fields)。
 
-示例:
+示例：
 
 ```text
 Example-Field: Foo, Bar
@@ -1575,7 +1575,7 @@ public func body(body: InputStream): HttpRequestBuilder
 public func body(body: String): HttpRequestBuilder
 ```
 
-功能：设置请求 body，如果已经设置过，调用该函数将替换原 body调用该函数设置请求 body，则 body 将以内置的 InputStream 实现类表示，其大小已知。
+功能：设置请求 body，如果已经设置过，调用该函数将替换原 body 调用该函数设置请求 body，则 body 将以内置的 InputStream 实现类表示，其大小已知。
 
 参数：
 
@@ -2118,7 +2118,7 @@ public func body(body: Array<UInt8>): HttpResponseBuilder
 public func body(body: InputStream): HttpResponseBuilder
 ```
 
-功能：设置响应 body，如果已经设置过，调用该函数将替换原 body调用该函数设置请求 body。
+功能：设置响应 body，如果已经设置过，调用该函数将替换原 body 调用该函数设置请求 body。
 
 参数：
 
@@ -2134,7 +2134,7 @@ public func body(body: InputStream): HttpResponseBuilder
 public func body(body: String): HttpResponseBuilder
 ```
 
-功能：设置响应 body，如果已经设置过，调用该函数将替换原 body调用该函数设置请求 body。
+功能：设置响应 body，如果已经设置过，调用该函数将替换原 body 调用该函数设置请求 body。
 
 参数：
 
@@ -2548,7 +2548,7 @@ public prop httpKeepAliveTimeout: Duration
 public prop initialWindowSize: UInt32
 ```
 
-功能：HTTP/2 专用，用来限制对端发送的报文stream 初始流量窗口大小。默认值为 65535 ，取值范围为 0 至 2^31 - 1。
+功能：HTTP/2 专用，用来限制对端发送的报文 stream 初始流量窗口大小。默认值为 65535 ，取值范围为 0 至 2^31 - 1。
 
 类型：UInt32
 
@@ -2598,7 +2598,7 @@ public prop maxFrameSize: UInt32
 public prop maxHeaderListSize: UInt32
 ```
 
-功能：获取客户端支持的 HTTP/2 最大头部（Header）大小。这个大小指的是响应头部中所有头部字段（Header Field）的最大允许长度之和，其中包括所有字段名称（name）的长度、字段值（value）的长度以及每个字段自动添加的伪头开销（通常每个字段会有32字节的开销，这包括了HTTP/2协议本身为头部字段添加的伪头部信息）。默认情况下，这个最大长度被设置为 UInt32.Max。
+功能：获取客户端支持的 HTTP/2 最大头部（Header）大小。这个大小指的是响应头部中所有头部字段（Header Field）的最大允许长度之和，其中包括所有字段名称（name）的长度、字段值（value）的长度以及每个字段自动添加的伪头开销（通常每个字段会有 32 字节的开销，这包括了 HTTP/2 协议本身为头部字段添加的伪头部信息）。默认情况下，这个最大长度被设置为 UInt32.Max。
 
 类型：UInt32
 
@@ -2758,9 +2758,9 @@ h1 request 检查和处理：
 - method 由 tokens 组成，且大小写敏感；request-target 为能够被解析的 url；HTTP-version 为 HTTP/1.0 或 HTTP/1.1 ，否则将会返回 400 响应；
 - headers name 和 value 需符合特定规则，详见 [HttpHeaders](http_package_classes.md#class-httpheaders) 类说明，否则返回 400 响应；
 - 当 headers 的大小超出 server 设定的 maxRequestHeaderSize 时将自动返回 431 响应；
-- headers 中必须包含 "host" 请求头，且值唯一，否则返回 400 响应headers 中不允许同时存在 "content-length" 与 "transfer-encoding" 请求头，否则返回 400 响应；
+- headers 中必须包含 "host" 请求头，且值唯一，否则返回 400 响应 headers 中不允许同时存在 "content-length" 与 "transfer-encoding" 请求头，否则返回 400 响应；
 - 请求头 "transfer-encoding" 的 value 经过 "," 分割后最后一个 value 必须为 "chunked"，且之前的 value 不允许存在 "chunked"，否则返回 400 响应；
-- 请求头 "content-length" 其 value 必须能解析为 Int64 类型，且不能为负值，否则返回 400 响应，当其 value 值超出 server 设定maxRequestBodySize，将返回 413 响应；
+- 请求头 "content-length" 其 value 必须能解析为 Int64 类型，且不能为负值，否则返回 400 响应，当其 value 值超出 server 设定 maxRequestBodySize，将返回 413 响应；
 - headers 中若不存在 "content-length" 和 "transfer-encoding: chunked" 时默认不存在 body；
 - 请求头 "trailer" 中，value 不允许存在 "transfer-encoding"，"trailer"，"content-length"；
 - 请求头 "expect" 中，value 中存在非 "100-continue" 的值，将会返回 417 响应；
@@ -2773,7 +2773,7 @@ h1 response 检查和处理：
 - 若接收到的 request 包含请求头 "connection: close" 而配置 response 未添加响应头 "connection" 或响应头 "connection" 的 value 不包含 "close"，将自动添加 "connection: close"，若接收到的 request 不包含请求头 "connection: close" 且响应头不存在 "connection: keep-alive"，将会自动添加；
 - 如果 headers 包含逐跳响应头："proxy-connection"，"keep-alive"，"te"，"transfer-encoding"，"upgrade"，将会在响应头 "connection" 自动添加这些头作为 value；
 - 将自动添加 "date" 响应头，用户提供的 "date" 将被忽略；
-- 若请求方法为 "HEAD" 或响应状态码为 "1XX\204\304"，body将配置为空；
+- 若请求方法为 "HEAD" 或响应状态码为 "1XX\204\304"，body 将配置为空；
 - 若已知提供 body 的长度时，将会与响应头 "content-length" 进行比较，若不存在响应头 "content-length"，将自动添加此响应头，其 value 值为 body 长度。若响应头 "content-length" 长度大于 body 长度，将会在 handler 中抛出 [HttpException](http_package_exceptions.md#class-httpexception)，若小于 body 长度，将对 body 进行截断处理，发送的 body 长度将为 "content-length" 的值；
 - response 中 "set-cookie" header 将分条发送，其他 headers 同名条目将合成一条发送；
 - 在处理包含请求头："expect: 100-continue" 的 request 时，在调用 request 的 body.read() 时将会自动发送状态码为 100 的响应给客户端。不允许用户主动发送状态码为 100 的 response，若进行发送则被认定为服务器异常。
@@ -2844,7 +2844,7 @@ public func updateCA(newCa: Array<X509Certificate>): Unit
 异常：
 
 - IllegalArgumentException - 参数包含空字符时抛出异常。
-- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig时抛出异常。
+- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig 时抛出异常。
 
 ### func updateCA(String)
 
@@ -2856,12 +2856,12 @@ public func updateCA(newCaFile: String): Unit
 
 参数：
 
-- newCaFile: String - CA证书文件。
+- newCaFile: String - CA 证书文件。
 
 异常：
 
 - IllegalArgumentException - 参数包含空字符时抛出异常。
-- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig时抛出异常。
+- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig 时抛出异常。
 
 ### func updateCert(Array\<X509Certificate>, PrivateKey)
 
@@ -2878,7 +2878,7 @@ public func updateCert(certChain: Array<X509Certificate>, certKey: PrivateKey): 
 
 异常：
 
-- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig时抛出异常。
+- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig 时抛出异常。
 
 ### func updateCert(String, String)
 
@@ -2896,7 +2896,7 @@ public func updateCert(certificateChainFile: String, privateKeyFile: String): Un
 异常：
 
 - IllegalArgumentException - 参数包含空字符时抛出异常。
-- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig时抛出异常。
+- [HttpException](http_package_exceptions.md#class-httpexception) - 服务端未配置 tlsConfig 时抛出异常。
 
 ## class ServerBuilder
 
@@ -3076,7 +3076,7 @@ public func listener(listener: ServerSocket): ServerBuilder
 
 参数：
 
-- listener: ServerSocket - 所绑定的socket。
+- listener: ServerSocket - 所绑定的 socket。
 
 返回值：
 
@@ -3136,7 +3136,7 @@ public func maxFrameSize(size: UInt32): ServerBuilder
 public func maxHeaderListSize(size: UInt32): ServerBuilder
 ```
 
-功能：获取客户端支持的 HTTP/2 最大头部（Header）大小。这个大小指的是响应头部中所有头部字段（Header Field）的最大允许长度之和，其中包括所有字段名称（name）的长度、字段值（value）的长度以及每个字段自动添加的伪头开销（通常每个字段会有32字节的开销，这包括了 HTTP/2 协议本身为头部字段添加的伪头部信息）。默认情况下，这个最大长度被设置为 UInt32.Max。
+功能：获取客户端支持的 HTTP/2 最大头部（Header）大小。这个大小指的是响应头部中所有头部字段（Header Field）的最大允许长度之和，其中包括所有字段名称（name）的长度、字段值（value）的长度以及每个字段自动添加的伪头开销（通常每个字段会有 32 字节的开销，这包括了 HTTP/2 协议本身为头部字段添加的伪头部信息）。默认情况下，这个最大长度被设置为 UInt32.Max。
 
 参数：
 
@@ -3164,7 +3164,7 @@ public func maxRequestBodySize(size: Int64): ServerBuilder
 
 异常：
 
-- IllegalArgumentException - 当入参size < 0时，抛出异常。
+- IllegalArgumentException - 当入参 size < 0 时，抛出异常。
 
 ### func maxRequestHeaderSize(Int64)
 
@@ -3184,7 +3184,7 @@ public func maxRequestHeaderSize(size: Int64): ServerBuilder
 
 异常：
 
-- IllegalArgumentException - 当入参size < 0时，抛出异常。
+- IllegalArgumentException - 当入参 size < 0 时，抛出异常。
 
 ### func onShutdown(() -> Unit)
 
@@ -3408,7 +3408,7 @@ public static func upgradeFromServer(ctx: HttpContext, subProtocols!: ArrayList<
 
 服务端升级的流程为：收到客户端发来的升级请求，验证请求，如果验证通过，则回复 101 响应并返回 [WebSocket](http_package_classes.md#class-websocket) 对象用于 [WebSocket](http_package_classes.md#class-websocket) 通讯。
 
-- 用户通过 subProtocols，origins 参数来配置其支持的 subprotocol 和 origin 白名单，subProtocols如果不设置，则表示不支持子协议，origins 如果不设置，则表示接受所有 origin 的握手请求；
+- 用户通过 subProtocols，origins 参数来配置其支持的 subprotocol 和 origin 白名单，subProtocols 如果不设置，则表示不支持子协议，origins 如果不设置，则表示接受所有 origin 的握手请求；
 - 用户通过 userFunc 来自定义处理升级请求的行为，如处理 cookie 等，传入的 userFunc 要求返回一个 [HttpHeaders](http_package_classes.md#class-httpheaders) 对象，其会通过 101 响应回给客户端（升级失败的请求则不会）；
 - 暂不支持 [WebSocket](http_package_classes.md#class-websocket) 的 extensions，因此如果握手过程中出现 extensions 协商则会抛 [WebSocketException](http_package_exceptions.md#class-websocketexception)；
 - 只支持 HTTP1_1 和 HTTP2_0 向 [WebSocket](http_package_classes.md#class-websocket) 升级。
@@ -3446,12 +3446,12 @@ public func read(): WebSocketFrame
 
 read 函数返回一个 [WebSocketFrame](http_package_classes.md#class-websocketframe) 对象，用户可以调用 [WebSocketFrame](http_package_classes.md#class-websocketframe) 的 frameType，fin 属性确定其帧类型和是否是分段帧调用。通过 [WebSocketFrame](http_package_classes.md#class-websocketframe) 的 payload 函数得到原始二进制数据数组：Array\<UInt8>
 
-- 分段帧的首帧为 fin == false，frameType == TextWebFrame 或 BinaryWebFrame中间帧 fin == false，frameType == ContinuationWebFrame尾帧 fin == true， frameType == ContinuationWebFrame；
+- 分段帧的首帧为 fin == false，frameType == TextWebFrame 或 BinaryWebFrame 中间帧 fin == false，frameType == ContinuationWebFrame 尾帧 fin == true， frameType == ContinuationWebFrame；
 - 非分段帧为     fin == true， frameType != ContinuationWebFrame。
 
 > **注意：**
 >
-> - 数据帧（Text，Binary）可以分段，用户需要多次调用 read 将所有分段帧读完（以下称为接收到完整的 message），再将分段帧的 payload 按接收序拼接Text 帧的 payload 为 UTF-8 编码，用户在接收到完整的 message 后，调用 String.fromUtf8函数将拼接后的 payload 转成字符串Binary 帧的 payload 的意义由使用其的应用确定，用户在接收到完整的 message 后，将拼接后的 payload 传给上层应用；
+> - 数据帧（Text，Binary）可以分段，用户需要多次调用 read 将所有分段帧读完（以下称为接收到完整的 message），再将分段帧的 payload 按接收序拼接 Text 帧的 payload 为 UTF-8 编码，用户在接收到完整的 message 后，调用 String.fromUtf8 函数将拼接后的 payload 转成字符串 Binary 帧的 payload 的意义由使用其的应用确定，用户在接收到完整的 message 后，将拼接后的 payload 传给上层应用；
 > - 控制帧（Close，Ping，Pong）不可分段；
 > - 控制帧本身不可分段，但其可以穿插在分段的数据帧之间。分段的数据帧之间不可出现其他数据帧，如果用户收到穿插的分段数据帧，则需要当作错误处理；
 > - 客户端收到 masked 帧，服务器收到 unmasked 帧，断开底层连接并抛出异常；
@@ -3483,8 +3483,8 @@ public func write(frameType: WebSocketFrameType, byteArray: Array<UInt8>, frameS
 >
 > write 函数将数据以 [WebSocket](http_package_classes.md#class-websocket) 帧的形式发送给对端；
 >
-> - 如果发送数据帧（Text，Binary），传入的 byteArray 如果大于 frameSize (默认 4 * 1024 bytes)，我们会将其分成小于等于 frameSize 的 payload 以分段帧的形式发送，否则不分段；
-> - 如果发送控制帧（Close，Ping，Pong），传入的 byteArray 的大小需要小于等于 125 bytes，Close 帧的前两个字节为状态码，可用的状态码见 RFC 6455 7.4. Status Codes协议规定，Close 帧发送之后，禁止再发送数据帧，如果发送则会抛出异常；
+> - 如果发送数据帧（Text，Binary），传入的 byteArray 如果大于 frameSize（默认 4 * 1024 bytes），我们会将其分成小于等于 frameSize 的 payload 以分段帧的形式发送，否则不分段；
+> - 如果发送控制帧（Close，Ping，Pong），传入的 byteArray 的大小需要小于等于 125 bytes，Close 帧的前两个字节为状态码，可用的状态码见 RFC 6455 7.4. Status Codes 协议规定，Close 帧发送之后，禁止再发送数据帧，如果发送则会抛出异常；
 > - 用户需要自己保证其传入的 byteArray 符合协议，如 Text 帧的 payload 需要是 UTF-8 编码，如果数据帧设置了 frameSize，那么需要大于 0，否则抛出异常；
 > - 发送数据帧时，frameSize 小于等于 0，抛出异常；
 > - 用户发送控制帧时，传入的数据大于 125 bytes，抛出异常；
@@ -3523,7 +3523,7 @@ public func writeCloseFrame(status!: ?UInt16 = None, reason!: String = ""): Unit
 
 异常：
 
-- [WebSocketException](http_package_exceptions.md#class-websocketexception) - 传入非法的状态码，或 reason 数据超过 123 bytes时抛出异常。
+- [WebSocketException](http_package_exceptions.md#class-websocketexception) - 传入非法的状态码，或 reason 数据超过 123 bytes 时抛出异常。
 
 ### func writePingFrame(Array\<UInt8>)
 

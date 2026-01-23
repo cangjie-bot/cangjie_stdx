@@ -66,7 +66,7 @@ main() {
 }
 ```
 
-## request中的 chunked 与 trailer
+## request 中的 chunked 与 trailer
 
 示例：
 

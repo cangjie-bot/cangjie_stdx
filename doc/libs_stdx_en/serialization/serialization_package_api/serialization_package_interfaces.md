@@ -889,4 +889,3 @@ Function: Serializes a UInt8 into a [DataModelInt](serialization_package_classes
 Return Value:
 
 - [DataModel](serialization_package_classes.md#class-datamodel) - The serialized [DataModelInt](serialization_package_classes.md#class-datamodelint).
-```
