@@ -7046,6 +7046,29 @@ public init(interpolationBlock: Block, comments!: Array<Comment> = [])
 - interpolationBlock: [Block](#class-block) - 插值代码块。
 - comments!: Array\<[Comment](#class-comment)> - 附加的注释列表，默认为空数组。
 
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.syntax.*
+
+main() {
+    // 创建 interpolationBlock
+    let interpolationBlock = Block(SymbolRef("str", []))
+
+    // 创建 StrInterpolationContent 实例
+    let strInterpolationContent = StrInterpolationContent(interpolationBlock)
+
+    println("strInterpolationContent: ${strInterpolationContent}")
+}
+```
+
+运行结果：
+
+```text
+strInterpolationContent: ${str}
+```
+
 ### func getDollarPos()
 
 ```cangjie
@@ -7057,6 +7080,31 @@ public func getDollarPos(): CodePositionRange
 返回值：
 
 - [CodePositionRange](syntax_package_structs.md#struct-codepositionrange) - 返回 `$` 关键字的位置。
+
+示例：
+
+<!-- verify -->
+```cangjie
+import stdx.syntax.*
+
+main(): Unit {
+    // 创建 interpolationBlock
+    let interpolationBlock = Block(SymbolRef("str", []))
+
+    // 创建 StrInterpolationContent 实例
+    let strInterpolationContent = StrInterpolationContent(interpolationBlock)
+    let pos = strInterpolationContent.getDollarPos()
+
+    // 输出 $ 关键字位置
+    println("strInterpolationContent.getDollarPos(): ${pos.beginLine}:${pos.beginColumn}-${pos.endLine}:${pos.endColumn}")
+}
+```
+
+运行结果：
+
+```text
+strInterpolationContent.getDollarPos(): 1:1-1:2
+```
 
 ## class StructDecl
 
