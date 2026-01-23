@@ -4,15 +4,15 @@
 
 ```cangjie
 public func csv<T>(
- fileName: String,
- delimiter!: Rune = ',',
- quoteChar!: Rune = '"',
- escapeChar!: Rune = '"',
- commentChar!: Option<Rune> = None,
- header!: Option<Array<String>> = None,
- skipRows!: Array<UInt64> = [],
- skipColumns!: Array<UInt64> = [],
- skipEmptyLines!: Bool = false
+    fileName: String,
+    delimiter!: Rune = ',',
+    quoteChar!: Rune = '"',
+    escapeChar!: Rune = '"',
+    commentChar!: Option<Rune> = None,
+    header!: Option<Array<String>> = None,
+    skipRows!: Array<UInt64> = [],
+    skipColumns!: Array<UInt64> = [],
+    skipEmptyLines!: Bool = false
 ): CsvStrategy<T> where T <: Serializable<T>
 ```
 
@@ -24,7 +24,7 @@ public func csv<T>(
 - delimiter!: Rune - 一行中作为元素分隔符的符号。默认值为 `,` （逗号）。
 - quoteChar!: Rune - 括住元素的符号。默认值为 `"` （双引号）。
 - escapeChar!: Rune ：转义括住元素的符号。默认值为 `"` （双引号）。
-- commentChar!: Option\<Rune> - 注释符号，跳过一行。必须在一行的最左侧。默认值是 `None` (不存在注释符号)。
+- commentChar!: Option\<Rune> - 注释符号，跳过一行。必须在一行的最左侧。默认值是 `None`（不存在注释符号）。
 - header!: Option\<Array\<String>> - 提供一种方式覆盖第一行。
     - 当 header 被指定时，文件的第一行将被作为数据行，指定的 header 将被使用。
     - 当 header 被指定，同时第一行通过指定 `skipRows` 被跳过时，第一行将被忽略，指定的 header 将被使用。
@@ -79,7 +79,7 @@ json 文件示例：
 ]
 ```
 
-创建一种被用作测试函数参数的类，该类实现接口 [Serializable](../../../serialization/serialization_package_api/serialization_package_interfaces.md#interface-serializable) 。
+创建一种被用作测试函数参数的类，该类实现接口 [Serializable](../../../serialization/serialization_package_api/serialization_package_interfaces.md#interface-serializable)。
 
 <!--compile-->
 ```cangjie
@@ -134,12 +134,12 @@ public func tsv<T>(
 
 功能：该函数可从 tsv 文件中读取类型 T 的数据值，其中 T 必须可被序列化。该函数的返回值是参数化测试的一种参数源。
 
-参数:
+参数：
 
 - fileName: String - TSV 格式的文件地址，可为相对地址，不限制后缀名。
 - quoteChar!: Rune - 括住元素的符号。默认值为 `"` （双引号）。
 - escapeChar!: Rune - 转义括住元素的符号。默认值为 `"` （双引号）。
-- commentChar!: Option\<Rune> - 注释符号，跳过一行。必须在一行的最左侧。默认值是 `None` (不存在注释符号)。
+- commentChar!: Option\<Rune> - 注释符号，跳过一行。必须在一行的最左侧。默认值是 `None`（不存在注释符号）。
 - header!: Option\<Array\<String>> - 提供一种方式覆盖第一行。
     - 当 header 被指定时，文件的第一行将被作为数据行，指定的 header 将被使用。
     - 当 header 被指定，同时第一行通过指定 `skipRows` 被跳过时，第一行将被忽略，指定的 header 将被使用。
@@ -189,7 +189,7 @@ Donald Sweet,28
     }
     ```
 
-2. 将数据表示为 [Serializable](../../../serialization/serialization_package_api/serialization_package_interfaces.md#interface-serializable)\<T> 类型数据，其 String 类型的数据可被反序列化为 [DataModelStruct](../../../serialization/serialization_package_api/serialization_package_classes.md#class-datamodelstruct) 格式对象。
+1. 将数据表示为 [Serializable](../../../serialization/serialization_package_api/serialization_package_interfaces.md#interface-serializable)\<T> 类型数据，其 String 类型的数据可被反序列化为 [DataModelStruct](../../../serialization/serialization_package_api/serialization_package_classes.md#class-datamodelstruct) 格式对象。
 
 具体示例为：
 

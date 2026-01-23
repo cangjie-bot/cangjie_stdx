@@ -146,7 +146,6 @@ public prop clientCertificate: ?Array<X509Certificate>
 
 - [TlsException](tls_package_exceptions.md#class-tlsexception) - 当套接字未完成 TLS 握手或本端 TLS 套接字已关闭时，抛出异常。
 
-
 ### prop domain
 
 ```cangjie
@@ -190,8 +189,8 @@ public prop peerCertificate: ?Array<X509Certificate>
 >
 > - 通过session 机制恢复连接时，双方都不发送证书，该接口行为如下：
 >
->   - 在服务端，如果被恢复的原始连接建立时获取了对端证书，服务端将缓存对端证书，并在此处获取到缓存的证书；
->   - 在客户端，不缓存原始连接的对端证书，此处将无法获取对端证书，返回 None。
+>     - 在服务端，如果被恢复的原始连接建立时获取了对端证书，服务端将缓存对端证书，并在此处获取到缓存的证书；
+>     - 在客户端，不缓存原始连接的对端证书，此处将无法获取对端证书，返回 None。
 
 类型：?Array<[X509Certificate](../../../crypto/x509/x509_package_api/x509_package_classes.md#class-x509certificate)>
 

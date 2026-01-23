@@ -16,7 +16,7 @@ main() {
     // 1. 启动服务器监听
     let port = startServer()
 
-    // 2. 构造http请求
+    // 2. 构造 http 请求
     let request = HttpRequestBuilder()
         .get()
         .url("http://127.0.0.1:${port}/hello")

@@ -24,7 +24,7 @@ main() {
 }
 ```
 
-## 通过 request distributor注册处理器
+## 通过 request distributor 注册处理器
 
 示例：
 
@@ -53,7 +53,7 @@ main() {
 }
 ```
 
-## 自定义 request distributor与处理器
+## 自定义 request distributor 与处理器
 
 示例：
 
@@ -132,7 +132,7 @@ main() {
 }
 ```
 
-## response中的 chunked与trailer
+## response 中的 chunked 与 trailer
 
 示例：
 

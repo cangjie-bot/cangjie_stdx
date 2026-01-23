@@ -2,7 +2,7 @@
 
 ## 功能介绍
 
-log 包提供了一个单一的日志API，它抽象了实际的日志实现。
+log 包提供了一个单一的日志 API，它抽象了实际的日志实现。
 
 ## API 列表
 
@@ -10,8 +10,8 @@ log 包提供了一个单一的日志API，它抽象了实际的日志实现。
 
 | 函数名                                                       | 功能                 |
 | ------------------------------------------------------------ | -------------------- |
-| [getGlobalLogger(Array\<Attr>)](./log_package_api/log_package_funcs.md#func-getgloballoggerarrayattr) | 获取全局Logger对象。 |
-| [setGlobalLogger(Logger)](./log_package_api/log_package_funcs.md#func-setgloballoggerlogger) | 设置全局Logger对象。 |
+| [getGlobalLogger(Array\<Attr>)](./log_package_api/log_package_funcs.md#func-getgloballoggerarrayattr) | 获取全局 Logger 对象。 |
+| [setGlobalLogger(Logger)](./log_package_api/log_package_funcs.md#func-setgloballoggerlogger) | 设置全局 Logger 对象。 |
 
 ### 类型别名
 

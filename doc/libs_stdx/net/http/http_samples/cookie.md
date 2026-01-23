@@ -13,20 +13,20 @@ import std.time.*
 import std.sync.*
 
 main() {
-    // 1、启动socket服务器
+    // 1、启动 socket 服务器
     let serverSocket = TcpServerSocket(bindAt: 0)
     serverSocket.bind()
     let fut = spawn {
         serverPacketCapture(serverSocket)
     }
     // 客户端一般从 response 中的 Set-Cookie header 中读取 cookie，并将其存入 cookieJar 中，
-    // 下次发起 request时，将其放在 request 的 Cookie header 中发送
+    // 下次发起 request 时，将其放在 request 的 Cookie header 中发送
     // 2、启动客户端
     let client = ClientBuilder().build()
     let port = (serverSocket.localAddress as IPSocketAddress)?.port ?? throw Exception("Port not found.")
     var u = URL.parse("http://127.0.0.1:${port}/a/b/c")
     var r = HttpRequestBuilder().url(u).build()
-    // 3、发送request
+    // 3、发送 request
     client.send(r)
     r = HttpRequestBuilder().url(u).build()
     // 4、发送新 request，从 CookieJar 中取出 cookie，并转成 Cookie header 中的值

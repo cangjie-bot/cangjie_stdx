@@ -251,7 +251,7 @@ Parameters:
 
 Return Value:
 
-- [Logger](log_package_classes.md#class-logger) - An instance of the [Logger](log_package_classes.md#class-logger) class.
+- [Logger](#class-logger) - An instance of the [Logger](#class-logger) class.
 
 ## class LogRecord
 
@@ -263,7 +263,7 @@ public class LogRecord {
 
 Functionality: The "payload" of a log message.
 
-The record structure is passed as a parameter to the [log](log_package_classes.md#func-loglogrecord) method of the [Logger](log_package_classes.md#class-logger) class. Log providers process these structures to display log messages. Records are automatically created by log objects and are not visible to log users.
+The record structure is passed as a parameter to the [log](log_package_classes.md#func-loglogrecord) method of the [Logger](#class-logger) class. Log providers process these structures to display log messages. Records are automatically created by log objects and are not visible to log users.
 
 ### init(DateTime, LogLevel, String, Array\<Attr>)
 
@@ -555,7 +555,7 @@ public class NoopLogger <: Logger {
 }
 ```
 
-Function: A NO-OP (no operation) implementation of [Logger](log_package_classes.md#class-logger) that discards all logs.
+Function: A NO-OP (no operation) implementation of [Logger](#class-logger) that discards all logs.
 
 Parent type:
 
@@ -653,4 +653,4 @@ Parameters:
 
 Return value:
 
-- [Logger](./log_package_classes.md#class-logger) - Logger
+- [Logger](#class-logger) - Logger

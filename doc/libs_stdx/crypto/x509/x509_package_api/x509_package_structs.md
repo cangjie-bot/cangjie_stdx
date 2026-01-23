@@ -275,7 +275,7 @@ public static let DecipherOnly: UInt16 = 0x0100
 public static let DigitalSignature: UInt16 = 0x0080
 ```
 
-功能：表示私钥可以用于除了签发证书、签发 CRL 和非否认性服务的各种数字签名操作,而公钥用来验证这些签名。
+功能：表示私钥可以用于除了签发证书、签发 CRL 和非否认性服务的各种数字签名操作，而公钥用来验证这些签名。
 
 类型：UInt16
 
@@ -315,7 +315,7 @@ public static let KeyEncipherment: UInt16 = 0x0020
 public static let NonRepudiation: UInt16 = 0x0040
 ```
 
-功能：表示私钥可以用于进行非否认性服务中的签名,而公钥用来验证签名。
+功能：表示私钥可以用于进行非否认性服务中的签名，而公钥用来验证签名。
 
 类型：UInt16
 
@@ -704,7 +704,7 @@ public struct SerialNumber <: Equatable<SerialNumber> & Hashable & ToString {
 }
 ```
 
-功能：结构体 [SerialNumber](x509_package_structs.md#struct-serialnumber) 为数字证书的序列号，是数字证书中的一个唯一标识符，用于标识数字证书的唯一性。根据规范，证书序列号的长度不应超过 20 字节。详见[rfc5280](https://www.rfc-editor.org/rfc/rfc5280)。
+功能：结构体 [SerialNumber](x509_package_structs.md#struct-serialnumber) 为数字证书的序列号，是数字证书中的一个唯一标识符，用于标识数字证书的唯一性。根据规范，证书序列号的长度不应超过 20 字节。详见 [rfc5280](https://www.rfc-editor.org/rfc/rfc5280)。
 
 父类型：
 
