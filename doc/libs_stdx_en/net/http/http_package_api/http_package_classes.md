@@ -3490,8 +3490,8 @@ The `read` function returns a [WebSocketFrame](http_package_classes.md#class-web
 > **Note:**
 >
 > - Data frames (Text, Binary) can be fragmented. Users must call `read` multiple times to receive all fragments (referred to as receiving a complete message) and concatenate the payloads in order.
->   - Text frame payloads are UTF-8 encoded. After receiving a complete message, users can convert the concatenated payload to a string using `String.fromUtf8`.
->   - Binary frame payloads are application-specific. After receiving a complete message, users pass the concatenated payload to the upper-layer application.
+>     - Text frame payloads are UTF-8 encoded. After receiving a complete message, users can convert the concatenated payload to a string using `String.fromUtf8`.
+>     - Binary frame payloads are application-specific. After receiving a complete message, users pass the concatenated payload to the upper-layer application.
 > - Control frames (Close, Ping, Pong) cannot be fragmented.
 > - Control frames cannot be fragmented but can be interleaved between fragmented data frames. Fragmented data frames cannot be interleaved with other data frames. If interleaved fragments are received, treat as an error.
 > - Clients must receive masked frames; servers must receive unmasked frames. Otherwise, the underlying connection is closed, and an exception is thrown.

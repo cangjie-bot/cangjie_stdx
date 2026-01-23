@@ -29,8 +29,8 @@ main() {
 linux 平台编译命令：
 
 ```shell
-cjc aop_demo1.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main	# 第一次编译，收集切面
-cjc aop_demo1.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main	# 第二次编译，织入切面
+cjc aop_demo1.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main # 第一次编译，收集切面
+cjc aop_demo1.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main # 第二次编译，织入切面
 ```
 
 运行结果可能如下：
@@ -40,8 +40,6 @@ cjc aop_demo1.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.a
 hi
 bye
 ```
-
-
 
 下面是使用 @InsertAtExit 完成在指定函数退出前插桩的示例代码：
 
@@ -73,8 +71,8 @@ main() {
 linux 平台编译命令：
 
 ```shell
-cjc aop_demo2.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main	# 第一次编译，收集切面
-cjc aop_demo2.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main	# 第二次编译，织入切面
+cjc aop_demo2.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main # 第一次编译，收集切面
+cjc aop_demo2.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main # 第二次编译，织入切面
 ```
 
 运行结果可能如下：
@@ -85,8 +83,6 @@ bye
 ----- 2025-06-03T00:04:59.996469-07:00 -----
 done
 ```
-
-
 
 下面是使用 @ReplaceFuncBody 完成替换指定函数函数体的示例代码：
 
@@ -120,8 +116,8 @@ main() {
 linux 平台编译命令：
 
 ```shell
-cjc aop_demo3.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main	# 第一次编译，收集切面
-cjc aop_demo3.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main	# 第二次编译，织入切面
+cjc aop_demo3.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libcollect-aspects.so -o main # 第一次编译，收集切面
+cjc aop_demo3.cj -L $CANGJIE_STDX_PATH --import-path $CANGJIE_STDX_PATH -lstdx.aspectCJ --plugin=$CANGJIE_STDX_PATH/libwave-aspects.so -o main # 第二次编译，织入切面
 ```
 
 运行结果可能如下：
@@ -133,4 +129,3 @@ abc
 ----- end -----
 def
 ```
-

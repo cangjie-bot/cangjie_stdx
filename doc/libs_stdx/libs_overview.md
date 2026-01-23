@@ -5,7 +5,7 @@
 标准库为开发者提供了最通用的 API，而扩展库则专注于某一领域。如 compress 包提供压缩与解压缩能力，crypto 包提供加解密相关能力，net 包则专注于提供高效的网络协议解析和网络通信能力。
 
 > **说明：**
-> 
+>
 > 目前，官方提供的扩展库不随仓颉编译器、工具链一起发布，需要用户单独下载。
 
 ## 包列表
@@ -64,7 +64,7 @@ static/stdx 是静态产物，包含静态文件、cjo、bc 文件。
 | import stdx.crypto.digest.*               | stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                                                                                   |
 | import stdx.crypto.keys.*                 | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
 | import stdx.crypto.kit.*                  | stdx.crypto.keys、stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                        |
-| import stdx.crypto.x509.*                 | stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                          |                                                                                                                                                                                                                 |
+| import stdx.crypto.x509.*                 | stdx.crypto.x509、stdx.encoding.hex、stdx.crypto.crypto、stdx.crypto.digest、stdx.crypto.common、stdx.encoding.base64                                                                                                          |
 | import stdx.effect.*                      | stdx.effect                                                                                                                                                                                                                    |
 | import stdx.encoding.hex.*                | stdx.encoding.hex                                                                                                                                                                                                              |
 | import stdx.encoding.base64.*             | stdx.encoding.base64                                                                                                                                                                                                           |
@@ -155,4 +155,3 @@ cjpm.toml 增加如下配置：
 
 上面配置中 x86_64-unknown-linux-gnu 表示的是系统架构信息，需要通过 cjc -v 获取，并替换成自己获取的系统架构信息。
 CANGJIE_STDX_PATH 是设置的 stdx 路径。
-
