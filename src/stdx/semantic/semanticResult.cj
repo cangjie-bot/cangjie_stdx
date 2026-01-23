@@ -43,8 +43,8 @@ public class SemanticResult {
     }
 
     private let declTypeInfoMap: HashMap<SyntaxTreeNode, SemanticType>
-    private let exprTypeInfoMap: HashMap<SyntaxTreeNode, SemanticType>
-    private let target: HashMap<SyntaxTreeNode, SyntaxTreeNode>
+    // private let exprTypeInfoMap: HashMap<SyntaxTreeNode, SemanticType>
+    // private let target: HashMap<SyntaxTreeNode, SyntaxTreeNode>
 
     init(declTypeInfoMap: HashMap<SyntaxTreeNode, SemanticType>){
         this.declTypeInfoMap = declTypeInfoMap
@@ -53,7 +53,7 @@ public class SemanticResult {
 
 public class SemanticContext {
     // cjo 
-    private let declTypeInfoMap: HashMap<SyntaxTreeNode, SemanticType>
+    // private let declTypeInfoMap: HashMap<SyntaxTreeNode, SemanticType>
 }
   
 class NodeFinder <: ASTVisitor {
