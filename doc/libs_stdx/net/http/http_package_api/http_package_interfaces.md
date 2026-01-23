@@ -170,11 +170,11 @@ func storeCookies(url: URL, cookies: ArrayList<Cookie>): Unit
 
 如果往 [CookieJar](http_package_interfaces.md#interface-cookiejar) 中存 [Cookie](http_package_classes.md#class-cookie) 时超过了上限（3000 条），那么至少清除 [CookieJar](http_package_interfaces.md#interface-cookiejar) 中 1000 条 [Cookie](http_package_classes.md#class-cookie) 再往里存储。清除 [CookieJar](http_package_interfaces.md#interface-cookiejar) 中 [Cookie](http_package_classes.md#class-cookie) 的优先级见 [RFC 6265 5.3.12.](https://httpwg.org/specs/rfc6265.html#storage-model)。
 
-[Cookie](http_package_classes.md#class-cookie)按如下顺序清除：
+[Cookie](http_package_classes.md#class-cookie) 按如下顺序清除：
 
 - 过期的 [Cookie](http_package_classes.md#class-cookie)；
 - 相同 domain 中超过 50 条以上的部分；
-- 所有 [Cookie](http_package_classes.md#class-cookie)具有相同优先级的 [Cookie](http_package_classes.md#class-cookie) 则优先删除 `last-access` 属性更早的。
+- 所有 [Cookie](http_package_classes.md#class-cookie) 具有相同优先级的 [Cookie](http_package_classes.md#class-cookie) 则优先删除 `last-access` 属性更早的。
 
 参数：
 

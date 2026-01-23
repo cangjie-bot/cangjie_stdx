@@ -103,7 +103,7 @@ public override func toString(): String
 
 返回值：
 
-- String - [TlsClientSession](tls_package_classes.md#class-tlsclientsession)(会话 id 字符串)。
+- String - [TlsClientSession](tls_package_classes.md#class-tlsclientsession)（会话 id 字符串）。
 
 ### operator func !=(TlsClientSession)
 
@@ -136,7 +136,6 @@ public override operator func ==(other: TlsClientSession): Bool
 返回值：
 
 - Bool - 若会话对象相同，返回 `true`；否则，返回 `false`。
-
 
 ## class TlsServerSession
 

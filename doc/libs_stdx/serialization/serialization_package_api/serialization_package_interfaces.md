@@ -21,7 +21,7 @@ static func deserialize(dm: DataModel): T
 
 > **说明：**
 >
-> 支持实现 [Serializable](serialization_package_interfaces.md#interface-serializable) 的类型包括:
+> 支持实现 [Serializable](serialization_package_interfaces.md#interface-serializable) 的类型包括：
 >
 > - 基本数据类型：整数类型、浮点类型、布尔类型、字符类型、字符串类型。
 > - Collection 类型：Array、ArrayList、HashSet、HashMap、Option。
