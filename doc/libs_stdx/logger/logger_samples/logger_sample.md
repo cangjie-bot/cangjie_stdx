@@ -28,7 +28,7 @@ main() {
             =>
             logger.info("abc", ("age", 2))
             let user = User()
-            // 记录诊断日志，如果 DEBUG 级别未开启，直接返回，几乎无cost
+            // 记录诊断日志，如果 DEBUG 级别未开启，直接返回，几乎无 cost
             logger.debug("Logging in user ${user.name} with birthday ${user.birthdayCalendar}")
             // 普通记录信息日志
             logger.info("Hello, World!", ("k1", [[1, 4], [2, 5], [3]]), ("password", "v22222"))
@@ -50,7 +50,7 @@ main() {
             m2.add("g1", m)
             m2.add("k1", [["1", "4 s"], ["2", "5"], ["3"]])
 
-            // 如果TRACE 级别没有开启，那么lambda表达式不会被执行
+            // 如果 TRACE 级别没有开启，那么 lambda 表达式不会被执行
             logger.trace({=> "Some long-running operation returned"}, ("m2", m2))
         }
         futs.add(f)
@@ -131,7 +131,7 @@ main() {
             =>
             logger.info("abc", ("age", 2))
             let user = User()
-            // 记录诊断日志，如果 DEBUG 级别未开启，直接返回，几乎无cost
+            // 记录诊断日志，如果 DEBUG 级别未开启，直接返回，几乎无 cost
             logger.debug("Logging in user ${user.name} with birthday ${user.birthdayCalendar}")
             // 普通记录信息日志
             logger.info("Hello, World!", ("k1", [[1, 4], [2, 5], [3]]), ("password", "v22222"))
@@ -153,7 +153,7 @@ main() {
             m2.add("g1", m)
             m2.add("k1", [["1", "4 s"], ["2", "5"], ["3"]])
 
-            // 如果TRACE 级别没有开启，那么lambda表达式不会被执行
+            // 如果 TRACE 级别没有开启，那么 lambda 表达式不会被执行
             logger.trace({=> "Some long-running operation returned"}, ("m2", m2))
         }
         futs.add(f)
@@ -234,7 +234,7 @@ main() {
             =>
             logger.info("abc", ("age", 2))
             let user = User()
-            // 记录诊断日志，如果 DEBUG 级别未开启，直接返回，几乎无cost
+            // 记录诊断日志，如果 DEBUG 级别未开启，直接返回，几乎无 cost
             logger.debug("Logging in user ${user.name} with birthday ${user.birthdayCalendar}")
             // 普通记录信息日志
             logger.info("Hello, World!", ("k1", [[1, 4], [2, 5], [3]]), ("password", "v22222"))
@@ -256,7 +256,7 @@ main() {
             m2.add("g1", m)
             m2.add("k1", [["1", "4 s"], ["2", "5"], ["3"]])
 
-            // 如果TRACE 级别没有开启，那么lambda表达式不会被执行
+            // 如果 TRACE 级别没有开启，那么 lambda 表达式不会被执行
             logger.trace({=> "Some long-running operation returned"}, ("m2", m2))
         }
         futs.add(f)

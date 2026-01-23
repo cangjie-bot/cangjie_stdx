@@ -8,7 +8,6 @@ public class ActorFuture<T> {}
 
 Function: Represents the pending result of a closure submitted to an Actor.
 
-
 ### func get()
 
 ```cangjie
@@ -16,7 +15,6 @@ public func get(): T
 ```
 
 Function: Blocks the current thread until the closure completes. If the closure throws an exception or error, this method will throw the same exception or error.
-
 
 Return Value:
 
@@ -50,7 +48,6 @@ Return Value:
 
 - Option\<T> - If the result is not yet ready, it returns `None`; otherwise, it returns the result value.
 
-
 ## class SequentialDispatcher
 
 ```cangjie
@@ -71,7 +68,6 @@ public init(enableReceiverPriorty!: Bool)
 
 Function: Creates a `SequentialDispatcher` instance and starts a thread for the `SequentialDispatcher` to handle the closures submitted by the user.
 
-
 Parameters:
 
 - enableReceiverPriorty!: Bool - When set to `true`, it enables the priority feature, allowing closures with higher priority to be executed first.
@@ -88,7 +84,6 @@ Parameters:
 
 - task: () -> T - The closure submitted to the actor.
 - priority!: Int64 - The priority of the submitted task, where 1 <= priority <= 10, with a default value of 5.
-
 
 Return Value:
 

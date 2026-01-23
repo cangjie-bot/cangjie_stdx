@@ -118,11 +118,13 @@ $ cjc main.cj -L $CANGJIE_STDX_PATH -lstdx.actors -lstdx.aspectCJ -lstdx.encodin
 `CANGJIE_STDX_PATH` is the path to the stdx library.
 
 For example, on Linux systems:
+
 ```shell
 export CANGJIE_STDX_PATH=/target/linux_x86_64_cjnative/dynamic/stdx
 ```
 
 Before running, ensure the extension library path is set:
+
 - On Linux: Set in `LD_LIBRARY_PATH`
 - On Windows: Set in `PATH`
 - On macOS: Set in `DYLD_LIBRARY_PATH`

@@ -8,7 +8,6 @@ public class ActorFuture<T> {}
 
 功能：提交给一个 Actor 的闭包的待定结果。
 
-
 ### func get()
 
 ```cangjie
@@ -16,7 +15,6 @@ public func get(): T
 ```
 
 功能：阻塞当前线程，直到闭包完成。如果闭包抛出异常或错误，此方法将抛出相同的异常或错误。
-
 
 返回值：
 
@@ -50,7 +48,6 @@ public func tryGet(): Option<T>
 
 - Option\<T> - 如果结果尚未准备好，则返回 None，否则返回结果值。
 
-
 ## class SequentialDispatcher
 
 ```cangjie
@@ -61,7 +58,7 @@ public class SequentialDispatcher {
 
 功能：一个 SequentialDispatcher 实例代表了一个仓颉的线程，用户可以向一个 SequentialDispatcher 实例提交闭包，这些闭包会在一个仓颉线程上排队执行。
 
-通常用户不需要直接使用这个类，而是应该使用 [@Actor](../macros/macros_package_api/macros_package_macros.md#actor-macro) 宏。
+通常用户不需要直接使用这个类，而是应该使用 [@Actor](../macros/macros_package_api/macros_package_macros.md#actor-宏) 宏。
 
 ### init(Bool)
 
@@ -70,7 +67,6 @@ public init(enableReceiverPriorty!: Bool)
 ```
 
 功能：创建一个 SequentialDispatcher 实例并启动 SequentialDispatcher 的线程来处理用户提交的闭包。
-
 
 参数：
 
@@ -88,7 +84,6 @@ public func post<T>(task: () -> T, priority!: Int64 = 5): ActorFuture<T>
 
 - task: () -> T - 提交到 actor 的闭包。
 - priority!: Int64 - 提交任务的优先级，1 <= priority <= 10，默认为 5。
-
 
 返回值：
 

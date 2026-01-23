@@ -10,7 +10,7 @@ public abstract class Command<Res> {
 
 功能：该抽象类表示一种可以被触发和处理的**效应（effect）**。
 
-参数:
+参数：
 
 - Res：当该效应被执行后，预期返回的结果类型。
 

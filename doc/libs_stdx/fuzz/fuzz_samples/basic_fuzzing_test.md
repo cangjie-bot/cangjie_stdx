@@ -8,7 +8,7 @@
 import stdx.fuzz.fuzz.Fuzzer
 
 main() {
-    // 创建Fuzzer并启动fuzz流程
+    // 创建 Fuzzer 并启动 fuzz 流程
     Fuzzer(api).startFuzz()
     return 0
 }
@@ -40,11 +40,11 @@ macOS 的编译命令是：`cjc fuzz_main.cj -L $CANGJIE_STDX_PATH -lstdx.fuzz.f
     - 使用 `whole-archive libfuzzer.a` 来规避符号找不到的问题。
 - `-lstdc++` (Linux) / `-lc++` (macOS) 用于链接 libfuzzer 依赖的 std 库。
 - `--sanitizer-coverage-inline-8bit-counters` 是 `cjc` 的编译选项，它会对当前 `package` 执行覆盖率反馈插桩，详见 cjc 编译器使用手册。
-    - 其他高级的参数有：`--sanitizer-coverage-trace-compares`（提高Fuzz变异的效率）、`--sanitizer-coverage-pc-table`（Fuzz结束后打印覆盖率信息）。
+    - 其他高级的参数有：`--sanitizer-coverage-trace-compares`（提高 Fuzz 变异的效率）、`--sanitizer-coverage-pc-table`（Fuzz 结束后打印覆盖率信息）。
 
 > **注意：**
 >
-> 如果您使用的Linux系统版本较低，可能出现GLIBC版本过低的链接器报错，请在 `link-options` 参数中添加 `-lpthread` 来解决此问题。
+> 如果您使用的 Linux 系统版本较低，可能出现 GLIBC 版本过低的链接器报错，请在 `link-options` 参数中添加 `-lpthread` 来解决此问题。
 
 与 `libfuzzer` 体验类似，可以直接运行，数秒后（取决于 CPU 性能）可获得 crash，且输入的数据是 "Cangjie!"
 
