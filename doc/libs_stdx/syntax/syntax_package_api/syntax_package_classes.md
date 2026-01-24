@@ -12709,6 +12709,8 @@ public func toTokens(): Tokens
 
 - Tokens - 返回包节点转换为一组词法单元的结果。
 
+示例：
+
 <!-- verify -->
 ```cangjie
 import stdx.syntax.*
