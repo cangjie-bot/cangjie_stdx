@@ -27,7 +27,7 @@ let ArrayBASE64: Array<Int64> = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 /*
  * Converting Base64 arrays into UInt8 sets (Base64ToString decoding).
  *
- * @Param data of Array<Rune>.
+ * @Param data of Array<UInt8>.
  * @return Parameters of Option<Array<UInt8>>.
  *
  * @since 0.17.4

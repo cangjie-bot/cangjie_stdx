@@ -64,6 +64,6 @@ public struct LogLevel <: ToString & Comparable<LogLevel> {
         this.value.compare(rhs.value)
     }
     public func toString(): String {
-        "${name}"
+        name
     }
 }

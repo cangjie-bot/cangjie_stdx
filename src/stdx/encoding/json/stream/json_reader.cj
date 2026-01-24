@@ -433,7 +433,6 @@ public class JsonReader {
                 }
             case _ => throw IllegalStateException("Illegal escape character.")
         }
-        0
     }
 
     @OverflowWrapping

@@ -662,7 +662,7 @@ public class URL <: ToString {
             }
             newUrl._path = String.empty
             newUrl._rawPath = String.empty
-            return newUrl
+            return
         }
         if (!newUrl._scheme.isEmpty() && path[0] != b'/') {
             throw UrlSyntaxException("Absolute URL requires an absolute path.")
