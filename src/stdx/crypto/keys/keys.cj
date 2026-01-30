@@ -408,7 +408,7 @@ public class GeneralPrivateKey <: PrivateKey {
                 exception.value = data
             }
         }
-        return encryptedBody ?? throw CryptoException("Failed to encrypt private key")
+        return encryptedBody ?? throw CryptoException("Failed to encrypt private key") // cjlint-ignore !G.EXP.03
     }
 
     private static unsafe func describeImpl(
