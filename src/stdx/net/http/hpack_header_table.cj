@@ -266,7 +266,7 @@ class HeaderTable {
     // cjlint-ignore -end
     private func reduceSizeTo(limit: Int64) {
         while (size > limit && !dynamicTable.isEmpty()) { // evict fields until the max size is met, or dynamic table is empty
-            let evictedField = dynamicTable.dequeue() ?? throw HpackException(
+            let evictedField = dynamicTable.dequeue() ?? throw HpackException(  // cjlint-ignore !G.EXP.03
                 "Dynamic table not empty but dequeue failed.")
             removeFromMap(evictedField)
 

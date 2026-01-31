@@ -357,7 +357,7 @@ public class HttpRequestBuilder {
      */
     public func build(): HttpRequest {
         let bodySize: ?Int64 = sizeOf(_body)
-        if (!priorityValue.isEmpty() && (_headers.isNone() || headers.get("priority").isEmpty())) {
+        if (!priorityValue.isEmpty() && (_headers.isNone() || headers.get("priority").isEmpty())) { // cjlint-ignore !G.EXP.03
             headers.add("priority", priorityValue)
         }
         return HttpRequest(

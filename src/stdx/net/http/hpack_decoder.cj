@@ -359,7 +359,7 @@ class ByteIterator {
     ByteIterator(let it: Iterator<Byte>) {}
 
     func nextByte(): Byte {
-        return it.next() ?? throw HpackException("Failed to decode data, next byte required but not found.")
+        return it.next() ?? throw HpackException("Failed to decode data, next byte required but not found.") // cjlint-ignore !G.EXP.03
     }
 
     func next(): Option<Byte> {
