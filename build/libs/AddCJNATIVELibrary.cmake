@@ -151,16 +151,6 @@ if(NOT WIN32)
 endif()
 
 make_cangjie_lib(
-    compress IS_SHARED
-    DEPENDS cangjie${BACKEND_TYPE}StdxCompress
-    CANGJIE_STD_LIB_LINK std-core
-    OBJECTS ${output_cj_object_dir}/stdx/compress.o)
-
-add_library(stdx.compress STATIC ${output_cj_object_dir}/stdx/compress.o)
-set_target_properties(stdx.compress PROPERTIES LINKER_LANGUAGE C)
-install(TARGETS stdx.compress DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
-
-make_cangjie_lib(
     compress.zlib IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}ZLIB stdx.compress.zlibFFI
     CANGJIE_STD_LIB_LINK std-core std-collection std-io std-math
@@ -174,6 +164,30 @@ add_library(stdx.compress.zlib STATIC ${ZLIBFFI_OBJS} ${output_cj_object_dir}/st
 set_target_properties(stdx.compress.zlib PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.compress.zlib DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
+make_cangjie_lib(
+    compress.tar IS_SHARED
+    DEPENDS cangjie${BACKEND_TYPE}Tar stdx.compress.tarFFI
+    CANGJIE_STD_LIB_LINK std-core std-collection std-io std-math std-time std-convert std-fs std-env
+
+    OBJECTS ${output_cj_object_dir}/stdx/compress.tar.o
+    FLAGS -lstdx.compress.tarFFI)
+
+    get_target_property(TARFFI_OBJS stdx.compress.tarFFI SOURCES)
+
+    add_library(stdx.compress.tar STATIC ${TARFFI_OBJS} ${output_cj_object_dir}/stdx/compress.tar.o)
+    set_target_properties(stdx.compress.tar PROPERTIES LINKER_LANGUAGE C)
+    install(TARGETS stdx.compress.tar DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+
+    make_cangjie_lib(
+        compress IS_SHARED
+        DEPENDS cangjie${BACKEND_TYPE}StdxCompress cangjie${BACKEND_TYPE}Tar cangjie${BACKEND_TYPE}ZLIB
+        CANGJIE_STDX_LIB_DEPENDS compress.tar compress.zlib
+        CANGJIE_STD_LIB_LINK std-core std-fs std-io
+        OBJECTS ${output_cj_object_dir}/stdx/compress.o)
+
+    add_library(stdx.compress STATIC ${output_cj_object_dir}/stdx/compress.o)
+    set_target_properties(stdx.compress PROPERTIES LINKER_LANGUAGE C)
+    install(TARGETS stdx.compress DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
 make_cangjie_lib(
     encoding.url IS_SHARED
@@ -806,6 +820,18 @@ add_cangjie_library(
     DEPENDS ${COMPRESS_ZLIB_DEPENDENCIES})
 
 add_cangjie_library(
+    cangjie${BACKEND_TYPE}Tar
+    NO_SUB_PKG
+    IS_STDXLIB
+    IS_PACKAGE
+    IS_CJNATIVE_BACKEND
+    PACKAGE_NAME "compress.tar"
+    MODULE_NAME "stdx"
+    SOURCES ${TAR_SRCS}
+    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/compress/tar
+    DEPENDS ${COMPRESS_TAR_DEPENDENCIES})
+
+add_cangjie_library(
     cangjie${BACKEND_TYPE}StdxCompress
     NO_SUB_PKG
     IS_STDXLIB
@@ -814,6 +840,7 @@ add_cangjie_library(
     OUTPUT_NAME "cangjieCompress"
     PACKAGE_NAME "compress"
     MODULE_NAME "stdx"
+    SOURCES ${COMPRESS_SRCS}
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/compress
     DEPENDS ${COMPRESS_DEPENDENCIES})
 
