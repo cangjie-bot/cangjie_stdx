@@ -139,10 +139,8 @@ endif()
 string(TOLOWER "${CMAKE_SYSTEM_NAME}" TARGET_OS)
 add_compile_definitions(__${TARGET_OS}__)
 
-if(NOT DEFINED CANGJIE_ZLIB_SOURCE_DIR)
-    set(CANGJIE_ZLIB_SOURCE_DIR ${CMAKE_SOURCE_DIR}/third_party/zlib)
-endif()
 
+set(CANGJIE_ZLIB_SOURCE_DIR "${CMAKE_SOURCE_DIR}/third_party/zlib")
 
 set(GCC_TOOLCHAIN_FLAG "")
 if(MINGW)
@@ -157,8 +155,14 @@ endif()
 if(NOT EXISTS ${CANGJIE_ZLIB_SOURCE_DIR})
     set(REPOSITORY_PATH https://gitcode.com/openharmony/third_party_zlib.git)
     message(STATUS "Set Zlib REPOSITORY_PATH: ${REPOSITORY_PATH}")
+    message(STATUS "CANGJIE_ZLIB_SOURCE_DIR: ${CANGJIE_ZLIB_SOURCE_DIR}")
     execute_process(
-        COMMAND git clone --branch OpenHarmony-v6.0-Release ${REPOSITORY_PATH} ${CANGJIE_ZLIB_SOURCE_DIR}
+        COMMAND "${CMAKE_COMMAND}" -E env
+                --unset=GIT_DIR
+                --unset=GIT_WORK_TREE
+                --unset=GIT_INDEX_FILE
+                git clone --branch OpenHarmony-v6.0-Release
+                "${REPOSITORY_PATH}" "${CANGJIE_ZLIB_SOURCE_DIR}"
     )
 endif()
 include(Zlib)
@@ -170,7 +174,11 @@ if(NOT EXISTS ${BOUNDSCHECK})
     set(REPOSITORY_PATH https://gitcode.com/openharmony/third_party_bounds_checking_function.git)
     message(STATUS "Set boundscheck REPOSITORY_PATH: ${REPOSITORY_PATH}")
     execute_process(
-        COMMAND git clone --branch OpenHarmony-v6.0-Release ${REPOSITORY_PATH} ${BOUNDSCHECK}
+        COMMAND "${CMAKE_COMMAND}" -E env
+                --unset=GIT_DIR
+                --unset=GIT_WORK_TREE
+                --unset=GIT_INDEX_FILE
+                git clone --branch OpenHarmony-v6.0-Release ${REPOSITORY_PATH} ${BOUNDSCHECK}
     )
 endif()
 file(COPY ${CMAKE_MODULE_PATH}/BoundsCheck.cmake DESTINATION ${BOUNDSCHECK}/)
@@ -178,16 +186,28 @@ file(RENAME ${BOUNDSCHECK}/BoundsCheck.cmake ${BOUNDSCHECK}/CMakeLists.txt)
 
 if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
     add_subdirectory(third_party/boundscheck-v1.1.16)
+    if(DEFINED CANGJIE_CJPM_BUILD_SELF)
+        if(CANGJIE_CJPM_BUILD_SELF)
+            set(BOUNDSCHECK_DESTINATION_DYNAMIC ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/dynamic/stdx)
+            set(BOUNDSCHECK_DESTINATION_STATIC ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+        else()
+            set(BOUNDSCHECK_DESTINATION_DYNAMIC stdx)
+            set(BOUNDSCHECK_DESTINATION_STATIC stdx)
+        endif()
+    else()
+        set(BOUNDSCHECK_DESTINATION_DYNAMIC ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/dynamic/stdx)
+        set(BOUNDSCHECK_DESTINATION_STATIC ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+    endif()
     install(
         TARGETS boundscheck
         RUNTIME
             DESTINATION
-            ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/dynamic/stdx # RUNTIME includes DLLs. This takes effect on Windows.
+            ${BOUNDSCHECK_DESTINATION_DYNAMIC} # RUNTIME includes DLLs. This takes effect on Windows.
         LIBRARY
             DESTINATION
-            ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/dynamic/stdx # LIBRARY includes shared libraries except DLLs.
+            ${BOUNDSCHECK_DESTINATION_DYNAMIC} # LIBRARY includes shared libraries except DLLs.
     )
-    install(TARGETS boundscheck-static DESTINATION ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
+    install(TARGETS boundscheck-static DESTINATION ${BOUNDSCHECK_DESTINATION_STATIC})
 endif()
 
 add_subdirectory(src)

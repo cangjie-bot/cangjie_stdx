@@ -136,13 +136,17 @@ source <cangjie sdk 路径>
 cjc -v
 ```
 
-#### 构建命令
+#### 准备源码
 
 下载源码
 
 ```bash
 git clone https://gitcode.com/Cangjie/cangjie_stdx.git
 ```
+
+#### 构建命令
+
+##### 方式一
 
 进入工程目录，运行下面构建命令:
 
@@ -160,9 +164,21 @@ python3 build.py install
 
 编译成功会在工程目录中得到默认名称为 target 产物目录。
 
-### 更多构建选项
+更多构建选项请参阅 [build.py](build.py) 或通过 `--help` 选项了解。
 
-请参阅 [build.py](build.py) 或通过 `--help` 选项了解更多编译选项。
+##### 方式二
+
+目前 stdx（dev 分支）也支持通过 cjpm 进行构建，构建命令如下：
+
+```shell
+cjpm build
+```
+
+cjpm 的详细使用可以参考 [cjpm 文档](https://gitcode.com/Cangjie/cangjie_docs/blob/main/docs/tools/source_zh_cn/cmd-tools/cjpm_manual.md)
+
+通过 cjpm 进行构建存在一些依赖，参见[依赖列表](./doc/libs_stdx/source_code_dependency.md#依赖)。
+
+目前通过 cjpm build 的 stdx 二进制包不包含 aspectCJ 和 syntax，并且在 Windows 平台上没有 fuzz 包。
 
 ### 集成构建指导
 
@@ -170,9 +186,9 @@ python3 build.py install
 
 ## 使用指导
 
-`stdx` 提供静态和动态两种二进制 ，两者独立使用，开发者可根据实际情况引用。
-
 ### 导入 stdx
+
+`stdx` 提供动态链接库和静态链接库，两者独立使用，开发者可根据实际情况引用。
 
 在代码工程的 `cjpm.toml` 文件中增加如下类似配置：
 
@@ -281,6 +297,10 @@ main () {
     server.serve()
 }
 ```
+
+### 配置 stdx 源码依赖
+
+除了集成 stdx 二进制外，stdx 目前支持源码依赖，详细使用见 [源码集成指导](./doc/libs_stdx/source_code_dependency.md)
 
 ## License 许可
 

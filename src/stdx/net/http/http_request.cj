@@ -210,6 +210,7 @@ public class HttpRequestBuilder {
         return this
     }
 
+    // cjlint-ignore -start !G.OTH.03
     /**
      * For http/2 only.
      * Sets request priority.
@@ -221,6 +222,7 @@ public class HttpRequestBuilder {
      *
      * @throws HttpException, if urg is not in 0 ~ 7, inclusive.
      */
+    // cjlint-ignore -end
     public func priority(urg: Int64, inc: Bool): HttpRequestBuilder {
         if (urg < 0 || urg > 7) {
             throw HttpException("Illegal header, priority urgency should be in range [0, 7].")
@@ -355,7 +357,7 @@ public class HttpRequestBuilder {
      */
     public func build(): HttpRequest {
         let bodySize: ?Int64 = sizeOf(_body)
-        if (!priorityValue.isEmpty() && (_headers.isNone() || headers.get("priority").isEmpty())) {
+        if (!priorityValue.isEmpty() && (_headers.isNone() || headers.get("priority").isEmpty())) { // cjlint-ignore !G.EXP.03
             headers.add("priority", priorityValue)
         }
         return HttpRequest(

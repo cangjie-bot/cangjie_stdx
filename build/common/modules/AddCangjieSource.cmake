@@ -6,7 +6,7 @@
 # See https://cangjie-lang.cn/pages/LICENSE for license information.
 
 set(CANGJIE_LIB_DIR "modules")
-
+string(TOLOWER "${CMAKE_BUILD_TYPE}" lowercase_build_type)
 function(add_cangjie_library target_name
 )
     set(options
@@ -176,57 +176,72 @@ function(add_cangjie_library target_name
 
     set(ENV{LD_LIBRARY_PATH} $ENV{LD_LIBRARY_PATH}:${CMAKE_BINARY_DIR}/lib)
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${BACKEND} output_cj_lib_dir)
-    add_custom_target(
-        ${target_name} ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${output_dir}
-        COMMAND ${CMAKE_COMMAND} -E env "CANGJIE_PATH=${CMAKE_BINARY_DIR}/modules/${output_cj_lib_dir}"  "LIBRARY_PATH=${CMAKE_BINARY_DIR}/lib"
-                ${COMPILE_CMD}
-        BYPRODUCTS ${output_full_name}
-        DEPENDS ${CANGJIELIB_DEPENDS} ${CANGJIELIB_SOURCE_DIR}
-        COMMENT "Generating ${target_name}")
+    if(NOT CMAKE_BUILD_STAGE STREQUAL "postBuild")
+        add_custom_target(
+            ${target_name} ALL
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${output_dir}
+            COMMAND ${CMAKE_COMMAND} -E env "CANGJIE_PATH=${CMAKE_BINARY_DIR}/modules/${output_cj_lib_dir}"  "LIBRARY_PATH=${CMAKE_BINARY_DIR}/lib"
+                    ${COMPILE_CMD}
+            BYPRODUCTS ${output_full_name}
+            DEPENDS ${CANGJIELIB_DEPENDS} ${CANGJIELIB_SOURCE_DIR}
+            COMMENT "Generating ${target_name}")
+    endif()
+    if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+        set(bc_depends ${CANGJIELIB_DEPENDS} ${CANGJIELIB_SOURCE_DIR})
+        if(CMAKE_CROSSCOMPILING)
+            set(bc_cangjie_path ${CMAKE_SOURCE_DIR}/target/${TRIPLE}/${lowercase_build_type}/stdx)
+        else()
+            set(bc_cangjie_path ${CMAKE_SOURCE_DIR}/target/${lowercase_build_type}/stdx)
+        endif()
+    else()
+        set(bc_depends ${CANGJIELIB_DEPENDS} ${CANGJIELIB_SOURCE_DIR} ${target_name})
+        set(bc_cangjie_path ${CMAKE_BINARY_DIR}/modules/${output_cj_lib_dir})
+    endif()
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND
        AND NOT WIN32
        AND NOT DARWIN)
         add_custom_target(
             ${target_name}_bc ALL
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/${output_bc_dir}
-            COMMAND ${CMAKE_COMMAND} -E env "CANGJIE_PATH=${CMAKE_BINARY_DIR}/modules/${output_cj_lib_dir}" "LIBRARY_PATH=${CMAKE_BINARY_DIR}/lib"
+            COMMAND ${CMAKE_COMMAND} -E env "CANGJIE_PATH=${bc_cangjie_path}" "LIBRARY_PATH=${CMAKE_BINARY_DIR}/lib"
                      ${COMPILE_BC_CMD}
             BYPRODUCTS ${output_lto_bc_full_name}
             # The ${target_name}_bc depends on ${target_name} so they will not run simultaneously. <target> and <target>_bc
             # compile the same package, which means they may write the same bc cache file. Running simultaneously
             # may cause IO error on windows in some cases.
-            DEPENDS ${CANGJIELIB_DEPENDS} ${CANGJIELIB_SOURCE_DIR} ${target_name}
+            DEPENDS ${bc_depends}
             COMMENT "Generating ${target_name}_bc")
     endif()
 
-    if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-        set(TARGET_AR ar)
-        if(CMAKE_CROSSCOMPILING)
-            if(IOS)
-                set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/ar)
-            elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-                set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/llvm-ar)
-            else()
-                set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/${TRIPLE}-ar)
+    if(NOT CMAKE_BUILD_STAGE STREQUAL "postBuild")
+        if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
+            set(TARGET_AR ar)
+            if(CMAKE_CROSSCOMPILING)
+                if(IOS)
+                    set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/ar)
+                elseif(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+                    set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/llvm-ar)
+                else()
+                    set(TARGET_AR ${CANGJIE_TARGET_TOOLCHAIN}/${TRIPLE}-ar)
+                endif()
             endif()
+            if(CMAKE_HOST_UNIX)
+                set(MOVE_CMD mv)
+            elseif(CMAKE_HOST_WIN32)
+                set(MOVE_CMD move)
+            endif()
+            add_custom_command(
+                TARGET ${target_name}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${target_name} && cd ${target_name}
+                COMMAND ${CMAKE_COMMAND} -E remove_directory tmp
+                COMMAND ${CMAKE_COMMAND} -E make_directory tmp && cd tmp
+                COMMAND ${TARGET_AR} x ${output_full_name}
+                COMMAND ${MOVE_CMD} *.o ${output_full_name_prefix}.o
+                COMMAND cd ..
+                COMMAND ${CMAKE_COMMAND} -E remove_directory tmp
+                BYPRODUCTS ${output_full_name_prefix}.o)
         endif()
-        if(CMAKE_HOST_UNIX)
-            set(MOVE_CMD mv)
-        elseif(CMAKE_HOST_WIN32)
-            set(MOVE_CMD move)
-        endif()
-        add_custom_command(
-            TARGET ${target_name}
-            POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${target_name} && cd ${target_name}
-            COMMAND ${CMAKE_COMMAND} -E remove_directory tmp
-            COMMAND ${CMAKE_COMMAND} -E make_directory tmp && cd tmp
-            COMMAND ${TARGET_AR} x ${output_full_name}
-            COMMAND ${MOVE_CMD} *.o ${output_full_name_prefix}.o
-            COMMAND cd ..
-            COMMAND ${CMAKE_COMMAND} -E remove_directory tmp
-            BYPRODUCTS ${output_full_name_prefix}.o)
     endif()
 
     # Install
@@ -235,9 +250,19 @@ function(add_cangjie_library target_name
     else()
         set(file_name "${CANGJIELIB_PACKAGE_NAME}")
     endif()
-    
-    set(install_files "${CMAKE_BINARY_DIR}/${output_dir}/${file_name}.cjo")
-    
+    if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+        if(CMAKE_CROSSCOMPILING)
+            if(${CANGJIELIB_PACKAGE_NAME} STREQUAL "actors.macros")
+                set(install_files "${CANGJIE_CJPM_DIR}/target/${lowercase_build_type}/stdx/${file_name}.cjo")
+            else()
+                set(install_files "${CANGJIE_CJPM_DIR}/target/${TRIPLE}/${lowercase_build_type}/stdx/${file_name}.cjo")
+            endif()
+        else()
+            set(install_files "${CANGJIE_CJPM_DIR}/target/${lowercase_build_type}/stdx/${file_name}.cjo")
+        endif()
+    else()
+        set(install_files "${CMAKE_BINARY_DIR}/${output_dir}/${file_name}.cjo")
+    endif()
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
     else()
         list(APPEND install_files "${CMAKE_BINARY_DIR}/${output_dir}/${file_name}.bchir")
@@ -261,7 +286,15 @@ function(install_cangjie_library_ffi lib_name)
     # Set install dir
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_lib_dir)
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-        install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/static/stdx)
+        if(DEFINED CANGJIE_CJPM_BUILD_SELF)
+            if(CANGJIE_CJPM_BUILD_SELF)
+                install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/static/stdx)
+            else()
+                install(TARGETS ${lib_name} DESTINATION "stdx")
+            endif()
+        else()
+            install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/static/stdx)
+        endif()
     endif()
 endfunction()
 
@@ -269,6 +302,14 @@ function(install_cangjie_library_ffi_s lib_name)
     # Set install dir
     string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_lib_dir)
     if(CANGJIE_CODEGEN_CJNATIVE_BACKEND)
-        install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/dynamic/stdx)
+        if(DEFINED CANGJIE_CJPM_BUILD_SELF)
+            if(CANGJIE_CJPM_BUILD_SELF)
+                install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/static/stdx)
+            else()
+                install(TARGETS ${lib_name} DESTINATION "stdx")
+            endif()
+        else()
+            install(TARGETS ${lib_name} DESTINATION ${output_lib_dir}_${CJNATIVE_BACKEND}/dynamic/stdx)
+        endif()
     endif()
 endfunction()

@@ -168,20 +168,20 @@ class CsvParser {
             let c = buf[i]
             match {
                 // comment
-                case isCommented && buf.isNewLine(at: i) => isCommented = false
+                case isCommented && buf.isNewLine(at: i) => isCommented = false // cjlint-ignore !G.EXP.03
                 case isCommented => continue
-                case isAtLineStart && Some(c) == commentChar => isCommented = true
+                case isAtLineStart && Some(c) == commentChar => isCommented = true // cjlint-ignore !G.EXP.03
                 // empty line
-                case isAtLineStart && skipEmptyLines && buf.isNewLine(at: i) => continue
+                case isAtLineStart && skipEmptyLines && buf.isNewLine(at: i) => continue // cjlint-ignore !G.EXP.03
                 // escape in quote
-                case isEscaped && shouldBeEscaped(c) =>
+                case isEscaped && shouldBeEscaped(c) => // cjlint-ignore !G.EXP.03
                     currentColumnData.add(c)
                     isEscaped = false
                 // in case of ambiguity between quote/escape char
                 case c == escapeChar && c == quoteChar && isQuoted && !buf.hasIndex(i + 1) =>
                     bufferStartIdx = i
                     return false
-                case c == escapeChar && isQuoted && buf.hasIndex(i + 1) && shouldBeEscaped(buf[i + 1]) =>
+                case c == escapeChar && isQuoted && buf.hasIndex(i + 1) && shouldBeEscaped(buf[i + 1]) => // cjlint-ignore !G.EXP.03
                     isEscaped = true
                     continue
                 // quote
@@ -194,7 +194,7 @@ class CsvParser {
                     isQuoted = true
                     continue
                 // end of row
-                case !isQuoted && !isEscaped && (c == delimiter || buf.isNewLine(at: i)) =>
+                case !isQuoted && !isEscaped && (c == delimiter || buf.isNewLine(at: i)) => // cjlint-ignore !G.EXP.03
                     bufferStartIdx = i
                     return true
                 // row's char
@@ -311,7 +311,7 @@ extend Array<Rune> {
     }
 
     func isNewLine(at!: Int64) {
-        isLF(at: at) || isCRLF(at: at)
+        isLF(at: at) || isCRLF(at: at) // cjlint-ignore !G.EXP.03
     }
 }
 

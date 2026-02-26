@@ -139,13 +139,17 @@ Execute the following command to verify whether the installation is successful:
 cjc -v
 ```
 
-#### Build Command
+#### Prepare source code
 
 Download the source code
 
 ```bash
 git clone https://gitcode.com/Cangjie/cangjie_stdx.git
 ```
+
+#### Build Command
+
+##### Method 1
 
 Enter the project directory, and run the following commands:
 
@@ -165,9 +169,21 @@ python3 build.py install
 
 If the compilation is successful, a product directory named target by default will be obtained in the project directory.
 
-### Get More Help Information
-
 For more information, please take a look at the [build.py](build.py) or use `--help`
+
+##### Method 2
+
+Currently, stdx (dev branch) also supports building via cjpm, and the build command is as follows:
+
+```shell
+cjpm build
+```
+
+For detailed usage of cjpm, refer to [cjpm Documentation](https://gitcode.com/Cangjie/cangjie_docs/blob/main/docs/tools/source_en/cmd-tools/cjpm_manual.md)
+
+Building via cjpm has some dependencies, see [dependency list](./doc/libs_stdx_en/source_code_dependency.md#Dependencies).
+
+Currently, the stdx binary packages built via cjpm do not include aspectCJ and syntax, and there are no fuzz packages on the Windows platform.
 
 ### Integration Build Guide
 
@@ -175,9 +191,9 @@ For integration building, please refer to the [Cangjie SDK Integration Build Gui
 
 ## Instructions for use
 
-`stdx` provides two types of binaries: static and dynamic. Both are used independently and developers can reference them according to actual conditions.
-
 ### Import stdx
+
+`stdx` provides two types of binaries: static and dynamic. Both are used independently and developers can reference them according to actual conditions.
 
 Add the following configuration to the `cjpm.toml` file of the code project:
 
@@ -285,6 +301,9 @@ main () {
     server.serve()
 }
 ```
+### Configure stdx source dependencies
+ 	 
+In addition to integrating stdx binaries, stdx currently supports source code dependency. For detailed usage, see [see Source Code Integration Guidance](./doc/libs_stdx_en/source_code_dependency.md)
 
 ## License
 

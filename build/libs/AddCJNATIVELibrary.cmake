@@ -14,17 +14,37 @@ set(BACKEND_TYPE CJNATIVE)
 # If we support cross-compiling, we need to change here for target type.
 string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${BACKEND_TYPE} output_cj_object_dir)
 string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX} output_triple_name)
+string(TOLOWER "${CMAKE_BUILD_TYPE}" lowercase_build_type)
 set(CJNATIVE_BACKEND "cjnative")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH})
-set(output_cj_object_dir ${CMAKE_BINARY_DIR}/modules/${output_cj_object_dir})
+message(STATUS "CANGJIE_CJPM_DIR ${CANGJIE_CJPM_DIR}")
+if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+    if(CMAKE_CROSSCOMPILING)
+        set(output_cj_object_dir ${CANGJIE_CJPM_DIR}/target/${TRIPLE}/${lowercase_build_type}/)
+    else()
+        set(output_cj_object_dir ${CANGJIE_CJPM_DIR}/target/${lowercase_build_type}/)
+    endif()
+else()
+    set(output_cj_object_dir ${CMAKE_BINARY_DIR}/modules/${output_cj_object_dir})
+endif()
 
+if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+    if(CMAKE_CROSSCOMPILING)
+        set(stdxo_path ${CANGJIE_CJPM_DIR}/target/${TRIPLE}/${lowercase_build_type}/stdx)
+    else()
+        set(stdxo_path ${CANGJIE_CJPM_DIR}/target/${lowercase_build_type}/stdx)
+    endif()
+    
+else()
+    set(stdxo_path ${output_cj_object_dir})
+endif()
 make_cangjie_lib(
     cangjieStdx IS_SHARED
     DEPENDS cangjie${BACKEND_TYPE}Stdx
     CANGJIE_STD_LIB_LINK std-core
-    OBJECTS ${output_cj_object_dir}/stdx.o)
+    OBJECTS ${stdxo_path}/stdx.o)
 
-add_library(stdx STATIC ${output_cj_object_dir}/stdx.o)
+add_library(stdx STATIC ${stdxo_path}/stdx.o)
 set_target_properties(stdx PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
@@ -268,7 +288,11 @@ make_cangjie_lib(
         $<$<BOOL:${MINGW}>:-pthread>
         $<$<BOOL:${MINGW}>:-lws2_32>
         $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
-
+if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+    set(tls_depends stdx.net.tlsFFI cangjie-dynamicLoader-opensslFFI)
+else()
+    set(tls_depends cangjie${BACKEND_TYPE}Tls stdx.net.tlsFFI cangjie-dynamicLoader-opensslFFI)
+endif()
 add_and_combine_static_lib(
     TARGET stdx-net-tls
     OUTPUT_NAME libstdx.net.tls.a
@@ -277,9 +301,7 @@ add_and_combine_static_lib(
         ${output_cj_object_dir}/stdx/net.tls.o
         $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
     DEPENDS
-        cangjie${BACKEND_TYPE}Tls
-        stdx.net.tlsFFI
-        cangjie-dynamicLoader-opensslFFI)
+        ${tls_depends})
 install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libstdx.net.tls.a
         DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
@@ -412,12 +434,19 @@ add_library(stdx.actors STATIC ${output_cj_object_dir}/stdx/actors.o)
 set_target_properties(stdx.actors PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.actors DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
-make_cangjie_lib(
-    actors.macros IS_SHARED IS_MACRO
-    DEPENDS cangjie${BACKEND_TYPE}ActorsMacros
-    CANGJIE_STD_LIB_LINK std-core std-ast std-collection std-convert
-    OBJECTS ${output_cj_object_dir}/stdx/actors.macros.o)
-
+if(NOT CMAKE_BUILD_STAGE STREQUAL "postBuild")
+    make_cangjie_lib(
+        actors.macros IS_SHARED IS_MACRO
+        DEPENDS cangjie${BACKEND_TYPE}ActorsMacros
+        CANGJIE_STD_LIB_LINK std-core std-ast std-collection std-convert
+        OBJECTS ${output_cj_object_dir}/stdx/actors.macros.o)
+else()
+    string(TOLOWER ${TARGET_TRIPLE_DIRECTORY_PREFIX}_${CJNATIVE_BACKEND} output_stdx_cj_lib_dir)
+    set(output_stdx_cj_lib_dir ${output_stdx_cj_lib_dir}${SANITIZER_SUBPATH})
+    set(actors_macros_full_name ${CANGJIE_CJPM_DIR}/target/${lowercase_build_type}/stdx/lib-macro_stdx.actors.macros${CMAKE_SHARED_LIBRARY_SUFFIX})
+    install(FILES ${actors_macros_full_name} DESTINATION ${output_stdx_cj_lib_dir}/dynamic/stdx)
+    install(FILES ${actors_macros_full_name} DESTINATION ${output_stdx_cj_lib_dir}/static/stdx)
+endif()
 
 if(NOT CANGJIE_BUILD_WITHOUT_EFFECT_HANDLERS)
 make_cangjie_lib(
@@ -499,6 +528,11 @@ make_cangjie_lib(
         $<$<BOOL:${WIN32}>:-lcrypt32>
         ${ssl_dependencies} $<$<BOOL:${MINGW}>:-lws2_32>
         $<$<NOT:$<BOOL:${WIN32}>>:-ldl>)
+if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+    set(x509_depends stdx.crypto.x509FFI cangjie-dynamicLoader-opensslFFI)
+else()
+    set(x509_depends cangjie${BACKEND_TYPE}X509 stdx.crypto.x509FFI cangjie-dynamicLoader-opensslFFI)
+endif()
 add_and_combine_static_lib(
     OUTPUT_NAME libstdx.crypto.x509.a
     TARGET stdx.crypto.x509
@@ -507,9 +541,7 @@ add_and_combine_static_lib(
         ${output_cj_object_dir}/stdx/crypto.x509.o
         $<TARGET_OBJECTS:cangjie-dynamicLoader-opensslFFI-objs>
     DEPENDS
-        cangjie${BACKEND_TYPE}X509
-        stdx.crypto.x509FFI
-        cangjie-dynamicLoader-opensslFFI)
+        ${x509_depends})
 install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libstdx.crypto.x509.a
         DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
@@ -534,15 +566,17 @@ add_library(stdx.logger STATIC ${output_cj_object_dir}/stdx/logger.o)
 set_target_properties(stdx.logger PROPERTIES LINKER_LANGUAGE C)
 install(TARGETS stdx.logger DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}${SANITIZER_SUBPATH}/static/stdx)
 
-make_cangjie_lib(
-    aspectCJ IS_SHARED
-    DEPENDS cangjie${BACKEND_TYPE}AspectCJ
-    CANGJIE_STD_LIB_LINK std-core
-    OBJECTS ${output_cj_object_dir}/stdx/aspectCJ.o)
+if(NOT CANGJIE_CJPM_BUILD_TYPE)
+    make_cangjie_lib(
+        aspectCJ IS_SHARED
+        DEPENDS cangjie${BACKEND_TYPE}AspectCJ
+        CANGJIE_STD_LIB_LINK std-core
+        OBJECTS ${output_cj_object_dir}/stdx/aspectCJ.o)
 
-add_library(stdx.aspectCJ STATIC ${output_cj_object_dir}/stdx/aspectCJ.o)
-set_target_properties(stdx.aspectCJ PROPERTIES LINKER_LANGUAGE C)
-install(TARGETS stdx.aspectCJ DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}/static/stdx)
+    add_library(stdx.aspectCJ STATIC ${output_cj_object_dir}/stdx/aspectCJ.o)
+    set_target_properties(stdx.aspectCJ PROPERTIES LINKER_LANGUAGE C)
+    install(TARGETS stdx.aspectCJ DESTINATION ${output_triple_name}_${CJNATIVE_BACKEND}/static/stdx)
+endif()
 
 make_cangjie_lib(
     string_intern IS_SHARED
@@ -562,7 +596,11 @@ install(TARGETS stdx.string_intern DESTINATION ${output_triple_name}_${CJNATIVE_
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Defined all xxx_DEPENDENCIES, which are for all backends.
-include(LibraryDependencies)
+if(CMAKE_BUILD_STAGE STREQUAL "postBuild")
+    include(LibraryDependenciesV2)
+else()
+    include(LibraryDependencies)
+endif()
 
 add_cangjie_library(
     cangjie${BACKEND_TYPE}Stdx
@@ -625,17 +663,19 @@ add_cangjie_library(
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/logger
     DEPENDS ${LOGGER_DEPENDENCIES})
 
-add_cangjie_library(
-    cangjie${BACKEND_TYPE}AspectCJ
-    NO_SUB_PKG
-    IS_STDXLIB
-    IS_PACKAGE
-    IS_CJNATIVE_BACKEND
-    PACKAGE_NAME "aspectCJ"
-    MODULE_NAME "stdx"
-    SOURCES ${ASPECTCJ_SRCS}
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/aspectCJ
-    DEPENDS ${ASPECTCJ_DEPENDENCIES})
+if(NOT CANGJIE_CJPM_BUILD_TYPE)
+    add_cangjie_library(
+        cangjie${BACKEND_TYPE}AspectCJ
+        NO_SUB_PKG
+        IS_STDXLIB
+        IS_PACKAGE
+        IS_CJNATIVE_BACKEND
+        PACKAGE_NAME "aspectCJ"
+        MODULE_NAME "stdx"
+        SOURCES ${ASPECTCJ_SRCS}
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stdx/aspectCJ
+        DEPENDS ${ASPECTCJ_DEPENDENCIES})
+endif()
 
 add_cangjie_library(
     cangjie${BACKEND_TYPE}StdxSerialization
